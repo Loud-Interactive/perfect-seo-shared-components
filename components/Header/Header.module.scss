@@ -13,6 +13,10 @@
   a {
     padding-bottom: unset;
     cursor: pointer !important;
+
+    i {
+      color: $primary;
+    }
   }
 }
 
@@ -31,7 +35,7 @@
 
 
     path {
-      color: $preferencesPerfect;
+      color: $primary;
       @include TransitionQuick;
     }
 
@@ -76,6 +80,7 @@
     justify-content: center;
     line-height: 50px;
     color: $primary;
+
 
     &:hover {
       color: white;

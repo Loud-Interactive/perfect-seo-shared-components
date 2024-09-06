@@ -1,0 +1,73 @@
+@use 'common' as *;
+
+.formField {
+  box-sizing: border-box;
+  flex: 1 0 0%;
+  padding: 1px;
+  position: relative;
+  width: 100%;
+
+  &:hover {
+    .formField-label {
+      color: $primary;
+
+      span {
+        color: $primary;
+
+        i {
+          color: white;
+        }
+      }
+    }
+  }
+
+  &-label {
+    color: white;
+
+    span {
+      color: white;
+      font-size: 14px;
+    }
+
+    display: block;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    margin: 0 0 .75em;
+    @include TransitionQuick;
+    @include TruncateText;
+  }
+
+  &_bottomSpacing {
+    margin: 0 0 20px;
+  }
+
+  &_withCheckbox {
+    align-items: center;
+    display: flex;
+    flex: unset;
+    flex-wrap: wrap;
+    min-width: 40px;
+    width: max-content;
+
+    .formField-label {
+      @include font-size-small;
+      display: flex;
+      flex-direction: column;
+
+      span {
+        font-size: 12px;
+        font-weight: normal;
+        color: $primary;
+      }
+
+      color: $primary;
+      cursor: pointer;
+      font-style: normal;
+      font-weight: 400;
+      margin-bottom: 1px;
+      margin-left: 6px;
+      transition: all 0.15s;
+    }
+  }
+}

@@ -1,0 +1,22 @@
+$headerHeight: 100px;
+$footerHeight: 280px;
+$minBodyHeight: calc(100vh - $headerHeight);
+$fullScreenBodyHeight: calc(100vh - $headerHeight - $footerHeight);
+
+// Layering/z-indices
+$header-z-index: 101;
+$modal-z-index: 20;
+
+$overlay-body-z-index: 5;
+$overlay-header-z-index: 15;
+
+// env variables 
+$bottom-gap: env(safe-area-inset-bottom);
+$top-gap: env(safe-area-inset-top);
+
+// Section sizes
+$content-height: calc(100vh - $headerHeight - $bottom-gap - $top-gap);
+$body-width: calc(100vw - calc(100vw - 100%));
+
+// Screen height 
+$screen-height: calc(100vh - $bottom-gap - $top-gap);

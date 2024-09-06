@@ -1,0 +1,22 @@
+@use 'common' as *;
+
+.formError {
+  align-items: center;
+  border-left: 2px solid $primary;
+  border-left-width: 10px;
+  border-radius: 4px;
+  border-right-width: 10px;
+  color: $primary;
+  display: flex;
+  // font-size: 12px;
+  font-weight: 500;
+  line-height: 16px;
+  margin: 10px 0;
+  padding: 10px;
+  text-align: left;
+
+  &-icon {
+    margin-left: 8px;
+    margin-right: 12px;
+  }
+}

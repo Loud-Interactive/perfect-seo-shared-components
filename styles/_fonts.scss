@@ -1,0 +1,11 @@
+@mixin font-size-small {
+  font-size: 14px;
+}
+
+@mixin font-size-tiny {
+  font-size: 12px;
+}
+
+@mixin font-digital {
+  font-family: 'VT323', monospace;
+}

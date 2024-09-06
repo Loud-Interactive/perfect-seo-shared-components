@@ -1,0 +1,63 @@
+@use 'colors' as *;
+
+.bgRobot {
+  background: url('/images/robot-friends.webp');
+  background-size: cover;
+  background-position: center center;
+}
+
+.robotContent {
+  padding: 30px;
+}
+
+
+form.plan label {
+  width: 100%;
+  font-size: 1.2em;
+  margin-top: 10px;
+  font-weight: 500 !important;
+  margin-bottom: 0.5rem;
+}
+
+
+
+#startButton {
+  margin: 20px auto;
+  display: block;
+  border-radius: 12px;
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+#rangeOutput {
+  text-align: center;
+  height: 20px;
+  margin: 5px auto 15px;
+}
+
+#tempTable {
+  width: 100%;
+}
+
+.subLabel {
+  font-size: .7em;
+  color: #999;
+}
+
+.callout-bar {
+  background: $primary;
+  color: #000;
+  padding: 1em;
+}
+
+.callout-bar p {
+  margin: 0px auto;
+  text-align: center;
+  font-weight: 600;
+}
+
+.callout-number {
+  /* font-family: 'VT323', monospace!important; */
+  font-size: 4em;
+  color: $secondary;
+  line-height: 1.2;
+}

@@ -1,0 +1,11 @@
+@use 'common' as *;
+@import '~bootstrap/scss/bootstrap';
+
+$theme-colors: (
+  'primary': $primary,
+  'secondary': $secondary
+);
+
+.contentBox {
+  background-color: $secondary !important;
+}

@@ -1,0 +1,217 @@
+@use 'colors' as *;
+@use 'variables' as *;
+
+/**
+ * Viewport mixins
+ * ---------------
+ */
+@mixin Phone {
+  @media screen and (max-width: 767px) {
+    $footer-height: 300px !important;
+    @content;
+  }
+}
+
+
+
+@mixin PhoneHorizontal {
+  @media screen and (max-width: 767px) and (orientation: landscape) {
+    $footer-height: 300px !important;
+    @content;
+  }
+}
+
+@mixin Horizontal {
+  @media screen and (orientation: landscape) {
+    @content;
+  }
+}
+
+@mixin PhoneUp {
+  @media screen and (min-width: 768px) {
+    @content;
+  }
+}
+
+@mixin TouchScreenDevice {
+
+  @media (pointer:none),
+  (pointer:coarse) {
+    @content;
+  }
+}
+
+@mixin Tablet {
+  @media screen and (min-width: 768px) and (max-width: 1024px) {
+    @content;
+  }
+}
+
+@mixin TabletPortrait {
+  @media screen and (min-width: 768px) and (orientation: portrait) and (max-width: 1024px) {
+    @content;
+  }
+}
+
+@mixin TabletHorizontal {
+  @media screen and (min-width: 768px) and (orientation: horizontal) and (max-width: 1024px) {
+    @content;
+  }
+}
+
+@mixin TabletUp {
+  @media screen and (min-width: 768px) {
+    @content;
+  }
+}
+
+@mixin TabletDown {
+  @media screen and (max-width: 1024px) {
+    @content;
+  }
+}
+
+@mixin Desktop {
+  @media screen and (min-width: 1025px) {
+    @content;
+  }
+}
+
+@mixin DesktopOnly {
+  @media screen and (min-width: 1025px) and (max-width: 1199px) {
+    @content;
+  }
+}
+
+@mixin DesktopXL {
+  @media screen and (min-width: 1200px) {
+    @content;
+  }
+}
+
+/**
+ * Style mixins
+ * ------------
+ */
+
+@mixin clear-list-properties {
+  list-style: none;
+  margin-block-end: 0px;
+  margin-block-start: 0px;
+  padding-inline-start: 0px;
+}
+
+@mixin PWA {
+  @media all and (display-mode: standalone) {
+    @content;
+  }
+
+  @media all and (display-mode: minimal-ui) {
+    @content;
+  }
+
+  @media all and (display-mode: fullscreen) {
+    @content;
+  }
+}
+
+@mixin Browser {
+  @media screen and (display-mode: browser) {
+    @content;
+  }
+}
+
+
+// Font related mixins 
+@mixin headerGutterReset {
+  margin-block-end: 0em;
+  margin-block-start: 0em;
+}
+
+// Transition Effect Mixins
+
+@mixin Transition($duration, $style) {
+  -webkit-transition: $duration $style;
+  -moz-transition: $duration $style;
+  -o-transition: $duration $style;
+  transition: $duration $style;
+}
+
+@mixin TransitionAdvanced($duration, $style, $component) {
+  -webkit-transition: $duration $component $style;
+  -moz-transition: $duration $component $style;
+  -o-transition: $duration $component $style;
+  transition: $duration $component $style;
+}
+
+@mixin TransitionQuick {
+  @include TransitionAdvanced(.5s, ease-in-out, all)
+}
+
+
+
+@mixin TruncateText {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@mixin NoSelect {
+  -webkit-touch-callout: none;
+  /* iOS Safari */
+  -webkit-user-select: none;
+  /* Safari */
+  -khtml-user-select: none;
+  /* Konqueror HTML */
+  -moz-user-select: none;
+  /* Old versions of Firefox */
+  -ms-user-select: none;
+  /* Internet Explorer/Edge */
+  user-select: none;
+  /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
+}
+
+@mixin ShadowItem {
+  border: .5px solid rgba(white, .2);
+  box-shadow: -3px 3px 8px rgba(0, 0, 0, .9);
+}
+
+
+// Modal Animation Mixin
+
+@keyframes slide-in {
+  0% {
+    transform: translateY(100vh)
+  }
+
+  100% {
+    transform: translateY(0%)
+  }
+}
+
+@keyframes slide-out {
+  0% {
+    transform: translateY(0%)
+  }
+
+  100% {
+    transform: translateY(100vh)
+  }
+}
+
+@mixin SlideOut {
+  animation-delay: 0s;
+  animation-duration: 0.5s;
+  animation-fill-mode: both;
+  animation-name: slide-out;
+  animation-timing-function: ease-in;
+  transform: translateY(100vh);
+}
+
+@mixin SlideIn {
+  animation-delay: 0s;
+  animation-duration: 0.5s;
+  animation-fill-mode: both;
+  animation-name: slide-in;
+  animation-timing-function: ease-in;
+}

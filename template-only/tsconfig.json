@@ -1,0 +1,64 @@
+{
+  "compilerOptions": {
+    "target": "ES2018",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ],
+      "contentPerfect": [
+        "./src/perfect-seo-shared-components/styles/_contentPerfect.scss"
+      ],
+      "home": [
+        "./src/perfect-seo-shared-components/styles/_home.scss"
+      ],
+      "colors": [
+        "./src/perfect-seo-shared-components/styles/_colors.scss"
+      ],
+      "variables": [
+        "./src/perfect-seo-shared-components/styles/_variables.scss"
+      ],
+      "bootstrap": [
+        "./src/perfect-seo-shared-components/styles/_bootstrap.scss"
+      ],
+      "mixins": [
+        "./src/perfect-seo-shared-components/styles/_mixins.scss"
+      ],
+      "common": [
+        "./src/styles/_common.scss"
+      ],
+      "fonts": [
+        "./src/perfect-seo-shared-components/styles/_fonts.scss"
+      ],
+      "pages/*": [
+        "./pages/*"
+      ],
+    },
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": false,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "incremental": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve"
+  },
+  "include": [
+    "next-env.d.ts",
+    "next.config.js",
+    "**/*.ts",
+    "**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules"
+  ],
+}

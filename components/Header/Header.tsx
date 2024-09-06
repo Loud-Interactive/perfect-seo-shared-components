@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import styles from './Header.module.scss'
-import { PerfectSEOLogo } from '@/assets/global-assets/brandIcons'
+import { PerfectSEOLogo } from '@/perfect-seo-shared-components/assets/brandIcons'
 import { loginWithGoogle, logout } from '@/utils/supabase/actions'
 import { useRouter } from 'next/router'
 import classNames from 'classnames'
@@ -103,7 +103,6 @@ const Header = ({ links, logo, menuHeader }: HeaderProps) => {
                             </div>
                             {menuHeader}
                           </div>
-
                           {links?.length > 0 && <div className='row g-2 justify-content-end p-3'>
                             {currentPage && <div className='col-12'>
                               <Link href="/">Return Home</Link>

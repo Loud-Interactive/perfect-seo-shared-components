@@ -1,0 +1,15 @@
+@use 'colors' as *;
+
+.logoLink {
+  cursor: pointer;
+
+  svg {
+    max-width: 300px;
+  }
+
+  &:hover {
+    svg path {
+      fill: white;
+    }
+  }
+}

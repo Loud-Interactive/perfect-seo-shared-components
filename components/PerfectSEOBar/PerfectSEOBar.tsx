@@ -1,4 +1,4 @@
-import { ContentPerfectLogo, PagePerfectLogo, PerfectSEOLogo, PreferencesPerfectLogo, SynopsisPerfectLogo, VoicePerfectLogo } from '@/assets/global-assets/brandIcons';
+import { ContentPerfectLogo, PagePerfectLogo, PerfectSEOLogo, PreferencesPerfectLogo, SynopsisPerfectLogo, VoicePerfectLogo } from '@/perfect-seo-shared-components/assets/brandIcons';
 import styles from './PerfectSEOBar.module.scss'
 
 interface BrandTileProps {

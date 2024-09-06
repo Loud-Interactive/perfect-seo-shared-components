@@ -10,7 +10,7 @@ import { StateTree } from '@/store/reducer'
 import { reduxReset } from '@/store/actions'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { Brands } from '@/assets/global-assets/Brands'
-import { BrandStatus } from '@/assets/global-assets/types'
+import { BrandStatus } from '@/perfect-seo-shared-components/types'
 import { useEffect, useState } from 'react'
 import useManageUser from '@/hooks/useManageUser'
 

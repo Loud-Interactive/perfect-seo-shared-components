@@ -1,0 +1,168 @@
+@use 'common' as *;
+
+.wrap {
+  display: flex;
+  justify-content: center;
+  column-gap: 8px;
+  max-width: calc(100vw - 32px);
+  padding: 32px 16px;
+
+  @include TabletDown {
+    flex-direction: column;
+    row-gap: 16px;
+  }
+}
+
+.header {
+  h3 {
+    text-align: center;
+    max-width: 450px;
+    margin-bottom: 16px;
+  }
+
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+
+  @include Desktop {
+    width: 50%;
+    justify-content: flex-end;
+    height: inherit;
+    align-items: center;
+
+    h3 {
+      text-align: right;
+      padding-right: 2em;
+      margin: 0;
+    }
+  }
+
+
+
+
+}
+
+.body {
+  @include Desktop {
+    width: 50%;
+    justify-content: flex-start;
+  }
+
+  @include Phone {
+    flex-direction: column;
+  }
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  column-gap: 16px;
+  justify-content: center;
+}
+
+.hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  &:hover {
+    svg {
+      path {
+        fill: white;
+      }
+    }
+
+    color: white;
+  }
+
+  .icon {
+    width: 150px;
+
+    &Full {
+      width: 150px;
+      margin-top: .5em;
+    }
+  }
+}
+
+.brands {
+  align-items: center;
+  justify-content: flex-start;
+  display: flex;
+  height: 100%;
+  column-gap: 16px;
+
+  @include TabletDown {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  &Wrap {
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+.brandTile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100px;
+  box-sizing: border-box;
+
+  &Header {
+    width: inherit;
+  }
+
+  &Logo {
+    width: 100px;
+
+    svg {
+      width: 100%;
+    }
+  }
+
+  &Icon {
+    width: 100px;
+
+    svg {
+      width: 100%;
+    }
+  }
+
+  .brandTileLogo {
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+
+    svg {
+      width: 100%;
+    }
+  }
+
+  &:hover {
+    width: 110px;
+
+    img {
+      width: 110px;
+    }
+
+
+
+    svg {
+
+      path {
+        fill: white;
+      }
+    }
+
+    color: white;
+  }
+}

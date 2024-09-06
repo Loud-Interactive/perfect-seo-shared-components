@@ -1,0 +1,95 @@
+@use 'common' as *;
+
+.header {
+  min-height: $headerHeight;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px;
+
+  a {
+    padding-bottom: unset;
+    cursor: pointer !important;
+  }
+}
+
+.logoLink {
+  cursor: pointer !important;
+
+  &:hover {
+    opacity: .8;
+  }
+}
+
+.logo {
+  cursor: pointer !important;
+
+  svg {
+
+
+    path {
+      color: $preferencesPerfect;
+      @include TransitionQuick;
+    }
+
+    &:hover {
+      path {
+        fill: white;
+      }
+    }
+  }
+}
+
+.menu {
+  max-width: 400px;
+  z-index: 1000;
+
+  @include Phone {
+    min-height: calc(100dvh - 100px);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    :global {
+
+      .card-header,
+      .card {
+        border-radius: 0 !important;
+      }
+    }
+  }
+
+  &Button {
+    @include TransitionQuick;
+    background-color: transparent;
+    padding: 0px;
+    aspect-ratio: 1;
+    width: 50px;
+    height: 50px;
+    border: none;
+    font-size: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 50px;
+    color: $perfectSEO;
+
+    &:hover {
+      color: white;
+    }
+  }
+}
+
+.brand {
+  &Icon {
+    width: 100%;
+  }
+
+  &Url {
+    font-weight: revert;
+    font-size: smaller;
+    color: white !important;
+  }
+}

@@ -9,12 +9,17 @@ import { useDispatch, useSelector } from 'react-redux'
 import { StateTree } from '@/store/reducer'
 import { reduxReset } from '@/store/actions'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import { Brands } from '@/assets/global-assets/Brands'
 import { BrandStatus } from '@/perfect-seo-shared-components/data/types'
 import { useEffect, useState } from 'react'
 import useManageUser from '@/hooks/useManageUser'
+import { Brands } from '@/perfect-seo-shared-components/assets/Brands'
 
-const Header = () => {
+export interface HeaderProps {
+  links?: { href: string, label: string }[],
+  logo?: any,
+  menuHeader?: any
+}
+const Header = ({ links, logo, menuHeader }: HeaderProps) => {
   const { isLoggedIn, user, isAdmin } = useSelector((state: StateTree) => state);
 
   const router = useRouter()
@@ -72,7 +77,7 @@ const Header = () => {
           <div className="col d-flex align-items-center justify-content-start">
             <Link href="/">
               <div className={styles.logo}>
-                <PerfectSEOLogo />
+                {logo}
               </div>
             </Link>
           </div>
@@ -96,19 +101,21 @@ const Header = () => {
                               <div className='col-auto'><a onClick={signOutHandler}>Sign Out</a>
                               </div>
                             </div>
+                            {menuHeader}
                           </div>
 
-                          <div className='row g-2 justify-content-end p-3'>
+                          {links?.length > 0 && <div className='row g-2 justify-content-end p-3'>
                             {currentPage && <div className='col-12'>
                               <Link href="/">Return Home</Link>
                             </div>}
-                            {/* <div className='col-12 p-3'>
-                            <Link href="/blog">Blog</Link>
-                          </div> */}
-                            {isAdmin && <div className='col-12'>
-                              <Link href="/admin" className={currentPage === 'admin' ? 'text-white' : ''}>Admin Dashboard</Link>
-                            </div>}
-                          </div>
+                            {links.map((link, index) => {
+                              return (
+                                <div className='col-12' key={link.href}>
+                                  <Link href={link.href} className={currentPage === link.href ? 'text-white' : ''}>{link.label}</Link>
+                                </div>
+                              )
+                            })}
+                          </div>}
                         </div>
                         <div className='card-body d-flex align-items-end'>
                           <div className='row g-3'>

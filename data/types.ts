@@ -76,6 +76,7 @@ export enum BrandStatus {
   PLANNED = "PLANNED",
   MASTER = "MASTER"
 }
+
 export interface Brand {
   title: string,
   url: string,

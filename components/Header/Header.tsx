@@ -30,7 +30,7 @@ const Header = ({ links, logo, menuHeader }: HeaderProps) => {
 
   useEffect(() => {
     const updateRoute = (url) => {
-      setCurrentPage(url.split("/")[1])
+      setCurrentPage(url)
     }
     updateRoute(router.pathname)
     router.events.on('routeChangeComplete', updateRoute)
@@ -54,10 +54,7 @@ const Header = ({ links, logo, menuHeader }: HeaderProps) => {
 
   }
 
-  const signInHandler = (e) => {
-    e.preventDefault();
-    router.push('/login')
-  }
+
   const signedInClass = classNames('col-auto d-flex align-items-center',
     {
       'justify-content-end': !phone,
@@ -104,17 +101,18 @@ const Header = ({ links, logo, menuHeader }: HeaderProps) => {
                             {menuHeader}
                           </div>
                           {links?.length > 0 && <div className='row g-2 justify-content-end p-3'>
-                            {currentPage && <div className='col-12'>
+                            {currentPage !== "/" && <div className='col-12'>
                               <Link href="/">Return Home</Link>
                             </div>}
                             {links.map((link, index) => {
                               return (
                                 <div className='col-12' key={link.href}>
-                                  <Link href={link.href} className={currentPage === link.href ? 'text-white' : ''}>{link.label}</Link>
+                                  <Link href={link.href} className={currentPage == link.href ? 'text-white no-underline' : ''}>{link.label}</Link>
                                 </div>
                               )
                             })}
                           </div>}
+
                         </div>
                         <div className='card-body d-flex align-items-end'>
                           <div className='row g-3'>

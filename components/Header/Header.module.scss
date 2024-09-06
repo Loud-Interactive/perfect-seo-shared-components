@@ -8,6 +8,7 @@
   width: 100%;
   box-sizing: border-box;
   padding: 8px;
+  z-index: 1000;
 
   a {
     padding-bottom: unset;
@@ -44,7 +45,7 @@
 
 .menu {
   max-width: 400px;
-  z-index: 1000;
+
 
   @include Phone {
     min-height: calc(100dvh - 100px);
@@ -74,7 +75,7 @@
     align-items: center;
     justify-content: center;
     line-height: 50px;
-    color: $perfectSEO;
+    color: $primary;
 
     &:hover {
       color: white;

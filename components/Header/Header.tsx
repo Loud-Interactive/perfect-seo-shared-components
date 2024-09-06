@@ -63,11 +63,9 @@ const Header = ({ links, logo, menuHeader }: HeaderProps) => {
   )
 
 
-  const headerClasses = classNames(styles.header,
-    { 'bg-dark': true }
-  )
+
   return (
-    <header className={headerClasses}>
+    <header className={styles.header}>
       <div className='container'>
         <div className='row g-3 d-flex justify-content-between align-items-center'>
 

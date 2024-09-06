@@ -1,6 +1,6 @@
 import { PerfectSEOLogo } from "@/assets/icons"
 import styles from './Footer.module.scss'
-import PerfectSEOBar from "../../../components/PerfectSEOBar/PerfectSEOBar"
+import PerfectSEOBar from "../PerfectSEOBar/PerfectSEOBar"
 
 const Footer = () => {
   return (

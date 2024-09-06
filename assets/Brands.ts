@@ -1,4 +1,4 @@
-import { Brand, BrandStatus } from "./data/types";
+import { Brand, BrandStatus } from "../data/types";
 
 export const Brands: Array<Brand> = [
   {

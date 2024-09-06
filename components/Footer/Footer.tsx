@@ -4,7 +4,7 @@ import PerfectSEOBar from "../PerfectSEOBar/PerfectSEOBar"
 
 const Footer = () => {
   return (
-    <footer>
+    <footer className="mb-5">
       <div className="container-fluid">
         <PerfectSEOBar />
       </div>

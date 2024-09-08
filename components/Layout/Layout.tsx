@@ -10,14 +10,15 @@ interface LayoutProps extends React.HTMLProps<HTMLDivElement> {
   hideFooter?: boolean,
   current: string;
   links?: Links[];
+  hasLogin?: boolean;
 }
 
-const Layout = ({ children, hideFooter, current, links }: LayoutProps) => {
+const Layout = ({ children, hideFooter, current, links, hasLogin = true }: LayoutProps) => {
 
   return (
     <>
       <Provider store={store}>
-        <Header current={current} links={links} />
+        <Header current={current} links={links} hasLogin={hasLogin} />
         <main className={style.wrap}>
           {children}
         </main>

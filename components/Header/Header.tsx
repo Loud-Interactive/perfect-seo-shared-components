@@ -8,11 +8,12 @@ import { useDispatch, useSelector } from 'react-redux'
 import { StateTree } from '@/store/reducer'
 import { reduxReset } from '@/store/actions'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import { BrandStatus, Links } from '@/perfect-seo-shared-components/data/types'
-import { useEffect, useState } from 'react'
+import { BrandStatus, Links, LinkType } from '@/perfect-seo-shared-components/data/types'
+import { useEffect, useMemo, useState } from 'react'
 import useManageUser from '@/perfect-seo-shared-components/hooks/useManageUser'
 import { Brands } from '@/perfect-seo-shared-components/assets/Brands'
 import { renderIcon, renderLogo } from '@/perfect-seo-shared-components/utils/brandUtilities'
+import { link } from 'fs'
 
 export interface HeaderProps {
   links?: Links[],
@@ -62,6 +63,18 @@ const Header = ({ links, menuHeader, current }: HeaderProps) => {
     }
   )
 
+  const dynamicLinks = useMemo(() => {
+    if (!links) return []
+    if (isAdmin) {
+      return links
+    }
+    else if (isLoggedIn) {
+
+      return links.filter((link) => link.type !== LinkType.ADMIN)
+    }
+
+    else return links.filter((link) => link.type === LinkType.PUBLIC);
+  }, [links, isAdmin, isLoggedIn])
 
 
   return (
@@ -77,69 +90,68 @@ const Header = ({ links, menuHeader, current }: HeaderProps) => {
             </Link>
           </div>
           <div className={signedInClass}>
-            {(isLoggedIn && user) ?
-              <>
-                <DropdownMenu.Root>
-                  <DropdownMenu.Trigger className={styles.menuButton}>
-                    <i className="bi bi-grid-3x3-gap-fill" />
-                  </DropdownMenu.Trigger>
 
-                  <DropdownMenu.Portal>
-                    <DropdownMenu.Content align="end" sideOffset={25} className='bg-dark card z-100'>
-                      <div className={styles.menu}>
-                        <div>
-                          <div className='card-header'>
-                            <div className='row justify-content-between'>
-                              <div className='col-auto'>
-                                <strong className='me-2'>Logged in as</strong>
-                                {user?.email}</div>
-                              <div className='col-auto'><a onClick={signOutHandler}>Sign Out</a>
-                              </div>
-                            </div>
-                            {menuHeader}
-                          </div>
-                          {links?.length > 0 && <div className='row g-2 justify-content-end p-3'>
-                            {currentPage !== "/" && <div className='col-12'>
-                              <Link href="/">Return Home</Link>
-                            </div>}
-                            {links.map((link, index) => {
-                              return (
-                                <div className='col-12' key={link.href}>
-                                  <Link href={link.href} className={currentPage == link.href ? 'text-white no-underline' : ''}>{link.label}</Link>
-                                </div>
-                              )
-                            })}
-                          </div>}
+            <DropdownMenu.Root>
+              <DropdownMenu.Trigger className={styles.menuButton}>
+                <i className="bi bi-grid-3x3-gap-fill" />
+              </DropdownMenu.Trigger>
+
+              <DropdownMenu.Portal>
+                <DropdownMenu.Content align="end" sideOffset={25} className='bg-dark card z-100'>
+                  <div className={styles.menu}>
+                    <div>
+                      <div className='card-header'>
+                        <div className='row justify-content-between'>
+                          {isLoggedIn ? <>
+                            <div className='col-auto'>
+                              <strong className='me-2'>Logged in as</strong>
+                              {user?.email}</div>
+                            <div className='col-auto'><a onClick={signOutHandler}>Sign Out</a>
+                            </div></>
+                            :
+                            <button className="btn btn-google ms-3" onClick={loginWithGoogle}><img src="/images/google-icon.png" /> Login</button>
+                          }
                         </div>
-                        <div className='card-body d-flex align-items-end'>
-                          <div className='row g-3'>
-                            <div className='col-12'>
-                              <span className='fs-2'>Our Products</span>
+                        {menuHeader}
+                      </div>
+                      {dynamicLinks?.length > 0 && <div className='row g-2 justify-content-end p-3'>
+                        {currentPage !== "/" && <div className='col-12'>
+                          <Link href="/">Return Home</Link>
+                        </div>}
+                        {dynamicLinks.map((link, index) => {
+                          return (
+                            <div className='col-12' key={link.href}>
+                              <Link href={link.href} className={currentPage == link.href ? 'text-white no-underline' : ''}>{link.label}</Link>
                             </div>
-                            {Brands.filter((obj) => obj.status === BrandStatus.LIVE && obj.title !== current).map((brand, index) => {
-
-                              return (
-                                <div key={index} className='col-4 text-center'>
-                                  <a href={brand.url} className={styles.brandUrl} target="_blank"><div className={styles.brandIcon}>{renderIcon(brand.title)}</div>
-                                    {brand.title.replace(".ai", "")}
-                                  </a>
-                                </div>
-                              )
-                            })}
-                          </div>
-
+                          )
+                        })}
+                      </div>}
+                    </div>
+                    <div className='card-body d-flex align-items-end'>
+                      <div className='row g-3'>
+                        <div className='col-12'>
+                          <span className='fs-2'>Our Products</span>
                         </div>
+                        {Brands.filter((obj) => obj.status === BrandStatus.LIVE && obj.title !== current).map((brand, index) => {
 
+                          return (
+                            <div key={index} className='col-4 text-center'>
+                              <a href={brand.url} className={styles.brandUrl} target="_blank"><div className={styles.brandIcon}>{renderIcon(brand.title)}</div>
+                                {brand.title.replace(".ai", "")}
+                              </a>
+                            </div>
+                          )
+                        })}
                       </div>
 
+                    </div>
 
-                    </DropdownMenu.Content>
-                  </DropdownMenu.Portal>
-                </DropdownMenu.Root>
-              </>
-              :
-              <button className="btn btn-google ms-3" onClick={loginWithGoogle}><img src="/images/google-icon.png" /> Login</button>
-            }
+                  </div>
+
+
+                </DropdownMenu.Content>
+              </DropdownMenu.Portal>
+            </DropdownMenu.Root>
           </div>
         </div>
       </div>

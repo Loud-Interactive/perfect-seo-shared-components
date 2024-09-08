@@ -89,7 +89,13 @@ export interface Brand {
   summary?: string,
 }
 
+export enum LinkType {
+  PUBLIC,
+  PRIVATE,
+  ADMIN
+}
 export interface Links {
   href: string,
-  label: string
+  label: string,
+  type?: LinkType
 }

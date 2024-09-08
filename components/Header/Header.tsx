@@ -109,7 +109,9 @@ const Header = ({ links, menuHeader, current }: HeaderProps) => {
                             <div className='col-auto'><a onClick={signOutHandler}>Sign Out</a>
                             </div></>
                             :
-                            <button className="btn btn-google ms-3" onClick={loginWithGoogle}><img src="/images/google-icon.png" /> Login</button>
+
+                            <button className="btn btn-google" onClick={loginWithGoogle}><img src="/images/google-icon.png" /> Login</button>
+
                           }
                         </div>
                         {menuHeader}

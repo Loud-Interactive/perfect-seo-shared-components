@@ -1,6 +1,7 @@
-import { PerfectSEOLogo } from '@/perfect-seo-shared-components/assets/brandIcons'
 import styles from './Footer.module.scss'
 import PerfectSEOBar from "../PerfectSEOBar/PerfectSEOBar"
+import { PerfectSEOLogo } from '@/perfect-seo-shared-components/assets/brandIcons'
+import moment from 'moment-timezone'
 
 const Footer = ({ current }) => {
   return (
@@ -17,7 +18,7 @@ const Footer = ({ current }) => {
               <a href="https://www.loud.us/ai-tools" className={styles.logoLink}>
                 <PerfectSEOLogo />
               </a></p>
-            <p>© 2023 by Loud Interactive LLC</p>
+            <p>© {moment().format("YYYY")} by Loud Interactive LLC</p>
           </div>
         </div>
       </div>

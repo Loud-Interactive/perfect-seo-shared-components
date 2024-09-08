@@ -1,4 +1,4 @@
-import { PerfectSEOLogo } from "@/assets/icons"
+import { PerfectSEOLogo } from '@/perfect-seo-shared-components/assets/brandIcons'
 import styles from './Footer.module.scss'
 import PerfectSEOBar from "../PerfectSEOBar/PerfectSEOBar"
 

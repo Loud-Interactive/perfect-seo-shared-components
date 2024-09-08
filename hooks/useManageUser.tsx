@@ -1,7 +1,7 @@
-import { StateTree } from "@/store/reducer";
+import { StateTree } from "@/perfect-seo-shared-components/store/reducer";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from 'react'
-import { reduxReset, setAdmin, setLoading, setLoggedIn, setUser } from '@/store/actions'
+import { reduxReset, setAdmin, setLoading, setLoggedIn, setUser } from '@/perfect-seo-shared-components/store/actions'
 import { createClient } from '@/utils/supabase/components'
 
 const useManageUser = () => {

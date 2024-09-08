@@ -5,15 +5,14 @@ import { useRouter } from 'next/router'
 import classNames from 'classnames'
 import useViewport from '@/perfect-seo-shared-components/hooks/useViewport'
 import { useDispatch, useSelector } from 'react-redux'
-import { StateTree } from '@/store/reducer'
-import { reduxReset } from '@/store/actions'
+import { StateTree } from '@/perfect-seo-shared-components/store/reducer'
+import { reduxReset } from '@/perfect-seo-shared-components/store/actions'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { BrandStatus, Links, LinkType } from '@/perfect-seo-shared-components/data/types'
 import { useEffect, useMemo, useState } from 'react'
 import useManageUser from '@/perfect-seo-shared-components/hooks/useManageUser'
 import { Brands } from '@/perfect-seo-shared-components/assets/Brands'
 import { renderIcon, renderLogo } from '@/perfect-seo-shared-components/utils/brandUtilities'
-import { link } from 'fs'
 
 export interface HeaderProps {
   links?: Links[],

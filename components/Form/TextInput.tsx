@@ -1,7 +1,7 @@
 import { Validator } from '@/utilities/validators';
 import classNames from 'classnames';
 import FormField from './FormField';
-import useFormInput from '@/hooks/useFormInput';
+import useFormInput from '@/perfect-seo-shared-components/hooks/useFormInput';
 import FieldErrors from './FieldErrors';
 
 interface TextInputProps extends React.HTMLProps<HTMLInputElement> {

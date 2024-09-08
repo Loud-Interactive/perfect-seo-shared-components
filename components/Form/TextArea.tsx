@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import FieldErrors from './FieldErrors';
 import FormField from './FormField';
-import useFormInput from '@/hooks/useFormInput';
+import useFormInput from '@/perfect-seo-shared-components/hooks/useFormInput';
 import { Validator } from '@/utilities/validators';
 
 interface TextAreaInputProps extends React.HTMLProps<HTMLTextAreaElement> {

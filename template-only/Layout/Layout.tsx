@@ -1,5 +1,5 @@
 import style from './Layout.module.scss'
-import useManageUser from '@/hooks/useManageUser'
+import useManageUser from '@/perfect-seo-shared-components/hooks/useManageUser'
 import Header from '@/perfect-seo-shared-components/components/Header/Header'
 import { ContentPerfectLogo } from '@/perfect-seo-shared-components/assets/brandIcons'
 import Footer from '@/perfect-seo-shared-components/components/Footer/Footer'

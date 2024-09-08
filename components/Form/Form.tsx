@@ -1,5 +1,5 @@
 import { createContext, useEffect, useState } from 'react';
-import { FormController } from '@/hooks/useForm';
+import { FormController } from '@/perfect-seo-shared-components/hooks/useForm';
 import FormError from './FormError';
 import Router, { useRouter } from 'next/router';
 import FormSuccess from './FormSuccess';

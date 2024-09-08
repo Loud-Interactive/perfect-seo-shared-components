@@ -4,14 +4,14 @@ import { PerfectSEOLogo } from '@/perfect-seo-shared-components/assets/brandIcon
 import { loginWithGoogle, logout } from '@/utils/supabase/actions'
 import { useRouter } from 'next/router'
 import classNames from 'classnames'
-import useViewport from '@/hooks/useViewport'
+import useViewport from '@/perfect-seo-shared-components/hooks/useViewport'
 import { useDispatch, useSelector } from 'react-redux'
 import { StateTree } from '@/store/reducer'
 import { reduxReset } from '@/store/actions'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { BrandStatus, Links } from '@/perfect-seo-shared-components/data/types'
 import { useEffect, useState } from 'react'
-import useManageUser from '@/hooks/useManageUser'
+import useManageUser from '@/perfect-seo-shared-components/hooks/useManageUser'
 import { Brands } from '@/perfect-seo-shared-components/assets/Brands'
 import { renderLogo } from '@/perfect-seo-shared-components/utils/brandUtilities'
 

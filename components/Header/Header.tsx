@@ -118,7 +118,7 @@ const Header = ({ links, menuHeader, current }: HeaderProps) => {
                             <div className='col-12'>
                               <span className='fs-2'>Our Products</span>
                             </div>
-                            {Brands.filter((obj) => obj.status === BrandStatus.LIVE).map((brand, index) => {
+                            {Brands.filter((obj) => obj.status === BrandStatus.LIVE && obj.title !== current).map((brand, index) => {
 
                               return (
                                 <div key={index} className='col-4 text-center'>

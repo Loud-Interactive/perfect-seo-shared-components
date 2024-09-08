@@ -18,9 +18,10 @@ import { link } from 'fs'
 export interface HeaderProps {
   links?: Links[],
   current: string,
-  menuHeader?: any
+  menuHeader?: any,
+  hasLogin?: boolean;
 }
-const Header = ({ links, menuHeader, current }: HeaderProps) => {
+const Header = ({ links, menuHeader, current, hasLogin = true }: HeaderProps) => {
   const { isLoggedIn, user, isAdmin } = useSelector((state: StateTree) => state);
   const [open, setOpen] = useState(true)
   const router = useRouter()
@@ -104,7 +105,7 @@ const Header = ({ links, menuHeader, current }: HeaderProps) => {
                 <DropdownMenu.Content align="end" sideOffset={25} className='bg-dark card z-100'>
                   <div className={styles.menu}>
                     <div>
-                      <div className='card-header'>
+                      {hasLogin && <div className='card-header'>
                         <div className='row justify-content-between'>
 
                           {isLoggedIn ? <>
@@ -120,7 +121,7 @@ const Header = ({ links, menuHeader, current }: HeaderProps) => {
                           }
                         </div>
                         {menuHeader}
-                      </div>
+                      </div>}
                       {dynamicLinks?.length > 0 && <div className='row g-2 justify-content-end p-3'>
                         {currentPage !== "/" && <div className='col-12'>
                           <Link href="/">Return Home</Link>

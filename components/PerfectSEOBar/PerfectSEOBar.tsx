@@ -42,7 +42,7 @@ export const PerfectSEOBrands: Array<BrandTileProps> = [
 
 ]
 
-const PerfectSEOBar = () => {
+const PerfectSEOBar = ({ current }) => {
   return (
     <div className={styles.wrap}>
       <div className={styles.header}>

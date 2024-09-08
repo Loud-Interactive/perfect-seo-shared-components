@@ -88,3 +88,8 @@ export interface Brand {
   status: BrandStatus
   summary?: string,
 }
+
+export interface Links {
+  href: string,
+  label: string
+}

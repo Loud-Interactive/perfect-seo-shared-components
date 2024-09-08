@@ -9,17 +9,18 @@ import { useDispatch, useSelector } from 'react-redux'
 import { StateTree } from '@/store/reducer'
 import { reduxReset } from '@/store/actions'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import { BrandStatus } from '@/perfect-seo-shared-components/data/types'
+import { BrandStatus, Links } from '@/perfect-seo-shared-components/data/types'
 import { useEffect, useState } from 'react'
 import useManageUser from '@/hooks/useManageUser'
 import { Brands } from '@/perfect-seo-shared-components/assets/Brands'
+import { renderLogo } from '@/perfect-seo-shared-components/utils/brandUtilities'
 
 export interface HeaderProps {
-  links?: { href: string, label: string }[],
-  logo?: any,
+  links?: Links[],
+  current: string,
   menuHeader?: any
 }
-const Header = ({ links, logo, menuHeader }: HeaderProps) => {
+const Header = ({ links, menuHeader, current }: HeaderProps) => {
   const { isLoggedIn, user, isAdmin } = useSelector((state: StateTree) => state);
 
   const router = useRouter()
@@ -72,7 +73,7 @@ const Header = ({ links, logo, menuHeader }: HeaderProps) => {
           <div className="col d-flex align-items-center justify-content-start">
             <Link href="/">
               <div className={styles.logo}>
-                {logo}
+                {renderLogo(current)}
               </div>
             </Link>
           </div>

@@ -1,4 +1,4 @@
-import { Validator } from '@/utilities/validators';
+import { Validator } from '@/perfect-seo-shared-components/utils/validators';
 import classNames from 'classnames';
 import FormField from './FormField';
 import useFormInput from '@/perfect-seo-shared-components/hooks/useFormInput';

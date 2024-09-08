@@ -1,7 +1,7 @@
 import { MutableRefObject, useContext, useEffect, useRef } from 'react';
-import { FormContext } from '@/components/Form/Form';
+import { FormContext } from '@/perfect-seo-shared-components/components/Form/Form';
 import type { FormController } from './useForm';
-import type { Validator } from '@/utilities/validators';
+import type { Validator } from '@/perfect-seo-shared-components/utils/validators';
 
 interface FormInputConfig {
   fieldName: string;

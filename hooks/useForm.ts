@@ -1,6 +1,6 @@
 import { FormEvent, useEffect, useRef, useState } from 'react';
-import type { Validator } from '@/utilities/validators';
-import { areArraysEqual } from '@/utilities/global';
+import type { Validator } from '@/perfect-seo-shared-components/utils/validators';
+import { areArraysEqual } from '@/perfect-seo-shared-components/utils/global';
 
 export type FormState = Record<string, any>;
 type FormElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;

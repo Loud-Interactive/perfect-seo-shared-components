@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import FieldErrors from './FieldErrors';
 import FormField from './FormField';
 import useFormInput from '@/perfect-seo-shared-components/hooks/useFormInput';
-import { Validator } from '@/utilities/validators';
+import { Validator } from '@/perfect-seo-shared-components/utils/validators';
 
 interface CheckboxProps extends React.HTMLProps<HTMLInputElement> {
   bottomSpacing?: boolean;

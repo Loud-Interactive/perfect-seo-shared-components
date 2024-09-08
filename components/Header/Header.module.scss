@@ -30,9 +30,14 @@
 
 .logo {
   cursor: pointer !important;
+  height: 100%;
+  width: 100%;
+  max-height: 30px;
 
   svg {
-
+    height: inherit;
+    width: inherit;
+    max-height: inherit;
 
     path {
       color: $primary;
@@ -51,11 +56,17 @@
   max-width: 400px;
 
 
+  a {
+    text-decoration: none;
+  }
+
   @include Phone {
     min-height: calc(100dvh - 100px);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    max-width: unset;
+    width: 100vw;
 
     :global {
 

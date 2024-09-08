@@ -1,6 +1,5 @@
 import Link from 'next/link'
 import styles from './Header.module.scss'
-import { PerfectSEOLogo } from '@/perfect-seo-shared-components/assets/brandIcons'
 import { loginWithGoogle, logout } from '@/utils/supabase/actions'
 import { useRouter } from 'next/router'
 import classNames from 'classnames'
@@ -111,7 +110,6 @@ const Header = ({ links, menuHeader, current }: HeaderProps) => {
                               )
                             })}
                           </div>}
-
                         </div>
                         <div className='card-body d-flex align-items-end'>
                           <div className='row g-3'>
@@ -123,7 +121,6 @@ const Header = ({ links, menuHeader, current }: HeaderProps) => {
                               return (
                                 <div key={index} className='col-4 text-center'>
                                   <a href={brand.url} className={styles.brandUrl} target="_blank"><div className={styles.brandIcon}>{renderIcon(brand.title)}</div>
-                                    <br />
                                     {brand.title.replace(".ai", "")}
                                   </a>
                                 </div>

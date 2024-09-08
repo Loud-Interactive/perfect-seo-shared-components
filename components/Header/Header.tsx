@@ -13,7 +13,7 @@ import { BrandStatus, Links } from '@/perfect-seo-shared-components/data/types'
 import { useEffect, useState } from 'react'
 import useManageUser from '@/perfect-seo-shared-components/hooks/useManageUser'
 import { Brands } from '@/perfect-seo-shared-components/assets/Brands'
-import { renderLogo } from '@/perfect-seo-shared-components/utils/brandUtilities'
+import { renderIcon, renderLogo } from '@/perfect-seo-shared-components/utils/brandUtilities'
 
 export interface HeaderProps {
   links?: Links[],
@@ -122,7 +122,7 @@ const Header = ({ links, menuHeader, current }: HeaderProps) => {
 
                               return (
                                 <div key={index} className='col-4 text-center'>
-                                  <a href={brand.url} className={styles.brandUrl} target="_blank"><img src={brand.icon} className={styles.brandIcon} />
+                                  <a href={brand.url} className={styles.brandUrl} target="_blank"><div className={styles.brandIcon}>{renderIcon(brand.title)}</div>
                                     <br />
                                     {brand.title.replace(".ai", "")}
                                   </a>

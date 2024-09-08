@@ -139,7 +139,7 @@ const Header = ({ links, menuHeader, current, hasLogin = true }: HeaderProps) =>
                     <div className='card-body d-flex align-items-end'>
                       <div className='row g-3'>
                         <div className='col-12'>
-                          <span className='fs-2'>Our Products</span>
+                          <span className='fs-2'>Our Other Products</span>
                         </div>
                         {Brands.filter((obj) => obj.status === BrandStatus.LIVE && obj.title !== current).map((brand, index) => {
 

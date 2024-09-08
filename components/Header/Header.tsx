@@ -13,7 +13,7 @@ import { useEffect, useMemo, useState } from 'react'
 import useManageUser from '@/perfect-seo-shared-components/hooks/useManageUser'
 import { Brands } from '@/perfect-seo-shared-components/assets/Brands'
 import { renderIcon, renderLogo } from '@/perfect-seo-shared-components/utils/brandUtilities'
-import { link } from 'fs'
+
 
 export interface HeaderProps {
   links?: Links[],
@@ -21,7 +21,7 @@ export interface HeaderProps {
   menuHeader?: any,
   hasLogin?: boolean;
 }
-const Header = ({ links, menuHeader, current, hasLogin = true }: HeaderProps) => {
+const Header = ({ links, menuHeader, current, hasLogin }: HeaderProps) => {
   const { isLoggedIn, user, isAdmin } = useSelector((state: StateTree) => state);
   const [open, setOpen] = useState(true)
   const router = useRouter()

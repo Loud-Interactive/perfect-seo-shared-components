@@ -95,7 +95,7 @@ export enum LinkType {
   ADMIN
 }
 export interface Links {
-  href: string,
+  href: any,
   label: string,
   type?: LinkType
 }

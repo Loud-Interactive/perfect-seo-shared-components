@@ -22,7 +22,7 @@ export interface HeaderProps {
 }
 const Header = ({ links, menuHeader, current }: HeaderProps) => {
   const { isLoggedIn, user, isAdmin } = useSelector((state: StateTree) => state);
-
+  const [open, setOpen] = useState(true)
   const router = useRouter()
   const dispatch = useDispatch()
   const { phone } = useViewport()
@@ -31,6 +31,7 @@ const Header = ({ links, menuHeader, current }: HeaderProps) => {
 
   useEffect(() => {
     const updateRoute = (url) => {
+      setOpen(false)
       setCurrentPage(url)
     }
     updateRoute(router.pathname)
@@ -76,6 +77,9 @@ const Header = ({ links, menuHeader, current }: HeaderProps) => {
     else return links.filter((link) => link.type === LinkType.PUBLIC);
   }, [links, isAdmin, isLoggedIn])
 
+  const openChangeHandler = (open) => {
+    setOpen(open)
+  }
 
   return (
     <header className={styles.header}>
@@ -91,7 +95,7 @@ const Header = ({ links, menuHeader, current }: HeaderProps) => {
           </div>
           <div className={signedInClass}>
 
-            <DropdownMenu.Root>
+            <DropdownMenu.Root defaultOpen open={open} onOpenChange={openChangeHandler}>
               <DropdownMenu.Trigger className={styles.menuButton}>
                 <i className="bi bi-grid-3x3-gap-fill" />
               </DropdownMenu.Trigger>
@@ -102,6 +106,7 @@ const Header = ({ links, menuHeader, current }: HeaderProps) => {
                     <div>
                       <div className='card-header'>
                         <div className='row justify-content-between'>
+
                           {isLoggedIn ? <>
                             <div className='col-auto'>
                               <strong className='me-2'>Logged in as</strong>
@@ -121,9 +126,10 @@ const Header = ({ links, menuHeader, current }: HeaderProps) => {
                           <Link href="/">Return Home</Link>
                         </div>}
                         {dynamicLinks.map((link, index) => {
+                          let href = typeof link.href === 'function' ? link.href(user) : link.href
                           return (
                             <div className='col-12' key={link.href}>
-                              <Link href={link.href} className={currentPage == link.href ? 'text-white no-underline' : ''}>{link.label}</Link>
+                              <Link href={href} className={currentPage === href ? 'text-white' : ''}>{link.label}</Link>
                             </div>
                           )
                         })}

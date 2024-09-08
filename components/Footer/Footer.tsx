@@ -1,12 +1,12 @@
-import { PerfectSEOLogo } from "@/assets/icons"
+import { PerfectSEOLogo } from '@/perfect-seo-shared-components/assets/brandIcons'
 import styles from './Footer.module.scss'
 import PerfectSEOBar from "../PerfectSEOBar/PerfectSEOBar"
 
-const Footer = () => {
+const Footer = ({ current }) => {
   return (
     <footer className="mb-5">
       <div className="container-fluid">
-        <PerfectSEOBar />
+        <PerfectSEOBar current={current} />
       </div>
       <div className="container">
         <div className="row">

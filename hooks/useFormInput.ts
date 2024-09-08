@@ -1,0 +1,50 @@
+import { MutableRefObject, useContext, useEffect, useRef } from 'react';
+import { FormContext } from '@/components/Form/Form';
+import type { FormController } from './useForm';
+import type { Validator } from '@/utilities/validators';
+
+interface FormInputConfig {
+  fieldName: string;
+  error?: string;
+  required?: boolean;
+  validator?: Validator;
+}
+
+interface FormInputData {
+  form: FormController;
+  errors: string[];
+  hasErrors: boolean;
+  inputRef: MutableRefObject<any>;
+}
+
+/**
+ * TODO: @description
+ */
+export default function useFormInput({ fieldName, error, required, validator }: FormInputConfig): FormInputData {
+  const form = useContext(FormContext);
+  const fieldErrors = form.getFieldErrors(fieldName);
+  const inputRef = useRef(null);
+
+  const errors = error
+    ? [error, ...fieldErrors]
+    : fieldErrors;
+
+  const hasErrors = errors?.length > 0;
+
+  useEffect(() => {
+    form.register(fieldName, {
+      ref: inputRef.current,
+      required,
+      validator,
+    });
+
+    return () => form.unregister(fieldName);
+  }, [fieldName, required, validator]);
+
+  return {
+    form,
+    errors,
+    hasErrors,
+    inputRef,
+  };
+}

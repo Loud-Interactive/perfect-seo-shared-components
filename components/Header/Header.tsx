@@ -1,25 +1,25 @@
 import Link from 'next/link'
 import styles from './Header.module.scss'
-import { PerfectSEOLogo } from '@/perfect-seo-shared-components/assets/brandIcons'
 import { loginWithGoogle, logout } from '@/utils/supabase/actions'
 import { useRouter } from 'next/router'
 import classNames from 'classnames'
-import useViewport from '@/hooks/useViewport'
+import useViewport from '@/perfect-seo-shared-components/hooks/useViewport'
 import { useDispatch, useSelector } from 'react-redux'
 import { StateTree } from '@/store/reducer'
 import { reduxReset } from '@/store/actions'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import { BrandStatus } from '@/perfect-seo-shared-components/data/types'
+import { BrandStatus, Links } from '@/perfect-seo-shared-components/data/types'
 import { useEffect, useState } from 'react'
-import useManageUser from '@/hooks/useManageUser'
+import useManageUser from '@/perfect-seo-shared-components/hooks/useManageUser'
 import { Brands } from '@/perfect-seo-shared-components/assets/Brands'
+import { renderIcon, renderLogo } from '@/perfect-seo-shared-components/utils/brandUtilities'
 
 export interface HeaderProps {
-  links?: { href: string, label: string }[],
-  logo?: any,
+  links?: Links[],
+  current: string,
   menuHeader?: any
 }
-const Header = ({ links, logo, menuHeader }: HeaderProps) => {
+const Header = ({ links, menuHeader, current }: HeaderProps) => {
   const { isLoggedIn, user, isAdmin } = useSelector((state: StateTree) => state);
 
   const router = useRouter()
@@ -72,7 +72,7 @@ const Header = ({ links, logo, menuHeader }: HeaderProps) => {
           <div className="col d-flex align-items-center justify-content-start">
             <Link href="/">
               <div className={styles.logo}>
-                {logo}
+                {renderLogo(current)}
               </div>
             </Link>
           </div>
@@ -110,19 +110,17 @@ const Header = ({ links, logo, menuHeader }: HeaderProps) => {
                               )
                             })}
                           </div>}
-
                         </div>
                         <div className='card-body d-flex align-items-end'>
                           <div className='row g-3'>
                             <div className='col-12'>
                               <span className='fs-2'>Our Products</span>
                             </div>
-                            {Brands.filter((obj) => obj.status === BrandStatus.LIVE).map((brand, index) => {
+                            {Brands.filter((obj) => obj.status === BrandStatus.LIVE && obj.title !== current).map((brand, index) => {
 
                               return (
                                 <div key={index} className='col-4 text-center'>
-                                  <a href={brand.url} className={styles.brandUrl} target="_blank"><img src={brand.icon} className={styles.brandIcon} />
-                                    <br />
+                                  <a href={brand.url} className={styles.brandUrl} target="_blank"><div className={styles.brandIcon}>{renderIcon(brand.title)}</div>
                                     {brand.title.replace(".ai", "")}
                                   </a>
                                 </div>

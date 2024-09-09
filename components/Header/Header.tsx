@@ -133,28 +133,30 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits, brand }: Hea
                         </div>
                         {menuHeader}
                       </div>}
-                      {dynamicLinks?.length > 0 && <div className='row g-2 justify-content-end p-3'>
-                        {currentPage !== "/" && <div className='col-12'>
-                          <Link href="/">Return Home</Link>
-                        </div>}
-                        {dynamicLinks.map((link, index) => {
-                          let href = typeof link.href === 'function' ? link.href(user) : link.href
-                          return (
-                            <div className='col-12' key={link.href}>
-                              <Link href={href} className={currentPage?.includes(href) ? 'text-white' : ''}>{link.label}</Link>
-                            </div>
-                          )
-                        })}
-                      </div>}
-                      {isAdmin && <>
-                        {brand.developmentUrl && <div className='col-12'>
-                          <Link target='_blank'
-                            href={brand.developmentUrl}>View Development Env</Link>
-                        </div>}
-                        {brand.stagingUrl && <div className='col-12'>
-                          <Link href={brand.stagingUrl} target='_blank'>View Staging Env</Link>
-                        </div>}
-                      </>}
+                      <div className='row g-2 justify-content-end p-3'>
+                        {dynamicLinks?.length > 0 && <>
+                          {currentPage !== "/" && <div className='col-12'>
+                            <Link href="/">Return Home</Link>
+                          </div>}
+                          {dynamicLinks.map((link, index) => {
+                            let href = typeof link.href === 'function' ? link.href(user) : link.href
+                            return (
+                              <div className='col-12' key={link.href}>
+                                <Link href={href} className={currentPage?.includes(href) ? 'text-white' : ''}>{link.label}</Link>
+                              </div>
+                            )
+                          })}
+                        </>}
+                        {isAdmin && <>
+                          {brand.developmentUrl && <div className='col-12'>
+                            <Link target='_blank'
+                              href={brand.developmentUrl}>View Development Env</Link>
+                          </div>}
+                          {brand.stagingUrl && <div className='col-12'>
+                            <Link href={brand.stagingUrl} target='_blank'>View Staging Env</Link>
+                          </div>}
+                        </>}
+                      </div>
                     </div>
                     <div className='card-body d-flex align-items-end'>
                       <div className='row g-3'>
@@ -184,7 +186,7 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits, brand }: Hea
           </div>
         </div>
       </div>
-    </header>
+    </header >
   )
 }
 

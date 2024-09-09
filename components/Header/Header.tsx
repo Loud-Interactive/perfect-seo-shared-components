@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import styles from './Header.module.scss'
-import { loginWithGoogle, logout } from '@/utils/supabase/actions'
+import { loginWithGoogle, logout } from '@/perfect-seo-shared-components/utils/supabase/actions'
 import { useRouter } from 'next/router'
 import classNames from 'classnames'
 import useViewport from '@/perfect-seo-shared-components/hooks/useViewport'

@@ -52,7 +52,6 @@ const DraggableRow: FC<{
       'dragging': isDragging,
     });
 
-
   return (
     <div className={rowClasses}>
       <div

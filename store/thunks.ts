@@ -12,7 +12,7 @@ const headers = {
   "Content-Type": "application/json",
 };
 
-import { urlSanitization } from "@/utilities/conversion-utilities";
+import { urlSanitization } from "@/perfect-seo-shared-components/utils/conversion-utilities";
 import { BrandImpression, ContentPlan } from '../data/types';
 export interface PlanItemProps {
   brand_name: string;

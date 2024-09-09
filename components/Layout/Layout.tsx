@@ -4,6 +4,7 @@ import Header from '../Header/Header'
 import style from './Layout.module.scss'
 import store from '@/perfect-seo-shared-components/store';
 import { Provider } from "react-redux";
+import "bootstrap-icons/font/bootstrap-icons.css";
 
 
 interface LayoutProps extends React.HTMLProps<HTMLDivElement> {

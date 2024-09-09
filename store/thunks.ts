@@ -195,7 +195,7 @@ export const loadCreditData = (email: string) => {
 
   return async (dispatch: Dispatch) => {
 
-    checkUserCredits(email).then((res) => {
+    return checkUserCredits(email).then((res) => {
       dispatch(updatePoints(res.data.credits))
 
     }, dispatch)

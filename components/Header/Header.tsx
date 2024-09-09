@@ -130,7 +130,7 @@ const Header = ({ links, menuHeader, current, hasLogin = true }: HeaderProps) =>
                           let href = typeof link.href === 'function' ? link.href(user) : link.href
                           return (
                             <div className='col-12' key={link.href}>
-                              <Link href={href} className={currentPage.includes(href) ? 'text-white' : ''}>{link.label}</Link>
+                              <Link href={href} className={currentPage?.includes(href) ? 'text-white' : ''}>{link.label}</Link>
                             </div>
                           )
                         })}

@@ -30,8 +30,8 @@ const Header = ({ links, menuHeader, current, hasLogin = true }: HeaderProps) =>
   const [currentPage, setCurrentPage] = useState('')
 
   useEffect(() => {
-    if (user?.email) {
-      loadCreditData(user.email)
+    if (user) {
+      dispatch(loadCreditData(user?.email))
     }
   }, [user])
 

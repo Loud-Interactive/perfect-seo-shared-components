@@ -75,7 +75,7 @@ export const Select = ({
   const inputClass = 'select-input';
 
   const inputClassNames = classNames(`${inputClass} form-select form-control`, {
-    [`${inputClass}_withSelection`]: selectedValue !== ('default' && selectedValue),
+    [`${inputClass}_withSelection`]: (selectedValue !== 'default' && selectedValue),
     [`${inputClass}_withIcon`]: !!icon,
     [`${inputClass}_withError`]: hasErrors,
     [className]: className,

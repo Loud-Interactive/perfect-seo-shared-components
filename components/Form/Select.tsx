@@ -56,7 +56,7 @@ export const Select = ({
   const [selectedValue, setSelectedValue] = useState(value);
 
   useEffect(() => {
-    if (value !== (null || undefined) && value) {
+    if (value) {
       setSelectedValue(value);
     } else {
       setSelectedValue('default');

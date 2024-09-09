@@ -89,10 +89,7 @@ export const createPost = (reqBody: Request.GenerateContentPost) => {
   return axios.post(`https://content-v5.replit.app/generate_content`, reqBody);
 };
 
-export const getImpression = (domain_name: string) => {
-  return axios.get(
-    `https://synopsisperfectai.replit.app/domain/${domain_name}`,
-  );
+
 };
 
 export const regenerateOutline = (

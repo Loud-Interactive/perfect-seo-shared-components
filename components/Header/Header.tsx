@@ -13,6 +13,7 @@ import { useEffect, useMemo, useState } from 'react'
 import useManageUser from '@/perfect-seo-shared-components/hooks/useManageUser'
 import { Brands } from '@/perfect-seo-shared-components/assets/Brands'
 import { renderIcon, renderLogo } from '@/perfect-seo-shared-components/utils/brandUtilities'
+import { loadCreditData } from '@/perfect-seo-shared-components/store/thunks'
 
 export interface HeaderProps {
   links?: Links[],
@@ -27,6 +28,12 @@ const Header = ({ links, menuHeader, current, hasLogin = true }: HeaderProps) =>
   const dispatch = useDispatch()
   const { phone } = useViewport()
   const [currentPage, setCurrentPage] = useState('')
+
+  useEffect(() => {
+    if (user?.email) {
+      loadCreditData(user.email)
+    }
+  }, [user])
 
   useManageUser(current)
 

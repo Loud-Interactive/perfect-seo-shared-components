@@ -66,7 +66,8 @@ export const Brands: Array<Brand> = [
     status: BrandStatus.MASTER,
     stagingUrl: "https://perfect-seo.vercel.app/",
     developmentUrl: "https://perfect-seo-git-development-loud-interactives-projects.vercel.app/",
-    primary: "#E63946"
+    primary: "#E63946",
+    summary: "Maximize your marketing and SEO with AI-generated content of human-like excellence!_"
   },
   {
     title: 'preferencesPerfect.ai',

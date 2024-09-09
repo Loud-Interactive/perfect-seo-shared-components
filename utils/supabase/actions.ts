@@ -1,4 +1,4 @@
-import { createClient } from '@/utils/supabase/components'
+import { createClient } from '@/perfect-seo-shared-components/utils/supabase/components'
 
 export const login = (formData: any) => {
   const supabase = createClient()

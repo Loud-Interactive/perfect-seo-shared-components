@@ -4819,3 +4819,15 @@ input[type="color"] {
 a.text-white {
   color: white !important;
 }
+
+.btn-primary {
+  svg path {
+    fill: white;
+  }
+}
+
+.standard-button {
+  height: 50px;
+  display: flex;
+  align-items: center;
+}

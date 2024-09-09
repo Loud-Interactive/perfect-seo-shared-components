@@ -26,7 +26,7 @@ export const Brands: Array<Brand> = [
     logo: '/svg/factcheckPerfect.svg',
     icon: '/svg/factcheckPerfect-icon.svg',
     status: BrandStatus.COMING_SOON,
-    primary: "#99cc33",
+    primary: "#179BAE",
     summary: "factcheckPerfect.ai helps businesses verify their articles and content for accuracy and credibility using AI."
   },
   {
@@ -98,10 +98,10 @@ export const Brands: Array<Brand> = [
   },
   {
     title: 'socialPerfect.ai',
-    url: '/socialperfect',
+    url: 'https://socialPerfect.ai',
     logo: '/svg/socialPerfect.svg',
     icon: '/svg/socialPerfect-icon.svg',
-    status: BrandStatus.LIVE,
+    status: BrandStatus.COMING_SOON,
     summary: "Amplify your social media engagement by generating the right emoticon and hashtags to achieve the right tone",
     primary: "#CC6699"
   },

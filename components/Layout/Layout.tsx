@@ -24,7 +24,7 @@ const Layout = ({ children, hideFooter, current, links, hasLogin = true, getCred
     <>
       <Head>
         <title>{current}</title>
-        <link rel="icon" type="image/png" href={`/images/brands/${current.replace(".ai", "")}-icon.png`} />
+        <link rel="icon" href={`/svg/${current.endsWith(".ai") ? current.replace(".ai", "") : current}-icon.svg`} />
         <meta charSet="UTF-8" />
         <meta name="description" content={currentBrand.summary} />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />

@@ -14,7 +14,7 @@ interface LayoutProps extends React.HTMLProps<HTMLDivElement> {
   getCredits?: boolean;
 }
 
-const Layout = ({ children, hideFooter, current, links, hasLogin, getCredits }: LayoutProps) => {
+const Layout = ({ children, hideFooter, current, links, hasLogin = true, getCredits = false }: LayoutProps) => {
 
   return (
     <>

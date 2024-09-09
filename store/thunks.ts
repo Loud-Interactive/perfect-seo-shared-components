@@ -191,7 +191,7 @@ export const getSynopsisInfo = (domain, regenerate?) => {
   return axios.get(`https://pp-api.replit.app/pairs/${newDomain}`, { headers: { 'Access-Control-Allow-Origin': '*' } });
 };
 
-export const loadCreditData = (email: string) => async (dispatch: Dispatch): Promise<any> => {
+export const loadCreditData = (email: string) => (dispatch: Dispatch) => {
 
   return checkUserCredits(email).then((res) => {
     dispatch(updatePoints(res.data.credits))

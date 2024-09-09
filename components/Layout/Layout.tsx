@@ -30,7 +30,7 @@ const Layout = ({ children, hideFooter, current, links, hasLogin = true, getCred
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </Head>
       <Provider store={store}>
-        <Header current={current} links={links} hasLogin={hasLogin} getCredits={getCredits} />
+        <Header brand={currentBrand} current={current} links={links} hasLogin={hasLogin} getCredits={getCredits} />
         <main className={style.wrap}>
           {children}
         </main>

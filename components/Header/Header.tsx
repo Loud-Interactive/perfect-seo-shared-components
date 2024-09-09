@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { StateTree } from '@/perfect-seo-shared-components/store/reducer'
 import { reduxReset } from '@/perfect-seo-shared-components/store/actions'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import { BrandStatus, Links, LinkType } from '@/perfect-seo-shared-components/data/types'
+import { Brand, BrandStatus, Links, LinkType } from '@/perfect-seo-shared-components/data/types'
 import { useEffect, useMemo, useState } from 'react'
 import useManageUser from '@/perfect-seo-shared-components/hooks/useManageUser'
 import { Brands } from '@/perfect-seo-shared-components/assets/Brands'
@@ -21,8 +21,9 @@ export interface HeaderProps {
   menuHeader?: any,
   hasLogin?: boolean;
   getCredits?: boolean;
+  brand: Brand;
 }
-const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProps) => {
+const Header = ({ links, menuHeader, current, hasLogin, getCredits, brand }: HeaderProps) => {
   const { isLoggedIn, user, isAdmin, points } = useSelector((state: StateTree) => state);
   const [open, setOpen] = useState(true)
   const router = useRouter()
@@ -121,7 +122,6 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
                               <strong className='me-2 text-primary'>Logged in as</strong>
                               {user?.email}</div>
                             <div className='col-auto'><a onClick={signOutHandler}>Sign Out</a>
-
                             </div>
                             {points && <div className='col-12 d-flex justify-content-start'><strong className='me-2 text-primary'>Credits</strong> {points.toLocaleString()}</div>}</>
                             :
@@ -145,6 +145,15 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
                           )
                         })}
                       </div>}
+                      {isAdmin && <>
+                        {brand.developmentUrl && <div className='col-12'>
+                          <Link target='_blank'
+                            href={brand.developmentUrl}>View Development Env</Link>
+                        </div>}
+                        {brand.stagingUrl && <div className='col-12'>
+                          <Link href={brand.stagingUrl} target='_blank'>View Staging Env</Link>
+                        </div>}
+                      </>}
                     </div>
                     <div className='card-body d-flex align-items-end'>
                       <div className='row g-3'>

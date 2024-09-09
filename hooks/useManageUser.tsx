@@ -33,11 +33,12 @@ const useManageUser = (appKey) => {
 
   useEffect(() => {
     if (userData) {
-      let domains = [user?.email?.split("@")[1]]
-      if (user?.user_metadata?.custom_claims) {
-        let customClaims = Object.keys(user?.user_metadata.custom_claims).reduce((prev, curr) => {
-          if (user?.user_metadata?.custom_claims[curr] !== domains[0]) {
-            return [...prev, user?.user_metadata?.custom_claims[curr]]
+
+      let domains = [userData?.email?.split("@")[1]]
+      if (userData?.user_metadata?.custom_claims) {
+        let customClaims = Object.keys(userData?.user_metadata.custom_claims).reduce((prev, curr) => {
+          if (userData?.user_metadata?.custom_claims[curr] !== domains[0]) {
+            return [...prev, userData?.user_metadata?.custom_claims[curr]]
           }
           else return prev
         }, [])

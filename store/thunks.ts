@@ -1,6 +1,6 @@
 
 import { updatePoints } from './actions';
-import { Dispatch } from 'redux';
+import { Action, Dispatch } from 'redux';
 import * as Request from "@/perfect-seo-shared-components/data/requestTypes";
 
 import axios from "axios";
@@ -191,37 +191,34 @@ export const getSynopsisInfo = (domain, regenerate?) => {
   return axios.get(`https://pp-api.replit.app/pairs/${newDomain}`, { headers: { 'Access-Control-Allow-Origin': '*' } });
 };
 
-export const loadCreditData = (email: string) => {
+export const loadCreditData = (email: string) => async (dispatch: Dispatch): Promise<any> => {
 
-  return async (dispatch: Dispatch) => {
+  return checkUserCredits(email).then((res) => {
+    dispatch(updatePoints(res.data.credits))
 
-    return checkUserCredits(email).then((res) => {
-      dispatch(updatePoints(res.data.credits))
+  }, dispatch)
+    .catch(err => {
+      console.log(err)
+      console.log("Check User Credits failed")
 
-    }, dispatch)
-      .catch(err => {
-        console.log(err)
-        console.log("Check User Credits failed")
+      createUserCreditAccount(email)
+        .then(res1 => {
+          console.log("Create User Credits succeeded")
+          if (res1.data.credits === 0) {
+            addUserCredit(email, 9000)
+              .then(res2 => {
+                dispatch(updatePoints(res2.data.credits))
+              }, dispatch
+              )
+          } else {
+            dispatch(updatePoints(res1.data.credits))
+          }
+        }, dispatch)
+        .catch(err => {
+          console.log("Create User Credits failed")
+          console.log(err)
+        })
+    })
 
-        createUserCreditAccount(email)
-          .then(res1 => {
-            console.log("Create User Credits succeeded")
-            if (res1.data.credits === 0) {
-              addUserCredit(email, 9000)
-                .then(res2 => {
-                  dispatch(updatePoints(res2.data.credits))
-                }, dispatch
-                )
-            } else {
-              dispatch(updatePoints(res1.data.credits))
-            }
-          }, dispatch)
-          .catch(err => {
-            console.log("Create User Credits failed")
-            console.log(err)
-          })
-      })
+}
 
-  };
-
-};

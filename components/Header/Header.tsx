@@ -20,9 +20,10 @@ export interface HeaderProps {
   current: string,
   menuHeader?: any,
   hasLogin?: boolean;
+  getCredits?: boolean;
 }
-const Header = ({ links, menuHeader, current, hasLogin = true }: HeaderProps) => {
-  const { isLoggedIn, user, isAdmin } = useSelector((state: StateTree) => state);
+const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProps) => {
+  const { isLoggedIn, user, isAdmin, points } = useSelector((state: StateTree) => state);
   const [open, setOpen] = useState(true)
   const router = useRouter()
   const dispatch = useDispatch()
@@ -30,10 +31,11 @@ const Header = ({ links, menuHeader, current, hasLogin = true }: HeaderProps) =>
   const [currentPage, setCurrentPage] = useState('')
 
   useEffect(() => {
-    if (user) {
-      dispatch(loadCreditData(user?.email))
+    if (user && getCredits) {
+      console.log(points)
+      loadCreditData(user?.email)
     }
-  }, [user])
+  }, [user, getCredits])
 
   useManageUser(current)
 

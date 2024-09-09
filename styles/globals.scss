@@ -4833,3 +4833,10 @@ a.text-white {
   display: flex;
   align-items: center;
 }
+
+.bg-robot {
+  background: url('/images/homebot.webp');
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}

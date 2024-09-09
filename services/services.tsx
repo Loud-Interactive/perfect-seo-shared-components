@@ -90,7 +90,7 @@ export const getPreviousPlans = (domain_name) => {
   return axios.get(`${API_URL}/incoming_plan_items_by_domain/${domain_name}`);
 };
 
-export const updateContentPlan = (guid, reqObj: Request.ContentPlanPostRequest[]) => {
+export const updateContentPlan = (guid, reqObj) => {
   return axios.post(`${API_URL}/update_content_plan`, {
     guid,
     content_plan_table: reqObj,

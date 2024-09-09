@@ -32,9 +32,9 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
 
   useEffect(() => {
     if (user && getCredits) {
-      loadCreditData(user?.email)
+      dispatch(loadCreditData(user?.email) as any); // Add 'as any' to cast the action to 'UnknownAction'
     }
-  }, [user, getCredits])
+  }, [user, getCredits, dispatch]) // Add 'dispatch' to the dependency array
 
   useManageUser(current)
 

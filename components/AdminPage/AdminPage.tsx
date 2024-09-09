@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 
 const AdminPage = () => {
-  const { isLoggedIn, user, isAdmin, points } = useSelector((state: StateTree) => state);
+  const { isLoggedIn } = useSelector((state: StateTree) => state);
   const router = useRouter()
   const dispatch = useDispatch()
 

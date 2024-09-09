@@ -98,10 +98,10 @@ export const Brands: Array<Brand> = [
   },
   {
     title: 'socialPerfect.ai',
-    url: '/socialperfect',
+    url: 'https://socialPerfect.ai',
     logo: '/svg/socialPerfect.svg',
     icon: '/svg/socialPerfect-icon.svg',
-    status: BrandStatus.LIVE,
+    status: BrandStatus.COMING_SOON,
     summary: "Amplify your social media engagement by generating the right emoticon and hashtags to achieve the right tone",
     primary: "#CC6699"
   },

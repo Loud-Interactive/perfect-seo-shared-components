@@ -27,7 +27,8 @@ const Header = ({ links, menuHeader, current, hasLogin = true }: HeaderProps) =>
   const dispatch = useDispatch()
   const { phone } = useViewport()
   const [currentPage, setCurrentPage] = useState('')
-  useManageUser()
+
+  useManageUser(current)
 
   useEffect(() => {
     const updateRoute = (url) => {

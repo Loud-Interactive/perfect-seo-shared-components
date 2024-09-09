@@ -1,5 +1,5 @@
 import type { Thunk } from '@/perfect-seo-shared-components/store';
-import { addUserCredit, checkUserCredits, createUserCreditAccount } from '@/services/services';
+import { addUserCredit, checkUserCredits, createUserCreditAccount } from '@/perfect-seo-shared-components/services/services';
 import { updatePoints } from './actions';
 import { ThunkAction } from 'redux-thunk';
 import { Action, Dispatch } from 'redux';

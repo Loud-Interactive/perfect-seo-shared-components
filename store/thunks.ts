@@ -81,16 +81,12 @@ export const updateContentPlan = (guid, reqObj: ContentPlan[]) => {
   });
 };
 
-// export const createPost = (reqBody: Request.GenerateContentPost) => {
-//   return axios.post(`https://content-status.replit.app/content/add`, reqBody);
-// };
 
 export const createPost = (reqBody: Request.GenerateContentPost) => {
   return axios.post(`https://content-v5.replit.app/generate_content`, reqBody);
 };
 
 
-};
 
 export const regenerateOutline = (
   content_plan_guid,

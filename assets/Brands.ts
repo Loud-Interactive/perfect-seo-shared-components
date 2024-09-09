@@ -17,7 +17,8 @@ export const Brands: Array<Brand> = [
     status: BrandStatus.LIVE,
     summary: "contentPerfect.AI leverages AI to deliver SEO-optimized content plans and calculated blog posts, boosting site traffic with data-driven strategies designed by SEO experts.",
     primary: "#FEB800",
-    stagingUrl: "https://content-perfect-theta.vercel.app/"
+    stagingUrl: "https://content-perfect-theta.vercel.app/",
+    developmentUrl: "https://content-perfect-git-development-loud-interactives-projects.vercel.app/"
   },
   {
     title: 'factcheckPerfect.ai',
@@ -54,7 +55,8 @@ export const Brands: Array<Brand> = [
     icon: '/svg/pagePerfect-icon.svg',
     status: BrandStatus.LIVE,
     primary: "#666699",
-    stagingUrl: "https://page-perfect-one.vercel.app/"
+    stagingUrl: "https://page-perfect-one.vercel.app/",
+    developmentUrl: "https://page-perfect-git-development-loud-interactives-projects.vercel.app/"
   },
   {
     title: 'perfectSEO.ai',
@@ -62,7 +64,8 @@ export const Brands: Array<Brand> = [
     logo: '/svg/perfectSEO.svg',
     icon: '/svg/perfectSEO-icon.svg',
     status: BrandStatus.MASTER,
-    stagingUrl: "https://perfect-seo-dash.vercel.app/",
+    stagingUrl: "https://perfect-seo.vercel.app/",
+    developmentUrl: "https://perfect-seo-git-development-loud-interactives-projects.vercel.app/",
     primary: "#E63946"
   },
   {
@@ -72,7 +75,9 @@ export const Brands: Array<Brand> = [
     icon: '/svg/preferencesPerfect-icon.svg',
     status: BrandStatus.LIVE,
     primary: "#E63946",
-    summary: "preferencesPerfect allows you to update all your brand information across our AI suite all in one place."
+    summary: "preferencesPerfect allows you to update all your brand information across our AI suite all in one place.",
+    stagingUrl: "https://preferences-perfect.vercel.app/",
+    developmentUrl: "https://preferences-perfect-git-development-loud-interactives-projects.vercel.app/"
   },
   {
     title: 'profilePerfect.ai',
@@ -106,6 +111,8 @@ export const Brands: Array<Brand> = [
     icon: '/svg/synopsisPerfect-icon.svg',
     status: BrandStatus.LIVE,
     primary: "#8b59ad",
+    stagingUrl: "https://synopsis-perfect.vercel.app/",
+    developmentUrl: "https://synopsis-perfect-git-development-loud-interactives-projects.vercel.app/",
     summary: "synopsisPerfect.ai helps businesses identify their brand and the effectiveness of information conveyed on their website using AI."
   },
   {
@@ -115,6 +122,8 @@ export const Brands: Array<Brand> = [
     icon: '/svg/voicePerfect-icon.svg',
     status: BrandStatus.LIVE,
     summary: "voicePerfect AI provides insights into the ideal tone, language style, common phrases, and inclusivity of your brand voice to perfect it in the minds of your customers.",
+    stagingUrl: "https://voice-perfect.vercel.app/",
+    developmentUrl: "https://voice-perfect-git-development-loud-interactives-projects.vercel.app/",
     primary: "#6699cc"
   }
 ];

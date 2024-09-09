@@ -85,6 +85,7 @@ export interface Brand {
   current?: boolean;
   primary: string
   stagingUrl?: string
+  developmentUrl?: string
   status: BrandStatus
   summary?: string,
 }

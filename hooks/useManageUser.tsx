@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { reduxReset, setAdmin, setLoading, setLoggedIn, setUser } from '@/perfect-seo-shared-components/store/actions'
 import { createClient } from '@/utils/supabase/components'
 
-const useManageUser = () => {
+const useManageUser = (appKey) => {
   const { isLoggedIn, user, isAdmin, isLoading } = useSelector((state: StateTree) => state);
   const [userData, setUserData] = useState(null)
 
@@ -45,7 +45,7 @@ const useManageUser = () => {
       }
 
       let products = userData.products;
-      let key = "perfectSEO"
+      let key = appKey;
       if (products) {
         if (products[key]) {
           products[key] = new Date().toISOString()

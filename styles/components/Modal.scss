@@ -1,0 +1,218 @@
+@use "common" as *;
+
+.modal {
+  &-button-bar {
+    column-gap: 5px;
+    display: flex;
+    justify-content: flex-end;
+
+    &.three-button {
+      justify-content: space-between;
+    }
+
+    .modal-button-group {
+      column-gap: 5px;
+      display: flex;
+    }
+  }
+
+  &-closeButton {
+    background-color: transparent;
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+    border: 0;
+    border-radius: 50%;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    position: absolute;
+    right: 15px;
+    top: 8px;
+    transition: all 0.2s;
+    width: 40px;
+    z-index: 1002;
+
+    &:hover,
+    &:focus {
+      background-color: transparent;
+      color: black;
+    }
+  }
+
+  &-content {
+    background-color: $secondary;
+    box-sizing: border-box;
+    height: auto;
+    max-height: calc(100vh - $bottom-gap - $top-gap - 32px);
+    max-width: 100%;
+    overflow-x: hidden;
+    position: fixed;
+    transition: all 0.2s;
+    width: max-content;
+    z-index: 10000;
+
+    // show header theme
+    &.showHeader {
+      @include Phone {
+        min-height: calc($content-height - $bottom-gap);
+        top: $headerHeight !important;
+      }
+    }
+
+    // adds close and open animation 
+    &.animate {
+      @include SlideIn;
+
+      &.closing {
+        @include SlideOut;
+      }
+    }
+
+    &>div {
+      box-sizing: border-box;
+    }
+
+    @include Phone {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: $bottom-gap;
+      width: 100vw;
+    }
+
+    @include TabletUp {
+      border-radius: 8px !important;
+    }
+
+    // align bottom on mobile theme
+    &.bottom {
+      &>div {
+        padding: 24px;
+      }
+
+      @include Phone {
+        bottom: calc($bottom-gap + 14px);
+        left: 14px;
+        max-width: calc(100vw - 28px) !important;
+        min-height: unset;
+        position: fixed;
+        top: unset;
+        width: auto !important;
+      }
+    }
+  }
+
+  &-description {
+    flex: 1 0 auto;
+    height: 100%;
+    overflow-y: auto;
+    padding: 16px;
+  }
+
+  &-footer {
+
+    @include TabletUp {
+      padding: 16px;
+    }
+
+    @include Phone {
+      padding: 16px;
+    }
+  }
+
+  &-heading {
+    width: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    h1 {
+      color: black;
+    }
+
+    background-color: $primary;
+
+    width: 100%;
+    padding: 16px;
+    border-bottom: 2px solid $secondary;
+    display: flex;
+
+    @include font-size-small;
+
+    p {
+      font-weight: 400;
+    }
+
+    .icon {
+      margin-right: 16px;
+      margin-top: 5px;
+      min-width: 24px;
+    }
+
+    &-text {
+      flex: 1 0 0;
+      width: 100%;
+    }
+
+    @include TabletUp {
+      padding: 16px 64px 16px 24px;
+    }
+
+    @include Phone {
+      padding: 16px;
+      padding-right: 56px;
+    }
+  }
+
+  &-title {
+    font-size: 20px;
+    line-height: 24px;
+    margin-bottom: 0;
+  }
+}
+
+.modal-overlay {
+  align-items: center;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  overflow-x: hidden;
+  overflow-y: auto;
+  position: fixed;
+  scrollbar-gutter: auto both-edges;
+  background-color: rgba(black, .5);
+  z-index: 1003;
+
+  @include Phone {
+    align-items: flex-start;
+    height: calc(100vh - $bottom-gap - $top-gap);
+    left: 0;
+    top: $top-gap;
+    width: 100vw;
+
+    &.center {
+      align-items: center;
+    }
+
+    &.end {
+      align-items: flex-end;
+      margin-bottom: $bottom-gap;
+    }
+
+    &.start {
+      align-items: flex-start;
+    }
+  }
+
+  @include TabletUp {
+    bottom: 0;
+    height: 100vh;
+    left: 0;
+    right: 0;
+    top: 0;
+    width: 100vw;
+  }
+}

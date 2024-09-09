@@ -5,6 +5,8 @@
 @use './_colors.scss' as *;
 @use './_variables.scss' as *;
 @use './_fonts.scss' as *;
+@use './components/Accordion.scss';
+@use './components/Modal.scss';
 @use './components/FormError.scss';
 @use './components/FieldErrors.scss';
 @use './components/FormField.scss';
@@ -117,7 +119,7 @@ a {
   text-shadow: 1px 1px 2px #2e2e2e;
   cursor: pointer;
   padding-bottom: 2rem;
-  text-decoration: underline;
+  text-decoration: none;
 }
 
 a:hover {
@@ -4818,4 +4820,16 @@ input[type="color"] {
 
 a.text-white {
   color: white !important;
+}
+
+.btn-primary {
+  svg path {
+    fill: white;
+  }
+}
+
+.standard-button {
+  height: 50px;
+  display: flex;
+  align-items: center;
 }

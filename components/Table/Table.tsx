@@ -9,7 +9,8 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import DraggableRow from '../DraggableRow/DraggableRow';
+import DraggableRow from './DraggableRow';
+
 
 export interface TableColumnArrayProps {
   Header?: string;

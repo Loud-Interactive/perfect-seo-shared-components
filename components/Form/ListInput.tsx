@@ -68,20 +68,20 @@ const ListInput = ({
     props.onChange?.(e);
     let value = e.target.value
     if (value.includes("|")) {
-      setValues(value.split("|"))
+      setValues(value?.split("|"))
     }
     else if (value.includes(", ")) {
-      setValues(value.split(", "))
+      setValues(value?.split(", "))
     }
   }
 
   useEffect(() => {
     let value = props.value ?? form.getState[fieldName] ?? ''
     if (value.includes("|")) {
-      setValues(value.split("|"))
+      setValues(value?.split("|"))
     }
     else if (value.includes(", ")) {
-      setValues(value.split(", "))
+      setValues(value?.split(", "))
     }
     else if (value) {
       setValues([value])

@@ -99,3 +99,99 @@ export interface Links {
   label: string,
   type?: LinkType
 }
+
+export interface ContentRequestFormProps {
+  email: string,
+  domainName: string,
+  brandName: string,
+  targetKeyword?: string,
+  entityVoice?: string,
+  priorityCode?: string,
+  url1?: string,
+  priority1?: 'high' | 'medium' | 'low'
+  url2?: string,
+  priority2?: 'high' | 'medium' | 'low'
+  url3?: string,
+  priority3?: 'high' | 'medium' | 'low'
+}
+
+export interface ContentIncomingProps {
+  email: string,
+  domain_name: string,
+  brand_name: string,
+  target_keyword?: string,
+  entity_voice?: string,
+  priority_code?: string,
+  inspiration_url_1?: string,
+  priority1?: 'high' | 'medium' | 'low'
+  inspiration_url_2?: string,
+  priority2?: 'high' | 'medium' | 'low'
+  inspiration_url_3?: string,
+  priority3?: 'high' | 'medium' | 'low'
+}
+
+export enum FormSteps {
+  INTRO,
+  BASIC,
+  ADVANCED,
+  LOADING
+}
+
+export interface SubheadingProps {
+  index?: number,
+  headingIndex?: number,
+  title: string
+}
+
+export interface OutlineRowProps {
+  index?: number,
+  title: string,
+  subheadings: SubheadingProps[] | string[]
+}
+
+export interface ContentPlan {
+  CPC: string,
+  Day: string
+  Difficulty: string,
+  "Hub Number": string,
+  Keyword: string,
+  "Post Title": string,
+  "Spoke Number": string,
+  "URL Slug": string,
+  Volume: string,
+}
+
+export interface BrandImpression {
+  anchor_text: string,
+  brand_name: string,
+  elevator_pitch: string,
+  example_link: string,
+  freq_phrases: string,
+  lang_style: string
+  lexicon: string,
+  ling_style: string,
+  rationale: string,
+  synopsis: string,
+  url: string,
+  voice_prompt: string
+  voice_prompt_logic: string
+  voice_traits: string
+  domain_name?: string
+}
+
+export interface TetrominoProps {
+  shape: Array<any[]>,
+  color: string,
+  key: any
+}
+
+export interface PlayerProps {
+  pos: {
+    x: number,
+    y: number
+  }
+  tetromino: TetrominoProps,
+  orientation: number,
+  collided: false;
+
+}

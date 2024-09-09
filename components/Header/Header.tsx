@@ -1,12 +1,12 @@
 import Link from 'next/link'
 import styles from './Header.module.scss'
-import { loginWithGoogle, logout } from '@/utils/supabase/actions'
+import { loginWithGoogle, logout } from '@/perfect-seo-shared-components/utils/supabase/actions'
 import { useRouter } from 'next/router'
 import classNames from 'classnames'
 import useViewport from '@/perfect-seo-shared-components/hooks/useViewport'
 import { useDispatch, useSelector } from 'react-redux'
-import { StateTree } from '@/store/reducer'
-import { reduxReset } from '@/store/actions'
+import { StateTree } from '@/perfect-seo-shared-components/store/reducer'
+import { reduxReset } from '@/perfect-seo-shared-components/store/actions'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { BrandStatus, Links, LinkType } from '@/perfect-seo-shared-components/data/types'
 import { useEffect, useMemo, useState } from 'react'
@@ -14,21 +14,30 @@ import useManageUser from '@/perfect-seo-shared-components/hooks/useManageUser'
 import { Brands } from '@/perfect-seo-shared-components/assets/Brands'
 import { renderIcon, renderLogo } from '@/perfect-seo-shared-components/utils/brandUtilities'
 
+import { loadCreditData } from '@/perfect-seo-shared-components/store/thunks'
 
 export interface HeaderProps {
   links?: Links[],
   current: string,
   menuHeader?: any,
   hasLogin?: boolean;
+  getCredits?: boolean;
 }
-const Header = ({ links, menuHeader, current, hasLogin }: HeaderProps) => {
-  const { isLoggedIn, user, isAdmin } = useSelector((state: StateTree) => state);
+const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProps) => {
+  const { isLoggedIn, user, isAdmin, points } = useSelector((state: StateTree) => state);
   const [open, setOpen] = useState(true)
   const router = useRouter()
   const dispatch = useDispatch()
   const { phone } = useViewport()
   const [currentPage, setCurrentPage] = useState('')
-  useManageUser()
+
+  useEffect(() => {
+    if (user && getCredits) {
+      dispatch(loadCreditData(user?.email) as any); // Add 'as any' to cast the action to 'UnknownAction'
+    }
+  }, [user, getCredits, dispatch]) // Add 'dispatch' to the dependency array
+
+  useManageUser(current)
 
   useEffect(() => {
     const updateRoute = (url) => {
@@ -110,10 +119,12 @@ const Header = ({ links, menuHeader, current, hasLogin }: HeaderProps) => {
 
                           {isLoggedIn ? <>
                             <div className='col-auto'>
-                              <strong className='me-2'>Logged in as</strong>
+                              <strong className='me-2 text-primary'>Logged in as</strong>
                               {user?.email}</div>
                             <div className='col-auto'><a onClick={signOutHandler}>Sign Out</a>
-                            </div></>
+
+                            </div>
+                            {points && <div className='col-12 d-flex justify-content-start'><strong className='me-2 text-primary'>Credits</strong> {points.toLocaleString()}</div>}</>
                             :
 
                             <button className="btn btn-google" onClick={loginWithGoogle}><img src="/images/google-icon.png" /> Login</button>
@@ -130,7 +141,7 @@ const Header = ({ links, menuHeader, current, hasLogin }: HeaderProps) => {
                           let href = typeof link.href === 'function' ? link.href(user) : link.href
                           return (
                             <div className='col-12' key={link.href}>
-                              <Link href={href} className={currentPage === href ? 'text-white' : ''}>{link.label}</Link>
+                              <Link href={href} className={currentPage?.includes(href) ? 'text-white' : ''}>{link.label}</Link>
                             </div>
                           )
                         })}

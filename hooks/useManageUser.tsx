@@ -1,10 +1,10 @@
-import { StateTree } from "@/store/reducer";
+import { StateTree } from "@/perfect-seo-shared-components/store/reducer";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from 'react'
-import { reduxReset, setAdmin, setLoading, setLoggedIn, setUser } from '@/store/actions'
-import { createClient } from '@/utils/supabase/components'
+import { reduxReset, setAdmin, setLoading, setLoggedIn, setUser } from '@/perfect-seo-shared-components/store/actions'
+import { createClient } from '@/perfect-seo-shared-components/utils/supabase/components'
 
-const useManageUser = () => {
+const useManageUser = (appKey) => {
   const { isLoggedIn, user, isAdmin, isLoading } = useSelector((state: StateTree) => state);
   const [userData, setUserData] = useState(null)
 
@@ -33,11 +33,12 @@ const useManageUser = () => {
 
   useEffect(() => {
     if (userData) {
-      let domains = [user.email.split("@")[1]]
-      if (user.user_metadata?.custom_claims) {
-        let customClaims = Object.keys(user.user_metadata.custom_claims).reduce((prev, curr) => {
-          if (user.user_metadata.custom_claims[curr] !== domains[0]) {
-            return [...prev, user.user_metadata.custom_claims[curr]]
+
+      let domains = [userData?.email?.split("@")[1]]
+      if (userData?.user_metadata?.custom_claims) {
+        let customClaims = Object.keys(userData?.user_metadata.custom_claims).reduce((prev, curr) => {
+          if (userData?.user_metadata?.custom_claims[curr] !== domains[0]) {
+            return [...prev, userData?.user_metadata?.custom_claims[curr]]
           }
           else return prev
         }, [])
@@ -45,7 +46,7 @@ const useManageUser = () => {
       }
 
       let products = userData.products;
-      let key = "perfectSEO"
+      let key = appKey;
       if (products) {
         if (products[key]) {
           products[key] = new Date().toISOString()

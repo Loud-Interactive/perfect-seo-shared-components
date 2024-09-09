@@ -16,7 +16,7 @@ export const Brands: Array<Brand> = [
     icon: '/svg/contentPerfect-icon.svg',
     status: BrandStatus.LIVE,
     summary: "contentPerfect.AI leverages AI to deliver SEO-optimized content plans and calculated blog posts, boosting site traffic with data-driven strategies designed by SEO experts.",
-    primary: "#FEB800",
+    primary: "#D14124",
     stagingUrl: "https://content-perfect-theta.vercel.app/",
     developmentUrl: "https://content-perfect-git-development-loud-interactives-projects.vercel.app/"
   },
@@ -74,7 +74,7 @@ export const Brands: Array<Brand> = [
     logo: '/svg/preferencesPerfect.svg',
     icon: '/svg/preferencesPerfect-icon.svg',
     status: BrandStatus.LIVE,
-    primary: "#E63946",
+    primary: "#9dc450",
     summary: "preferencesPerfect allows you to update all your brand information across our AI suite all in one place.",
     stagingUrl: "https://preferences-perfect.vercel.app/",
     developmentUrl: "https://preferences-perfect-git-development-loud-interactives-projects.vercel.app/"

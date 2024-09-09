@@ -7,6 +7,8 @@
     position: relative;
   }
 
+
+
   &-input {
     font-weight: 400;
     box-sizing: border-box;
@@ -15,26 +17,26 @@
     resize: none;
     width: 100%;
 
+
     &_disabled {
-      background-color: transparent;
-      border: none;
+
+      background-color: transparent !important;
+      border: none !important;
+      padding: 0 !important;
     }
 
-    &::placeholder {
-      color: $host-purplegray60;
-    }
 
     &_withError {
-      background-color: rgba($host-red, .2);
-      border-color: $host-red;
+      background-color: rgba(red, .2);
+      border-color: red;
 
       &::placeholder {
-        color: $host-red;
+        color: red;
       }
     }
 
     &:hover {
-      border-color: var(--primary50);
+      border-color: $primary;
     }
   }
 }

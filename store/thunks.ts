@@ -1,6 +1,7 @@
 
 import { updatePoints } from './actions';
 import { Dispatch } from 'redux';
+import * as Request from "@/perfect-seo-shared-components/data/requestTypes";
 
 import axios from "axios";
 
@@ -11,7 +12,6 @@ const headers = {
   "Content-Type": "application/json",
 };
 
-import * as Request from "@/perfect-seo-shared-components/data/requestTypes";
 import { urlSanitization } from "@/utilities/conversion-utilities";
 import { BrandImpression, ContentPlan } from '../data/types';
 export interface PlanItemProps {

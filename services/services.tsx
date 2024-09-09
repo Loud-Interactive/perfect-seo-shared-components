@@ -1,6 +1,6 @@
 import axios from "axios";
 import * as Request from "@/perfect-seo-shared-components/data/requestTypes";
-import { urlSanitization } from "@/utilities/conversion-utilities";
+import { urlSanitization } from "@/perfect-seo-shared-components/utils/conversion-utilities";
 export interface PlanItemProps {
   brand_name: string;
   domain_name: string;

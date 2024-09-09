@@ -5,6 +5,7 @@
 @use './_colors.scss' as *;
 @use './_variables.scss' as *;
 @use './_fonts.scss' as *;
+@use './components/Modal.scss';
 @use './components/FormError.scss';
 @use './components/FieldErrors.scss';
 @use './components/FormField.scss';

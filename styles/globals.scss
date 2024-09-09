@@ -21,10 +21,6 @@ select {
   border-color: white !important;
 }
 
-.capitalize {
-  text-transform: capitalize;
-}
-
 .comp-font {
   @include font-digital;
   font-size: 1.4em;
@@ -466,7 +462,6 @@ hr {
   width: 560px;
   font-size: 24px;
   text-align: left;
-  text-transform: uppercase;
 }
 
 .bubble.grow {

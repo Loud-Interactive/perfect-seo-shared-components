@@ -170,3 +170,29 @@ export const fetchOutlineStatus = (guid: string) => {
     `https://planperfectapi.replit.app/get_outline_status/${guid}`,
   );
 };
+
+
+export const submitDomain = (domain: string) => {
+  return axios.get(`https://discoverdomainurls.replit.app/urlcount?domain=${urlSanitization(domain)}`, { headers: { Accept: '*/*' } })
+}
+
+export const getMaxUrls = () => {
+  return axios.get(`https://discoverdomainurls.replit.app//api/process_max_urls`)
+}
+
+
+
+
+export const validatePromoCode = (promoCode, total) => {
+  return axios.get(`
+  https://pageperfect.ai/validate_promo_code/${promoCode}/${total.toString()}`)
+}
+
+
+export const sendOptimizeRequest = (request: Request.MetaRequest) => {
+  return axios.post(`https://pageperfectapi.replit.app/optimize_data`, request);
+}
+export const getDashboard = (guid: string) => {
+  return axios.get(`https://pageperfectapi.replit.app/dashboard/${guid}`);
+}
+

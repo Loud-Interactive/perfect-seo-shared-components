@@ -195,3 +195,26 @@ export interface PlayerProps {
   collided: false;
 
 }
+
+export interface Synopsis {
+  anchor_text: string,
+  brand_name: string,
+  elevator_pitch: string,
+  example_link: string,
+  freq_phrases: string,
+  lang_style: string
+  lexicon: string,
+  ling_style: string,
+  rationale: string,
+  synopsis: string,
+  url: string,
+  voice_prompt: string
+  voice_prompt_logic: string
+  voice_traits: string
+}
+
+export interface Sitemap {
+  "name": string,
+  "url": string,
+  "total_urls": number
+}

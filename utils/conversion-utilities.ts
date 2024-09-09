@@ -17,3 +17,18 @@ export const findUniqueKeys = (newObj, oldObj) => {
   }, {})
   return finalObj
 }
+
+export const getAverage = (arr: number[]) => {
+  let quantity = arr.length;
+  let sum = arr.reduce((prev, curr) => prev + curr, 0)
+
+  return sum / quantity
+}
+
+
+export const convertArrayToObject = (arr: any[]) => {
+  let obj = arr.reduce((prev, curr) => {
+    return ({ ...prev, [curr.key]: curr.value })
+  }, {})
+  return obj
+}

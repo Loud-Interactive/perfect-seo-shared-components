@@ -196,3 +196,20 @@ export const getDashboard = (guid: string) => {
   return axios.get(`https://pageperfectapi.replit.app/dashboard/${guid}`);
 }
 
+
+
+
+
+export const getBatchStatus = (guids: string[]) => {
+  return axios.post(
+    `https://content-status.replit.app/content/status/batch`,
+    guids,
+  );
+};
+export const getPostsByDomain = (domain: string) => {
+  return axios.get(
+    `https://content-status.replit.app/content/domain/all/${domain}`,
+  );
+};
+
+

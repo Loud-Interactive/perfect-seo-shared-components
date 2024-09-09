@@ -4,7 +4,7 @@ import { loginWithGoogle, logout } from "@/perfect-seo-shared-components/utils/s
 import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 
-const AdminPage = () => {
+const AdminLogin = () => {
   const { isLoggedIn, user, isAdmin, points } = useSelector((state: StateTree) => state);
   const router = useRouter()
   const dispatch = useDispatch()
@@ -39,4 +39,4 @@ const AdminPage = () => {
     </div>
   )
 }
-export default AdminPage;
+export default AdminLogin;

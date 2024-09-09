@@ -47,7 +47,7 @@ export default function useArrayForm(form): ArrayFormController {
       if (keyArray.length > 0) {
         for (var idx in keyArray) {
           let obj = keyArray[idx];
-          let objParts = obj.split('-');
+          let objParts = obj?.split('-');
           let i = objParts[1];
           let key = objParts[0];
 
@@ -104,7 +104,7 @@ export default function useArrayForm(form): ArrayFormController {
     if (config && objectData) {
       let dataKeys = Object.keys(objectData);
       let newArray = dataKeys.map(obj => {
-        let key = obj.split('-')[0];
+        let key = obj?.split('-')[0];
 
         if (config.requiredKeys) {
           if (config.requiredKeys.includes(key)) {
@@ -123,7 +123,7 @@ export default function useArrayForm(form): ArrayFormController {
       if (config.validatedKeys) {
         let dataKeys = Object.keys(objectData);
         let newArray = dataKeys.map(obj => {
-          let key = obj.split('-')[0];
+          let key = obj?.split('-')[0];
 
           if (config.validatedKeys.includes(key) && key !== undefined) {
             return obj.toString();

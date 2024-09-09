@@ -182,19 +182,19 @@ export const getQueryValues = (string) => {
     let newString = string.replace('?', '');
 
     if (newString.toString().includes('&')) {
-      newString = newString.split('&');
+      newString = newString?.split('&');
     } else {
       newString = [newString];
     }
 
     let newList = newString.map(obj => {
-      let value = obj.split('=')[1];
+      let value = obj?.split('=')[1];
 
-      return value?.includes(',') ? value.split(',') : [value];
+      return value?.includes(',') ? value?.split(',') : [value];
 
     });
 
-    return newList.join(',').split(',');
+    return newList.join(',')?.split(',');
   } else return [];
 };
 

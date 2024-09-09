@@ -129,7 +129,7 @@ export const regenerateOutline = (
 
 
 export const getPostStatus = (guid: string) => {
-  return axios.get(`https://content-v4.replit.app/content/status/${guid}`);
+  return axios.get(`https://content-status.replit.app/content/status/${guid}`);
 };
 
 export const createUserCreditAccount = (email: string) => {

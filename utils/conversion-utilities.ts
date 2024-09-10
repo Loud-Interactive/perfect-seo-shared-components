@@ -1,5 +1,5 @@
 
-import { ContentIncomingProps, ContentRequestFormProps } from "@/types"
+import { ContentIncomingProps, ContentRequestFormProps } from "../data/types"
 
 
 export const urlSanitization = (url: string): string => {

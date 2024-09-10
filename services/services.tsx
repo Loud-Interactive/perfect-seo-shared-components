@@ -92,7 +92,7 @@ export const getPreviousPlans = (domain_name) => {
   return axios.get(`${API_URL}/incoming_plan_items_by_domain/${domain_name}`);
 };
 
-export const updateContentPlan = (guid, reqObj: Request.ContentPlanPostRequest[]) => {
+export const updateContentPlan = (guid, reqObj) => {
   return axios.post(`${API_URL}/update_content_plan`, {
     guid,
     content_plan_table: reqObj,
@@ -194,3 +194,25 @@ export const getDashboard = (guid: string) => {
   return axios.get(`https://pageperfectapi.replit.app/dashboard/${guid}`);
 }
 
+
+
+
+
+export const getBatchStatus = (guids: string[]) => {
+  return axios.post(
+    `https://content-status.replit.app/content/status/batch`,
+    guids,
+  );
+};
+export const getPostsByDomain = (domain: string) => {
+  return axios.get(
+    `https://content-status.replit.app/content/domain/all/${domain}`,
+  );
+};
+
+
+
+
+export const deleteContentPlan = (guid: string) => {
+  return axios.delete(`${API_URL}/delete_content_plan/${guid}`);
+}

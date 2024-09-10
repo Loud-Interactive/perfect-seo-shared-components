@@ -1,0 +1,42 @@
+@use 'colors' as *;
+
+.textArea {
+  &-container {
+    align-items: center;
+    display: flex;
+    position: relative;
+  }
+
+
+
+  &-input {
+    font-weight: 400;
+    box-sizing: border-box;
+    font-size: 16px;
+    padding: 15px 10px;
+    resize: none;
+    width: 100%;
+
+
+    &_disabled {
+
+      background-color: transparent !important;
+      border: none !important;
+      padding: 0 !important;
+    }
+
+
+    &_withError {
+      background-color: rgba(red, .2);
+      border-color: red;
+
+      &::placeholder {
+        color: red;
+      }
+    }
+
+    &:hover {
+      border-color: $primary;
+    }
+  }
+}

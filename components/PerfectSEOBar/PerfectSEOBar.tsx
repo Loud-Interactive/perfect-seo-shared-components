@@ -28,7 +28,7 @@ const PerfectSEOBar = ({ current }) => {
       <div className='row d-flex justify-content-center'>
         {Brands.filter(brand => brand.title !== current && brand.status === BrandStatus.LIVE).map((brand: Brand) => {
           return (
-            <div className='col-4 col-lg-auto' key={brand.title}>
+            <div className='col-3 col-lg-auto' key={brand.title}>
               <a href={brand.url} target="_blank" className={styles.brandTile} rel="noreferrer" key={brand.title}>
                 <div className={styles.brandTileHeader}>
                   <div className={styles.brandTileIcon}>

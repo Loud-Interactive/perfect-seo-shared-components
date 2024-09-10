@@ -98,7 +98,7 @@ export const updateContentPlan = (guid, reqObj) => {
 };
 
 export const createPost = (reqBody: Request.GenerateContentPost) => {
-  return axios.post(`https://content-v4.replit.app/generate_content`, reqBody);
+  return axios.post(`https://content-v5.replit.app/generate_content`, reqBody);
 };
 
 

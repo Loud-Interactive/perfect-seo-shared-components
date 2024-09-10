@@ -30,6 +30,7 @@ const parseQueries = (obj: object) => {
   );
 };
 
+// synopsisPerfect APIS 
 export const getSynopsisInfo = (domain, regenerate?) => {
   let newDomain = urlSanitization(domain);
   if (regenerate) {
@@ -46,12 +47,13 @@ export const updateImpression = (domain: string, obj: Object) => {
   return axios.post("https://pp-api.replit.app/pairs", reqObj, { headers });
 };
 
+// check what this endpoint does
 export const domainExists = (domain: string) => {
   let newDomain = urlSanitization(domain);
   return axios.get(`https://pp-api.replit.app/pairs/guid/${newDomain}`);
 };
 
-
+// contentPerfect apis 
 export const addIncomingPlanItem = (reqObj: PlanItemProps) => {
   return axios.post(`${API_URL}/add_incoming_plan_item`, reqObj);
 };
@@ -99,10 +101,6 @@ export const updateContentPlan = (guid, reqObj: Request.ContentPlanPostRequest[]
 
 export const createPost = (reqBody: Request.GenerateContentPost) => {
   return axios.post(`https://content-v4.replit.app/generate_content`, reqBody);
-};
-
-export const getImpression = (domain_name: string) => {
-  return axios.get(`https://synopsisperfectai.replit.app/domain/${domain_name}`);
 };
 
 export const regenerateOutline = (

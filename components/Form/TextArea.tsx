@@ -37,7 +37,8 @@ const TextArea = ({
 
   const inputClassNames = classNames(`${inputClass} form-control`, {
     [`${inputClass}_withError`]: hasErrors,
-    [className]: className
+    [className]: className,
+    [`${inputClass}_disabled`]: props.disabled,
   });
 
   const ariaProps = {

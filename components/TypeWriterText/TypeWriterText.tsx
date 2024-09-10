@@ -9,6 +9,7 @@ interface TypeWriterText {
 }
 const TypeWriterText = ({ string, withBlink, loop }: TypeWriterText) => {
   const [text, setText] = useState(string)
+  const [hiddenText, setHiddenText] = useState('')
   const { isIntersecting, ref } = useIntersectionObserver({
     threshold: 0.5,
   })
@@ -23,6 +24,7 @@ const TypeWriterText = ({ string, withBlink, loop }: TypeWriterText) => {
         if (index < string.length) {
           index++
           setText(string.substring(0, index))
+          setHiddenText(string.substring(index))
         }
         else {
           if (loop) {
@@ -45,7 +47,7 @@ const TypeWriterText = ({ string, withBlink, loop }: TypeWriterText) => {
       {text}
       {withBlink &&
         <span className={styles.blink}>_</span>
-      }
+      }<span className="hidden">{hiddenText}</span>
     </span>
   )
 }

@@ -11,6 +11,7 @@ interface FormProps {
   onSave?: () => boolean;
   className?: string;
   id?: string;
+  onSubmit?: (any) => void
 }
 
 export const FormContext = createContext<FormController>({
@@ -28,9 +29,10 @@ export const FormContext = createContext<FormController>({
   unregister: () => { },
   validate: () => true,
   resetFieldErrors: () => { },
+
 });
 
-const Form = ({ children, controller, validation, onSave, className, id }: FormProps) => {
+const Form = ({ children, controller, validation, onSave, className, id, onSubmit }: FormProps) => {
   const formError = controller.getFormError;
   const formSuccess = controller.getFormSuccess;
   const router = useRouter();
@@ -85,8 +87,15 @@ const Form = ({ children, controller, validation, onSave, className, id }: FormP
 
   };
 
+  const onSubmitHandler = (e) => {
+    e.preventDefault()
+    if (onSubmit) {
+      onSubmit(e)
+    }
+  }
+
   return (
-    <form className={className} id={id}>
+    <form className={className} id={id} onSubmit={onSubmitHandler}>
       <FormContext.Provider value={controller}>
         {formError && (
           <FormError>

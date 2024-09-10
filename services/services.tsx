@@ -186,6 +186,9 @@ export const deleteContentPlan = (guid: string) => {
   return axios.delete(`${API_URL}/delete_content_plan/${guid}`);
 }
 
+export const deleteContentOutline = (content_plan_outline_guid: string) => {
+  return axios.delete(`https://content-status.replit.app/content/delete/${content_plan_outline_guid}`);
+}
 // pagePerfect apis 
 export const submitDomain = (domain: string) => {
   return axios.get(`https://discoverdomainurls.replit.app/urlcount?domain=${urlSanitization(domain)}`, { headers: { Accept: '*/*' } })

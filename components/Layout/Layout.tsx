@@ -27,7 +27,7 @@ const Layout = ({ children, hideFooter, current, links, hasLogin = true, getCred
       <link rel="icon" href={`/svg/${current.endsWith(".ai") ? current.replace(".ai", "") : current}-icon.svg`} />
     </Head>
       <MetaTags title={current} url={currentBrand.url} description={currentBrand?.summary} image={`/svg/${current.endsWith(".ai") ? current.replace(".ai", "") : current}-icon.svg`} />
-      <Script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossOrigin="anonymous" />
+      <Script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossOrigin="anonymous" />
       <Provider store={store}>
         <Header brand={currentBrand} current={current} links={links} hasLogin={hasLogin} getCredits={getCredits} />
         <main className={style.wrap}>

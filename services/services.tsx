@@ -210,3 +210,8 @@ export const getPostsByDomain = (domain: string) => {
 };
 
 
+
+
+export const deleteContentPlan = (guid: string) => {
+  return axios.delete(`${API_URL}/delete_content_plan/${guid}`);
+}

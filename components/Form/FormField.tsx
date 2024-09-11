@@ -22,7 +22,7 @@ const FormField = ({
 }: FormFieldProps) => {
   const formFieldClasses = classNames('formField', {
     'formField_withCheckbox': withCheckbox,
-    [className]: className,
+    className: className,
     'formField_bottomSpacing': bottomSpacing,
   });
 

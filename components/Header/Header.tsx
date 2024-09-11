@@ -105,7 +105,7 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits, brand }: Hea
           </div>
           <div className={signedInClass}>
 
-            <DropdownMenu.Root defaultOpen open={true} onOpenChange={openChangeHandler}>
+            <DropdownMenu.Root defaultOpen open={open} onOpenChange={openChangeHandler}>
               <DropdownMenu.Trigger className={styles.menuButton}>
                 <i className="bi bi-grid-3x3-gap-fill" />
               </DropdownMenu.Trigger>

@@ -5,8 +5,8 @@ import { reset, setAdmin, setLoading, setLoggedIn, setUser } from '@/perfect-seo
 import { createClient } from '@/perfect-seo-shared-components/utils/supabase/client'
 
 const useManageUser = (appKey) => {
-  const { isLoggedIn, user, isAdmin, isLoading } = useSelector((state: RootState) => state);
-  const [userData, setUserData] = useState(null)
+  const { user, isLoading } = useSelector((state: RootState) => state);
+  const [userData, setUserData] = useState<any>(null)
 
   const dispatch = useDispatch();
   const supabase = createClient()
@@ -20,9 +20,11 @@ const useManageUser = (appKey) => {
         .select()
         .then(res => {
           dispatch(setLoading(false))
-          if (res.data[0]) {
-            setUserData(res.data[0])
-            dispatch(setAdmin(res.data[0]?.admin))
+          if (res?.data && res?.data?.length > 0) {
+            if (res?.data[0]) {
+              setUserData(res.data[0])
+              dispatch(setAdmin(res.data[0]?.admin))
+            }
           }
         })
     }

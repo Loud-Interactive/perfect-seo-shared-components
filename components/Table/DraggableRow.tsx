@@ -16,9 +16,9 @@ export const DragHandle = () => (
 const DraggableRow: FC<{
   row: Row<Object>,
   reorderRow: (draggedRowIndex: number, targetRowIndex: number) => void,
-  selected: number,
+  selected?: number | null,
   setSelected: (val: number) => void,
-}> = ({ row, reorderRow, selected, setSelected }) => {
+}> = ({ row, reorderRow, selected = 0, setSelected }) => {
   const [{ isOver }, dropRef] = useDrop({
     accept: 'row',
     drop: (draggedRow: Row<Object>) => reorderRow(draggedRow.index, row.index),
@@ -47,8 +47,8 @@ const DraggableRow: FC<{
   const rowClasses = classNames('table-drag-row-wrapper',
     {
       'table-drag-row-hover': isOver,
-      'down': isOver && row.index >= selected,
-      'up': isOver && row.index < selected,
+      'down': isOver && selected && row.index >= selected,
+      'up': isOver && selected && row.index < selected,
       'dragging': isDragging,
     });
 

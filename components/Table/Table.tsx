@@ -72,7 +72,7 @@ const Table = ({ isLoading,
   reorder,
   ...props }: TableProps) => {
 
-  const [sorting, setSorting] = useState<SortingState>(sortedBy);
+  const [sorting, setSorting] = useState<SortingState>(sortedBy || []);
   const [data, setData] = useState<Object[]>([]);
   const [selected, setSelected] = useState<number>();
 
@@ -159,7 +159,7 @@ const Table = ({ isLoading,
 
   const tableClassName = classNames('table',
     {
-      [className]: className,
+      [`${className}`]: className,
       'table-drag': draggable,
     },
   );
@@ -191,7 +191,7 @@ const Table = ({ isLoading,
                     });
 
                     return (
-                      <th title={!column.columnDef.enableSorting && 'Toggle Sorting'} onClick={(e) => { e.preventDefault(); }} className={columnHeaderClasses} key={header.id}>
+                      <th title={!column.columnDef.enableSorting ? 'Toggle Sorting' : header.id} onClick={(e) => { e.preventDefault(); }} className={columnHeaderClasses} key={header.id}>
                         {header.isPlaceholder ?
                           null
                           : flexRender(
@@ -226,7 +226,7 @@ const Table = ({ isLoading,
               };
 
               if (draggable) {
-                return <DraggableRow selected={selected} setSelected={setSelected} key={row.id} row={row} reorderRow={reorderRow} />;
+                return <DraggableRow selected={selected && selected} setSelected={setSelected} key={row.id} row={row} reorderRow={reorderRow} />;
               } else {
                 return (
                   <tr key={row.id} className={rowClassName} onClick={clickHandler}>
@@ -298,7 +298,7 @@ Table.defaultProps = {
 
 export default Table;
 
-export const sumFooter = (rows, footKey): number => {
+export const sumFooter = (rows, footKey): number | null => {
   if (rows?.table?.options?.data?.length > 0) {
     return rows.table.options.data.reduce((sum, row) => {
       if (typeof row[footKey] === 'string') {
@@ -312,4 +312,5 @@ export const sumFooter = (rows, footKey): number => {
       }
     }, 0);
   }
+  return null;
 };

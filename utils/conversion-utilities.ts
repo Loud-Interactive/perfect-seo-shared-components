@@ -1,5 +1,5 @@
 
-import { ContentIncomingProps, ContentRequestFormProps } from "@/types"
+import { ContentIncomingProps, ContentRequestFormProps } from "@/perfect-seo-shared-components/data/types"
 
 
 export const urlSanitization = (url: string): string => {
@@ -40,10 +40,10 @@ export const convertArrayToObject = (arr: any[]) => {
 export const convertFormDataToOutgoing = (data: ContentRequestFormProps): ContentIncomingProps => {
   return ({
     email: data.email,
-    domain_name: urlSanitization(data?.domainName),
+    domain_name: data?.domainName && urlSanitization(data?.domainName),
     brand_name: data?.brandName,
     target_keyword: data?.targetKeyword,
-    priority_code: urlSanitization(data?.priorityCode),
+    priority_code: data?.priorityCode && urlSanitization(data?.priorityCode),
     entity_voice: data?.entityVoice,
     inspiration_url_1: data?.url1,
     priority1: data?.priority1,

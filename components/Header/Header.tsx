@@ -24,9 +24,8 @@ export interface HeaderProps {
   menuHeader?: any,
   hasLogin?: boolean;
   getCredits?: boolean;
-  brand: Brand;
 }
-const Header = ({ links, menuHeader, current, hasLogin, getCredits, brand }: HeaderProps) => {
+const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProps) => {
   const { isLoggedIn, user, isAdmin, points } = useSelector((state: RootState) => state);
   const [open, setOpen] = useState(true)
   const router = useRouter()
@@ -35,6 +34,7 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits, brand }: Hea
   const [currentPage, setCurrentPage] = useState('')
   const pathname = usePathname()
 
+  const brand = Brands.find((brand) => brand.title === current)
   useEffect(() => {
     if (user && getCredits) {
       dispatch(loadCreditData(user?.email) as any); // Add 'as any' to cast the action to 'UnknownAction'
@@ -147,12 +147,12 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits, brand }: Hea
                           })}
                         </>}
                         {isAdmin && <>
-                          {brand.developmentUrl && <div className='col-12'>
+                          {brand?.developmentUrl && <div className='col-12'>
                             <Link target='_blank' className='text-primary'
                               href={brand.developmentUrl}>View Development Env</Link>
                           </div>}
-                          {brand.stagingUrl && <div className='col-12'>
-                            <Link href={brand.stagingUrl} target='_blank' className='text-primary'>View Staging Env</Link>
+                          {brand?.stagingUrl && <div className='col-12'>
+                            <Link href={brand?.stagingUrl} target='_blank' className='text-primary'>View Staging Env</Link>
                           </div>}
                         </>}
                       </div>

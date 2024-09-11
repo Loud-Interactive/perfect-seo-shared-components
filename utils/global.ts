@@ -10,7 +10,12 @@ export const areArraysEqual = <T>(target: T[], comparison: T[]) => {
 };
 
 export const getTimeZone = () => {
-  return moment.tz.zone(moment.tz.guess()).abbr(new Date().valueOf());
+  try {
+    const timeZone = moment.tz.zone(moment.tz.guess());
+    return timeZone ? timeZone.abbr(new Date().valueOf()) : '';
+  } catch (error) {
+    return '';
+  }
 };
 
 export const capitalizeFirst = (string: string) => {
@@ -48,7 +53,7 @@ export const createPhoneString = (tel) => {
   const first = groups?.first;
   const second = groups?.second;
   const third = groups?.third;
-  const length = aux?.length;
+  const length = aux?.length || 0;
 
   if (length < 3) {
     phoneString = first;
@@ -91,17 +96,18 @@ export const numberToCurrency = (value: number | string, accountingNegatives: bo
 export const filterUnique = (arr, key) => {
   if (arr?.length > 0 && arr !== null) {
     let newArray = [...arr];
-    let uniqueKeys = [];
+    let uniqueKeys: any[] = [];
 
     let newData = newArray.filter(element => {
-      const isDuplicate = uniqueKeys.includes(element[key]);
+      if (element && element[key]) {
+        const isDuplicate = uniqueKeys.includes(element[key]);
 
-      if (!isDuplicate) {
-        uniqueKeys.push(element[key]);
+        if (!isDuplicate) {
+          uniqueKeys.push(element[key]);
 
-        return true;
+          return true;
+        }
       }
-
       return false;
     });
 
@@ -279,38 +285,46 @@ tr{
 export const printDiv = (divId, title?) => {
   var mywindow = window.open('', 'PRINT');
   let docTitle = title || document.title;
+  if (mywindow && window) {
+    mywindow.document.open('', 'PRINT');
+    mywindow.document.write(`<html><head><title>${docTitle} </title>`);
+    mywindow.document.write(`${printStyling}</head><body>`);
+    mywindow.document.write('<h1>' + docTitle + '</h1>');
+    const divElement = window.document.getElementById(divId);
+    if (divElement) {
+      mywindow.document.write(divElement.innerHTML);
+    }
+    mywindow.document.write('</body></html>');
 
-  mywindow.document.open('', 'PRINT');
-  mywindow.document.write(`<html><head><title>${docTitle} </title>`);
-  mywindow.document.write(`${printStyling}</head><body>`);
-  mywindow.document.write('<h1>' + docTitle + '</h1>');
-  mywindow.document.write(window.document.getElementById(divId).innerHTML);
-  mywindow.document.write('</body></html>');
+    mywindow.document.close(); // necessary for IE >= 10
+    mywindow.focus(); // necessary for IE >= 10*/
 
-  mywindow.document.close(); // necessary for IE >= 10
-  mywindow.focus(); // necessary for IE >= 10*/
+    mywindow.print();
+    mywindow.close();
 
-  mywindow.print();
-  mywindow.close();
-
-  return true;
+    return true;
+  }
+  else return false;
 };
 
 export const printRaw = (raw, title?) => {
   let mywindow = window.open('', 'PRINT');
 
-  mywindow.document.write(`<html><head><title>${title ? title : document.title}</title>`);
-  mywindow.document.write('<style type="text/css" media="all"> @page { size: portrait; } body { max-width: 8.5in;} th, td { width: 33%;  font-size: 10px;} h1 {font-size: 16px; margin-bottom: 8px;} .truncate{ overflow: hidden; text-overflow: ellipsis;white-space: nowrap;}</style></head><body>');
-  mywindow.document.write(`<h1 style="text-transform:capitalize">${title ? title : document.title}</h1>`);
-  mywindow.document.write(raw);
-  mywindow.document.write('</body></html>');
+  if (mywindow) {
+    mywindow.document.write(`<html><head><title>${title ? title : document.title}</title>`);
+    mywindow.document.write('<style type="text/css" media="all"> @page { size: portrait; } body { max-width: 8.5in;} th, td { width: 33%;  font-size: 10px;} h1 {font-size: 16px; margin-bottom: 8px;} .truncate{ overflow: hidden; text-overflow: ellipsis;white-space: nowrap;}</style></head><body>');
+    mywindow.document.write(`<h1 style="text-transform:capitalize">${title ? title : document.title}</h1>`);
+    mywindow.document.write(raw);
+    mywindow.document.write('</body></html>');
 
-  mywindow.document.close(); // necessary for IE >= 10
-  mywindow.focus(); // necessary for IE >= 10*/
+    mywindow.document.close(); // necessary for IE >= 10
+    mywindow.focus(); // necessary for IE >= 10*/
 
-  mywindow.print();
+    mywindow.print();
+    return mywindow.close();
+  }
 
-  return mywindow.close();
+
 };
 
 export function debounce(func, timeout = 300) {

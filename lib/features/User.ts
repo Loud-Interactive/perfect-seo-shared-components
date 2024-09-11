@@ -63,7 +63,7 @@ export const UserSlice = createSlice({
         domain: action.payload,
       };
     },
-    reset: (state, action: PayloadAction<boolean>) => {
+    reset: () => {
       return initialState
     }
   }

@@ -59,7 +59,7 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits, brand }: Hea
           console.log(res.error)
         }
         else {
-          dispatch(reset(null))
+          dispatch(reset())
           router.push('/')
         }
       })
@@ -123,14 +123,14 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits, brand }: Hea
                               {user?.email}</div>
                             <div className='col-auto'><a onClick={signOutHandler}>Sign Out</a>
                             </div>
-                            {points && <div className='col-12 d-flex justify-content-start'><strong className='me-2 text-primary'>Credits</strong> {points.toLocaleString()}</div>}</>
+                            {points ? <div className='col-12 d-flex justify-content-start'><strong className='me-2 text-primary'>Credits</strong> {points.toLocaleString()}</div> : null}</>
                             :
 
                             <button className="btn btn-google" onClick={loginWithGoogle}><img src="/images/google-icon.png" /> Login</button>
 
                           }
                         </div>
-                        {menuHeader}
+                        {menuHeader ? menuHeader : null}
                       </div>}
                       <div className='row g-2 justify-content-end p-3'>
                         {dynamicLinks?.length > 0 && <>

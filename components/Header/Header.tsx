@@ -1,3 +1,4 @@
+'use client'
 import Link from 'next/link'
 import styles from './Header.module.scss'
 import { loginWithGoogle, logout } from '@/perfect-seo-shared-components/utils/supabase/actions'
@@ -5,8 +6,7 @@ import { useRouter } from 'next/navigation'
 import classNames from 'classnames'
 import useViewport from '@/perfect-seo-shared-components/hooks/useViewport'
 import { useDispatch, useSelector } from 'react-redux'
-import { StateTree } from '@/perfect-seo-shared-components/store/reducer'
-import { reduxReset } from '@/perfect-seo-shared-components/store/actions'
+import { reset } from '@/perfect-seo-shared-components/store/actions'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { Brand, BrandStatus, Links, LinkType } from '@/perfect-seo-shared-components/data/types'
 import { useEffect, useMemo, useState } from 'react'
@@ -15,6 +15,8 @@ import { Brands } from '@/perfect-seo-shared-components/assets/Brands'
 import { renderIcon, renderLogo } from '@/perfect-seo-shared-components/utils/brandUtilities'
 
 import { loadCreditData } from '@/perfect-seo-shared-components/store/thunks'
+import { usePathname } from 'next/navigation'
+import { RootState } from '@/perfect-seo-shared-components/lib/store'
 
 export interface HeaderProps {
   links?: Links[],
@@ -25,12 +27,13 @@ export interface HeaderProps {
   brand: Brand;
 }
 const Header = ({ links, menuHeader, current, hasLogin, getCredits, brand }: HeaderProps) => {
-  const { isLoggedIn, user, isAdmin, points } = useSelector((state: StateTree) => state);
+  const { isLoggedIn, user, isAdmin, points } = useSelector((state: RootState) => state);
   const [open, setOpen] = useState(true)
   const router = useRouter()
   const dispatch = useDispatch()
   const { phone } = useViewport()
   const [currentPage, setCurrentPage] = useState('')
+  const pathname = usePathname()
 
   useEffect(() => {
     if (user && getCredits) {
@@ -45,12 +48,8 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits, brand }: Hea
       setOpen(false)
       setCurrentPage(url)
     }
-    updateRoute(router.pathname)
-    router.events.on('routeChangeComplete', updateRoute)
-    return () => {
-      router.events.off('routeChangeComplete', updateRoute)
-    }
-  }, [])
+    updateRoute(pathname)
+  }, [pathname])
 
   const signOutHandler = (e) => {
     e.preventDefault()
@@ -60,7 +59,7 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits, brand }: Hea
 
         }
         else {
-          dispatch(reduxReset())
+          dispatch(reset())
           router.push('/')
         }
       })
@@ -106,7 +105,7 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits, brand }: Hea
           </div>
           <div className={signedInClass}>
 
-            <DropdownMenu.Root defaultOpen open={open} onOpenChange={openChangeHandler}>
+            <DropdownMenu.Root defaultOpen open={true} onOpenChange={openChangeHandler}>
               <DropdownMenu.Trigger className={styles.menuButton}>
                 <i className="bi bi-grid-3x3-gap-fill" />
               </DropdownMenu.Trigger>
@@ -115,6 +114,8 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits, brand }: Hea
                 <DropdownMenu.Content align="end" sideOffset={25} className='bg-dark card z-100'>
                   <div className={styles.menu}>
                     <div>
+                      <div className='col-auto text-primary'><a onClick={signOutHandler}>Sign Out</a>
+                      </div>
                       {hasLogin && <div className='card-header'>
                         <div className='row justify-content-between'>
 

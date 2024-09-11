@@ -1,11 +1,11 @@
-import { reduxReset } from "@/perfect-seo-shared-components/store/actions";
-import { StateTree } from "@/perfect-seo-shared-components/store/reducer";
+import { reset } from "@/perfect-seo-shared-components/store/actions";
+import { RootState } from '@/perfect-seo-shared-components/lib/store'
 import { loginWithGoogle, logout } from "@/perfect-seo-shared-components/utils/supabase/actions";
 import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 
 const AdminLogin = () => {
-  const { isLoggedIn, user, isAdmin, points } = useSelector((state: StateTree) => state);
+  const { isLoggedIn, user, isAdmin, points } = useSelector((state: RootState) => state);
   const router = useRouter()
   const dispatch = useDispatch()
 
@@ -17,7 +17,7 @@ const AdminLogin = () => {
 
         }
         else {
-          dispatch(reduxReset() as any); // Add 'as any' to cast the action to 'UnknownAction'
+          dispatch(reset() as any); // Add 'as any' to cast the action to 'UnknownAction'
           router.push('/')
         }
       })

@@ -7,7 +7,7 @@ interface TypeWriterText {
   withBlink?: boolean;
   loop?: boolean;
 }
-const TypeWriterText = ({ string, withBlink, loop }: TypeWriterText) => {
+const TypeWriterText = ({ string, withBlink, loop = false }: TypeWriterText) => {
   const [text, setText] = useState(string)
   const [hiddenText, setHiddenText] = useState('')
   const { isIntersecting, ref } = useIntersectionObserver({
@@ -52,8 +52,4 @@ const TypeWriterText = ({ string, withBlink, loop }: TypeWriterText) => {
   )
 }
 
-TypeWriterText.defaultProps = {
-  loop: false,
-  fast: true
-}
 export default TypeWriterText

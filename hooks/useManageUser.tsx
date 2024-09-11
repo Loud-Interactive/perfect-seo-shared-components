@@ -1,11 +1,11 @@
-import { StateTree } from "@/perfect-seo-shared-components/store/reducer";
+import { RootState } from '@/perfect-seo-shared-components/lib/store'
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from 'react'
-import { reduxReset, setAdmin, setLoading, setLoggedIn, setUser } from '@/perfect-seo-shared-components/store/actions'
-import { createClient } from '@/perfect-seo-shared-components/utils/supabase/components'
+import { reset, setAdmin, setLoading, setLoggedIn, setUser } from '@/perfect-seo-shared-components/lib/features/User'
+import { createClient } from '@/perfect-seo-shared-components/utils/supabase/client'
 
 const useManageUser = (appKey) => {
-  const { isLoggedIn, user, isAdmin, isLoading } = useSelector((state: StateTree) => state);
+  const { isLoggedIn, user, isAdmin, isLoading } = useSelector((state: RootState) => state);
   const [userData, setUserData] = useState(null)
 
   const dispatch = useDispatch();
@@ -73,7 +73,7 @@ const useManageUser = (appKey) => {
             dispatch(setLoading(false))
           }
           else if (res.error !== null) {
-            dispatch(reduxReset())
+            dispatch(reset())
           } else {
             dispatch(setLoggedIn(true))
             return dispatch(setUser(res.data.user))

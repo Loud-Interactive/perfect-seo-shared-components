@@ -1,7 +1,7 @@
 
-import { ActionType } from './actions';
+import { ActionType } from '@/perfect-seo-shared-components/lib/User.ts';
 
-export type StateTree = {
+export type RootState = {
   user: any,
   points: number,
   isLoading: boolean,
@@ -14,7 +14,7 @@ interface ReduxAction {
   [key: string]: any;
 }
 
-const initialState: StateTree = {
+const initialState: RootState = {
   user: null,
   points: null,
   isLoading: true,
@@ -22,7 +22,7 @@ const initialState: StateTree = {
   isAdmin: false
 };
 
-export default function reducer(state: StateTree = initialState, action: ReduxAction = {}): StateTree {
+export default function reducer(state: RootState = initialState, action: ReduxAction = {}): RootState {
   switch (action.type) {
     case ActionType.SET_USER:
       return {

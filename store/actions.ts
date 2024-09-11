@@ -34,6 +34,6 @@ export const setAdmin = (bool) => ({
   bool,
 });
 
-export const reduxReset = () => ({
+export const reset = () => ({
   type: ActionType.RESET
 });

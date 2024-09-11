@@ -15,11 +15,11 @@ export type RootState = {
 
 const initialState: RootState = {
   user: null,
-  points: null,
+  points: 0,
   isLoading: true,
   isLoggedIn: false,
   isAdmin: false,
-  domain: null
+  domain: undefined
 };
 
 export const UserSlice = createSlice({

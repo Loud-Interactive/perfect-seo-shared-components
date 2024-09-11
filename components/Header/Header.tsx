@@ -59,7 +59,7 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits, brand }: Hea
           console.log(res.error)
         }
         else {
-          dispatch(reset())
+          dispatch(reset(null))
           router.push('/')
         }
       })

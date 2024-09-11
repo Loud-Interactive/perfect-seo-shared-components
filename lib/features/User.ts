@@ -9,6 +9,7 @@ export type RootState = {
   isLoading: boolean,
   isLoggedIn: boolean,
   isAdmin: boolean
+  domain?: string;
 };
 
 
@@ -17,7 +18,8 @@ const initialState: RootState = {
   points: null,
   isLoading: true,
   isLoggedIn: false,
-  isAdmin: false
+  isAdmin: false,
+  domain: null
 };
 
 export const UserSlice = createSlice({
@@ -28,6 +30,7 @@ export const UserSlice = createSlice({
       return {
         ...state,
         user: action.payload,
+        domain: action.payload?.email?.split('@')[1]
       };
     },
     updatePoints: (state, action: PayloadAction<number>) => {
@@ -54,6 +57,12 @@ export const UserSlice = createSlice({
         isAdmin: action.payload,
       };
     },
+    setDomain: (state, action: PayloadAction<string>) => {
+      return {
+        ...state,
+        domain: action.payload,
+      };
+    },
     reset: (state, action: PayloadAction<boolean>) => {
       return initialState
     }
@@ -62,5 +71,5 @@ export const UserSlice = createSlice({
 });
 // Action creators are generated for each case reducer function
 
-export const { setUser, updatePoints, setLoggedIn, setLoading, setAdmin, reset } = UserSlice.actions;
+export const { setUser, updatePoints, setLoggedIn, setLoading, setAdmin, setDomain, reset } = UserSlice.actions;
 export default UserSlice.reducer;

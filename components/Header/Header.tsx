@@ -114,13 +114,11 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits, brand }: Hea
                 <DropdownMenu.Content align="end" sideOffset={25} className='bg-dark card z-100'>
                   <div className={styles.menu}>
                     <div>
-                      <div className='col-auto text-primary'><a onClick={signOutHandler}>Sign Out</a>
-                      </div>
-                      {hasLogin && <div className='card-header'>
+                      {hasLogin && <div className='card-header bg-secondary text-white'>
                         <div className='row justify-content-between'>
 
                           {isLoggedIn ? <>
-                            <div className='col-auto'>
+                            <div className='col-auto text-white'>
                               <strong className='me-2 text-primary'>Logged in as</strong>
                               {user?.email}</div>
                             <div className='col-auto'><a onClick={signOutHandler}>Sign Out</a>
@@ -143,18 +141,18 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits, brand }: Hea
                             let href = typeof link.href === 'function' ? link.href(user) : link.href
                             return (
                               <div className='col-12' key={link.href}>
-                                <Link href={href} className={currentPage?.includes(href) ? 'text-white' : ''}>{link.label}</Link>
+                                <Link href={href} className={currentPage?.includes(href) ? 'text-white' : 'text-primary'}>{link.label}</Link>
                               </div>
                             )
                           })}
                         </>}
                         {isAdmin && <>
                           {brand.developmentUrl && <div className='col-12'>
-                            <Link target='_blank'
+                            <Link target='_blank' className='text-primary'
                               href={brand.developmentUrl}>View Development Env</Link>
                           </div>}
                           {brand.stagingUrl && <div className='col-12'>
-                            <Link href={brand.stagingUrl} target='_blank'>View Staging Env</Link>
+                            <Link href={brand.stagingUrl} target='_blank' className='text-primary'>View Staging Env</Link>
                           </div>}
                         </>}
                       </div>

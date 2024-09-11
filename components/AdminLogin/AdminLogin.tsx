@@ -1,4 +1,4 @@
-import { reset } from "@/perfect-seo-shared-components/store/actions";
+import { reset } from "@/perfect-seo-shared-components/lib/features/User";
 import { RootState } from '@/perfect-seo-shared-components/lib/store'
 import { loginWithGoogle, logout } from "@/perfect-seo-shared-components/utils/supabase/actions";
 import { useRouter } from "next/navigation";

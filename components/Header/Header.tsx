@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import styles from './Header.module.scss'
 import { loginWithGoogle, logout } from '@/perfect-seo-shared-components/utils/supabase/actions'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import classNames from 'classnames'
 import useViewport from '@/perfect-seo-shared-components/hooks/useViewport'
 import { useDispatch, useSelector } from 'react-redux'

@@ -1,7 +1,7 @@
 import { createContext, useEffect, useState } from 'react';
 import { FormController } from '@/perfect-seo-shared-components/hooks/useForm';
 import FormError from './FormError';
-import Router, { useRouter } from 'next/router';
+import Router, { useRouter } from 'next/navigation';
 import FormSuccess from './FormSuccess';
 
 interface FormProps {

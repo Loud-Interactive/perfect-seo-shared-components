@@ -1,7 +1,7 @@
 import { reduxReset } from "@/perfect-seo-shared-components/store/actions";
 import { StateTree } from "@/perfect-seo-shared-components/store/reducer";
 import { loginWithGoogle, logout } from "@/perfect-seo-shared-components/utils/supabase/actions";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 
 const AdminLogin = () => {

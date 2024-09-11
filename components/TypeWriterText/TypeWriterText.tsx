@@ -1,3 +1,4 @@
+"use client"
 import { useEffect, useState } from "react"
 import styles from './TypeWriterText.module.scss'
 import { useIntersectionObserver } from 'usehooks-ts'

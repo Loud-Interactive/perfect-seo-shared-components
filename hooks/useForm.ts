@@ -97,7 +97,7 @@ export default function useForm(): FormController {
 
     if (requiredFails(fieldName, value)) {
       return ['This field is required.'];
-    } else if (validatorFails(fieldName, value)) {
+    } else if (validatorFails(fieldName, value) && validator) {
       return [validator.message];
     }
 
@@ -192,7 +192,7 @@ export default function useForm(): FormController {
       validators.forEach((fieldName) => {
         const { validator } = fieldConfigs[fieldName];
 
-        if (validatorFails(fieldName)) {
+        if (validatorFails(fieldName) && validator) {
           errors[fieldName] = [validator.message];
         }
       });

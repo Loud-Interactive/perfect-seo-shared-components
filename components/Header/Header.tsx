@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import classNames from 'classnames'
 import useViewport from '@/perfect-seo-shared-components/hooks/useViewport'
 import { useDispatch, useSelector } from 'react-redux'
-import { reset } from '@/perfect-seo-shared-components/store/actions'
+import { reset } from '@/perfect-seo-shared-components/lib/features/User'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { Brand, BrandStatus, Links, LinkType } from '@/perfect-seo-shared-components/data/types'
 import { useEffect, useMemo, useState } from 'react'
@@ -56,7 +56,7 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits, brand }: Hea
     logout()
       .then(res => {
         if (res.error) {
-
+          console.log(res.error)
         }
         else {
           dispatch(reset())

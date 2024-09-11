@@ -23,12 +23,12 @@ export function renderMetaData({ title, description, image, icon, current }: Met
       icon: icon || `/svg/${current.endsWith(".ai") ? current.replace(".ai", "") : current}-icon.svg`
     },
     robots: {
-      index: false,
+      index: true,
       follow: true,
       nocache: true,
       googleBot: {
         index: true,
-        follow: false,
+        follow: true,
         noimageindex: true,
         'max-video-preview': -1,
         'max-image-preview': 'large',

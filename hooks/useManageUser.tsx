@@ -20,8 +20,10 @@ const useManageUser = (appKey) => {
         .select()
         .then(res => {
           dispatch(setLoading(false))
+          console.log("get user", res.data)
           if (res?.data && res?.data?.length > 0) {
             if (res?.data[0]) {
+              console.log("set userData", res.data[0])
               setUserData(res.data[0])
               dispatch(setAdmin(res.data[0]?.admin))
             }
@@ -35,7 +37,9 @@ const useManageUser = (appKey) => {
 
   useEffect(() => {
     if (userData) {
-
+      if (!userData.email) {
+        userData.email = user.email
+      }
       let domains = [userData?.email?.split("@")[1]]
       if (userData?.user_metadata?.custom_claims) {
         let customClaims = Object.keys(userData?.user_metadata.custom_claims).reduce((prev, curr) => {
@@ -44,28 +48,31 @@ const useManageUser = (appKey) => {
           }
           else return prev
         }, [])
-        domains = [...domains, ...customClaims]
-      }
+        domains = [...domains, ...customClaims].filter(obj => obj !== 'google' && obj !== "gmail")
 
-      let products = userData.products;
-      let key = appKey;
-      if (products) {
-        if (products[key]) {
-          products[key] = new Date().toISOString()
-        }
-        else {
-          products = { ...products, [key]: new Date().toISOString() }
-        }
-      }
-      let profileObj: any = { meta_data: user, email: user.email, domains: domains, products: products };
 
-      supabase
-        .from('profiles')
-        .update(profileObj)
-        .eq('id', user.id)
-        .select()
-    }
-  }, [userData])
+        let products = userData.products;
+        let key = appKey;
+        if (products) {
+          if (products[key]) {
+            products[key] = new Date().toISOString()
+          }
+          else {
+            products = { ...products, [key]: new Date().toISOString() }
+          }
+        }
+        let profileObj: any = { meta_data: user, email: user.email, domains: domains, products: products };
+        profileObj.updated_at = new Date().toISOString()
+        supabase
+          .from('profiles')
+          .update(profileObj)
+          .eq('id', user.id)
+          .then(res => {
+            console.log(res)
+          }
+          )
+      }
+    }, [userData])
 
   useEffect(() => {
     if (isLoading !== false) {
@@ -77,6 +84,7 @@ const useManageUser = (appKey) => {
           else if (res.error !== null) {
             dispatch(reset())
           } else {
+            console.log(res.data.user)
             dispatch(setLoggedIn(true))
             return dispatch(setUser(res.data.user))
           }

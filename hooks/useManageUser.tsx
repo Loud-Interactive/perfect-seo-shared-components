@@ -72,7 +72,8 @@ const useManageUser = (appKey) => {
           }
           )
       }
-    }, [userData])
+    }
+  }, [userData])
 
   useEffect(() => {
     if (isLoading !== false) {

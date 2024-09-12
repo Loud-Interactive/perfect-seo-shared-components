@@ -59,7 +59,7 @@ const useManageUser = (appKey) => {
 
 
 
-      let products = userData.products;
+      let products = userData.products
       let key = appKey.replace(".ai", "");
       if (products) {
         if (products[key]) {
@@ -70,11 +70,7 @@ const useManageUser = (appKey) => {
         }
       }
 
-      Object.keys(products).forEach((productKey) => {
-        if (productKey.includes(".ai")) {
-          delete products[productKey]
-        }
-      })
+
       let profileObj: any = { meta_data: userData, email: userData.email, domains: domains, products: products };
       profileObj.updated_at = new Date().toISOString()
       dispatch(setUser({ ...userData, domains: domains }))

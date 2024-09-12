@@ -115,15 +115,16 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
                   <div className={styles.menu}>
                     <div>
                       {hasLogin && <div className='card-header bg-secondary text-white'>
-                        <div className='row justify-content-between'>
+                        <div className='row justify-content-between d-flex'>
 
                           {isLoggedIn ? <>
-                            <div className='col-auto text-white'>
+                            <div className='col-12 text-white'>
                               <strong className='me-2 text-primary'>Logged in as</strong>
                               {user?.email}</div>
-                            <div className='col-auto'><a onClick={signOutHandler}>Sign Out</a>
-                            </div>
-                            {points ? <div className='col-12 d-flex justify-content-start'><strong className='me-2 text-primary'>Credits</strong> {points.toLocaleString()}</div> : null}</>
+
+                            {points ? <div className='col-12 d-flex justify-content-start'><strong className='me-2 text-primary'>Credits</strong> {points.toLocaleString()}</div> : null}
+                            <div className='col-12'><a onClick={signOutHandler}>Sign Out</a>
+                            </div></>
                             :
 
                             <button className="btn btn-google" onClick={loginWithGoogle}><img src="/images/google-icon.png" /> Login</button>

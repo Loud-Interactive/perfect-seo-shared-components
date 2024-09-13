@@ -37,6 +37,9 @@ const useManageUser = (appKey) => {
       if (!userData.email) {
         userData.email = user.email
       }
+      if (!userData.full_name) {
+        userData.full_name = userData?.user_matadata?.full_name
+      }
       let domains;
       if (!userData.domains) {
         domains = [userData?.email?.split("@")[1]]

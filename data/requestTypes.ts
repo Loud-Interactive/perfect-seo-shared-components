@@ -105,3 +105,9 @@ export interface MetaRequest {
   competitors: string
 }
 
+
+export interface FactCheckRequest {
+  model: string
+  file?: any
+  url?: string
+}

@@ -50,7 +50,7 @@ const useManageUser = (appKey) => {
             }
             else return prev
           }, [])
-          domains = [...domains, ...customClaims].filter(obj => obj !== 'google' && obj !== "gmail")
+          domains = [...domains, ...customClaims]
         }
 
       }
@@ -60,7 +60,7 @@ const useManageUser = (appKey) => {
 
 
 
-
+      domains = domains.filter(obj => obj !== 'google' && obj !== "gmail")
 
       let products = userData.products
       let key = appKey.replace(".ai", "");

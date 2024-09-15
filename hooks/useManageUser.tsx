@@ -49,14 +49,16 @@ const useManageUser = (appKey) => {
       let key = appKey;
       if (products) {
         if (products[key]) {
+          console.log('product exists')
           products[key] = new Date().toISOString()
         }
         else {
+          console.log('product does not exist')
           products = { ...products, [key]: new Date().toISOString() }
         }
       }
       let profileObj: any = { meta_data: user, email: user.email, domains: domains, products: products };
-
+      console.log(products)
       supabase
         .from('profiles')
         .update(profileObj)

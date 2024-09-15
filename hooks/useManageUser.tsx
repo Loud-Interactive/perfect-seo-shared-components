@@ -84,7 +84,10 @@ const useManageUser = (appKey) => {
         .from('profiles')
         .update(profileObj)
         .eq('id', userData.id)
-
+        .select("*")
+        .then(res => {
+          console.log(res)
+        })
 
     }
   }, [userData])

@@ -15,7 +15,7 @@ const PerfectSEOBar = ({ current }) => {
           </div>
         </div>
         <div className="col-auto">
-          <a href="https://www.loud.us/ai-tools" target="_blank" rel="noreferrer">
+          <a href="https://perfectSEO.ai/" target="_blank" rel="noreferrer">
             <div className={styles.hero}>
               <img src="/svg/perfectSEO-icon.svg" className={styles.icon} />
               <div className={styles.iconFull}>

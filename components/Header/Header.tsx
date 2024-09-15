@@ -1,12 +1,12 @@
+'use client'
 import Link from 'next/link'
 import styles from './Header.module.scss'
 import { loginWithGoogle, logout } from '@/perfect-seo-shared-components/utils/supabase/actions'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import classNames from 'classnames'
 import useViewport from '@/perfect-seo-shared-components/hooks/useViewport'
 import { useDispatch, useSelector } from 'react-redux'
-import { StateTree } from '@/perfect-seo-shared-components/store/reducer'
-import { reduxReset } from '@/perfect-seo-shared-components/store/actions'
+import { reset } from '@/perfect-seo-shared-components/lib/features/User'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { Brand, BrandStatus, Links, LinkType } from '@/perfect-seo-shared-components/data/types'
 import { useEffect, useMemo, useState } from 'react'
@@ -15,6 +15,8 @@ import { Brands } from '@/perfect-seo-shared-components/assets/Brands'
 import { renderIcon, renderLogo } from '@/perfect-seo-shared-components/utils/brandUtilities'
 
 import { loadCreditData } from '@/perfect-seo-shared-components/store/thunks'
+import { usePathname } from 'next/navigation'
+import { RootState } from '@/perfect-seo-shared-components/lib/store'
 
 export interface HeaderProps {
   links?: Links[],
@@ -22,16 +24,17 @@ export interface HeaderProps {
   menuHeader?: any,
   hasLogin?: boolean;
   getCredits?: boolean;
-  brand: Brand;
 }
-const Header = ({ links, menuHeader, current, hasLogin, getCredits, brand }: HeaderProps) => {
-  const { isLoggedIn, user, isAdmin, points } = useSelector((state: StateTree) => state);
+const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProps) => {
+  const { isLoggedIn, user, isAdmin, points } = useSelector((state: RootState) => state);
   const [open, setOpen] = useState(true)
   const router = useRouter()
   const dispatch = useDispatch()
   const { phone } = useViewport()
   const [currentPage, setCurrentPage] = useState('')
+  const pathname = usePathname()
 
+  const brand = Brands.find((brand) => brand.title === current)
   useEffect(() => {
     if (user && getCredits) {
       dispatch(loadCreditData(user?.email) as any); // Add 'as any' to cast the action to 'UnknownAction'
@@ -45,22 +48,18 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits, brand }: Hea
       setOpen(false)
       setCurrentPage(url)
     }
-    updateRoute(router.pathname)
-    router.events.on('routeChangeComplete', updateRoute)
-    return () => {
-      router.events.off('routeChangeComplete', updateRoute)
-    }
-  }, [])
+    updateRoute(pathname)
+  }, [pathname])
 
   const signOutHandler = (e) => {
     e.preventDefault()
     logout()
       .then(res => {
         if (res.error) {
-
+          console.log(res.error)
         }
         else {
-          dispatch(reduxReset())
+          dispatch(reset())
           router.push('/')
         }
       })
@@ -115,23 +114,24 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits, brand }: Hea
                 <DropdownMenu.Content align="end" sideOffset={25} className='bg-dark card z-100'>
                   <div className={styles.menu}>
                     <div>
-                      {hasLogin && <div className='card-header'>
-                        <div className='row justify-content-between'>
+                      {hasLogin && <div className='card-header bg-secondary text-white'>
+                        <div className='row justify-content-between d-flex'>
 
                           {isLoggedIn ? <>
-                            <div className='col-auto'>
+                            <div className='col-12 text-white'>
                               <strong className='me-2 text-primary'>Logged in as</strong>
                               {user?.email}</div>
-                            <div className='col-auto'><a onClick={signOutHandler}>Sign Out</a>
-                            </div>
-                            {points && <div className='col-12 d-flex justify-content-start'><strong className='me-2 text-primary'>Credits</strong> {points.toLocaleString()}</div>}</>
+
+                            {points ? <div className='col-12 d-flex justify-content-start'><strong className='me-2 text-primary'>Credits</strong> {points.toLocaleString()}</div> : null}
+                            <div className='col-12'><a onClick={signOutHandler}>Sign Out</a>
+                            </div></>
                             :
 
                             <button className="btn btn-google" onClick={loginWithGoogle}><img src="/images/google-icon.png" /> Login</button>
 
                           }
                         </div>
-                        {menuHeader}
+                        {menuHeader ? menuHeader : null}
                       </div>}
                       <div className='row g-2 justify-content-end p-3'>
                         {dynamicLinks?.length > 0 && <>
@@ -142,18 +142,18 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits, brand }: Hea
                             let href = typeof link.href === 'function' ? link.href(user) : link.href
                             return (
                               <div className='col-12' key={link.href}>
-                                <Link href={href} className={currentPage?.includes(href) ? 'text-white' : ''}>{link.label}</Link>
+                                <Link href={href} className={currentPage?.includes(href) ? 'text-white' : 'text-primary'}>{link.label}</Link>
                               </div>
                             )
                           })}
                         </>}
                         {isAdmin && <>
-                          {brand.developmentUrl && <div className='col-12'>
-                            <Link target='_blank'
+                          {brand?.developmentUrl && <div className='col-12'>
+                            <Link target='_blank' className='text-primary'
                               href={brand.developmentUrl}>View Development Env</Link>
                           </div>}
-                          {brand.stagingUrl && <div className='col-12'>
-                            <Link href={brand.stagingUrl} target='_blank'>View Staging Env</Link>
+                          {brand?.stagingUrl && <div className='col-12'>
+                            <Link href={brand?.stagingUrl} target='_blank' className='text-primary'>View Staging Env</Link>
                           </div>}
                         </>}
                       </div>

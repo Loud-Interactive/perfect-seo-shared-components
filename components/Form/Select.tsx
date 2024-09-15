@@ -78,7 +78,7 @@ export const Select = ({
     [`${inputClass}_withSelection`]: (selectedValue !== 'default' && selectedValue),
     [`${inputClass}_withIcon`]: !!icon,
     [`${inputClass}_withError`]: hasErrors,
-    [className]: className,
+    [`${className}`]: className,
   });
 
   const ariaProps = {

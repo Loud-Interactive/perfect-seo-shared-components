@@ -5,10 +5,10 @@ interface FormSuccessProps {
 }
 
 const FormSuccess = ({ children }: FormSuccessProps) => {
-  const containerRef = useRef(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    containerRef.current.focus();
+    containerRef.current!.focus();
   }, []);
 
   return (

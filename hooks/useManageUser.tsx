@@ -1,52 +1,69 @@
-import { StateTree } from "@/perfect-seo-shared-components/store/reducer";
+import { RootState } from '@/perfect-seo-shared-components/lib/store'
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from 'react'
-import { reduxReset, setAdmin, setLoading, setLoggedIn, setUser } from '@/perfect-seo-shared-components/store/actions'
-import { createClient } from '@/perfect-seo-shared-components/utils/supabase/components'
+import { reset, setAdmin, setLoading, setLoggedIn, setUser } from '@/perfect-seo-shared-components/lib/features/User'
+import { createClient } from '@/perfect-seo-shared-components/utils/supabase/client'
 
 const useManageUser = (appKey) => {
-  const { isLoggedIn, user, isAdmin, isLoading } = useSelector((state: StateTree) => state);
-  const [userData, setUserData] = useState(null)
+  const { user, isLoading } = useSelector((state: RootState) => state);
+  const [userData, setUserData] = useState<any>(null)
 
   const dispatch = useDispatch();
   const supabase = createClient()
 
-  useEffect(() => {
-    if (user) {
-      supabase
-        .from('profiles')
-        .select("*")
-        .eq('id', user.id)
-        .select()
-        .then(res => {
-          dispatch(setLoading(false))
-          if (res.data[0]) {
-            setUserData(res.data[0])
+  const updateUser = (user) => {
+    supabase
+      .from('profiles')
+      .select("*")
+      .eq('id', user.id)
+      .select()
+      .then(res => {
+        dispatch(setLoading(false))
+
+        if (res?.data && res?.data?.length > 0) {
+          if (res?.data[0]) {
+
+            setUserData({ ...user, ...res.data[0] })
             dispatch(setAdmin(res.data[0]?.admin))
           }
-        })
-    }
-    else {
-      dispatch(setLoading(false))
-    }
-  }, [user])
+        }
+      })
+  }
+
+
 
   useEffect(() => {
     if (userData) {
+      if (!userData.email) {
+        userData.email = user.email
+      }
+      if (!userData.full_name) {
+        userData.full_name = userData?.user_matadata?.full_name
+      }
+      let domains;
+      if (!userData.domains) {
+        domains = [userData?.email?.split("@")[1]]
+        if (userData?.user_metadata?.custom_claims) {
+          let customClaims = Object.keys(userData?.user_metadata.custom_claims).reduce((prev, curr) => {
+            if (userData?.user_metadata?.custom_claims[curr] !== domains[0]) {
+              return [...prev, userData?.user_metadata?.custom_claims[curr]]
+            }
+            else return prev
+          }, [])
+          domains = [...domains, ...customClaims]
+        }
 
-      let domains = [userData?.email?.split("@")[1]]
-      if (userData?.user_metadata?.custom_claims) {
-        let customClaims = Object.keys(userData?.user_metadata.custom_claims).reduce((prev, curr) => {
-          if (userData?.user_metadata?.custom_claims[curr] !== domains[0]) {
-            return [...prev, userData?.user_metadata?.custom_claims[curr]]
-          }
-          else return prev
-        }, [])
-        domains = [...domains, ...customClaims]
+      }
+      else {
+        domains = userData.domains
       }
 
-      let products = userData.products;
-      let key = appKey;
+
+
+      domains = domains.filter(obj => obj !== 'google' && obj !== "gmail")
+
+      let products = userData.products
+      let key = appKey.replace(".ai", "");
       if (products) {
         if (products[key]) {
           console.log('product exists')
@@ -55,15 +72,22 @@ const useManageUser = (appKey) => {
         else {
           console.log('product does not exist')
           products = { ...products, [key]: new Date().toISOString() }
+
         }
       }
-      let profileObj: any = { meta_data: user, email: user.email, domains: domains, products: products };
-      console.log(products)
+
+      let profileObj: any = { meta_data: userData, email: userData.email, domains: domains, products: products };
+      profileObj.updated_at = new Date().toISOString()
+      dispatch(setUser({ ...userData, domains: domains }))
+      console.log(profileObj)
       supabase
         .from('profiles')
         .update(profileObj)
-        .eq('id', user.id)
-        .select()
+        .eq('id', userData.id)
+        .select("*")
+        .then(res => {
+        })
+
     }
   }, [userData])
 
@@ -75,10 +99,10 @@ const useManageUser = (appKey) => {
             dispatch(setLoading(false))
           }
           else if (res.error !== null) {
-            dispatch(reduxReset())
+            dispatch(reset())
           } else {
             dispatch(setLoggedIn(true))
-            return dispatch(setUser(res.data.user))
+            return updateUser(res.data.user)
           }
         })
     }

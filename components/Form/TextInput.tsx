@@ -51,7 +51,7 @@ const TextInput = ({
     [`${inputClass}_readOnly`]: props.readOnly || props.disabled,
     [`${inputClass}_bottomSpacing`]: bottomSpacing,
     [`${inputClass}_button`]: props.button,
-    [className]: className,
+    [`${className}`]: className,
   });
 
   const ariaProps = {

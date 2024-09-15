@@ -94,17 +94,17 @@ export const Overlay = (
   }, [open]);
 
   const contentClasses = classNames('modal-content', {
-    [className]: className,
-    [componentClassNames?.modal]: componentClassNames?.modal,
+    [`${className}`]: className,
+    [`${componentClassNames?.modal}`]: componentClassNames?.modal,
     transparent: transparent,
     'closing': closing && animateClose,
     'animate': animateClose || custom,
-    [theme.toString()]: true,
+    [`${theme?.toString()}`]: true,
   });
 
   const overlayClasses = classNames('modal-overlay', {
-    [componentClassNames?.overlay]: componentClassNames?.overlay,
-    [mobileAlignment]: mobileAlignment,
+    [`${componentClassNames?.overlay}`]: componentClassNames?.overlay,
+    [`${mobileAlignment}`]: mobileAlignment,
   });
 
   const openChange = (bool) => {
@@ -157,7 +157,7 @@ interface ModalTitleProps {
 
 export const Title = ({ children, className, title }: ModalTitleProps) => {
   const modalTitleClasses = classNames('modal-heading', {
-    [className]: className,
+    [`${className}`]: className,
   });
 
   return (
@@ -170,7 +170,7 @@ export const Title = ({ children, className, title }: ModalTitleProps) => {
 
 export const Description = ({ children, className }: ModalChildProps) => {
   const modalDescriptionClasses = classNames('modal-description', {
-    [className]: className,
+    [`${className}`]: className,
   });
 
   return (
@@ -187,7 +187,7 @@ interface ModalHeadingProps {
 
 export const Footer = ({ children, className }: ModalChildProps) => {
   const modalFooterClasses = classNames('modal-footer', {
-    [className]: className,
+    [`${className}`]: className,
   });
 
   return (
@@ -197,7 +197,7 @@ export const Footer = ({ children, className }: ModalChildProps) => {
 
 export const Icon = ({ children, className }: ModalChildProps) => {
   const modalIconClasses = classNames('icon', {
-    [className]: className,
+    [`${className}`]: className,
   });
 
   return (
@@ -207,7 +207,7 @@ export const Icon = ({ children, className }: ModalChildProps) => {
 
 export const ButtonBar = ({ children, className }: ModalChildProps) => {
   const modalIconClasses = classNames('modal-button-bar', {
-    [className]: className,
+    [`${className}`]: className,
   });
 
   return (
@@ -217,7 +217,7 @@ export const ButtonBar = ({ children, className }: ModalChildProps) => {
 
 export const ButtonBarGroup = ({ children, className }: ModalChildProps) => {
   const modalIconClasses = classNames('modal-button-group', {
-    [className]: className,
+    [`${className}`]: className,
   });
 
   return (

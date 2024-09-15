@@ -12,7 +12,7 @@ const Footer = ({ current }) => {
       <div className="container">
         <div className="row">
           <div className="col-md-12 text-center">
-            <p><a href="/terms-and-conditions" target="_blank">Terms &amp; Conditions</a></p>
+            {/* <p><a href="/terms-and-conditions" target="_blank">Terms &amp; Conditions</a></p> */}
             <p><a href="mailto:sales@contentperfect.ai">sales@contentperfect.ai</a></p>
             <p>
               <a href="https://perfectSEO.ai/" className={styles.logoLink}>

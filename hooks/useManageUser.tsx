@@ -67,16 +67,19 @@ const useManageUser = (appKey) => {
       if (products) {
         if (products[key]) {
           products[key] = new Date().toISOString()
+          console.log(products[key])
         }
         else {
           products = { ...products, [key]: new Date().toISOString() }
+
         }
       }
-
+      console.log(products)
 
       let profileObj: any = { meta_data: userData, email: userData.email, domains: domains, products: products };
       profileObj.updated_at = new Date().toISOString()
       dispatch(setUser({ ...userData, domains: domains }))
+      console.log(profileObj)
       supabase
         .from('profiles')
         .update(profileObj)

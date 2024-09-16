@@ -178,7 +178,7 @@ export const getBatchStatus = (guids: string[]) => {
 };
 export const getPostsByDomain = (domain: string) => {
   return axios.get(
-    `https://content-status.replit.app/content/domain/all/${domain}`,
+    `https://content-status.replit.app/content/domain/${domain}`,
   );
 };
 

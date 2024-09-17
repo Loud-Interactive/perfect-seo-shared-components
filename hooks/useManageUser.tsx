@@ -62,11 +62,7 @@ const useManageUser = (appKey) => {
   const fetchAllDomains = async () => {
     const { data } = await axios.get('https://www.googleapis.com/webmasters/v3/sites', { headers: { Authorization: `Bearer ${token}` } })
 
-    return data.siteEntry.map(obj => {
-      let domain = obj.siteUrl.split(":")[1]
-      checkDomain(domain)
-      return domain
-    })
+    return data.siteEntry
   }
 
   useEffect(() => {
@@ -78,7 +74,9 @@ const useManageUser = (appKey) => {
         if (!userData.full_name) {
           userData.full_name = userData?.user_matadata?.full_name
         }
-        let domains = await fetchAllDomains()
+        let domain_access = await fetchAllDomains()
+        let domains = await fetchAllDomains();
+        domains = domains.map(obj => obj.siteUrl)
         if (!userData.domains) {
           domains = [...domains, userData?.email?.split("@")[1]]
           if (userData?.user_metadata?.custom_claims) {
@@ -115,7 +113,7 @@ const useManageUser = (appKey) => {
           }
         }
 
-        let profileObj: any = { meta_data: userData, email: userData.email, domains: domains, products: products };
+        let profileObj: any = { meta_data: userData, email: userData.email, domains: domains, domain_access: domain_access, products: products };
         profileObj.updated_at = new Date().toISOString()
         dispatch(setUser(userData))
         supabase

@@ -96,7 +96,12 @@ const useManageUser = (appKey) => {
           domains = [...domains, ...userData.domains]
         }
 
-        domains = domains.filter(obj => obj !== 'google' && obj !== "gmail")
+        domains = domains.filter(obj => obj !== 'google' && obj !== "gmail").reduce((prev, curr) => {
+          if (prev.includes(curr)) return prev
+          else {
+            return [...prev, curr]
+          }
+        }, [])
 
         let products = userData.products
         let key = appKey.replace(".ai", "");

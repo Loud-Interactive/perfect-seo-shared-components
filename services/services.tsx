@@ -210,6 +210,16 @@ export const getDashboard = (guid: string) => {
   return axios.get(`https://pageperfectapi.replit.app/dashboard/${guid}`);
 }
 
+export const updateLiveUrl = (guid, url) => {
+  return axios.put(`https://content-status.replit.app/content/posts/${guid}/live-post-url`, url);
+}
+export const updateHTML = (guid, html) => {
+  return axios.put(`https://content-status.replit.app/content/posts/${guid}/html`, html);
+}
+export const updateGoogleDoc = (guid, url) => {
+  return axios.put(`https://content-status.replit.app/content/posts/${guid}/google-doc`, url);
+}
+
 // factcheckPerfect apis 
 export const getFactCheckStatus = (guid: string) => {
   return axios.get(`https://factcheckapi.replit.app/status/${guid}`);
@@ -218,3 +228,4 @@ export const getFactCheckStatus = (guid: string) => {
 export const postFactCheck = (reqObj: Request.FactCheckRequest) => {
   return axios.post(`https://factcheckapi.replit.app/fact_check_html`, reqObj, { headers: { "Content-Type": "multipart/form-data; boundary=----WebKitFormBoundary4BlampJWNu9F0sga" } });
 }
+

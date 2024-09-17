@@ -35,7 +35,7 @@ export const Brands: Array<Brand> = [
     logo: '/svg/imagePerfect.svg',
     icon: '/svg/imagePerfect-icon.svg',
     status: BrandStatus.COMING_SOON,
-    summary: "Transform your blog into a highly engaging and SEO-optimized platform by generating a comprehensive blog strategy with strategic keywords and link structures.",
+    summary: "Discover the perfect images for your content via imagePerfect.AI. We will scan your page's content and provide you with the best image prompts and even provide you with the AI-generated images.",
     primary: "#EF476F",
   },
   {

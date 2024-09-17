@@ -9,7 +9,13 @@ import Loader from '../../../components/Templates/Loader/Loader'
 import Link from 'next/link'
 import TypeWriterText from '@/perfect-seo-shared-components/components/TypeWriterText/TypeWriterText'
 
-const PostsList = ({ domain_name, active }) => {
+export interface PostsListProps {
+  domain_name: string;
+  active: boolean;
+  startDate?: string;
+  endDate?: string;
+}
+const PostsList = ({ domain_name, active, startDate, endDate }: PostsListProps) => {
   const [loading, setLoading] = useState(true)
   const [data, setData] = useState<any[]>()
   const { desktop } = useViewport()
@@ -98,14 +104,27 @@ const PostsList = ({ domain_name, active }) => {
       })
   }
 
+
   const filteredData = useMemo(() => {
+    let newData;
     if (!data) {
       return null
     }
-    if (filter === 'all') return data
-    else if (filter === 'completed') return data.filter((post) => post.status === 'Complete')
-    else if (filter === 'other') return data.filter((post) => post.status !== 'Complete')
-  }, [data, filter])
+    if (filter === 'all') {
+      newData = data
+    }
+    else if (filter === 'completed') {
+      newData = data.filter((post) => post.status === 'Finished')
+    }
+    else if (filter === 'other') {
+      newData = data.filter((post) => post.status !== 'Finished')
+    }
+    if (startDate) {
+      newData = newData.filter(obj => {
+        return moment(obj.created_at).isBetween(moment(startDate).startOf('day'), moment(endDate || startDate).endOf('day'))
+      })
+    }
+  }, [data, filter, startDate, endDate])
 
   useEffect(() => {
     let interval;

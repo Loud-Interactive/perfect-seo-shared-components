@@ -9,8 +9,13 @@ import useViewport from '@/perfect-seo-shared-components/hooks/useViewport'
 import Loader from '../../../components/Templates/Loader/Loader'
 import TypeWriterText from '@/perfect-seo-shared-components/components/TypeWriterText/TypeWriterText'
 
-
-const PlansList = ({ domain_name, active }) => {
+export interface PlanListProps {
+  domain_name: string;
+  active: boolean;
+  startDate?: string;
+  endDate?: string;
+}
+const PlansList = ({ domain_name, active, startDate, endDate }: PlanListProps) => {
   const [loading, setLoading] = useState(true)
   const [data, setData] = useState<any[]>()
   const { tablet, phone } = useViewport()
@@ -21,7 +26,10 @@ const PlansList = ({ domain_name, active }) => {
   const fetchPlans = () => {
     getPreviousPlans(domain_name)
       .then(res => {
-        setData(res.data.filter(obj => obj.status && obj.target_keyword))
+        let newData = res.data.filter(obj => {
+          return obj.status && obj.target_keyword
+        })
+        setData(newData)
         setLoading(false)
       })
   }
@@ -70,13 +78,25 @@ const PlansList = ({ domain_name, active }) => {
   }
 
   const filteredData = useMemo(() => {
+    let newData;
     if (!data) {
       return null
     }
-    if (filter === 'all') return data
-    else if (filter === 'completed') return data.filter((post) => post.status === 'Finished')
-    else if (filter === 'other') return data.filter((post) => post.status !== 'Finished')
-  }, [data, filter])
+    if (filter === 'all') {
+      newData = data
+    }
+    else if (filter === 'completed') {
+      newData = data.filter((post) => post.status === 'Finished')
+    }
+    else if (filter === 'other') {
+      newData = data.filter((post) => post.status !== 'Finished')
+    }
+    if (startDate) {
+      newData = newData.filter(obj => {
+        return moment(obj.timestamp).isBetween(moment(startDate).startOf('day'), moment(endDate || startDate).endOf('day'))
+      })
+    }
+  }, [data, filter, startDate, endDate])
 
   const handleFilterChange = (e) => {
     setFilter(e.target.value)

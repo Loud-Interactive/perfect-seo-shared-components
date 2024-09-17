@@ -9,12 +9,17 @@ import { useSearchParams } from 'next/navigation';
 import { useSelector } from 'react-redux'
 import { RootState } from '@/perfect-seo-shared-components/lib/store'
 import SearchSelect from '@/perfect-seo-shared-components/components/SearchSelect/SearchSelect'
-
-const MyContent = ({ currentDomain }) => {
+export interface MyContentProps {
+  currentDomain: string;
+  startDate?: string;
+  endDate?: string;
+  hideTitle?: boolean;
+}
+const MyContent = ({ currentDomain, startDate, endDate, hideTitle }: MyContentProps) => {
   const { user } = useSelector((state: RootState) => state);
   const [selectedTab, setSelectedTab] = useState('posts')
   const searchParams = useSearchParams();
-  const queryParam = searchParams.get('tab');
+  const queryParam = searchParams.get('domain');
   const router = useRouter();
   const pathname = usePathname()
   const [domain, setDomain] = useState(currentDomain || user?.domains[0])
@@ -30,7 +35,7 @@ const MyContent = ({ currentDomain }) => {
 
   const clickHandler = (e, val) => {
     e.preventDefault()
-    router.replace(pathname + '?' + createQueryString('tab', val))
+    router.replace(pathname + '?' + createQueryString('domain', val))
   }
 
   useEffect(() => {
@@ -39,9 +44,6 @@ const MyContent = ({ currentDomain }) => {
     }
   }, [queryParam])
 
-  useEffect(() => {
-    console.log(user?.domains)
-  }, [user])
   const TabData = [
     { key: "posts", title: "Generated Posts" },
     { key: "content-plan", title: "Content Plans" },
@@ -62,18 +64,18 @@ const MyContent = ({ currentDomain }) => {
   }, [user?.domains])
   return (
     <div className='container-xl content-fluid'>
-      <div className='row d-flex justify-content-between'>
+      {!hideTitle && <div className='row d-flex justify-content-between'>
         <div className='col'>
           <h1 className="text-3xl font-bold text-start mb-5"><TypeWriterText string={`Content for ${domain}`} withBlink /></h1>
         </div>
-        {user?.domains?.length > 1 && <div className='col-12 col-md-4'>
+        {(!currentDomain && user?.domains?.length > 1) && <div className='col-12 col-md-4'>
           <SearchSelect
             onChange={searchUserChangeHandler}
             options={domainsList}
             placeholder="Search Domain..."
           />
         </div>}
-      </div>
+      </div>}
       <div className={styles.tabWrap}>
         <ul className="nav nav-tabs mb-0">
           {TabData.map((tab) => {
@@ -91,12 +93,12 @@ const MyContent = ({ currentDomain }) => {
         <div className="tab-content bg-dark mb-3" id="myTabContent">
           <div className={`tab-pane fade ${selectedTab === 'posts' && 'show active'}`} id="posts" role="tabpanel" aria-labelledby="posts-tab">
             <div className='tab p-3'>
-              <PostsList active={selectedTab === 'posts'} domain_name={domain} />
+              <PostsList startDate={startDate} endDate={endDate} active={selectedTab === 'posts'} domain_name={domain} />
             </div>
           </div>
           <div className={`tab-pane fade ${selectedTab === 'content-plan' && 'show active'}`} id="content-plan" role="tabpanel" aria-labelledby="content-plan-tab">
             <div className='tab p-3'>
-              <PlansList active={selectedTab === 'content-plan'} domain_name={domain} />
+              <PlansList startDate={startDate} endDate={endDate} active={selectedTab === 'content-plan'} domain_name={domain} />
             </div>
           </div>
 

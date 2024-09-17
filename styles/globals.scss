@@ -4857,3 +4857,7 @@ a.text-white {
   line-height: 14px;
   font-weight: bolder;
 }
+
+.flip-vertical {
+  transform: scaleY(-1);
+}

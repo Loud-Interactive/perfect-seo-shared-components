@@ -75,6 +75,9 @@ const useManageUser = (appKey) => {
           userData.full_name = userData?.user_matadata?.full_name
         }
         let domain_access = await fetchAllDomains()
+        if (userData?.domainAccess) {
+          domain_access = [...domain_access, ...userData.domainAccess.filter(obj => obj.permissionLevel === "added")]
+        }
         let domains = await fetchAllDomains();
         domains = domains.map(obj => urlSanitization(obj.siteUrl))
         if (!userData.domains) {

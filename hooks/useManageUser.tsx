@@ -76,7 +76,7 @@ const useManageUser = (appKey) => {
         }
         let domain_access = await fetchAllDomains()
         let domains = await fetchAllDomains();
-        domains = domains.map(obj => obj.siteUrl)
+        domains = domains.map(obj => urlSanitization(obj.siteUrl))
         if (!userData.domains) {
           domains = [...domains, userData?.email?.split("@")[1]]
           if (userData?.user_metadata?.custom_claims) {

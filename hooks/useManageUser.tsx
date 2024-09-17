@@ -99,7 +99,7 @@ const useManageUser = (appKey) => {
         domains = domains.filter(obj => obj !== 'google' && obj !== "gmail").reduce((prev, curr) => {
           if (prev.includes(curr)) return prev
           else {
-            return [...prev, curr]
+            return [...prev, urlSanitization(curr)]
           }
         }, [])
 

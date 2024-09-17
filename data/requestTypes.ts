@@ -81,28 +81,28 @@ export interface PromoValidationResponse {
 
 
 export interface DomainResponse {
-  "sitemap_list": Array<Sitemap>,
-  "total_sitemap_urls": number,
-  "total_ahrefs_urls": number,
-  "max_urls": number
+  sitemap_list: Array<Sitemap>,
+  total_sitemap_urls: number,
+  total_ahrefs_urls: number,
+  max_urls: number
 
 }
 
 export interface MetaRequest {
-  first_name: string,
-  last_name: string,
-  email: string,
-  company: string,
-  website: string,
-  budget: number,
-  completed_urls: number,
-  brand: string,
-  voice: string,
-  exclusion: string,
-  completed: boolean,
-  in_process: boolean,
-  guid: string,
-  competitors: string
+
+  optimize_data_guid: string,
+  url: string,
+  meta_description: string,
+  seo_title_tag: string,
+  social_media_title_tag: string,
+  seo_headline: string,
+  social_media_headline: string,
+  clarifying_content_subheadline: string,
+  seo_product_name: string,
+  clarifying_content_blurb: string,
+  selected_keywords: string[],
+  keyword_logic: string
+
 }
 
 

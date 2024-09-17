@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import TypeWriterText from '@/perfect-seo-shared-components/components/TypeWriterText/TypeWriterText'
 import { usePathname, useRouter } from 'next/navigation'
 import PostsList from '@/perfect-seo-shared-components/components/PostsList/PostsList'
-import PlansList from '../PlansList/PlansList'
+import PlansList from '@/perfect-seo-shared-components/components/PlansList/PlansList'
 import { useSearchParams } from 'next/navigation';
 import { useSelector } from 'react-redux'
 import { RootState } from '@/perfect-seo-shared-components/lib/store'

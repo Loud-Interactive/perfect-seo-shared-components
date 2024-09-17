@@ -21,7 +21,6 @@ const useManageUser = (appKey) => {
       .select()
       .then(res => {
         dispatch(setLoading(false))
-
         if (res?.data && res?.data?.length > 0) {
           if (res?.data[0]) {
 
@@ -49,7 +48,6 @@ const useManageUser = (appKey) => {
       .eq('domain', urlSanitization(domain))
       .select()
       .then(res => {
-        console.log(res)
         if (res.data.length === 0) {
           console.log("Domain not found")
           supabase
@@ -58,77 +56,76 @@ const useManageUser = (appKey) => {
               { 'domain': urlSanitization(domain) }
             ])
             .select()
-            .then(res => { console.log(res) })
         }
       })
   }
+  const fetchAllDomains = async () => {
+    const { data } = await axios.get('https://www.googleapis.com/webmasters/v3/sites', { headers: { Authorization: `Bearer ${token}` } })
+
+    return data.siteEntry.map(obj => {
+      let domain = obj.siteUrl.split(":")[1]
+      checkDomain(domain)
+      return domain
+    })
+  }
 
   useEffect(() => {
-    if (userData && token) {
-
-
-      if (!userData.email) {
-        userData.email = user.email
-      }
-      if (!userData.full_name) {
-        userData.full_name = userData?.user_matadata?.full_name
-      }
-      let domains;
-      if (!userData.domains) {
-        domains = [userData?.email?.split("@")[1]]
-        if (userData?.user_metadata?.custom_claims) {
-          let customClaims = Object.keys(userData?.user_metadata.custom_claims).reduce((prev, curr) => {
-            if (userData?.user_metadata?.custom_claims[curr] !== domains[0]) {
-              return [...prev, userData?.user_metadata?.custom_claims[curr]]
-            }
-            else return prev
-          }, [])
-          domains = [...domains, ...customClaims]
+    const fetchData = async () => {
+      if (userData && token) {
+        if (!userData.email) {
+          userData.email = user.email
         }
-
-      }
-      else {
-        domains = userData.domains
-      }
-
-      axios.get('https://www.googleapis.com/webmasters/v3/sites', { headers: { Authorization: `Bearer ${token}` } })
-        .then(res => {
-          if (res.data.siteEntry) {
-
-            domains = [...domains, ...res.data.siteEntry.map(obj => {
-              let domain = obj.siteUrl.split(":")[1]
-              checkDomain(domain)
-              return domain
-            })]
+        if (!userData.full_name) {
+          userData.full_name = userData?.user_matadata?.full_name
+        }
+        let domains = await fetchAllDomains()
+        if (!userData.domains) {
+          domains = [...domains, userData?.email?.split("@")[1]]
+          if (userData?.user_metadata?.custom_claims) {
+            let customClaims = Object.keys(userData?.user_metadata.custom_claims).reduce((prev, curr) => {
+              if (userData?.user_metadata?.custom_claims[curr] !== domains[0]) {
+                return [...prev, userData?.user_metadata?.custom_claims[curr]]
+              }
+              else return prev
+            }, [])
+            domains = [...domains, ...customClaims]
           }
-        })
-        .catch(err => {
-          console.log(err)
-        })
 
-      domains = domains.filter(obj => obj !== 'google' && obj !== "gmail")
-
-      let products = userData.products
-      let key = appKey.replace(".ai", "");
-      if (products) {
-        if (products[key]) {
-          products[key] = new Date().toISOString()
         }
         else {
-          products = { ...products, [key]: new Date().toISOString() }
-
+          domains = [...domains, ...userData.domains]
         }
+
+        domains = domains.filter(obj => obj !== 'google' && obj !== "gmail")
+
+        let products = userData.products
+        let key = appKey.replace(".ai", "");
+        if (products) {
+          if (products[key]) {
+            products[key] = new Date().toISOString()
+          }
+          else {
+            products = { ...products, [key]: new Date().toISOString() }
+
+          }
+        }
+
+        let profileObj: any = { meta_data: userData, email: userData.email, domains: domains, products: products };
+        profileObj.updated_at = new Date().toISOString()
+        dispatch(setUser(userData))
+        supabase
+          .from('profiles')
+          .update(profileObj)
+          .eq('id', userData.id)
+          .select("*")
+          .then(res => {
+            console.log(res);
+          })
+
       }
-
-      let profileObj: any = { meta_data: userData, email: userData.email, domains: domains, products: products };
-      profileObj.updated_at = new Date().toISOString()
-      dispatch(setUser({ ...userData, domains: domains }))
-      supabase
-        .from('profiles')
-        .update(profileObj)
-        .eq('id', userData.id)
-        .select("*")
-
+    };
+    if (userData && token) {
+      fetchData();
     }
   }, [userData, token])
 
@@ -158,6 +155,8 @@ const useManageUser = (appKey) => {
     })
     return () => subscription.unsubscribe()
   }, [])
+
+
 }
 
 export default useManageUser;

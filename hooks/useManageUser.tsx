@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from 'react'
 import { reset, setAdmin, setLoading, setLoggedIn, setUser } from '@/perfect-seo-shared-components/lib/features/User'
 import { createClient } from '@/perfect-seo-shared-components/utils/supabase/client'
-
+import { jwtDecode } from 'jwt-decode';
 const useManageUser = (appKey) => {
   const { user, isLoading } = useSelector((state: RootState) => state);
   const [userData, setUserData] = useState<any>(null)
@@ -32,8 +32,30 @@ const useManageUser = (appKey) => {
 
 
 
+  function getDecodedAccessToken(token: string): any {
+    try {
+      return jwtDecode(token);
+    } catch (Error) {
+      return null;
+    }
+  }
+  useEffect(() => {
+
+
+
+  }, [])
+
+
   useEffect(() => {
     if (userData) {
+      let session;
+      const {
+        data: { subscription },
+      } = supabase.auth.onAuthStateChange((event, _session) => {
+        localStorage.setItem('supabase.auth.token', _session?.access_token)
+        localStorage.setItem('supabase.provider.token', _session?.provider_token)
+        session = _session
+      })
       if (!userData.email) {
         userData.email = user.email
       }
@@ -76,21 +98,21 @@ const useManageUser = (appKey) => {
 
       let profileObj: any = { meta_data: userData, email: userData.email, domains: domains, products: products };
       profileObj.updated_at = new Date().toISOString()
-      dispatch(setUser({ ...userData, domains: domains }))
+      dispatch(setUser({ ...userData, domains: domains, session: session }))
       supabase
         .from('profiles')
         .update(profileObj)
         .eq('id', userData.id)
         .select("*")
-        .then(res => {
-        })
 
     }
+    return () => subscription.unsubscribe()
   }, [userData])
 
   useEffect(() => {
     if (isLoading !== false) {
-      supabase.auth.getUser()
+      let jwt = localStorage.getItem('supabase.auth.token')
+      supabase.auth.getUser(jwt)
         .then((res) => {
           if (res.data.user === null) {
             dispatch(setLoading(false))

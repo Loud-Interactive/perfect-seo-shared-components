@@ -4,10 +4,11 @@ import { useEffect, useState } from 'react'
 import { reset, setAdmin, setLoading, setLoggedIn, setUser } from '@/perfect-seo-shared-components/lib/features/User'
 import { createClient } from '@/perfect-seo-shared-components/utils/supabase/client'
 import { jwtDecode } from 'jwt-decode';
+import axios from 'axios';
 const useManageUser = (appKey) => {
   const { user, isLoading } = useSelector((state: RootState) => state);
   const [userData, setUserData] = useState<any>(null)
-
+  const [token, setToken] = useState(null)
   const dispatch = useDispatch();
   const supabase = createClient()
 
@@ -39,23 +40,30 @@ const useManageUser = (appKey) => {
       return null;
     }
   }
-  useEffect(() => {
 
-
-
-  }, [])
-
-
-  useEffect(() => {
-    if (userData) {
-      let session;
-      const {
-        data: { subscription },
-      } = supabase.auth.onAuthStateChange((event, _session) => {
-        localStorage.setItem('supabase.auth.token', _session?.access_token)
-        localStorage.setItem('supabase.provider.token', _session?.provider_token)
-        session = _session
+  const checkDomain = (domain) => {
+    supabase
+      .from('domains')
+      .select("*")
+      .eq('domain', domain)
+      .select()
+      .then(res => {
+        if (res.data.length === 0) {
+          console.log("Domain not found")
+          supabase
+            .from('domains')
+            .insert([
+              { 'domain': domain }
+            ])
+            .select()
+        }
       })
+  }
+
+  useEffect(() => {
+    if (userData && token) {
+
+
       if (!userData.email) {
         userData.email = user.email
       }
@@ -80,7 +88,20 @@ const useManageUser = (appKey) => {
         domains = userData.domains
       }
 
+      axios.get('https://www.googleapis.com/webmasters/v3/sites', { headers: { Authorization: `Bearer ${token}` } })
+        .then(res => {
+          if (res.data.siteEntry) {
 
+            domains = [...domains, ...res.data.siteEntry.map(obj => {
+              let domain = obj.siteUrl.split(":")[1]
+              checkDomain(domain)
+              return domain
+            })]
+          }
+        })
+        .catch(err => {
+          console.log(err)
+        })
 
       domains = domains.filter(obj => obj !== 'google' && obj !== "gmail")
 
@@ -98,7 +119,7 @@ const useManageUser = (appKey) => {
 
       let profileObj: any = { meta_data: userData, email: userData.email, domains: domains, products: products };
       profileObj.updated_at = new Date().toISOString()
-      dispatch(setUser({ ...userData, domains: domains, session: session }))
+      dispatch(setUser({ ...userData, domains: domains }))
       supabase
         .from('profiles')
         .update(profileObj)
@@ -106,13 +127,11 @@ const useManageUser = (appKey) => {
         .select("*")
 
     }
-    return () => subscription.unsubscribe()
-  }, [userData])
+  }, [userData, token])
 
   useEffect(() => {
     if (isLoading !== false) {
-      let jwt = localStorage.getItem('supabase.auth.token')
-      supabase.auth.getUser(jwt)
+      supabase.auth.getUser()
         .then((res) => {
           if (res.data.user === null) {
             dispatch(setLoading(false))
@@ -125,6 +144,16 @@ const useManageUser = (appKey) => {
           }
         })
     }
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, _session) => {
+      localStorage.setItem('supabase.auth.token', _session?.access_token)
+      localStorage.setItem('supabase.provider.token', _session?.provider_token)
+      if (_session) {
+        setToken(_session?.provider_token)
+      }
+    })
+    return () => subscription.unsubscribe()
   }, [])
 }
 

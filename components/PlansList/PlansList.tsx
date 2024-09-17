@@ -93,9 +93,14 @@ const PlansList = ({ domain_name, active, startDate, endDate }: PlanListProps) =
     }
     if (startDate) {
       newData = newData.filter(obj => {
-        return moment(obj.timestamp).isBetween(moment(startDate).startOf('day'), moment(endDate || startDate).endOf('day'))
+        let startDateInfo = startDate.split('-')
+        let endDateInfo = endDate.split('-')
+        let newStartDate = new Date(moment().set({ year: parseInt(startDateInfo[0]), month: parseInt(startDateInfo[1]), date: parseInt(startDateInfo[2]) }).toISOString())
+        let newEndDate = new Date(moment().set({ year: parseInt(endDateInfo[0]), month: parseInt(endDateInfo[1]), date: parseInt(endDateInfo[2]) }).toISOString())
+        return moment(new Date(obj.timestamp)).isBetween(moment(newStartDate).startOf('day'), moment(newEndDate).endOf('day'))
       })
     }
+    return newData
   }, [data, filter, startDate, endDate])
 
   const handleFilterChange = (e) => {

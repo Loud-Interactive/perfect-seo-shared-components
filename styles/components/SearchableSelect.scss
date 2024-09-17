@@ -1,0 +1,43 @@
+@use 'common' as *;
+
+.react-select {
+  color: white;
+
+  .select {
+    &__control {
+      background-color: $dark;
+    }
+
+    &__menu {
+      background-color: $dark;
+
+      &-list {
+        overflow-x: hidden;
+      }
+    }
+
+    &__option {
+      &--is-focused {
+        background-color: rgba($primary, .5);
+      }
+    }
+
+    &__input {
+      color: white;
+
+      &-container {
+        color: white;
+      }
+    }
+
+    &__multi-value {
+      background-color: $primary;
+
+      &__label {
+        color: white;
+      }
+    }
+  }
+
+
+}

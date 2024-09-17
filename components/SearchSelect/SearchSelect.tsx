@@ -5,7 +5,7 @@ const SearchSelect = ({ defaultValue = '', isDisabled = false, isLoading = false
 
   return (
     <Select
-      className="react-select text-dark"
+      className="react-select"
       classNamePrefix="select"
       isDisabled={isDisabled}
       isLoading={isLoading}

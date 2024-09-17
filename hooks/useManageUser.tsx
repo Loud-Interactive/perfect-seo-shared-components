@@ -66,11 +66,9 @@ const useManageUser = (appKey) => {
       let key = appKey.replace(".ai", "");
       if (products) {
         if (products[key]) {
-          console.log('product exists')
           products[key] = new Date().toISOString()
         }
         else {
-          console.log('product does not exist')
           products = { ...products, [key]: new Date().toISOString() }
 
         }
@@ -79,7 +77,6 @@ const useManageUser = (appKey) => {
       let profileObj: any = { meta_data: userData, email: userData.email, domains: domains, products: products };
       profileObj.updated_at = new Date().toISOString()
       dispatch(setUser({ ...userData, domains: domains }))
-      console.log(profileObj)
       supabase
         .from('profiles')
         .update(profileObj)

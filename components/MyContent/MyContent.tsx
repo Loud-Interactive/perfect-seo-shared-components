@@ -72,6 +72,7 @@ const MyContent = ({ currentDomain, startDate, endDate, hideTitle }: MyContentPr
           <SearchSelect
             onChange={searchUserChangeHandler}
             options={domainsList}
+            value={domain}
             placeholder="Search Domain..."
           />
         </div>}

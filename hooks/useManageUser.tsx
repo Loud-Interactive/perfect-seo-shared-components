@@ -5,6 +5,7 @@ import { reset, setAdmin, setLoading, setLoggedIn, setUser } from '@/perfect-seo
 import { createClient } from '@/perfect-seo-shared-components/utils/supabase/client'
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
+import { urlSanitization } from '../utils/conversion-utilities';
 const useManageUser = (appKey) => {
   const { user, isLoading } = useSelector((state: RootState) => state);
   const [userData, setUserData] = useState<any>(null)
@@ -45,17 +46,19 @@ const useManageUser = (appKey) => {
     supabase
       .from('domains')
       .select("*")
-      .eq('domain', domain)
+      .eq('domain', urlSanitization(domain))
       .select()
       .then(res => {
+        console.log(res)
         if (res.data.length === 0) {
           console.log("Domain not found")
           supabase
             .from('domains')
             .insert([
-              { 'domain': domain }
+              { 'domain': urlSanitization(domain) }
             ])
             .select()
+            .then(res => { console.log(res) })
         }
       })
   }

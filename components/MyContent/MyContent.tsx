@@ -10,7 +10,7 @@ import { useSelector } from 'react-redux'
 import { RootState } from '@/perfect-seo-shared-components/lib/store'
 import SearchSelect from '@/perfect-seo-shared-components/components/SearchSelect/SearchSelect'
 export interface MyContentProps {
-  currentDomain: string;
+  currentDomain?: string;
   startDate?: string;
   endDate?: string;
   hideTitle?: boolean;

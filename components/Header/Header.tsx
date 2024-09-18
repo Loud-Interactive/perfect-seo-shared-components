@@ -46,7 +46,12 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
   useEffect(() => {
     const updateRoute = (url) => {
       setOpen(false)
-      setCurrentPage(url)
+      if (url.includes("?")) {
+        setCurrentPage(url.split("?")[0])
+      }
+      else {
+        setCurrentPage(url)
+      }
     }
     updateRoute(pathname)
   }, [pathname])
@@ -162,7 +167,7 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
                             let href = typeof link.href === 'function' ? link.href(user) : link.href
                             return (
                               <div className='col-12' key={link.href}>
-                                <Link href={href} className={currentPage?.includes(href) ? 'text-white' : 'text-primary'}>{link.label}</Link>
+                                <Link href={href} className={currentPage === href ? 'text-white' : 'text-primary'}>{link.label}</Link>
                               </div>
                             )
                           })}

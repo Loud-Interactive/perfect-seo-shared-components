@@ -17,6 +17,8 @@
     }
 
     &__option {
+      color: white;
+
       &--is-focused {
         background-color: rgba($primary, .5);
       }

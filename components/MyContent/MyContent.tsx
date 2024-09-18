@@ -9,20 +9,23 @@ import { useSearchParams } from 'next/navigation';
 import { useSelector } from 'react-redux'
 import { RootState } from '@/perfect-seo-shared-components/lib/store'
 import SearchSelect from '@/perfect-seo-shared-components/components/SearchSelect/SearchSelect'
+import Loader from '@/components/Templates/Loader/Loader'
 export interface MyContentProps {
   currentDomain?: string;
   startDate?: string;
   endDate?: string;
   hideTitle?: boolean;
 }
-const MyContent = ({ currentDomain, startDate, endDate, hideTitle }: MyContentProps) => {
-  const { user } = useSelector((state: RootState) => state);
+const MyContent = ({ currentDomain, startDate, endDate, hideTitle = false }: MyContentProps) => {
+  const { user, isAdmin, isLoading, isLoggedIn } = useSelector((state: RootState) => state);
   const [selectedTab, setSelectedTab] = useState('posts')
   const searchParams = useSearchParams();
-  const queryParam = searchParams.get('domain');
+  const queryParam = searchParams.get('tab');
   const router = useRouter();
   const pathname = usePathname()
   const [domain, setDomain] = useState(currentDomain || user?.domains[0])
+  const [selected, setSelected] = useState(null)
+
   const createQueryString = useCallback(
     (name: string, value: string) => {
       const params = new URLSearchParams(searchParams.toString())
@@ -35,7 +38,11 @@ const MyContent = ({ currentDomain, startDate, endDate, hideTitle }: MyContentPr
 
   const clickHandler = (e, val) => {
     e.preventDefault()
-    router.replace(pathname + '?' + createQueryString('domain', val))
+    let url = pathname + '?' + createQueryString('tab', val)
+    if (searchParams) {
+      console.log(searchParams)
+    }
+    router.replace(url)
   }
 
   useEffect(() => {
@@ -49,7 +56,8 @@ const MyContent = ({ currentDomain, startDate, endDate, hideTitle }: MyContentPr
     { key: "content-plan", title: "Content Plans" },
   ]
   const searchUserChangeHandler = (e) => {
-    setDomain(e?.value);
+    setDomain(e.value);
+    setSelected(e)
   };
 
   const domainsList = useMemo(() => {
@@ -62,6 +70,31 @@ const MyContent = ({ currentDomain, startDate, endDate, hideTitle }: MyContentPr
     return domains;
 
   }, [user?.domains])
+
+  useEffect(() => {
+    if (user?.domains?.length > 0 && !currentDomain) {
+      setDomain(user?.domains[0])
+      setSelected({ label: user?.domains[0], value: user?.domains[0] })
+    }
+  }, [user?.domains, currentDomain])
+
+  const isAuthorized = useMemo(() => {
+    let bool = false;
+    if (isAdmin) {
+      bool = true
+    } else if (user?.email) {
+      bool = (user?.domains.includes(currentDomain?.toLowerCase()) || user?.email.split('@')[1] === currentDomain || isAdmin)
+    }
+    return bool
+  }, [user, isAdmin, currentDomain])
+  if (isLoading) return <Loader />
+  else if (!isAuthorized) {
+    return (
+      <div className="container strip-padding d-flex align-items-center">
+        <h1 className="text-3xl font-bold text-center mb-3"><TypeWriterText string={isLoggedIn ? 'You are not authorized to view this domains content' : 'Log in to view your content'} withBlink /></h1>
+      </div>
+    )
+  }
   return (
     <div className='container-xl content-fluid'>
       {!hideTitle && <div className='row d-flex justify-content-between'>
@@ -72,6 +105,7 @@ const MyContent = ({ currentDomain, startDate, endDate, hideTitle }: MyContentPr
           <SearchSelect
             onChange={searchUserChangeHandler}
             options={domainsList}
+            value={selected}
             placeholder="Search Domain..."
           />
         </div>}

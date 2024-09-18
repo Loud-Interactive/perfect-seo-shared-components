@@ -3,7 +3,12 @@ import { ContentIncomingProps, ContentRequestFormProps } from "@/perfect-seo-sha
 
 
 export const urlSanitization = (url: string): string => {
-  return url?.replaceAll("https://", "").replaceAll("http://", "").replaceAll("www.", "").replaceAll("/", "").toLowerCase().replaceAll("sc-domain:", "")
+  if (!url) return ""
+  let newUrl = url.replaceAll("https://", "").replaceAll("http://", "").replaceAll("www.", "").replaceAll("//", "")
+  console.log(newUrl)
+  newUrl = newUrl.split("/")[0]
+  console.log(newUrl)
+  return newUrl?.replaceAll("/", "").toLowerCase().replaceAll("sc-domain:", "")
 }
 
 

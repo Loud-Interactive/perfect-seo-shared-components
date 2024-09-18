@@ -20,13 +20,13 @@ interface ListInputProps extends React.HTMLProps<HTMLInputElement> {
 
 const ListInput = ({
   borderless,
-  bottomSpacing,
+  bottomSpacing = true,
   error,
   icon,
   label,
   fieldName,
   required,
-  type,
+  type = 'text',
   validator,
   className,
   hideErrorMessage,
@@ -162,9 +162,5 @@ const ListInput = ({
   );
 };
 
-ListInput.defaultProps = {
-  type: 'text',
-  bottomSpacing: true,
-};
 
 export default ListInput;

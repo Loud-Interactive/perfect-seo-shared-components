@@ -18,7 +18,7 @@ const FormField = ({
   renderChildrenFirst,
   withCheckbox,
   className,
-  bottomSpacing,
+  bottomSpacing = true,
 }: FormFieldProps) => {
   const formFieldClasses = classNames('formField', {
     'formField_withCheckbox': withCheckbox,
@@ -47,6 +47,4 @@ const FormField = ({
 
 export default FormField;
 
-FormField.defaultProps = {
-  bottomSpacing: true,
-};
+

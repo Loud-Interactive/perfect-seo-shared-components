@@ -13,20 +13,22 @@ const useManageUser = (appKey) => {
   const dispatch = useDispatch();
   const supabase = createClient()
 
-  const updateUser = (user) => {
+  const updateUser = (updatedUser) => {
     supabase
       .from('profiles')
       .select("*")
-      .eq('id', user.id)
+      .eq('id', updatedUser.id)
       .select()
       .then(res => {
         dispatch(setLoading(false))
         if (res?.data && res?.data?.length > 0) {
           if (res?.data[0]) {
-
-            setUserData({ ...user, ...res.data[0] })
+            setUserData({ ...res.data[0], ...updatedUser })
             dispatch(setAdmin(res.data[0]?.admin))
           }
+        }
+        else {
+          setUserData(updatedUser)
         }
       })
   }
@@ -49,7 +51,7 @@ const useManageUser = (appKey) => {
       .select()
       .then(res => {
         if (res.data.length === 0) {
-          console.log("Domain not found")
+          console.log(`Domain not found, not adding ${domain}`)
           supabase
             .from('domains')
             .insert([
@@ -62,15 +64,19 @@ const useManageUser = (appKey) => {
   const fetchAllDomains = async () => {
     const { data } = await axios.get('https://www.googleapis.com/webmasters/v3/sites', { headers: { Authorization: `Bearer ${token}` } })
 
-    return data.siteEntry
+    return data.siteEntry.map(obj => {
+      return ({
+        type: obj.siteUrl.split(":")[0],
+        siteUrl: urlSanitization(obj.siteUrl.split(":")[1]),
+        permissionLevel: obj.permissionLevel,
+        originalUrl: obj.siteUrl.split(":")[1]
+      })
+    })
   }
 
   useEffect(() => {
     const fetchData = async () => {
       if (userData && token) {
-        if (!userData.email) {
-          userData.email = user.email
-        }
         if (!userData.full_name) {
           userData.full_name = userData?.user_matadata?.full_name
         }
@@ -94,7 +100,7 @@ const useManageUser = (appKey) => {
 
         }
         else {
-          domains = [...domains, ...userData.domains]
+          domains = [...domains, ...userData.domains.map(obj => urlSanitization(obj))]
         }
 
         domains = domains.filter(obj => obj !== 'google' && obj !== "gmail").reduce((prev, curr) => {
@@ -115,6 +121,8 @@ const useManageUser = (appKey) => {
 
           }
         }
+        domains = domains.sort((a, b) => a.localeCompare(b))
+        domain_access = domain_access.sort((a, b) => a.siteUrl.localeCompare(b.siteUrl))
 
         let profileObj: any = { meta_data: userData, email: userData.email, domains: domains, domain_access: domain_access, products: products };
         profileObj.updated_at = new Date().toISOString()
@@ -124,6 +132,9 @@ const useManageUser = (appKey) => {
           .update(profileObj)
           .eq('id', userData.id)
           .select("*")
+          .then(res => {
+
+          })
 
       }
     };

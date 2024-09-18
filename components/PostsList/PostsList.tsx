@@ -190,9 +190,10 @@ const PostsList = ({ domain_name, active, startDate, endDate }: PostsListProps) 
         </div>
       </div>
       {loading ? <Loader />
-        :
-        <Table rawData={filteredData} isLoading={loading} sortedBy={[{ id: 'created_at', desc: true }]} columnArray={columnArray} />
-      }
+        : filteredData?.length > 0 ?
+          <Table rawData={filteredData} isLoading={loading} sortedBy={[{ id: 'created_at', desc: true }]} columnArray={columnArray} />
+          :
+          <h5><TypeWriterText withBlink string="The are no results for the given parameters" /></h5>}
       <Modal.Overlay open={deleteModal} onClose={() => { setDeleteModal(null) }}>
         <Modal.Title title="Delete Plan" />
         <Modal.Description>

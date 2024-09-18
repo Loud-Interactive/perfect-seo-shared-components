@@ -58,11 +58,10 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
   }
 
   const signOutHandler = (e) => {
-    dispatch(setLoading(true))
     e.preventDefault()
     logout()
       .then(res => {
-        dispatch(setLoading(false))
+        setOpen(false)
         if (res.error) {
           console.log(res.error)
         }

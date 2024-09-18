@@ -25,6 +25,12 @@ const useManageUser = (appKey) => {
             setUserData(res.data[0])
             dispatch(setAdmin(res.data[0]?.admin))
           }
+          else if (user?.email) {
+            setUserData({ email: user.email })
+          }
+        }
+        else {
+          setUserData({ email: user.email })
         }
       })
   }
@@ -79,6 +85,9 @@ const useManageUser = (appKey) => {
       if (userData && token) {
         if (!userData.full_name) {
           userData.full_name = userData?.user_matadata?.full_name
+        }
+        if (!user.email) {
+          user.email = userData.email
         }
         let domain_access = await fetchAllDomains()
         if (userData?.domainAccess) {
@@ -135,9 +144,6 @@ const useManageUser = (appKey) => {
           .update(profileObj)
           .eq('id', userData.id)
           .select("*")
-          .then(res => {
-
-          })
 
       }
     };

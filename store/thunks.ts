@@ -11,8 +11,7 @@ export const loadCreditData = (email: string) => {
 
     }, dispatch)
       .catch(err => {
-        console.log(err)
-        console.log("Check User Credits failed")
+        console.log("Check User Credits failed", err)
 
         createUserCreditAccount(email)
           .then(res1 => {
@@ -28,8 +27,7 @@ export const loadCreditData = (email: string) => {
             }
           }, dispatch)
           .catch(err => {
-            console.log("Create User Credits failed")
-            console.log(err)
+            console.log("Create User Credits failed", err)
           })
       })
 

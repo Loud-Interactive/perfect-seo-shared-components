@@ -30,13 +30,18 @@ const parseQueries = (obj: object) => {
   );
 };
 
+export const generateSynopsis = (domain) => {
+  let newDomain = urlSanitization(domain);
+  return axios.get(`https://synopsisperfectai.replit.app/domain/${newDomain}`)
+}
+
 // synopsisPerfect APIS 
 export const getSynopsisInfo = (domain, regenerate?) => {
   let newDomain = urlSanitization(domain);
   if (regenerate) {
     newDomain += "?regenerate=true";
   }
-  return axios.get(`https://pp-api.replit.app/pairs/${newDomain}`, { headers: { 'Access-Control-Allow-Origin': '*' } });
+  return axios.get(`https://pp-api.replit.app/pairs/${newDomain}`, { headers: { 'Access-Control-Allow-Origin': '*' } })
 };
 
 export const updateImpression = (domain: string, obj: Object) => {

@@ -20,9 +20,10 @@ const TextArea = ({
   error,
   label,
   fieldName,
-  required,
+  required = false,
   validator,
   bottomSpacing,
+  type = "text",
   className,
   ...props
 }: TextAreaInputProps) => {
@@ -77,9 +78,6 @@ const TextArea = ({
   );
 };
 
-TextArea.defaultProps = {
-  type: 'text',
-  required: false,
-};
+
 
 export default TextArea;

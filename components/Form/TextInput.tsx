@@ -20,13 +20,13 @@ interface TextInputProps extends React.HTMLProps<HTMLInputElement> {
 
 const TextInput = ({
   borderless,
-  bottomSpacing,
+  bottomSpacing = true,
   error,
   icon,
   label,
   fieldName,
   required,
-  type,
+  type = 'text',
   validator,
   className,
   hideErrorMessage,
@@ -102,9 +102,6 @@ const TextInput = ({
   );
 };
 
-TextInput.defaultProps = {
-  type: 'text',
-  bottomSpacing: true,
-};
+
 
 export default TextInput;

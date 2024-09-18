@@ -6,6 +6,7 @@ import { createClient } from '@/perfect-seo-shared-components/utils/supabase/cli
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 import { urlSanitization } from '../utils/conversion-utilities';
+import { original } from '@reduxjs/toolkit';
 const useManageUser = (appKey) => {
   const { user, isLoading } = useSelector((state: RootState) => state);
   const [userData, setUserData] = useState<any>(null)
@@ -62,7 +63,14 @@ const useManageUser = (appKey) => {
   const fetchAllDomains = async () => {
     const { data } = await axios.get('https://www.googleapis.com/webmasters/v3/sites', { headers: { Authorization: `Bearer ${token}` } })
 
-    return data.siteEntry
+    return data.siteEntry.map(obj => {
+      return ({
+        type: obj.siteUrl.split(":")[0],
+        siteUrl: urlSanitization(obj.siteUrl.split(":")[1]),
+        permissionLevel: obj.permissionLevel,
+        originalUrl: obj.siteUrl.split(":")[1]
+      })
+    })
   }
 
   useEffect(() => {

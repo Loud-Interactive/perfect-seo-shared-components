@@ -31,7 +31,6 @@ const useManageUser = (appKey) => {
 
   useEffect(() => {
     if (user) {
-      console.log("user", user)
       updateUser()
     }
   }, [user])
@@ -78,7 +77,6 @@ const useManageUser = (appKey) => {
   useEffect(() => {
     const fetchData = async () => {
       if (userData && token) {
-        console.log("userData", userData)
         if (!userData.full_name) {
           userData.full_name = userData?.user_matadata?.full_name
         }
@@ -125,7 +123,10 @@ const useManageUser = (appKey) => {
         }
         domains = domains.sort((a, b) => a.localeCompare(b))
         domain_access = domain_access.sort((a, b) => a.siteUrl.localeCompare(b.siteUrl))
-
+        domains = domains.filter((domain) => {
+          checkDomain(domain);
+          return domain !== ""
+        })
         let profileObj: any = { email: userData.email, domains: domains, domain_access: domain_access, products: products };
         profileObj.updated_at = new Date().toISOString()
         dispatch(setProfile(profileObj))

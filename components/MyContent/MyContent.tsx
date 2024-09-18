@@ -17,13 +17,13 @@ export interface MyContentProps {
   hideTitle?: boolean;
 }
 const MyContent = ({ currentDomain, startDate, endDate, hideTitle = false }: MyContentProps) => {
-  const { user, isAdmin, isLoading, isLoggedIn } = useSelector((state: RootState) => state);
+  const { user, isAdmin, isLoading, isLoggedIn, profile } = useSelector((state: RootState) => state);
   const [selectedTab, setSelectedTab] = useState('posts')
   const searchParams = useSearchParams();
   const queryParam = searchParams.get('tab');
   const router = useRouter();
   const pathname = usePathname()
-  const [domain, setDomain] = useState(currentDomain || user?.domains[0])
+  const [domain, setDomain] = useState(currentDomain || profile?.domains[0])
   const [selected, setSelected] = useState(null)
 
   const createQueryString = useCallback(
@@ -62,28 +62,28 @@ const MyContent = ({ currentDomain, startDate, endDate, hideTitle = false }: MyC
 
   const domainsList = useMemo(() => {
     let domains;
-    if (user?.domains) {
-      domains = [...user?.domains];
+    if (profile?.domains) {
+      domains = [...profile?.domains];
       domains = domains?.sort((a, b) => a.localeCompare(b)).map((domain) => ({ label: domain, value: domain }))
     }
 
     return domains;
 
-  }, [user?.domains])
+  }, [profile?.domains])
 
   useEffect(() => {
-    if (user?.domains?.length > 0 && !currentDomain) {
-      setDomain(user?.domains[0])
-      setSelected({ label: user?.domains[0], value: user?.domains[0] })
+    if (profile?.domains?.length > 0 && !currentDomain) {
+      setDomain(profile?.domains[0])
+      setSelected({ label: profile?.domains[0], value: profile?.domains[0] })
     }
-  }, [user?.domains, currentDomain])
+  }, [profile?.domains, currentDomain])
 
   const isAuthorized = useMemo(() => {
     let bool = false;
     if (isAdmin) {
       bool = true
     } else if (user?.email) {
-      bool = (user?.domains.includes(currentDomain?.toLowerCase()) || user?.email.split('@')[1] === currentDomain || isAdmin)
+      bool = (profile?.domains.includes(currentDomain?.toLowerCase()) || user?.email.split('@')[1] === currentDomain || isAdmin)
     }
     return bool
   }, [user, isAdmin, currentDomain])
@@ -101,7 +101,7 @@ const MyContent = ({ currentDomain, startDate, endDate, hideTitle = false }: MyC
         <div className='col'>
           <h1 className="text-3xl font-bold text-start mb-5"><TypeWriterText string={`Content for ${domain}`} withBlink /></h1>
         </div>
-        {(!currentDomain && user?.domains?.length > 1) && <div className='col-12 col-md-4'>
+        {(!currentDomain && profile?.domains?.length > 1) && <div className='col-12 col-md-4'>
           <SearchSelect
             onChange={searchUserChangeHandler}
             options={domainsList}

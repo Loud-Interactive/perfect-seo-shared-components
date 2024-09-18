@@ -170,7 +170,7 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
                           </div>}
                         </>}
                         {(hasLogin && isLoggedIn) && <div className='col-12'>
-                          <a onClick={signOutHandler}>Sign Out</a>
+                          <a className="text-primary" onClick={signOutHandler}>Sign Out</a>
                         </div>}
                       </div>
                     </div>

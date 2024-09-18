@@ -13,20 +13,22 @@ const useManageUser = (appKey) => {
   const dispatch = useDispatch();
   const supabase = createClient()
 
-  const updateUser = (user) => {
+  const updateUser = (updatedUser) => {
     supabase
       .from('profiles')
       .select("*")
-      .eq('id', user.id)
+      .eq('id', updatedUser.id)
       .select()
       .then(res => {
         dispatch(setLoading(false))
         if (res?.data && res?.data?.length > 0) {
           if (res?.data[0]) {
-
-            setUserData({ ...user, ...res.data[0] })
+            setUserData({ ...res.data[0], ...updatedUser })
             dispatch(setAdmin(res.data[0]?.admin))
           }
+        }
+        else {
+          setUserData(updatedUser)
         }
       })
   }
@@ -49,7 +51,7 @@ const useManageUser = (appKey) => {
       .select()
       .then(res => {
         if (res.data.length === 0) {
-          console.log("Domain not found")
+          console.log(`Domain not found, not adding ${domain}`)
           supabase
             .from('domains')
             .insert([
@@ -75,9 +77,6 @@ const useManageUser = (appKey) => {
   useEffect(() => {
     const fetchData = async () => {
       if (userData && token) {
-        if (!userData.email) {
-          userData.email = user.email
-        }
         if (!userData.full_name) {
           userData.full_name = userData?.user_matadata?.full_name
         }

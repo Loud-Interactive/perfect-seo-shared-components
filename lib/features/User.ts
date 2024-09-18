@@ -10,6 +10,7 @@ export type RootState = {
   isLoggedIn: boolean,
   isAdmin: boolean
   domain?: string;
+  profile: any;
 };
 
 
@@ -19,7 +20,7 @@ const initialState: RootState = {
   isLoading: true,
   isLoggedIn: false,
   isAdmin: false,
-  domain: undefined
+  profile: null
 };
 
 export const UserSlice = createSlice({
@@ -30,7 +31,12 @@ export const UserSlice = createSlice({
       return {
         ...state,
         user: action.payload,
-        domain: action.payload?.email?.split('@')[1]
+      };
+    },
+    setProfile: (state, action: PayloadAction<any>) => {
+      return {
+        ...state,
+        profile: action.payload,
       };
     },
     updatePoints: (state, action: PayloadAction<number>) => {
@@ -71,5 +77,5 @@ export const UserSlice = createSlice({
 });
 // Action creators are generated for each case reducer function
 
-export const { setUser, updatePoints, setLoggedIn, setLoading, setAdmin, setDomain, reset } = UserSlice.actions;
+export const { setUser, setProfile, updatePoints, setLoggedIn, setLoading, setAdmin, setDomain, reset } = UserSlice.actions;
 export default UserSlice.reducer;

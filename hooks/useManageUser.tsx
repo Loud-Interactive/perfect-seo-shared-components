@@ -1,7 +1,7 @@
 import { RootState } from '@/perfect-seo-shared-components/lib/store'
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from 'react'
-import { reset, setAdmin, setLoading, setLoggedIn, setUser } from '@/perfect-seo-shared-components/lib/features/User'
+import { reset, setAdmin, setLoading, setLoggedIn, setProfile, setUser } from '@/perfect-seo-shared-components/lib/features/User'
 import { createClient } from '@/perfect-seo-shared-components/utils/supabase/client'
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
@@ -13,27 +13,28 @@ const useManageUser = (appKey) => {
   const dispatch = useDispatch();
   const supabase = createClient()
 
-  const updateUser = (updatedUser) => {
+  const updateUser = () => {
     supabase
       .from('profiles')
       .select("*")
-      .eq('id', updatedUser.id)
+      .eq('id', user.id)
       .select()
       .then(res => {
-        dispatch(setLoading(false))
         if (res?.data && res?.data?.length > 0) {
           if (res?.data[0]) {
-            setUserData({ ...res.data[0], ...updatedUser })
+            setUserData(res.data[0])
             dispatch(setAdmin(res.data[0]?.admin))
           }
-        }
-        else {
-          setUserData(updatedUser)
         }
       })
   }
 
-
+  useEffect(() => {
+    if (user) {
+      console.log("user", user)
+      updateUser()
+    }
+  }, [user])
 
   function getDecodedAccessToken(token: string): any {
     try {
@@ -77,6 +78,7 @@ const useManageUser = (appKey) => {
   useEffect(() => {
     const fetchData = async () => {
       if (userData && token) {
+        console.log("userData", userData)
         if (!userData.full_name) {
           userData.full_name = userData?.user_matadata?.full_name
         }
@@ -124,9 +126,9 @@ const useManageUser = (appKey) => {
         domains = domains.sort((a, b) => a.localeCompare(b))
         domain_access = domain_access.sort((a, b) => a.siteUrl.localeCompare(b.siteUrl))
 
-        let profileObj: any = { meta_data: userData, email: userData.email, domains: domains, domain_access: domain_access, products: products };
+        let profileObj: any = { ...userData, meta_data: user, email: userData.email, domains: domains, domain_access: domain_access, products: products };
         profileObj.updated_at = new Date().toISOString()
-        dispatch(setUser(userData))
+        dispatch(setProfile(userData))
         supabase
           .from('profiles')
           .update(profileObj)
@@ -154,8 +156,9 @@ const useManageUser = (appKey) => {
             dispatch(reset())
           } else {
             dispatch(setLoggedIn(true))
-            return updateUser(res.data.user)
+            dispatch(setUser(res.data.user))
           }
+          return dispatch(setLoading(false))
         })
     }
     const {

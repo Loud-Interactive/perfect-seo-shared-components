@@ -16,7 +16,7 @@ export interface MyContentProps {
   endDate?: string;
   hideTitle?: boolean;
 }
-const MyContent = ({ currentDomain, startDate, endDate, hideTitle }: MyContentProps) => {
+const MyContent = ({ currentDomain, startDate, endDate, hideTitle = false }: MyContentProps) => {
   const { user, isAdmin, isLoading, isLoggedIn } = useSelector((state: RootState) => state);
   const [selectedTab, setSelectedTab] = useState('posts')
   const searchParams = useSearchParams();

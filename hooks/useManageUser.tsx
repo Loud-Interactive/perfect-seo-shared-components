@@ -122,6 +122,8 @@ const useManageUser = (appKey) => {
 
           }
         }
+        domains = domains.sort((a, b) => a.localeCompare(b))
+        domain_access = domain_access.sort((a, b) => a.siteUrl.localeCompare(b.siteUrl))
 
         let profileObj: any = { meta_data: userData, email: userData.email, domains: domains, domain_access: domain_access, products: products };
         profileObj.updated_at = new Date().toISOString()

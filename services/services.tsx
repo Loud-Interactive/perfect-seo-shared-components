@@ -234,9 +234,3 @@ export const getFactCheckStatus = (guid: string) => {
 export const postFactCheck = (reqObj: Request.FactCheckRequest) => {
   return axios.post(`https://factcheckapi.replit.app/fact_check_html`, reqObj, { headers: { "Content-Type": "multipart/form-data; boundary=----WebKitFormBoundary4BlampJWNu9F0sga" } });
 }
-
-
-export const generateSynopsis = (domain: string) => {
-  console.log(domain)
-  return axios.get(`https://synopsisperfectai.replit.app/domain/${domain}`);
-}

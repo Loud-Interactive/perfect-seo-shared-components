@@ -39,9 +39,6 @@ const MyContent = ({ currentDomain, startDate, endDate, hideTitle = false }: MyC
   const clickHandler = (e, val) => {
     e.preventDefault()
     let url = pathname + '?' + createQueryString('tab', val)
-    if (searchParams) {
-      console.log(searchParams)
-    }
     router.replace(url)
   }
 

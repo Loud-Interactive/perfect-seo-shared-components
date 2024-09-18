@@ -5,9 +5,9 @@ import { ContentIncomingProps, ContentRequestFormProps } from "@/perfect-seo-sha
 export const urlSanitization = (url: string): string => {
   if (!url) return ""
   let newUrl = url.replaceAll("https://", "").replaceAll("http://", "").replaceAll("www.", "").replaceAll("//", "")
-  if (newUrl.includes("/")) {
-    newUrl = newUrl.substring(0, newUrl.indexOf("/"))
-  }
+  console.log(newUrl)
+  newUrl = newUrl.split("/")[0]
+  console.log(newUrl)
   return newUrl?.replaceAll("/", "").toLowerCase().replaceAll("sc-domain:", "")
 }
 

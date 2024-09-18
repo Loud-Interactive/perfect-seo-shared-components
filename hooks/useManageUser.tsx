@@ -132,7 +132,7 @@ const useManageUser = (appKey) => {
           .eq('id', userData.id)
           .select("*")
           .then(res => {
-            console.log(res)
+
           })
 
       }

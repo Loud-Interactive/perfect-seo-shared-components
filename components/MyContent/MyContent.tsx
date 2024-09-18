@@ -20,11 +20,12 @@ const MyContent = ({ currentDomain, startDate, endDate, hideTitle = false }: MyC
   const { user, isAdmin, isLoading, isLoggedIn } = useSelector((state: RootState) => state);
   const [selectedTab, setSelectedTab] = useState('posts')
   const searchParams = useSearchParams();
-  const queryParam = searchParams.get('domain');
+  const queryParam = searchParams.get('tab');
   const router = useRouter();
   const pathname = usePathname()
   const [domain, setDomain] = useState(currentDomain || user?.domains[0])
   const [selected, setSelected] = useState(null)
+
   const createQueryString = useCallback(
     (name: string, value: string) => {
       const params = new URLSearchParams(searchParams.toString())
@@ -37,7 +38,11 @@ const MyContent = ({ currentDomain, startDate, endDate, hideTitle = false }: MyC
 
   const clickHandler = (e, val) => {
     e.preventDefault()
-    router.replace(pathname + '?' + createQueryString('domain', val))
+    let url = pathname + '?' + createQueryString('tab', val)
+    if (searchParams) {
+      console.log(searchParams)
+    }
+    router.replace(url)
   }
 
   useEffect(() => {

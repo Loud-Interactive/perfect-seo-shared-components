@@ -104,7 +104,21 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
             </Link>
           </div>
           <div className={signedInClass}>
+            {(hasLogin && !phone) && <div className='col-auto flex-column pe-3 d-flex align-items-end'>
 
+              {isLoggedIn ? <>
+                <div>
+                  <strong className='me-2 text-primary'>Logged in as</strong>
+                  {user?.email}</div>
+
+                {points ? <div><strong className='text-primary'>Credits</strong> {points.toLocaleString()}</div> : null}
+              </>
+                :
+
+                <button className="btn btn-google" onClick={loginWithGoogle}><img src="/images/google-icon.png" /> Login</button>
+
+              }
+            </div>}
             <DropdownMenu.Root defaultOpen open={open} onOpenChange={openChangeHandler}>
               <DropdownMenu.Trigger className={styles.menuButton}>
                 <i className="bi bi-grid-3x3-gap-fill" />
@@ -114,7 +128,7 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
                 <DropdownMenu.Content align="end" sideOffset={25} className='bg-dark card z-100'>
                   <div className={styles.menu}>
                     <div>
-                      {hasLogin && <div className='card-header bg-secondary text-white'>
+                      {(hasLogin && phone) && <div className='card-header bg-secondary text-white'>
                         <div className='row justify-content-between d-flex'>
 
                           {isLoggedIn ? <>
@@ -123,8 +137,7 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
                               {user?.email}</div>
 
                             {points ? <div className='col-12 d-flex justify-content-start'><strong className='me-2 text-primary'>Credits</strong> {points.toLocaleString()}</div> : null}
-                            <div className='col-12'><a onClick={signOutHandler}>Sign Out</a>
-                            </div></>
+                          </>
                             :
 
                             <button className="btn btn-google" onClick={loginWithGoogle}><img src="/images/google-icon.png" /> Login</button>
@@ -156,6 +169,9 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
                             <Link href={brand?.stagingUrl} target='_blank' className='text-primary'>View Staging Env</Link>
                           </div>}
                         </>}
+                        {(hasLogin && isLoggedIn) && <div className='col-12'>
+                          <a onClick={signOutHandler}>Sign Out</a>
+                        </div>}
                       </div>
                     </div>
                     <div className='card-body d-flex align-items-end'>

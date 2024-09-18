@@ -124,6 +124,9 @@ const useManageUser = (appKey) => {
           .update(profileObj)
           .eq('id', userData.id)
           .select("*")
+          .then(res => {
+            console.log(res)
+          })
 
       }
     };

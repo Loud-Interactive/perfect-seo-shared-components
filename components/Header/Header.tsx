@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import classNames from 'classnames'
 import useViewport from '@/perfect-seo-shared-components/hooks/useViewport'
 import { useDispatch, useSelector } from 'react-redux'
-import { reset } from '@/perfect-seo-shared-components/lib/features/User'
+import { reset, setLoading } from '@/perfect-seo-shared-components/lib/features/User'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { Brand, BrandStatus, Links, LinkType } from '@/perfect-seo-shared-components/data/types'
 import { useEffect, useMemo, useState } from 'react'
@@ -26,7 +26,7 @@ export interface HeaderProps {
   getCredits?: boolean;
 }
 const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProps) => {
-  const { isLoggedIn, user, isAdmin, points } = useSelector((state: RootState) => state);
+  const { isLoggedIn, user, isAdmin, points, isLoading } = useSelector((state: RootState) => state);
   const [open, setOpen] = useState(true)
   const router = useRouter()
   const dispatch = useDispatch()
@@ -51,10 +51,18 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
     updateRoute(pathname)
   }, [pathname])
 
+  const loginWithGoogleHandler = (e) => {
+    e?.preventDefault();
+    dispatch(setLoading(true))
+    loginWithGoogle()
+  }
+
   const signOutHandler = (e) => {
+    dispatch(setLoading(true))
     e.preventDefault()
     logout()
       .then(res => {
+        dispatch(setLoading(false))
         if (res.error) {
           console.log(res.error)
         }
@@ -104,7 +112,7 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
             </Link>
           </div>
           <div className={signedInClass}>
-            {(hasLogin && !phone) && <div className='col-auto flex-column pe-3 d-flex align-items-end'>
+            {(hasLogin && !phone && !isLoading) && <div className='col-auto flex-column pe-3 d-flex align-items-end'>
 
               {isLoggedIn ? <>
                 <div>
@@ -115,7 +123,7 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
               </>
                 :
 
-                <button className="btn btn-google" onClick={loginWithGoogle}><img src="/images/google-icon.png" /> Login</button>
+                <button className="btn btn-google" onClick={loginWithGoogleHandler}><img src="/images/google-icon.png" /> Login</button>
 
               }
             </div>}
@@ -128,7 +136,7 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
                 <DropdownMenu.Content align="end" sideOffset={25} className='bg-dark card z-100'>
                   <div className={styles.menu}>
                     <div>
-                      {(hasLogin && phone) && <div className='card-header bg-secondary text-white'>
+                      {(hasLogin && phone && !isLoading) && <div className='card-header bg-secondary text-white'>
                         <div className='row justify-content-between d-flex'>
 
                           {isLoggedIn ? <>
@@ -140,7 +148,7 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
                           </>
                             :
 
-                            <button className="btn btn-google" onClick={loginWithGoogle}><img src="/images/google-icon.png" /> Login</button>
+                            <button className="btn btn-google" onClick={loginWithGoogleHandler}><img src="/images/google-icon.png" /> Login</button>
 
                           }
                         </div>

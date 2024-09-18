@@ -24,6 +24,7 @@ const MyContent = ({ currentDomain, startDate, endDate, hideTitle = false }: MyC
   const router = useRouter();
   const pathname = usePathname()
   const [domain, setDomain] = useState(currentDomain || user?.domains[0])
+  const [selected, setSelected] = useState(null)
   const createQueryString = useCallback(
     (name: string, value: string) => {
       const params = new URLSearchParams(searchParams.toString())
@@ -50,7 +51,8 @@ const MyContent = ({ currentDomain, startDate, endDate, hideTitle = false }: MyC
     { key: "content-plan", title: "Content Plans" },
   ]
   const searchUserChangeHandler = (e) => {
-    setDomain(e?.value);
+    setDomain(e.value);
+    setSelected(e)
   };
 
   const domainsList = useMemo(() => {
@@ -63,6 +65,13 @@ const MyContent = ({ currentDomain, startDate, endDate, hideTitle = false }: MyC
     return domains;
 
   }, [user?.domains])
+
+  useEffect(() => {
+    if (user?.domains?.length > 0 && !currentDomain) {
+      setDomain(user?.domains[0])
+      setSelected({ label: user?.domains[0], value: user?.domains[0] })
+    }
+  }, [user?.domains, currentDomain])
 
   const isAuthorized = useMemo(() => {
     let bool = false;
@@ -91,7 +100,7 @@ const MyContent = ({ currentDomain, startDate, endDate, hideTitle = false }: MyC
           <SearchSelect
             onChange={searchUserChangeHandler}
             options={domainsList}
-            value={domain}
+            value={selected}
             placeholder="Search Domain..."
           />
         </div>}

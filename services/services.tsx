@@ -88,7 +88,7 @@ export const getContentPlanOutline = (
 };
 
 export const generateContentPlanOutline = (
-  reqObj: Request.GetPostOutlineRequest,
+  reqObj: Request.PostOutlineGenerateRequest,
 ) => {
   return axios.post(`${API_URL}/get_outline`, reqObj);
 };

@@ -239,3 +239,11 @@ export const getFactCheckStatus = (guid: string) => {
 export const postFactCheck = (reqObj: Request.FactCheckRequest) => {
   return axios.post(`https://factcheckapi.replit.app/fact_check_html`, reqObj, { headers: { "Content-Type": "multipart/form-data; boundary=----WebKitFormBoundary4BlampJWNu9F0sga" } });
 }
+
+export const generateVoicePrompts = (domain) => {
+  return axios.get(`https://voice-perfect-api.replit.app/GenerateVoicePrompt?domain=${urlSanitization(domain)}`)
+}
+
+export const saveDetails = (data) => {
+  return axios.post('https://voice-perfect-api.replit.app/SaveUserDetails', data)
+}

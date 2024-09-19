@@ -69,15 +69,17 @@ const useManageUser = (appKey) => {
   }
   const fetchAllDomains = async () => {
     const { data } = await axios.get('https://www.googleapis.com/webmasters/v3/sites', { headers: { Authorization: `Bearer ${token}` } })
-
-    return data.siteEntry.map(obj => {
-      return ({
-        type: obj.siteUrl.split(":")[0],
-        siteUrl: urlSanitization(obj.siteUrl.split(":")[1]),
-        permissionLevel: obj.permissionLevel,
-        originalUrl: obj.siteUrl.split(":")[1]
+    if (data?.siteEntry) {
+      return data.siteEntry.map(obj => {
+        return ({
+          type: obj.siteUrl.split(":")[0],
+          siteUrl: urlSanitization(obj.siteUrl.split(":")[1]),
+          permissionLevel: obj.permissionLevel,
+          originalUrl: obj.siteUrl.split(":")[1]
+        })
       })
-    })
+    }
+    else return []
   }
 
   useEffect(() => {

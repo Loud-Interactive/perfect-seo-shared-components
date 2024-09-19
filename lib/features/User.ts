@@ -70,7 +70,7 @@ export const UserSlice = createSlice({
       };
     },
     reset: () => {
-      return initialState
+      return { ...initialState, isLoading: false }
     }
   }
 

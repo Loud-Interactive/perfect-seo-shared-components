@@ -28,6 +28,9 @@ const useManageUser = (appKey) => {
           else if (user?.email) {
             setUserData({ email: user.email })
           }
+          else {
+            setUserData({})
+          }
         }
         else {
           setUserData({ email: user.email })
@@ -37,6 +40,7 @@ const useManageUser = (appKey) => {
 
   useEffect(() => {
     if (user) {
+      console.log("user", user)
       updateUser()
     }
   }, [user])
@@ -155,21 +159,20 @@ const useManageUser = (appKey) => {
   }, [userData, token])
 
   useEffect(() => {
-    if (isLoading !== false) {
-      supabase.auth.getUser()
-        .then((res) => {
-          if (res.data.user === null) {
-            dispatch(setLoading(false))
-          }
-          else if (res.error !== null) {
-            dispatch(reset())
-          } else {
-            dispatch(setLoggedIn(true))
-            dispatch(setUser(res.data.user))
-          }
-          return dispatch(setLoading(false))
-        })
-    }
+    supabase.auth.getUser()
+      .then((res) => {
+        console.log(res)
+        if (res.data.user === null) {
+          dispatch(setLoading(false))
+        }
+        else if (res.error !== null) {
+          dispatch(reset())
+        } else {
+          dispatch(setLoggedIn(true))
+          dispatch(setUser(res.data.user))
+        }
+        return dispatch(setLoading(false))
+      })
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, _session) => {

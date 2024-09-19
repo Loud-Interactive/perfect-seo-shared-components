@@ -15,16 +15,24 @@ const PostItem = ({ post, key }) => {
   const [urlError, setUrlError] = useState(null)
   const [deleteModal, setDeleteModal] = useState(false)
   const [showUrl, setShowUrl] = useState(false)
-  const liveUrlUpdate = (e) => {
-    if (new RegExp(emailValidator.toString()).test(e.target.value)) {
-      if (localPost?.live_post_url !== e.target.value) {
-        updateLiveUrl(localPost?.content_plan_outline_guid, e.target.value)
-          .then(res => {
-            console.log(res.data)
+  const [saving, setSaving] = useState(false)
+  const liveUrlUpdate = () => {
+    setUrlError(null)
+    if (new RegExp(emailValidator.toString()).test(liveUrl)) {
+      setSaving(true)
+      if (localPost?.live_post_url !== liveUrl) {
+        updateLiveUrl(localPost?.content_plan_outline_guid, liveUrl)
+          .then(() => {
             let newData = { ...localPost }
-            newData.live_post_url = e.target.value;
+            newData.live_post_url = liveUrl;
             setLocalPost(newData)
+            setSaving(false)
           })
+          .catch(err => {
+            console.log("error", err)
+            setSaving(false)
+          }
+          )
 
       }
     }
@@ -56,11 +64,18 @@ const PostItem = ({ post, key }) => {
     setDeleteModal(true)
   }
 
+  const URLSaveButton = () => {
+    return (
+      <button className="btn btn-primary" onClick={liveUrlUpdate} title="Save Live Url" disabled={saving}>{saving ?
+        <div className="spinner-border" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div> : <i className="bi bi-floppy-fill" />}</button>
+    )
+  }
 
   const deleteHandler = () => {
     deleteContentOutline(localPost?.content_plan_outline_guid)
       .then(res => {
-        console.log(res)
         setDeleteModal(false)
       })
       .catch(err => {
@@ -78,7 +93,7 @@ const PostItem = ({ post, key }) => {
             <div className="col-12">
               {showUrl || localPost?.live_post_url ?
                 <><TextInput
-                  bottomSpacing={false} fieldName="live-url" value={liveUrl} onChange={(e) => setLiveUrl(e.target.value)} onBlur={liveUrlUpdate} label="Live Post Url" />
+                  bottomSpacing={false} fieldName="live-url" value={liveUrl} onChange={(e) => setLiveUrl(e.target.value)} label="Live Post Url" button={<URLSaveButton />} />
                   {urlError && <div className="text-danger">{urlError}</div>}
                 </>
                 :

@@ -8,6 +8,7 @@ import useViewport from '@/perfect-seo-shared-components/hooks/useViewport'
 import Loader from '../../../components/Templates/Loader/Loader'
 import Link from 'next/link'
 import TypeWriterText from '@/perfect-seo-shared-components/components/TypeWriterText/TypeWriterText'
+import PostItem from '../PostItem/PostItem'
 
 export interface PostsListProps {
   domain_name: string;
@@ -145,6 +146,9 @@ const PostsList = ({ domain_name, active, startDate, endDate }: PostsListProps) 
   }, [domain_name, active])
 
 
+
+
+
   const columnArray: TableColumnArrayProps[] = useMemo(() => {
     if (desktop) {
 
@@ -191,8 +195,10 @@ const PostsList = ({ domain_name, active, startDate, endDate }: PostsListProps) 
       </div>
       {loading ? <Loader />
         : filteredData?.length > 0 ?
-          <Table rawData={filteredData} isLoading={loading} sortedBy={[{ id: 'created_at', desc: true }]} columnArray={columnArray} />
-          :
+          <div className='row d-flex g-3'>
+            {filteredData.map((obj, i) => {
+              return <PostItem post={obj} key={obj.content_plan_outline_guid} />
+            })}</div> :
           <h5><TypeWriterText withBlink string="The are no results for the given parameters" /></h5>}
       <Modal.Overlay open={deleteModal} onClose={() => { setDeleteModal(null) }}>
         <Modal.Title title="Delete Plan" />

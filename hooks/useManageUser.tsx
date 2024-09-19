@@ -40,9 +40,21 @@ const useManageUser = (appKey) => {
 
   useEffect(() => {
     if (user) {
-      console.log("user", user)
       updateUser()
     }
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, _session) => {
+      localStorage.setItem('supabase.auth.token', _session?.access_token)
+      localStorage.setItem('supabase.provider.token', _session?.provider_token)
+      if (_session?.provider_token) {
+        setToken(_session?.provider_token)
+      }
+      else {
+        console.log("no provider token", event)
+      }
+    })
+    return () => subscription.unsubscribe()
   }, [user])
 
   function getDecodedAccessToken(token: string): any {
@@ -173,16 +185,7 @@ const useManageUser = (appKey) => {
         }
         return dispatch(setLoading(false))
       })
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, _session) => {
-      localStorage.setItem('supabase.auth.token', _session?.access_token)
-      localStorage.setItem('supabase.provider.token', _session?.provider_token)
-      if (_session) {
-        setToken(_session?.provider_token)
-      }
-    })
-    return () => subscription.unsubscribe()
+
   }, [])
 
 

@@ -16,6 +16,7 @@ interface TextInputProps extends React.HTMLProps<HTMLInputElement> {
   autoComplete?: string
   bottomSpacing?: boolean
   button?: any;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const TextInput = ({

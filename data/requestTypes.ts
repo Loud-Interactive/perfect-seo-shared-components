@@ -30,6 +30,15 @@ export interface SaveContentPost {
   }
 }
 
+export interface PostGenerateRequest {
+  guid: string,
+  content_plan_guid: string,
+  post_title: string,
+  client_name: string,
+  client_domain: string,
+
+}
+
 export interface GenerateContentPost {
   email: string,
   keyword?: string,

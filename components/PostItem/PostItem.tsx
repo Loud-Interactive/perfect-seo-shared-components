@@ -66,8 +66,8 @@ const PostItem = ({ post, key }) => {
 
   const URLSaveButton = () => {
     return (
-      <button className="btn btn-primary" onClick={liveUrlUpdate} title="Save Live Url" disabled={saving}>{saving ?
-        <div className="spinner-border" role="status">
+      <button className="btn btn-primary d-flex align-items-center justify-content-center" onClick={liveUrlUpdate} title="Save Live Url" disabled={saving}>{saving ?
+        <div className="spinner-border spinner-border-sm" role="status">
           <span className="visually-hidden">Loading...</span>
         </div> : <i className="bi bi-floppy-fill" />}</button>
     )

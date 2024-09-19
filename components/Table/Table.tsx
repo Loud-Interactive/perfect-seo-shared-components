@@ -60,13 +60,13 @@ const Table = ({ isLoading,
   sortTrack,
   hideColumn,
   className,
-  draggable,
-  footer,
+  draggable = false,
+  footer = false,
   hideHeader,
   id,
   onChange,
   rowClassNames,
-  zeroState,
+  zeroState = false,
   manualSortBy,
   rowOnClick,
   reorder,
@@ -290,11 +290,7 @@ const Table = ({ isLoading,
   );
 };
 
-Table.defaultProps = {
-  footer: false,
-  zeroState: false,
-  draggable: false,
-};
+
 
 export default Table;
 

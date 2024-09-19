@@ -1,5 +1,18 @@
 @use 'common' as *;
 
+
+.bg-primary {
+  .formField:hover {
+    .formField-label {
+      color: $secondary;
+
+      span {
+        color: $secondary;
+      }
+    }
+  }
+}
+
 .formField {
   box-sizing: border-box;
   flex: 1 0 0%;

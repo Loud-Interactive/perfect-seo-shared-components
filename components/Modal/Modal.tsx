@@ -38,14 +38,14 @@ export const Overlay = (
     open,
     className,
     componentClassNames,
-    closeDelay,
+    closeDelay = 500,
     closeIcon,
     noClickout,
     noKeyEscape,
     custom,
     transparent,
-    animateClose,
-    theme,
+    animateClose = true,
+    theme = ModalThemes.NORMAL,
     id,
     mobileAlignment,
     onClick,
@@ -139,11 +139,7 @@ export const Overlay = (
   );
 };
 
-Overlay.defaultProps = {
-  closeDelay: 500,
-  animateClose: true,
-  theme: ModalThemes.NORMAL,
-};
+
 
 interface ModalChildProps {
   children: React.ReactNode,

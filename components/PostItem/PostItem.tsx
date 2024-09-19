@@ -117,7 +117,7 @@ const PostItem = ({ post, key }) => {
         <div className="col-12 col-lg-6">
           <div className='row g-0 d-flex'>
             <div className="col-12 d-flex justify-content-start mb-1">
-              <strong className="text-primary me-2">Created on</strong> {moment(`${localPost?.created_at}Z`).local().format("MMMM Do, 'YY hA")}
+              <strong className="text-primary me-2">Created on</strong> {moment(`${localPost?.created_at}Z`).local().format("dddd, MMMM Do, YYYY h:mma")}
             </div>
             {(post?.google_doc_link && post?.html_link) &&
               <>

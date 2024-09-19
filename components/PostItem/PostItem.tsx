@@ -6,6 +6,7 @@ import moment from "moment-timezone"
 import TypeWriterText from "../TypeWriterText/TypeWriterText"
 import Link from "next/link"
 import * as Modal from '@/perfect-seo-shared-components/components/Modal/Modal'
+import { urlSanitization } from "@/perfect-seo-shared-components/utils/conversion-utilities"
 
 
 const PostItem = ({ post, key }) => {
@@ -16,7 +17,9 @@ const PostItem = ({ post, key }) => {
   const [deleteModal, setDeleteModal] = useState(false)
   const [showUrl, setShowUrl] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [saved, setSaved] = useState(false)
   const liveUrlUpdate = () => {
+    setSaved(false)
     setUrlError(null)
     if (new RegExp(emailValidator.toString()).test(liveUrl)) {
       setSaving(true)
@@ -27,6 +30,7 @@ const PostItem = ({ post, key }) => {
             newData.live_post_url = liveUrl;
             setLocalPost(newData)
             setSaving(false)
+            setSaved(true)
           })
           .catch(err => {
             console.log("error", err)
@@ -65,12 +69,20 @@ const PostItem = ({ post, key }) => {
   }
 
   const URLSaveButton = () => {
-    return (
-      <button className="btn btn-primary d-flex align-items-center justify-content-center" onClick={liveUrlUpdate} title="Save Live Url" disabled={saving}>{saving ?
-        <div className="spinner-border spinner-border-sm" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </div> : <i className="bi bi-floppy-fill" />}</button>
-    )
+    if (liveUrl) {
+      return (
+        <div className="d-flex h-100 align-items-center justify-content-center">
+          <button className="btn btn-transparent d-flex align-items-center justify-content-center" onClick={(e => { setLiveUrl(null) })} title="Clear Live Url"><i className="bi bi-x-circle" /></button>
+          <button className="btn btn-transparent d-flex align-items-center justify-content-center" onClick={liveUrlUpdate} title="Save Live Url" disabled={saving}>
+
+            {saving ?
+              <div className="spinner-border spinner-border-sm" role="status">
+                <span className="visually-hidden">Loading...</span>
+              </div> : saved ? <i className="bi bi-check-circle-fill" /> : <i className="bi bi-floppy-fill" />}</button>
+        </div>
+      )
+    }
+    else return null
   }
 
   const deleteHandler = () => {
@@ -84,72 +96,85 @@ const PostItem = ({ post, key }) => {
   }
   return (
     <div className="card bg-secondary p-3" key={key} title={post?.title}>
-      <div className="row d-flex g-3 align-items-center">
+      <div className="row d-flex g-5 align-items-end">
         <div className="col-12 col-lg-6">
           <div className="row g-3">
             <div className="col-12">
-              {localPost?.title}
+              <strong className="text-primary me-1">Title</strong>  {localPost?.title}
             </div>
             <div className="col-12">
               {showUrl || localPost?.live_post_url ?
                 <><TextInput
-                  bottomSpacing={false} fieldName="live-url" value={liveUrl} onChange={(e) => setLiveUrl(e.target.value)} label="Live Post Url" button={<URLSaveButton />} />
+                  bottomSpacing={false} fieldName="live-url" value={liveUrl} onChange={(e) => { setSaved(false); setLiveUrl(e.target.value) }} label="Live Post Url" button={<URLSaveButton />} />
                   {urlError && <div className="text-danger">{urlError}</div>}
                 </>
                 :
-                <a onClick={(e) => { e.preventDefault(); setShowUrl(true) }} className="text-primary">Add Live Post Url</a>
+                <a onClick={(e) => { e.preventDefault(); setShowUrl(true) }} className="text-primary">Add Live Post URL</a>
               }
             </div>
           </div>
         </div>
         <div className="col-12 col-lg-6">
-          <div className='row g-0 d-flex justify-content-end'>
-            <div className="col-12 d-flex justify-content-end mb-3">
+          <div className='row g-0 d-flex'>
+            <div className="col-12 d-flex justify-content-start mb-1">
               <strong className="text-primary me-2">Created on</strong> {moment(localPost?.created_at).format("MMMM Do, 'YY hA")}
             </div>
             {(post?.google_doc_link && post?.html_link) &&
               <>
-                <div className="col-auto">
+                <div className="col">
                   <a
                     onClick={htmlClickHandler}
 
-                    className="btn btn-primary standard-button"
+                    className="btn btn-primary standard-button d-flex justify-content-center align-items-center"
 
                   >
-                    <i className="bi bi-filetype-html" /> HTML
+                    <i className="bi bi-filetype-html me-2" /> HTML
                   </a>
                 </div>
-                <div className="col-auto pe-0">
+                <div className="col">
                   <a
                     onClick={docClickHandler}
 
-                    className="btn btn-primary standard-button ms-1"
+                    className="btn btn-primary standard-button d-flex justify-content-center align-items-center ms-1"
 
                   >
                     <i className="bi bi-filetype-doc me-2" /> Google Docs
                   </a>
                 </div>
               </>}
+            {localPost?.live_post_url && <>
+              <div className="col">
+                <a
+                  href={`https://app.ahrefs.com/v2-site-explorer/organic-keywords?columns=CPC%7C%7CKD%7C%7CLastUpdated%7C%7COrganicTraffic%7C%7CPaidTraffic%7C%7CPosition%7C%7CPositionHistory%7C%7CSERP%7C%7CSF%7C%7CURL%7C%7CVolume&compareDate=dontCompare&country=us&currentDate=today&keywordRules=&limit=100&mode=prefix&offset=0&positionChanges=&serpFeatures=&sort=Volume&sortDirection=desc&target=${encodeURI(localPost?.live_post_url.replace("https://", '').replace("http://", "").replace("www.", ""))}%2F&urlRules=&volume_type=average`}
+                  target="_blank"
+                  className="btn btn-primary standard-button d-flex justify-content-center align-items-center ms-1"
+
+                >
+                  Ahrefs URL
+                </a>
+              </div>
+              <div className="col">
+                <a
+                  href={`https://search.google.com/search-console/performance/search-analytics?resource_id=sc-domain%3A${urlSanitization(localPost?.live_post_url)}&hl=en&page=*${encodeURI(localPost?.live_post_url)}`}
+                  target="_blank"
+                  className="btn btn-primary standard-button d-flex justify-content-center align-items-center ms-1"
+
+                >
+                  GSC Report
+                </a>
+              </div>
+            </>}
             <>
-              <div className="col-auto text-end px-0">
+              <div className="col">
                 <Link
                   href={`https://contentPerfect.ai/dashboard/${localPost?.content_plan_guid}`}
-                  className="btn btn-primary standard-button ms-1"
+                  className="btn btn-primary standard-button d-flex justify-content-center align-items-center ms-1"
                 >
                   View Content Plan
                 </Link>
               </div>
-              {localPost?.live_post_url && <div className="col-auto text-end px-0">
-                <Link
-                  href={localPost?.live_post_url}
-                  className="btn btn-primary standard-button ms-1"
-                  target="_blank"
-                >
-                  View Live Post
-                </Link>
-              </div>}
               <div className='col-auto'>
-                <button className='btn btn-warning d-flex align-items-center justify-content-center ms-1 standard-button' onClick={deleteClickHandler} title={`View GUID: ${localPost?.guid}`}><i className="bi bi-trash pt-1" /></button>
+                <button className='btn btn-warning ms-1 standard-button d-flex justify-content-center align-items-center' onClick={deleteClickHandler} title={`View GUID: ${localPost?.guid}`}><i className="bi bi-trash pt-1" /></button>
               </div>
               {localPost?.status !== "Complete" && <div className='col-12 text-end text-primary px-0'>
                 <TypeWriterText string={status} withBlink />

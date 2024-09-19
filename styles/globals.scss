@@ -4795,12 +4795,20 @@ input[type="color"] {
   z-index: 1;
   height: 100%;
   overflow: hidden;
+  width: min-content;
 
   button {
     border-radius: 0 5px 5px 0 !important;
-    width: 45px;
     height: inherit;
+    box-sizing: border-box !important;
+    font-size: 14px;
+    padding: 0 .5em !important;
+    min-width: revert !important;
   }
+}
+
+.btn-transparent {
+  background-color: transparent !important;
 }
 
 .listInput-container {

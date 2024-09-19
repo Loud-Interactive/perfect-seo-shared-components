@@ -28,7 +28,7 @@ export const Select = ({
   type,
   className,
   disabled,
-  bottomSpacing,
+  bottomSpacing = true,
   readOnly,
   placeholder,
   ...props
@@ -124,8 +124,4 @@ export const Select = ({
       )}
     </FormField>
   );
-};
-
-Select.defaultProps = {
-  bottomSpacing: true,
 };

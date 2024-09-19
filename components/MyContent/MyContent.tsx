@@ -26,6 +26,7 @@ const MyContent = ({ currentDomain, startDate, endDate, hideTitle = false }: MyC
   const [domain, setDomain] = useState(currentDomain || profile?.domains[0])
   const [selected, setSelected] = useState(null)
 
+
   const createQueryString = useCallback(
     (name: string, value: string) => {
       const params = new URLSearchParams(searchParams.toString())
@@ -36,6 +37,9 @@ const MyContent = ({ currentDomain, startDate, endDate, hideTitle = false }: MyC
     [searchParams]
   )
 
+  useEffect(() => {
+    console.log(profile)
+  }, [profile])
   const clickHandler = (e, val) => {
     e.preventDefault()
     let url = pathname + '?' + createQueryString('tab', val)

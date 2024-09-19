@@ -118,7 +118,7 @@ const PostItem = ({ post, key }) => {
             <>
               <div className="col-auto text-end px-0">
                 <Link
-                  href={`/dashboard/${localPost?.content_plan_guid}`}
+                  href={`https://contentPerfect.ai/dashboard/${localPost?.content_plan_guid}`}
                   className="btn btn-primary standard-button ms-1"
                 >
                   View Content Plan

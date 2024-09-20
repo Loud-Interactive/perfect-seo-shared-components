@@ -16,69 +16,11 @@ export interface PostsListProps {
 const PostsList = ({ domain_name, active }: PostsListProps) => {
   const [loading, setLoading] = useState(true)
   const [data, setData] = useState<any[]>()
-  const { desktop } = useViewport()
   const [deleteModal, setDeleteModal] = useState(null)
   const [filter, setFilter] = useState('all');
 
 
 
-  const actionField = (post) => {
-    const docClickHandler = (e) => {
-      e.preventDefault();
-      window.open(post.google_doc_link, '_blank')
-    }
-    const htmlClickHandler = (e) => {
-      e.preventDefault();
-      window.open(post.html_link, '_blank')
-    }
-    const deleteClickHandler = (e) => {
-      e.preventDefault()
-      setDeleteModal(post.content_plan_outline_guid)
-    }
-    return (
-      <div className='row g-0 d-flex align-items-center justify-content-end px-0 w-100 mx-0'>
-        {(post?.google_doc_link && post?.html_link) &&
-          <>
-            <div className="col-auto">
-              <a
-                onClick={htmlClickHandler}
-
-                className="btn btn-primary standard-button"
-
-              >
-                <i className="bi bi-filetype-html" /> HTML
-              </a>
-            </div>
-            <div className="col-auto pe-0">
-              <a
-                onClick={docClickHandler}
-
-                className="btn btn-primary standard-button ms-1"
-
-              >
-                <i className="bi bi-filetype-doc me-2" /> Google Docs
-              </a>
-            </div>
-          </>}
-        <>
-          <div className="col-auto text-end px-0">
-            <Link
-              href={`/dashboard/${post.content_plan_guid}`}
-              className="btn btn-primary standard-button ms-1"
-            >
-              View Content Plan
-            </Link>
-          </div>
-          <div className='col-auto'>
-            <button className='btn btn-warning d-flex align-items-center justify-content-center ms-1 standard-button' onClick={deleteClickHandler} title={`View GUID: ${post.guid}`}><i className="bi bi-trash pt-1" /></button>
-          </div>
-          {post.status !== "Complete" && <div className='col-12 text-end text-primary px-0'>
-            <TypeWriterText string={post.status} withBlink />
-          </div>}
-        </>
-      </div>
-    )
-  }
 
   const getPosts = () => {
     if (domain_name && active) {
@@ -162,7 +104,7 @@ const PostsList = ({ domain_name, active }: PostsListProps) => {
         : filteredData?.length > 0 ?
           <div className='row d-flex g-3'>
             {filteredData.map((obj, i) => {
-              return <PostItem post={obj} key={obj.content_plan_outline_guid} />
+              return <PostItem post={obj} key={obj.content_plan_outline_guid} refresh={getPosts} />
             })}</div> :
           <h5><TypeWriterText withBlink string="The are no results for the given parameters" /></h5>}
       <Modal.Overlay open={deleteModal} onClose={() => { setDeleteModal(null) }}>

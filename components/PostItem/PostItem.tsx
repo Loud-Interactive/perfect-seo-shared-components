@@ -9,7 +9,7 @@ import * as Modal from '@/perfect-seo-shared-components/components/Modal/Modal'
 import { urlSanitization } from "@/perfect-seo-shared-components/utils/conversion-utilities"
 
 
-const PostItem = ({ post }) => {
+const PostItem = ({ post, refresh }) => {
   const [liveUrl, setLiveUrl] = useState(post?.live_post_url)
   const [status, setStatus] = useState(post?.status)
   const [localPost, setLocalPost] = useState(post)
@@ -144,6 +144,7 @@ const PostItem = ({ post }) => {
   const deleteHandler = () => {
     deleteContentOutline(localPost?.content_plan_outline_guid)
       .then(res => {
+        refresh();
         setDeleteModal(false)
       })
       .catch(err => {

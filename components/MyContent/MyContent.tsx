@@ -1,3 +1,4 @@
+import en from '@/assets/en.json';
 import classNames from 'classnames'
 import styles from './MyContent.module.scss'
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -30,7 +31,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
     if (user?.id && domain) {
       supabase
         .from('user_history')
-        .insert({ user_id: user.id, domain: domain, transaction_data: { page: 'my-content', tab: selectedTab || queryParam || 'posts' } })
+        .insert({ user_id: user.id, domain: domain, transaction_data: { page: 'my-content', tab: selectedTab || queryParam || 'posts' }, product: en })
         .select('*')
         .then(res => {
           console.log(res)

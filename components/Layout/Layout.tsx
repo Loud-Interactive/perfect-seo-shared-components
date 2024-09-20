@@ -9,7 +9,6 @@ import useNotification from '@/perfect-seo-shared-components/hooks/useNotificati
 import { useEffect } from 'react';
 import { RootState } from '@/perfect-seo-shared-components/lib/store';
 import { useSelector } from 'react-redux';
-import { usePathname } from 'next/navigation';
 
 
 interface LayoutProps extends React.HTMLProps<HTMLDivElement> {
@@ -24,7 +23,6 @@ interface LayoutProps extends React.HTMLProps<HTMLDivElement> {
 const Layout = ({ children, hideFooter, current, links, hasLogin = true, getCredits = false, notificationConfig = null }: LayoutProps) => {
   const { runOneSignal } = useNotification()
   const { isLoggedIn } = useSelector((state: RootState) => state);
-  const pathname = usePathname()
   useEffect(() => {
     if (notificationConfig && isLoggedIn) {
       runOneSignal(notificationConfig)

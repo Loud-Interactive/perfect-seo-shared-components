@@ -3,12 +3,16 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import { TouchBackend } from 'react-dnd-touch-backend';
 import { BrowserView, MobileView } from 'react-device-detect';
 import { DndProvider } from 'react-dnd';
-import { Links } from '@/perfect-seo-shared-components/data/types';
+import { Links, OneSignalOptions } from '@/perfect-seo-shared-components/data/types';
 import Footer from '../Footer/Footer'
 import Header from '../Header/Header'
 import style from './DnDLayout.module.scss'
 import "bootstrap-icons/font/bootstrap-icons.css";
 import Script from 'next/script';
+import { useEffect } from 'react';
+import useNotification from '@/perfect-seo-shared-components/hooks/useNotifications';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/perfect-seo-shared-components/lib/store';
 
 
 interface DnDLayoutProps extends React.HTMLProps<HTMLDivElement> {
@@ -17,9 +21,17 @@ interface DnDLayoutProps extends React.HTMLProps<HTMLDivElement> {
   links?: Links[];
   hasLogin?: boolean;
   getCredits?: boolean;
+  notificationConfig?: OneSignalOptions;
 }
 
-const DnDLayout = ({ children, hideFooter, current, links, hasLogin = true, getCredits = false }: DnDLayoutProps) => {
+const DnDLayout = ({ children, hideFooter, current, links, hasLogin = true, getCredits = false, notificationConfig = null }: DnDLayoutProps) => {
+  const { runOneSignal } = useNotification()
+  const { isLoggedIn } = useSelector((state: RootState) => state);
+  useEffect(() => {
+    if (notificationConfig && isLoggedIn) {
+      runOneSignal(notificationConfig)
+    }
+  }, [notificationConfig, isLoggedIn])
 
   return (
     <>

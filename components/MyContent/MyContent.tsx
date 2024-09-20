@@ -53,8 +53,10 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
     { key: "content-plan", title: "Content Plans" },
   ]
   const searchUserChangeHandler = (e) => {
-    setDomain(e.value);
-    setSelected(e)
+    if (e) {
+      setDomain(e?.value);
+      setSelected(e)
+    }
   };
   const supabase = createClient();
   const checkDomain = () => {

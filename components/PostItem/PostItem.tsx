@@ -56,24 +56,7 @@ const PostItem = ({ post }) => {
       setStatus(post?.status)
       if (completedStatus.includes(post?.status)) {
         if (!completed) {
-
           setCompleted(true)
-          if ('Notification' in window) {
-            // Check if the browser supports notifications
-            if (Notification.permission === 'granted') {
-              let string: string = `Post ${post?.title} is now ${post?.status}`
-              new Notification(string)
-            } else if (Notification.permission !== 'denied') {
-              // Request permission
-              Notification.requestPermission().then(permission => {
-                if (permission === 'granted') {
-                  // Permission granted
-                } else {
-                  // Permission denied
-                }
-              });
-            }
-          }
         }
       }
     }
@@ -90,23 +73,6 @@ const PostItem = ({ post }) => {
             setStatus(res.data.status)
             if (!completed) {
               setCompleted(true)
-              if ('Notification' in window) {
-                // Check if the browser supports notifications
-                if (Notification.permission === 'granted') {
-                  let string: string = `Post ${res?.data?.title} is now ${res?.data?.status}`
-                  new Notification(string)
-                  // Permission already granted
-                } else if (Notification.permission !== 'denied') {
-                  // Request permission
-                  Notification.requestPermission().then(permission => {
-                    if (permission === 'granted') {
-                      // Permission granted
-                    } else {
-                      // Permission denied
-                    }
-                  });
-                }
-              }
             }
             setLocalPost(res.data)
           }
@@ -127,26 +93,6 @@ const PostItem = ({ post }) => {
   useEffect(() => {
     let interval;
     if (completedStatus.includes(status)) {
-      try {
-        if (Notification.permission === 'granted') {
-          let string: string = `Post ${post?.title} is now ${post?.status}`
-          console.log(string)
-          const notification = new Notification(string, { tag: string, icon: '/images/contentPerfect-icon.png' })
-          // Permission already granted
-        } else if (Notification.permission !== 'denied') {
-          // Request permission
-          Notification.requestPermission().then(permission => {
-            if (permission === 'granted') {
-              // Permission granted
-            } else {
-              // Permission denied
-            }
-          });
-        }
-      }
-      catch (err) {
-        console.log(err)
-      }
       if (completed) {
         setCompleted(true)
 

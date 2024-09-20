@@ -180,7 +180,6 @@ const useManageUser = (appKey) => {
   useEffect(() => {
     supabase.auth.getUser()
       .then((res) => {
-        console.log(res)
         if (res.data.user === null) {
           dispatch(setLoading(false))
         }

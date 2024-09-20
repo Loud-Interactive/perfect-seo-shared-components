@@ -6,7 +6,7 @@ const useNotification = () => {
 
   async function runOneSignal(options: OneSignalOptions) {
     const { appId, safari_web_id, message } = options;
-    const promptOptions = {
+    let promptOptions: any = {
       serviceWorkerParam: {
         scope: '/content',
       },
@@ -22,7 +22,7 @@ const useNotification = () => {
               autoPrompt: true,
               text: {
                 /* limited to 90 characters */
-                actionMessage: 'message',
+                actionMessage: message,
                 /* acceptButton limited to 15 characters */
                 acceptButton: 'Allow',
                 /* cancelButton limited to 15 characters */
@@ -37,8 +37,16 @@ const useNotification = () => {
         },
       },
     };
+    try {
+      if (window?.location?.hostname === 'localhost') {
+        promptOptions = { ...promptOptions, allowLocalhostAsSecureOrigin: true, }
+      }
+    }
+    catch (e) {
+
+    }
     await OneSignal.init(promptOptions)
-    return OneSignal.Slidedown.promptPush();
+    OneSignal.Slidedown.promptPush();
 
   }
   return {

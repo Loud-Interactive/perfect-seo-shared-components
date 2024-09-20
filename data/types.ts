@@ -219,3 +219,12 @@ export interface Sitemap {
   "url": string,
   "total_urls": number
 }
+
+
+export interface OneSignalOptions {
+  appId: string,
+  safari_web_id: string,
+  message: string,
+  allowLocalhostAsSecureOrigin?: boolean
+
+}

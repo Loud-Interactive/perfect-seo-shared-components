@@ -18,6 +18,7 @@ const PostItem = ({ post }) => {
   const [showUrl, setShowUrl] = useState(false)
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
+  const [completed, setCompleted] = useState(false)
 
   const liveUrlUpdate = () => {
     setSaved(false)
@@ -53,8 +54,30 @@ const PostItem = ({ post }) => {
     }
     if (post?.status !== status) {
       setStatus(post?.status)
+      if (completedStatus.includes(post?.status)) {
+        if (!completed) {
+
+          setCompleted(true)
+          if ('Notification' in window) {
+            // Check if the browser supports notifications
+            if (Notification.permission === 'granted') {
+              let string: string = `Post ${post?.title} is now ${post?.status}`
+              new Notification(string)
+            } else if (Notification.permission !== 'denied') {
+              // Request permission
+              Notification.requestPermission().then(permission => {
+                if (permission === 'granted') {
+                  // Permission granted
+                } else {
+                  // Permission denied
+                }
+              });
+            }
+          }
+        }
+      }
     }
-  }, [post])
+  }, [post, completed])
 
   const fetchStatus = () => {
     getPostStatus(post?.content_plan_outline_guid)
@@ -64,6 +87,27 @@ const PostItem = ({ post }) => {
             setStatus(res.data.status);
           }
           else if (completedStatus.includes(res.data.status)) {
+            setStatus(res.data.status)
+            if (!completed) {
+              setCompleted(true)
+              if ('Notification' in window) {
+                // Check if the browser supports notifications
+                if (Notification.permission === 'granted') {
+                  let string: string = `Post ${res?.data?.title} is now ${res?.data?.status}`
+                  new Notification(string)
+                  // Permission already granted
+                } else if (Notification.permission !== 'denied') {
+                  // Request permission
+                  Notification.requestPermission().then(permission => {
+                    if (permission === 'granted') {
+                      // Permission granted
+                    } else {
+                      // Permission denied
+                    }
+                  });
+                }
+              }
+            }
             setLocalPost(res.data)
           }
         }
@@ -83,7 +127,30 @@ const PostItem = ({ post }) => {
   useEffect(() => {
     let interval;
     if (completedStatus.includes(status)) {
-      return;
+      console.log("completed", status)
+      if (!completed) {
+        setCompleted(true)
+        if ('Notification' in window) {
+          // Check if the browser supports notifications
+          if (Notification.permission === 'granted') {
+            let string: string = `Post ${post?.title} is now ${post?.status}`
+            new Notification(string)
+            // Permission already granted
+          } else if (Notification.permission !== 'denied') {
+            // Request permission
+            Notification.requestPermission().then(permission => {
+              if (permission === 'granted') {
+                // Permission granted
+              } else {
+                // Permission denied
+              }
+            });
+          }
+        }
+      }
+      else {
+        return;
+      }
     }
     else {
       interval = setInterval(() => {
@@ -91,16 +158,18 @@ const PostItem = ({ post }) => {
       }, 10000)
     }
     return () => clearTimeout(interval)
-  }, [status])
+  }, [status, completed])
 
   const docClickHandler = (e) => {
     e.preventDefault();
     window.open(localPost?.google_doc_link, '_blank')
   }
+
   const htmlClickHandler = (e) => {
     e.preventDefault();
     window.open(localPost?.html_link, '_blank')
   }
+
   const deleteClickHandler = (e) => {
     e.preventDefault()
     setDeleteModal(true)
@@ -132,6 +201,7 @@ const PostItem = ({ post }) => {
         console.log(err)
       })
   }
+
   return (
     <div className="card bg-secondary p-3" title={post?.title}>
       <div className="row d-flex g-5 align-items-end">

@@ -95,8 +95,10 @@ const PlansList = ({ domain_name, active, startDate, endDate }: PlanListProps) =
       newData = newData.filter(obj => {
         let startDateInfo = startDate.split('-')
         let endDateInfo = endDate.split('-')
+
         let newStartDate = new Date(moment().set({ year: parseInt(startDateInfo[0]), month: parseInt(startDateInfo[1]), date: parseInt(startDateInfo[2]) }).toISOString())
         let newEndDate = new Date(moment().set({ year: parseInt(endDateInfo[0]), month: parseInt(endDateInfo[1]), date: parseInt(endDateInfo[2]) }).toISOString())
+        console.log(newStartDate, newEndDate)
         return moment(new Date(obj.timestamp)).isBetween(moment(newStartDate).startOf('day'), moment(newEndDate).endOf('day'))
       })
     }
@@ -119,7 +121,7 @@ const PlansList = ({ domain_name, active, startDate, endDate }: PlanListProps) =
     else {
       return [
         { id: 'target_keyword', Header: 'Target Keyword', accessor: 'target_keyword', disableSortBy: false },
-        { id: 'timestamp', Header: 'Timestamp', accessor: (obj) => moment(obj.timestamp).format("MMMM Do, 'YY hA"), disableSortBy: false },
+        { id: 'timestamp', Header: 'Timestamp', accessor: (obj) => moment(obj.timestamp + 'Z').format("MMMM Do, 'YY hA"), disableSortBy: false },
         { id: 'guid', Header: 'GUID', accessor: renderStatusCell, headerClassName: 'text-end pe-3', cellClassName: 'max-325' },
       ];
     }

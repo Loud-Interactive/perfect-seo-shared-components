@@ -37,9 +37,6 @@ const MyContent = ({ currentDomain, startDate, endDate, hideTitle = false }: MyC
     [searchParams]
   )
 
-  useEffect(() => {
-    console.log(profile)
-  }, [profile])
   const clickHandler = (e, val) => {
     e.preventDefault()
     let url = pathname + '?' + createQueryString('tab', val)

@@ -124,10 +124,9 @@ const PostsList = ({ domain_name, active, startDate, endDate }: PostsListProps) 
       newData = newData.filter(obj => {
         let startDateInfo = startDate.split('-')
         let endDateInfo = endDate.split('-')
-        let newStartDate = new Date(moment().set({ year: parseInt(startDateInfo[0]), month: parseInt(startDateInfo[1]), date: parseInt(startDateInfo[2]) }).toISOString())
-        let newEndDate = new Date(moment().set({ year: parseInt(endDateInfo[0]), month: parseInt(endDateInfo[1]), date: parseInt(endDateInfo[2]) }).toISOString())
-        console.log(obj)
-        return moment(new Date(obj.timestamp)).isBetween(moment(newStartDate).startOf('day'), moment(newEndDate).endOf('day'))
+        let newStartDate = new Date(moment().set({ year: parseInt(startDateInfo[0]), month: parseInt(startDateInfo[1]), date: parseInt(startDateInfo[2]) }).toISOString() + 'Z')
+        let newEndDate = new Date(moment().set({ year: parseInt(endDateInfo[0]), month: parseInt(endDateInfo[1]), date: parseInt(endDateInfo[2]) }).toISOString() + 'Z')
+        return moment(new Date(obj.timestamp)).isBetween(moment(newStartDate + 'Z').startOf('day'), moment(newEndDate + 'Z').endOf('day'))
       })
     }
     return newData

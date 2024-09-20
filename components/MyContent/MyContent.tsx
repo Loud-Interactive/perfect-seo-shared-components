@@ -10,6 +10,7 @@ import { useSelector } from 'react-redux'
 import { RootState } from '@/perfect-seo-shared-components/lib/store'
 import SearchSelect from '@/perfect-seo-shared-components/components/SearchSelect/SearchSelect'
 import Loader from '@/components/Templates/Loader/Loader'
+import { createClient } from '@/perfect-seo-shared-components/utils/supabase/client'
 export interface MyContentProps {
   currentDomain?: string;
   hideTitle?: boolean;
@@ -23,7 +24,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
   const pathname = usePathname()
   const [domain, setDomain] = useState(currentDomain || profile?.domains[0])
   const [selected, setSelected] = useState(null)
-
+  const [domains, setDomains] = useState([])
 
   const createQueryString = useCallback(
     (name: string, value: string) => {
@@ -55,17 +56,33 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
     setDomain(e.value);
     setSelected(e)
   };
+  const supabase = createClient();
+  const checkDomain = () => {
+    supabase
+      .from("domains")
+      .select("*")
+      .select()
+      .then((res) => {
+        if (res.data?.length > 0) {
+          setDomains(res?.data?.sort((a, b) => a?.domain?.localeCompare(b?.domain)));
+        }
+
+      });
+  };
 
   const domainsList = useMemo(() => {
-    let domains;
-    if (profile?.domains) {
-      domains = [...profile?.domains];
-      domains = domains?.sort((a, b) => a.localeCompare(b)).map((domain) => ({ label: domain, value: domain }))
+    let list;
+    if (isAdmin) {
+      list = domains?.sort((a, b) => a.domain.localeCompare(b.domain)).map(({ domain }) => ({ label: domain, value: domain }))
+    }
+    else if (profile?.domains) {
+      list = [...profile?.domains];
+      list = domains?.sort((a, b) => a.localeCompare(b)).map((domain) => ({ label: domain, value: domain }))
     }
 
-    return domains;
+    return list;
 
-  }, [profile?.domains])
+  }, [profile?.domains, domains, isAdmin])
 
   useEffect(() => {
     if (profile?.domains?.length > 0 && !currentDomain) {
@@ -83,6 +100,12 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
     }
     return bool
   }, [user, isAdmin, currentDomain])
+  useEffect(() => {
+    if (isAdmin) {
+      checkDomain();
+    }
+  }, [isAdmin])
+
   if (isLoading) return <Loader />
   else if (!isAuthorized) {
     return (
@@ -97,7 +120,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
         <div className='col'>
           <h1 className="text-3xl font-bold text-start mb-5"><TypeWriterText string={`Content for ${domain}`} withBlink /></h1>
         </div>
-        {(!currentDomain && profile?.domains?.length > 1) && <div className='col-12 col-md-4'>
+        {(!currentDomain && profile?.domains?.length > 1) && <div className='col-12 col-md-4 mb-3'>
           <SearchSelect
             onChange={searchUserChangeHandler}
             options={domainsList}

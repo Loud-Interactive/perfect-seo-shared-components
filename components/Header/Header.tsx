@@ -133,7 +133,7 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
             </div>}
             <DropdownMenu.Root defaultOpen open={open} onOpenChange={openChangeHandler}>
               <DropdownMenu.Trigger className={styles.menuButton}>
-                <i className="bi bi-grid-3x3-gap-fill" />
+                <i className="bi text-white bi-grid-3x3-gap-fill" />
               </DropdownMenu.Trigger>
 
               <DropdownMenu.Portal>
@@ -167,7 +167,7 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
                             let href = typeof link.href === 'function' ? link.href(user) : link.href
                             return (
                               <div className='col-12' key={link.href}>
-                                <Link href={href} className={currentPage === href ? 'text-white' : 'text-primary'}>{link.label}</Link>
+                                <Link href={href} className={currentPage === href ? 'text-white' : 'text-primary'}>{link?.type === LinkType.ADMIN ? <i className="bi text-white bi-shield-lock-fill me-2" title="Admin Only" /> : link?.type === LinkType.PRIVATE ? <i className="bi text-white bi-person-check-fill me-2" title="Logged In Only" /> : null}{link.label}</Link>
                               </div>
                             )
                           })}
@@ -175,14 +175,14 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
                         {isAdmin && <>
                           {brand?.developmentUrl && <div className='col-12'>
                             <Link target='_blank' className='text-primary'
-                              href={brand.developmentUrl}>View Development Env</Link>
+                              href={brand.developmentUrl}><i className="bi text-white bi-shield-lock-fill me-2" title="Admin Only" />View Development Env</Link>
                           </div>}
                           {brand?.stagingUrl && <div className='col-12'>
-                            <Link href={brand?.stagingUrl} target='_blank' className='text-primary'>View Staging Env</Link>
+                            <Link href={brand?.stagingUrl} target='_blank' className='text-primary'><i className="bi text-white bi-shield-lock-fill me-2" title="Admin Only" />View Staging Env</Link>
                           </div>}
                         </>}
                         {(hasLogin && isLoggedIn) && <div className='col-12'>
-                          <a className="text-primary" onClick={signOutHandler}>Sign Out</a>
+                          <a className="text-primary" onClick={signOutHandler}><i className="bi text-white bi-unlock-fill me-2" />Sign Out</a>
                         </div>}
                       </div>
                     </div>

@@ -127,26 +127,29 @@ const PostItem = ({ post }) => {
   useEffect(() => {
     let interval;
     if (completedStatus.includes(status)) {
-      console.log("completed", status)
-      if (!completed) {
-        setCompleted(true)
-        if ('Notification' in window) {
-          // Check if the browser supports notifications
-          if (Notification.permission === 'granted') {
-            let string: string = `Post ${post?.title} is now ${post?.status}`
-            new Notification(string)
-            // Permission already granted
-          } else if (Notification.permission !== 'denied') {
-            // Request permission
-            Notification.requestPermission().then(permission => {
-              if (permission === 'granted') {
-                // Permission granted
-              } else {
-                // Permission denied
-              }
-            });
-          }
+      try {
+        if (Notification.permission === 'granted') {
+          let string: string = `Post ${post?.title} is now ${post?.status}`
+          console.log(string)
+          const notification = new Notification(string, { tag: string, icon: '/images/contentPerfect-icon.png' })
+          // Permission already granted
+        } else if (Notification.permission !== 'denied') {
+          // Request permission
+          Notification.requestPermission().then(permission => {
+            if (permission === 'granted') {
+              // Permission granted
+            } else {
+              // Permission denied
+            }
+          });
         }
+      }
+      catch (err) {
+        console.log(err)
+      }
+      if (completed) {
+        setCompleted(true)
+
       }
       else {
         return;

@@ -12,10 +12,8 @@ import TypeWriterText from '@/perfect-seo-shared-components/components/TypeWrite
 export interface PlanListProps {
   domain_name: string;
   active: boolean;
-  startDate?: string;
-  endDate?: string;
 }
-const PlansList = ({ domain_name, active, startDate, endDate }: PlanListProps) => {
+const PlansList = ({ domain_name, active }: PlanListProps) => {
   const [loading, setLoading] = useState(true)
   const [data, setData] = useState<any[]>()
   const { tablet, phone } = useViewport()
@@ -91,17 +89,9 @@ const PlansList = ({ domain_name, active, startDate, endDate }: PlanListProps) =
     else if (filter === 'other') {
       newData = data.filter((post) => post.status !== 'Finished')
     }
-    if (startDate) {
-      newData = newData.filter(obj => {
-        let startDateInfo = startDate.split('-')
-        let endDateInfo = endDate.split('-')
-        let newStartDate = new Date(moment().set({ year: parseInt(startDateInfo[0]), month: parseInt(startDateInfo[1]), date: parseInt(startDateInfo[2]) }).toISOString())
-        let newEndDate = new Date(moment().set({ year: parseInt(endDateInfo[0]), month: parseInt(endDateInfo[1]), date: parseInt(endDateInfo[2]) }).toISOString())
-        return moment(new Date(obj.timestamp)).isBetween(moment(newStartDate).startOf('day'), moment(newEndDate).endOf('day'))
-      })
-    }
+
     return newData
-  }, [data, filter, startDate, endDate])
+  }, [data, filter])
 
   const handleFilterChange = (e) => {
     setFilter(e.target.value)

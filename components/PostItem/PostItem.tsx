@@ -9,7 +9,7 @@ import * as Modal from '@/perfect-seo-shared-components/components/Modal/Modal'
 import { urlSanitization } from "@/perfect-seo-shared-components/utils/conversion-utilities"
 
 
-const PostItem = ({ post, key }) => {
+const PostItem = ({ post }) => {
   const [liveUrl, setLiveUrl] = useState(post?.live_post_url)
   const [status, setStatus] = useState(post?.status)
   const [localPost, setLocalPost] = useState(post)
@@ -133,7 +133,7 @@ const PostItem = ({ post, key }) => {
       })
   }
   return (
-    <div className="card bg-secondary p-3" key={key} title={post?.title}>
+    <div className="card bg-secondary p-3" title={post?.title}>
       <div className="row d-flex g-5 align-items-end">
         <div className="col-12 col-lg-6">
           <div className="row g-3">

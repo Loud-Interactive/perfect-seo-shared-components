@@ -12,11 +12,9 @@ import SearchSelect from '@/perfect-seo-shared-components/components/SearchSelec
 import Loader from '@/components/Templates/Loader/Loader'
 export interface MyContentProps {
   currentDomain?: string;
-  startDate?: string;
-  endDate?: string;
   hideTitle?: boolean;
 }
-const MyContent = ({ currentDomain, startDate, endDate, hideTitle = false }: MyContentProps) => {
+const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
   const { user, isAdmin, isLoading, isLoggedIn, profile } = useSelector((state: RootState) => state);
   const [selectedTab, setSelectedTab] = useState('posts')
   const searchParams = useSearchParams();
@@ -125,12 +123,12 @@ const MyContent = ({ currentDomain, startDate, endDate, hideTitle = false }: MyC
         <div className="tab-content bg-dark mb-3" id="myTabContent">
           <div className={`tab-pane fade ${selectedTab === 'posts' && 'show active'}`} id="posts" role="tabpanel" aria-labelledby="posts-tab">
             <div className='tab p-3'>
-              <PostsList startDate={startDate} endDate={endDate} active={selectedTab === 'posts'} domain_name={domain} />
+              <PostsList active={selectedTab === 'posts'} domain_name={domain} />
             </div>
           </div>
           <div className={`tab-pane fade ${selectedTab === 'content-plan' && 'show active'}`} id="content-plan" role="tabpanel" aria-labelledby="content-plan-tab">
             <div className='tab p-3'>
-              <PlansList startDate={startDate} endDate={endDate} active={selectedTab === 'content-plan'} domain_name={domain} />
+              <PlansList active={selectedTab === 'content-plan'} domain_name={domain} />
             </div>
           </div>
 

@@ -219,3 +219,10 @@ export interface Sitemap {
   "url": string,
   "total_urls": number
 }
+
+export interface User {
+  firstName: string,
+  lastName: string,
+  domain: string,
+  email: string,
+};

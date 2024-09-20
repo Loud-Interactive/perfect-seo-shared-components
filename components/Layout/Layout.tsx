@@ -1,9 +1,14 @@
+'use client'
 import { Links } from '@/perfect-seo-shared-components/data/types';
 import Footer from '../Footer/Footer'
 import Header from '../Header/Header'
 import style from './Layout.module.scss'
 import "bootstrap-icons/font/bootstrap-icons.css";
 import Script from 'next/script';
+import useNotification from '@/perfect-seo-shared-components/hooks/useNotifications';
+import { useEffect } from 'react';
+import { RootState } from '@/perfect-seo-shared-components/lib/store';
+import { useSelector } from 'react-redux';
 
 
 interface LayoutProps extends React.HTMLProps<HTMLDivElement> {
@@ -12,9 +17,17 @@ interface LayoutProps extends React.HTMLProps<HTMLDivElement> {
   links?: Links[];
   hasLogin?: boolean;
   getCredits?: boolean;
+  notificationConfig?: any;
 }
 
-const Layout = ({ children, hideFooter, current, links, hasLogin = true, getCredits = false }: LayoutProps) => {
+const Layout = ({ children, hideFooter, current, links, hasLogin = true, getCredits = false, notificationConfig = null }: LayoutProps) => {
+  const { runOneSignal } = useNotification()
+  const { isLoggedIn } = useSelector((state: RootState) => state);
+  useEffect(() => {
+    if (notificationConfig && isLoggedIn) {
+      runOneSignal(notificationConfig)
+    }
+  }, [notificationConfig, isLoggedIn])
 
   return (
     <>

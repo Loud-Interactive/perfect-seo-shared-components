@@ -158,6 +158,11 @@ const PostItem = ({ post, refresh }) => {
         <div className="col-12 col-lg-6">
           <div className="row g-3">
             <div className="col-12">
+              <p className="mb-1">
+                <small>
+                  <strong className="text-primary me-2">Created on</strong> {moment(`${localPost?.created_at}Z`).local().format("dddd, MMMM Do, YYYY h:mma")}
+                </small>
+              </p>
               <strong className="text-primary me-1">Title</strong>  {localPost?.title}
             </div>
             <div className="col-12">
@@ -174,9 +179,6 @@ const PostItem = ({ post, refresh }) => {
         </div>
         <div className="col-12 col-lg-6">
           <div className='row g-2 d-flex justify-content-end'>
-            <div className="col-12 d-flex justify-content-start mb-1">
-              <strong className="text-primary me-2">Created on</strong> {moment(`${localPost?.created_at}Z`).local().format("dddd, MMMM Do, YYYY h:mma")}
-            </div>
             {(post?.google_doc_link && post?.html_link) &&
               <>
                 <div className="col">

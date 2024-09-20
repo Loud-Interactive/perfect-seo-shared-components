@@ -26,6 +26,18 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
   const [selected, setSelected] = useState(null)
   const [domains, setDomains] = useState([])
 
+  useEffect(() => {
+    if (user?.id && domain) {
+      supabase
+        .from('user_history')
+        .insert({ user_id: user.id, domain: domain, transaction_data: { page: 'my-content', tab: selectedTab || queryParam || 'posts' } })
+        .select('*')
+        .then(res => {
+          console.log(res)
+        })
+    }
+  }, [domain, selectedTab, user])
+
   const createQueryString = useCallback(
     (name: string, value: string) => {
       const params = new URLSearchParams(searchParams.toString())

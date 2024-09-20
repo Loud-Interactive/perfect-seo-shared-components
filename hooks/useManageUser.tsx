@@ -6,7 +6,9 @@ import { createClient } from '@/perfect-seo-shared-components/utils/supabase/cli
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 import { urlSanitization } from '../utils/conversion-utilities';
+
 const useManageUser = (appKey) => {
+
   const { user, isLoading } = useSelector((state: RootState) => state);
   const [userData, setUserData] = useState<any>(null)
   const [token, setToken] = useState(null)

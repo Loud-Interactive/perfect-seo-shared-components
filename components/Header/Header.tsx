@@ -133,7 +133,7 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
             </div>}
             <DropdownMenu.Root defaultOpen open={open} onOpenChange={openChangeHandler}>
               <DropdownMenu.Trigger className={styles.menuButton}>
-                <i className="bi text-white bi-grid-3x3-gap-fill" />
+                <i className="bi text-primary bi-grid-3x3-gap-fill" />
               </DropdownMenu.Trigger>
 
               <DropdownMenu.Portal>

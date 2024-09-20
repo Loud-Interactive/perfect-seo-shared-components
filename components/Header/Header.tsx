@@ -189,9 +189,9 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
                     <div className='card-body d-flex align-items-end'>
                       <div className='row g-3'>
                         <div className='col-12'>
-                          <span className='fs-2'>Our Other Products</span>
+                          <span className='fs-2'>Our Products</span>
                         </div>
-                        {Brands.filter((obj) => obj.status === BrandStatus.LIVE && obj.title !== current).map((brand, index) => {
+                        {Brands.filter((obj) => obj.status === BrandStatus.LIVE).map((brand, index) => {
 
                           return (
                             <div key={index} className='col-4 text-center'>

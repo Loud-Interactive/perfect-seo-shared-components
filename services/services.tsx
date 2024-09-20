@@ -168,6 +168,9 @@ export const checkUserCredits = (email: string) => {
   });
 };
 
+export const getContentPlanOutlines = (guid: string) => {
+  return axios.get(`https://planperfectapi.replit.app/get_content_plan_outlines/${guid}`,);
+}
 export const fetchOutlineStatus = (guid: string) => {
   return axios.get(
     `https://planperfectapi.replit.app/get_outline_status/${guid}`,

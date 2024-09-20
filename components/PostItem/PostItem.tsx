@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import TextInput from "../Form/TextInput"
 import { emailValidator } from "@/perfect-seo-shared-components/utils/validators"
-import { deleteContentOutline, updateLiveUrl } from "@/perfect-seo-shared-components/services/services"
+import { deleteContentOutline, getPostStatus, updateLiveUrl } from "@/perfect-seo-shared-components/services/services"
 import moment from "moment-timezone"
 import TypeWriterText from "../TypeWriterText/TypeWriterText"
 import Link from "next/link"
@@ -18,6 +18,7 @@ const PostItem = ({ post, key }) => {
   const [showUrl, setShowUrl] = useState(false)
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
+
   const liveUrlUpdate = () => {
     setSaved(false)
     setUrlError(null)
@@ -54,6 +55,43 @@ const PostItem = ({ post, key }) => {
       setStatus(post?.status)
     }
   }, [post])
+
+  const fetchStatus = () => {
+    getPostStatus(post?.content_plan_outline_guid)
+      .then((res) => {
+        if (res.data.status) {
+          if (res.data.status !== status) {
+            setStatus(res.data.status);
+          }
+          else if (completedStatus.includes(res.data.status)) {
+            setLocalPost(res.data)
+          }
+        }
+        else if (res.data.message) {
+          setStatus(res.data.message);
+        }
+      })
+      .catch((err) => {
+        console.log(err, post["Post Title"]);
+        setStatus(err.message);
+      });
+  }
+
+
+  const completedStatus = ["Complete", "Uploaded To Google Drive", "Uploading To Google Drive"]
+
+  useEffect(() => {
+    let interval;
+    if (completedStatus.includes(status)) {
+      return;
+    }
+    else {
+      interval = setInterval(() => {
+        fetchStatus()
+      }, 10000)
+    }
+    return () => clearTimeout(interval)
+  }, [status])
 
   const docClickHandler = (e) => {
     e.preventDefault();

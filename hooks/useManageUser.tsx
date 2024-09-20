@@ -41,7 +41,6 @@ const useManageUser = (appKey) => {
   useEffect(() => {
     if (user) {
       updateUser()
-      supabase.auth.startAutoRefresh()
     }
     const {
       data: { subscription },
@@ -58,7 +57,7 @@ const useManageUser = (appKey) => {
         supabase.auth.refreshSession({ refresh_token: _session.refresh_token })
       }
       else {
-        dispatch(reset())
+        supabase.auth.startAutoRefresh()
       }
     })
     return () => {

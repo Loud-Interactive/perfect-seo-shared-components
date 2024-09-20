@@ -223,7 +223,7 @@ const PostItem = ({ post, refresh }) => {
               </div>
             </>}
             <>
-              <div className="col">
+              <div className="col-auto">
                 <Link
                   href={`https://contentPerfect.ai/dashboard/${localPost?.content_plan_guid}`}
                   className="btn btn-primary standard-button d-flex justify-content-center align-items-center ms-1"

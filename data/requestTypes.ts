@@ -21,6 +21,7 @@ export interface GetPostOutlineRequest {
 }
 
 export interface SaveContentPost {
+  guid?: string,
   content_plan_guid: string,
   post_title: string,
   client_name: string,

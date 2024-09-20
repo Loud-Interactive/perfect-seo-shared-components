@@ -18,31 +18,9 @@ interface DnDLayoutProps extends React.HTMLProps<HTMLDivElement> {
   links?: Links[];
   hasLogin?: boolean;
   getCredits?: boolean;
-  checkNotification?: boolean;
 }
 
-const DnDLayout = ({ children, hideFooter, current, links, hasLogin = true, getCredits = false, checkNotification = false }: DnDLayoutProps) => {
-
-
-  useEffect(() => {
-    if (checkNotification) {
-      if ('Notification' in window) {
-        if (Notification.permission) {
-          console.log(Notification.permission)
-        }
-        if (Notification.permission !== 'denied') {
-          // Request permission
-          Notification.requestPermission().then(permission => {
-            if (permission === 'granted') {
-              // Permission granted
-            } else {
-              // Permission denied
-            }
-          });
-        }
-      }
-    }
-  }, [checkNotification]);
+const DnDLayout = ({ children, hideFooter, current, links, hasLogin = true, getCredits = false }: DnDLayoutProps) => {
 
   return (
     <>

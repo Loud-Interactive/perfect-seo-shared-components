@@ -5,8 +5,6 @@ import Header from '../Header/Header'
 import style from './Layout.module.scss'
 import "bootstrap-icons/font/bootstrap-icons.css";
 import Script from 'next/script';
-import { useEffect } from 'react';
-
 
 interface LayoutProps extends React.HTMLProps<HTMLDivElement> {
   hideFooter?: boolean,
@@ -14,30 +12,10 @@ interface LayoutProps extends React.HTMLProps<HTMLDivElement> {
   links?: Links[];
   hasLogin?: boolean;
   getCredits?: boolean;
-  checkNotification?: boolean;
 }
 
-const Layout = ({ children, hideFooter, current, links, hasLogin = true, getCredits = false, checkNotification = false }: LayoutProps) => {
+const Layout = ({ children, hideFooter, current, links, hasLogin = true, getCredits = false }: LayoutProps) => {
 
-  useEffect(() => {
-    if (checkNotification) {
-      if ('Notification' in window) {
-        if (Notification.permission) {
-          console.log(Notification.permission)
-        }
-        if (Notification.permission !== 'denied') {
-          // Request permission
-          Notification.requestPermission().then(permission => {
-            if (permission === 'granted') {
-              // Permission granted
-            } else {
-              // Permission denied
-            }
-          });
-        }
-      }
-    }
-  }, [checkNotification]);
 
   return (
     <>

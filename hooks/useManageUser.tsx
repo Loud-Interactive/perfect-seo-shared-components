@@ -41,7 +41,6 @@ const useManageUser = (appKey) => {
   useEffect(() => {
     if (user) {
       updateUser()
-      supabase.auth.startAutoRefresh()
     }
     const {
       data: { subscription },
@@ -54,12 +53,14 @@ const useManageUser = (appKey) => {
       if (_session?.provider_token) {
         setToken(_session?.provider_token)
       }
+      else if (_session?.refresh_token) {
+        supabase.auth.refreshSession({ refresh_token: _session.refresh_token })
+      }
       else {
-        dispatch(reset())
+        supabase.auth.startAutoRefresh()
       }
     })
     return () => {
-      supabase.auth.stopAutoRefresh()
       subscription.unsubscribe()
     }
   }, [user])
@@ -180,7 +181,6 @@ const useManageUser = (appKey) => {
   useEffect(() => {
     supabase.auth.getUser()
       .then((res) => {
-        console.log(res)
         if (res.data.user === null) {
           dispatch(setLoading(false))
         }

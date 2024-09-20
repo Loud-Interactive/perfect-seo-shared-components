@@ -9,6 +9,36 @@ export const urlSanitization = (url: string): string => {
   return newUrl?.replaceAll("/", "").toLowerCase().replaceAll("sc-domain:", "")
 }
 
+export const trimSynopsis = (synopsis: any) => {
+
+  let emptyObject = {
+    service_1_category: "Service Category 1",
+    service_1_url: "Service URL 1",
+    service_3_category: "Service Category 3",
+    service_3_url: "Service URL 3",
+    product_1_name: "Product 1",
+    product_1_url: "Product URL 1",
+    product_2_name: "Product 2",
+    product_2_url: "Product URL 2",
+    product_3_name: "Product 3",
+    product_3_url: "Product URL 3",
+    service_2_category: "Service Category 2",
+    service_2_url: "Service URL 2"
+  }
+
+  let emptyKeys = Object.keys(emptyObject)
+
+  let newData = Object.keys(synopsis).reduce((prev, key) => {
+    if (emptyKeys.includes(key) && synopsis[key] === emptyObject[key]) {
+      return prev
+    }
+    else {
+      return { ...prev, [key]: synopsis[key] }
+    }
+  }, {})
+  return newData
+}
+
 
 export const findUniqueKeys = (newObj, oldObj) => {
   let keys = Object.keys(newObj)

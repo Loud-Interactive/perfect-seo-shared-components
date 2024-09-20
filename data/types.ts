@@ -228,3 +228,9 @@ export interface OneSignalOptions {
   allowLocalhostAsSecureOrigin?: boolean
 
 }
+export interface User {
+  firstName: string,
+  lastName: string,
+  domain: string,
+  email: string,
+};

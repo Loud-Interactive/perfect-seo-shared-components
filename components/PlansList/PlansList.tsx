@@ -100,7 +100,7 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
 
 
   const columnArray: TableColumnArrayProps[] = useMemo(() => {
-    if (phone) {
+    if (phone || tablet) {
       return [
         { id: 'target_keyword', Header: 'Target Keyword', accessor: 'target_keyword' },
         { id: 'guid', Header: 'GUID', accessor: renderStatusCell, headerClassName: 'text-end pe-3', cellClassName: 'max-325' },
@@ -109,7 +109,7 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
     else {
       return [
         { id: 'target_keyword', Header: 'Target Keyword', accessor: 'target_keyword', disableSortBy: false },
-        { id: 'timestamp', Header: 'Timestamp', accessor: (obj) => moment(obj.timestamp).format("MMMM Do, 'YY hA"), disableSortBy: false },
+        { id: 'timestamp', Header: 'Timestamp', accessor: (obj) => moment(obj.timestamp + 'Z').format("dddd, MMMM Do, YYYY h:mma"), disableSortBy: false },
         { id: 'guid', Header: 'GUID', accessor: renderStatusCell, headerClassName: 'text-end pe-3', cellClassName: 'max-325' },
       ];
     }

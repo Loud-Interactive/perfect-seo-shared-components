@@ -154,7 +154,7 @@ const PostItem = ({ post, refresh }) => {
 
   return (
     <div className="card bg-secondary p-3" title={post?.title}>
-      <div className="row d-flex g-5 align-items-end">
+      <div className="row d-flex g-3 align-items-end">
         <div className="col-12 col-lg-6">
           <div className="row g-3">
             <div className="col-12">

@@ -31,7 +31,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
     if (user?.id && domain) {
       supabase
         .from('user_history')
-        .insert({ user_id: user.id, domain: domain, transaction_data: { page: 'my-content', tab: selectedTab || queryParam || 'posts' }, product: en })
+        .insert({ user_id: user.id, domain: domain, transaction_data: { page: 'my-content', tab: selectedTab || queryParam || 'posts' }, product: en?.product })
         .select('*')
         .then(res => {
           console.log(res)

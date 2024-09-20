@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
 import styles from './PostsList.module.scss'
-import Table, { TableColumnArrayProps } from '@/perfect-seo-shared-components/components/Table/Table'
 import { deleteContentOutline, getPostsByDomain } from '@/perfect-seo-shared-components/services/services'
 import * as Modal from '@/perfect-seo-shared-components/components/Modal/Modal'
 import moment from 'moment-timezone'
@@ -8,14 +7,13 @@ import useViewport from '@/perfect-seo-shared-components/hooks/useViewport'
 import Loader from '../../../components/Templates/Loader/Loader'
 import Link from 'next/link'
 import TypeWriterText from '@/perfect-seo-shared-components/components/TypeWriterText/TypeWriterText'
+import PostItem from '../PostItem/PostItem'
 
 export interface PostsListProps {
   domain_name: string;
   active: boolean;
-  startDate?: string;
-  endDate?: string;
 }
-const PostsList = ({ domain_name, active, startDate, endDate }: PostsListProps) => {
+const PostsList = ({ domain_name, active }: PostsListProps) => {
   const [loading, setLoading] = useState(true)
   const [data, setData] = useState<any[]>()
   const { desktop } = useViewport()
@@ -119,18 +117,9 @@ const PostsList = ({ domain_name, active, startDate, endDate }: PostsListProps) 
     else if (filter === 'other') {
       newData = data.filter((post) => post.status !== 'Finished')
     }
-    if (startDate) {
-      newData = newData.filter(obj => {
-        let startDateInfo = startDate.split('-')
-        let endDateInfo = endDate.split('-')
-        let newStartDate = new Date(moment().set({ year: parseInt(startDateInfo[0]), month: parseInt(startDateInfo[1]), date: parseInt(startDateInfo[2]) }).toISOString())
-        let newEndDate = new Date(moment().set({ year: parseInt(endDateInfo[0]), month: parseInt(endDateInfo[1]), date: parseInt(endDateInfo[2]) }).toISOString())
-        console.log(obj)
-        return moment(new Date(obj.timestamp)).isBetween(moment(newStartDate).startOf('day'), moment(newEndDate).endOf('day'))
-      })
-    }
+
     return newData
-  }, [data, filter, startDate, endDate])
+  }, [data, filter])
 
   useEffect(() => {
     let interval;
@@ -143,26 +132,6 @@ const PostsList = ({ domain_name, active, startDate, endDate }: PostsListProps) 
       clearInterval(interval);
     }
   }, [domain_name, active])
-
-
-  const columnArray: TableColumnArrayProps[] = useMemo(() => {
-    if (desktop) {
-
-      return [
-        { id: 'title', Header: 'Post Titles', accessor: 'title', disableSortBy: false },
-        { id: 'created_at', Header: 'Created', accessor: (obj) => moment(obj.created_at).format("MMMM Do, 'YY hA"), disableSortBy: false },
-        { id: 'guid', Header: 'GUID', accessor: actionField, headerClassName: 'text-end pe-3', cellClassName: 'max-325' },
-      ];
-    }
-    else {
-      return [
-        { id: 'title', Header: 'Post Titles', accessor: 'title' },
-        { id: 'guid', Header: 'GUID', accessor: actionField, headerClassName: 'text-end pe-3', cellClassName: 'max-325' },
-      ];
-    }
-  }, [desktop])
-
-
 
   const handleFilterChange = (e) => {
     setFilter(e.target.value)
@@ -191,8 +160,10 @@ const PostsList = ({ domain_name, active, startDate, endDate }: PostsListProps) 
       </div>
       {loading ? <Loader />
         : filteredData?.length > 0 ?
-          <Table rawData={filteredData} isLoading={loading} sortedBy={[{ id: 'created_at', desc: true }]} columnArray={columnArray} />
-          :
+          <div className='row d-flex g-3'>
+            {filteredData.map((obj, i) => {
+              return <PostItem post={obj} key={obj.content_plan_outline_guid} />
+            })}</div> :
           <h5><TypeWriterText withBlink string="The are no results for the given parameters" /></h5>}
       <Modal.Overlay open={deleteModal} onClose={() => { setDeleteModal(null) }}>
         <Modal.Title title="Delete Plan" />

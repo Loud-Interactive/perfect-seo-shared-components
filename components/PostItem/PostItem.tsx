@@ -151,6 +151,15 @@ const PostItem = ({ post, refresh }) => {
         console.log(err)
       })
   }
+  const renderAhrefUrl = () => {
+    let newUrl = encodeURI(localPost?.live_post_url.replace("https://", '').replace("http://", "").replace("www.", ""))
+
+    if (newUrl.lastIndexOf("/") === newUrl.length - 1) {
+      newUrl = newUrl.slice(0, -1)
+    }
+    console.log(newUrl)
+    return newUrl
+  }
 
   return (
     <div className="card bg-secondary p-3" title={post?.title}>
@@ -205,7 +214,7 @@ const PostItem = ({ post, refresh }) => {
             {localPost?.live_post_url && <>
               <div className="col">
                 <a
-                  href={`https://app.ahrefs.com/v2-site-explorer/organic-keywords?columns=CPC%7C%7CKD%7C%7CLastUpdated%7C%7COrganicTraffic%7C%7CPaidTraffic%7C%7CPosition%7C%7CPositionHistory%7C%7CSERP%7C%7CSF%7C%7CURL%7C%7CVolume&compareDate=dontCompare&country=us&currentDate=today&keywordRules=&limit=100&mode=prefix&offset=0&positionChanges=&serpFeatures=&sort=Volume&sortDirection=desc&target=${encodeURI(localPost?.live_post_url.replace("https://", '').replace("http://", "").replace("www.", ""))}%2F&urlRules=&volume_type=average`}
+                  href={`https://app.ahrefs.com/v2-site-explorer/organic-keywords?columns=CPC%7C%7CKD%7C%7CLastUpdated%7C%7COrganicTraffic%7C%7CPaidTraffic%7C%7CPosition%7C%7CPositionHistory%7C%7CSERP%7C%7CSF%7C%7CURL%7C%7CVolume&compareDate=dontCompare&country=us&currentDate=today&keywordRules=&limit=100&mode=prefix&offset=0&positionChanges=&serpFeatures=&sort=Volume&sortDirection=desc&target=${renderAhrefUrl()}%2F&urlRules=&volume_type=average`}
                   target="_blank"
                   className="btn btn-primary standard-button d-flex justify-content-center align-items-center ms-1"
 

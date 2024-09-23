@@ -12,6 +12,8 @@ import { RootState } from '@/perfect-seo-shared-components/lib/store'
 import SearchSelect from '@/perfect-seo-shared-components/components/SearchSelect/SearchSelect'
 import Loader from '@/components/Templates/Loader/Loader'
 import { createClient } from '@/perfect-seo-shared-components/utils/supabase/client'
+import { urlSanitization } from '@/perfect-seo-shared-components/utils/conversion-utilities';
+import useManageUser from '@/perfect-seo-shared-components/hooks/useManageUser';
 export interface MyContentProps {
   currentDomain?: string;
   hideTitle?: boolean;
@@ -22,6 +24,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
   const searchParams = useSearchParams();
   const queryParam = searchParams.get('tab');
   const router = useRouter();
+  const { fetchData } = useManageUser(en?.product)
   const pathname = usePathname()
   const [domain, setDomain] = useState(currentDomain || profile?.domains[0])
   const [selected, setSelected] = useState(null)
@@ -71,12 +74,13 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
       setSelected(e)
     }
   };
+
   const supabase = createClient();
-  const checkDomain = () => {
+
+  const fetchDomains = () => {
     supabase
       .from("domains")
       .select("*")
-      .select()
       .then((res) => {
         if (res.data?.length > 0) {
           setDomains(res?.data?.sort((a, b) => a?.domain?.localeCompare(b?.domain)));
@@ -84,7 +88,27 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
 
       });
   };
-
+  const checkDomain = (domain) => {
+    supabase
+      .from('domains')
+      .select("*")
+      .eq('domain', urlSanitization(domain))
+      .select()
+      .then(res => {
+        if (res.data.length === 0) {
+          console.log(`Domain not found, now adding ${domain}`)
+          supabase
+            .from('domains')
+            .insert([
+              { 'domain': urlSanitization(domain) }
+            ])
+            .select()
+            .then(res => {
+              fetchData()
+            })
+        }
+      })
+  }
   const domainsList = useMemo(() => {
     let list;
     if (isAdmin) {
@@ -92,9 +116,12 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
     }
     else if (profile?.domains) {
       list = [...profile?.domains];
-      list = domains?.sort((a, b) => a.localeCompare(b)).map((domain) => ({ label: domain, value: domain }))
+      list = domains?.sort((a, b) => a.localeCompare(b)).map((domain) => {
+        checkDomain(domain)
+        return ({ label: domain, value: domain })
+      })
     }
-
+    console.log(list)
     return list;
 
   }, [profile?.domains, domains, isAdmin])
@@ -111,13 +138,15 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
     if (isAdmin) {
       bool = true
     } else if (user?.email) {
-      bool = (profile?.domains.includes(currentDomain?.toLowerCase()) || user?.email.split('@')[1] === currentDomain || isAdmin)
+      let domain = currentDomain || selected?.value
+      bool = (profile?.domains.includes(domain.toLowerCase()) || isAdmin)
     }
     return bool
-  }, [user, isAdmin, currentDomain])
+  }, [user, isAdmin, currentDomain, selected])
+
   useEffect(() => {
     if (isAdmin) {
-      checkDomain();
+      fetchDomains();
     }
   }, [isAdmin])
 
@@ -125,7 +154,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
   else if (!isAuthorized) {
     return (
       <div className="container strip-padding d-flex align-items-center">
-        <h1 className="text-3xl font-bold text-center mb-3"><TypeWriterText string={isLoggedIn ? 'You are not authorized to view this domains content' : 'Log in to view your content'} withBlink /></h1>
+        <h1 className="text-3xl font-bold text-center mb-3"><TypeWriterText string={isLoggedIn ? `You are not authorized to view content for ${selected.value}` : 'Log in to view your content'} withBlink /></h1>
       </div>
     )
   }

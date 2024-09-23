@@ -82,7 +82,6 @@ const useManageUser = (appKey) => {
       .select()
       .then(res => {
         if (res.data.length === 0) {
-          console.log(`Domain not found, not adding ${domain}`)
           supabase
             .from('domains')
             .insert([
@@ -106,77 +105,79 @@ const useManageUser = (appKey) => {
     }
     else return []
   }
-
-  useEffect(() => {
-    const fetchData = async () => {
-      if (userData && token) {
-        if (!userData.full_name) {
-          userData.full_name = userData?.user_matadata?.full_name
+  const fetchData = async () => {
+    if (userData && token) {
+      if (!userData.full_name) {
+        userData.full_name = userData?.user_matadata?.full_name
+      }
+      if (!user.email) {
+        userData.email = user.email
+      }
+      let domain_access = await fetchAllDomains()
+      if (userData?.domainAccess) {
+        domain_access = [...domain_access, ...userData.domainAccess.filter(obj => obj.permissionLevel === "added")]
+      }
+      let domains = await fetchAllDomains();
+      domains = domains.map(obj => urlSanitization(obj.siteUrl))
+      if (!userData.domains) {
+        domains = [...domains, userData?.email?.split("@")[1]]
+        if (userData?.user_metadata?.custom_claims) {
+          let customClaims = Object.keys(userData?.user_metadata.custom_claims).reduce((prev, curr) => {
+            if (userData?.user_metadata?.custom_claims[curr] !== domains[0]) {
+              return [...prev, userData?.user_metadata?.custom_claims[curr]]
+            }
+            else return prev
+          }, [])
+          domains = [...domains, ...customClaims]
         }
-        if (!user.email) {
-          userData.email = user.email
-        }
-        let domain_access = await fetchAllDomains()
-        if (userData?.domainAccess) {
-          domain_access = [...domain_access, ...userData.domainAccess.filter(obj => obj.permissionLevel === "added")]
-        }
-        let domains = await fetchAllDomains();
-        domains = domains.map(obj => urlSanitization(obj.siteUrl))
-        if (!userData.domains) {
-          domains = [...domains, userData?.email?.split("@")[1]]
-          if (userData?.user_metadata?.custom_claims) {
-            let customClaims = Object.keys(userData?.user_metadata.custom_claims).reduce((prev, curr) => {
-              if (userData?.user_metadata?.custom_claims[curr] !== domains[0]) {
-                return [...prev, userData?.user_metadata?.custom_claims[curr]]
-              }
-              else return prev
-            }, [])
-            domains = [...domains, ...customClaims]
-          }
-
-        }
-        else {
-          domains = [...domains, ...userData.domains.map(obj => urlSanitization(obj))]
-        }
-
-        domains = domains.filter(obj => obj !== 'google' && obj !== "gmail").reduce((prev, curr) => {
-          if (prev.includes(curr)) return prev
-          else {
-            return [...prev, urlSanitization(curr)]
-          }
-        }, [])
-
-        let products = userData.products
-        let key = appKey.replace(".ai", "");
-        if (products) {
-          if (products[key]) {
-            products[key] = new Date().toISOString()
-          }
-          else {
-            products = { ...products, [key]: new Date().toISOString() }
-
-          }
-        }
-        domains = domains.sort((a, b) => a.localeCompare(b))
-        domain_access = domain_access.sort((a, b) => a.siteUrl.localeCompare(b.siteUrl))
-        domains = domains.filter((domain) => {
-          checkDomain(domain);
-          return domain !== ""
-        })
-        let profileObj: any = { email: userData.email, domains: domains, domain_access: domain_access, products: products };
-        profileObj.updated_at = new Date().toISOString()
-        if (user) {
-          profileObj.user_metadata = user
-        }
-        dispatch(setProfile(profileObj))
-        supabase
-          .from('profiles')
-          .update(profileObj)
-          .eq('id', userData.id)
-          .select("*")
 
       }
-    };
+      else {
+        domains = [...domains, ...userData.domains.map(obj => urlSanitization(obj))]
+      }
+
+      domains = domains.filter(obj => obj !== 'google' && obj !== "gmail").reduce((prev, curr) => {
+        if (prev.includes(curr)) return prev
+        else {
+          return [...prev, urlSanitization(curr)]
+        }
+      }, [])
+
+      let products = userData.products
+      let key = appKey.replace(".ai", "");
+      if (products) {
+        if (products[key]) {
+          products[key] = new Date().toISOString()
+        }
+        else {
+          products = { ...products, [key]: new Date().toISOString() }
+
+        }
+      }
+      domains = domains.sort((a, b) => a.localeCompare(b))
+      domain_access = domain_access.sort((a, b) => a.siteUrl.localeCompare(b.siteUrl))
+      domains = domains.filter((domain) => {
+        console.log(domain)
+        checkDomain(domain);
+        return domain !== ""
+      })
+      let profileObj: any = { email: userData.email, domains: domains, domain_access: domain_access, products: products };
+      profileObj.updated_at = new Date().toISOString()
+      if (user) {
+        profileObj.user_metadata = user
+      }
+      dispatch(setProfile(profileObj))
+      supabase
+        .from('profiles')
+        .update(profileObj)
+        .eq('id', userData.id)
+        .select("*")
+
+    }
+  };
+
+  useEffect(() => {
+
     if (userData && token) {
       fetchData();
     }
@@ -199,7 +200,7 @@ const useManageUser = (appKey) => {
 
   }, [])
 
-
+  return ({ userData, token, updateUser, checkDomain, fetchAllDomains, fetchData, getDecodedAccessToken })
 }
 
 export default useManageUser;

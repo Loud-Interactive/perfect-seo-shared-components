@@ -102,6 +102,7 @@ const useManageUser = (appKey) => {
           originalUrl: obj.siteUrl.split(":")[1]
         })
       })
+
     }
     else return []
   }
@@ -114,7 +115,9 @@ const useManageUser = (appKey) => {
         userData.email = user.email
       }
       let domain_access = await fetchAllDomains()
-      domain_access = [...domain_access, ...userData?.domain_access.filter(obj => obj.permissionLevel === "added")]
+      if (userData?.domain_access) {
+        domain_access = [...domain_access, ...userData?.domain_access.filter(obj => obj?.permissionLevel === "added")]
+      }
       let domains = domain_access.map(({ siteUrl }) => urlSanitization(siteUrl))
       if (!userData.domains) {
         domains = [...domains, userData?.email?.split("@")[1]]
@@ -139,7 +142,6 @@ const useManageUser = (appKey) => {
           return [...prev, urlSanitization(curr)]
         }
       }, [])
-
       let products = userData.products
       let key = appKey.replace(".ai", "");
       if (products) {
@@ -154,7 +156,6 @@ const useManageUser = (appKey) => {
       domains = domains.sort((a, b) => a.localeCompare(b))
       domain_access = domain_access.sort((a, b) => a.siteUrl.localeCompare(b.siteUrl))
       domains = domains.filter((domain) => {
-        console.log(domain)
         checkDomain(domain);
         return domain !== ""
       })
@@ -169,14 +170,32 @@ const useManageUser = (appKey) => {
         .update(profileObj)
         .eq('id', userData.id)
         .select("*")
-
+        .then(res => {
+          console.log(res)
+        })
     }
   };
 
   useEffect(() => {
-
+    let profiles;
     if (userData && token) {
       fetchData();
+    }
+    if (userData) {
+      profiles = supabase.channel('custom-filter-channel')
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'profiles', filter: `id=eq.${user?.id}` },
+          (payload) => {
+            dispatch(setProfile(payload.new))
+          }
+        )
+        .subscribe()
+    }
+    return () => {
+      if (profiles) {
+        profiles.unsubscribe()
+      }
     }
   }, [userData, token])
 

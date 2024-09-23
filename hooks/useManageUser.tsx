@@ -114,11 +114,8 @@ const useManageUser = (appKey) => {
         userData.email = user.email
       }
       let domain_access = await fetchAllDomains()
-      if (userData?.domainAccess) {
-        domain_access = [...domain_access, ...userData.domainAccess.filter(obj => obj.permissionLevel === "added")]
-      }
-      let domains = await fetchAllDomains();
-      domains = domains.map(obj => urlSanitization(obj.siteUrl))
+      domain_access = [...domain_access, ...userData?.domain_access.filter(obj => obj.permissionLevel === "added")]
+      let domains = domain_access.map(({ siteUrl }) => urlSanitization(siteUrl))
       if (!userData.domains) {
         domains = [...domains, userData?.email?.split("@")[1]]
         if (userData?.user_metadata?.custom_claims) {

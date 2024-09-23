@@ -36,9 +36,6 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
         .from('user_history')
         .insert({ user_id: user.id, domain: domain, transaction_data: { page: 'my-content', tab: selectedTab || queryParam || 'posts' }, product: en?.product })
         .select('*')
-        .then(res => {
-          console.log(res)
-        })
     }
   }, [domain, selectedTab, user])
 
@@ -121,7 +118,6 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
         return ({ label: domain, value: domain })
       })
     }
-    console.log(list)
     return list;
 
   }, [profile?.domains, domains, isAdmin])

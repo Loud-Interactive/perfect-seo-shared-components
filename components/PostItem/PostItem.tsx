@@ -157,7 +157,6 @@ const PostItem = ({ post, refresh }) => {
     if (newUrl.lastIndexOf("/") === newUrl.length - 1) {
       newUrl = newUrl.slice(0, -1)
     }
-    console.log(newUrl)
     return newUrl
   }
 

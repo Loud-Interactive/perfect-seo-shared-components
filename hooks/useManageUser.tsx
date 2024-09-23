@@ -50,7 +50,7 @@ const useManageUser = (appKey) => {
       localStorage.setItem('supabase.auth.token', _session?.access_token)
       localStorage.setItem('supabase.provider.token', _session?.provider_token)
       if (event === "SIGNED_OUT") {
-        dispatch(reset())
+        return
       }
       if (_session?.provider_token) {
         setToken(_session?.provider_token)

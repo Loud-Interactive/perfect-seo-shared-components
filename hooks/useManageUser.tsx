@@ -165,6 +165,9 @@ const useManageUser = (appKey) => {
         })
         let profileObj: any = { email: userData.email, domains: domains, domain_access: domain_access, products: products };
         profileObj.updated_at = new Date().toISOString()
+        if (user) {
+          profileObj.user_metadata = user
+        }
         dispatch(setProfile(profileObj))
         supabase
           .from('profiles')

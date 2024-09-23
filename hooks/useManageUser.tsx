@@ -47,10 +47,11 @@ const useManageUser = (appKey) => {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, _session) => {
+      supabase.auth.startAutoRefresh()
       localStorage.setItem('supabase.auth.token', _session?.access_token)
       localStorage.setItem('supabase.provider.token', _session?.provider_token)
       if (event === "SIGNED_OUT") {
-        return
+        return;
       }
       if (_session?.provider_token) {
         setToken(_session?.provider_token)
@@ -58,9 +59,7 @@ const useManageUser = (appKey) => {
       else if (_session?.refresh_token) {
         supabase.auth.refreshSession({ refresh_token: _session.refresh_token })
       }
-      else {
-        supabase.auth.startAutoRefresh()
-      }
+
     })
     return () => {
       subscription.unsubscribe()

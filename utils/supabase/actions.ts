@@ -29,7 +29,7 @@ export const signup = (formData: any) => {
 }
 export const logout = () => {
   const supabase = createClient()
-
+  supabase.auth.stopAutoRefresh();
 
   return supabase.auth.signOut()
 }

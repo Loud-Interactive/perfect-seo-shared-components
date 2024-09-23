@@ -150,11 +150,17 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
     }
   }, [isAdmin])
 
-  if (isLoading) return <Loader />
+  if (isLoading) {
+    return (
+      <div className='strip-padding'>
+        <Loader />
+      </div>
+    )
+  }
   else if (!isAuthorized) {
     return (
       <div className="container strip-padding d-flex align-items-center">
-        <h1 className="text-3xl font-bold text-center mb-3"><TypeWriterText string={isLoggedIn ? `You are not authorized to view content for ${selected.value}` : 'Log in to view your content'} withBlink /></h1>
+        <h1 className="text-3xl font-bold text-center mb-3"><TypeWriterText string={isLoggedIn ? `You are not authorized to view content for ${currentDomain || selected?.value || 'this domain'}` : 'Log in to view your content'} withBlink /></h1>
       </div>
     )
   }

@@ -114,7 +114,7 @@ const useManageUser = (appKey) => {
           userData.full_name = userData?.user_matadata?.full_name
         }
         if (!user.email) {
-          user.email = userData.email
+          userData.email = user.email
         }
         let domain_access = await fetchAllDomains()
         if (userData?.domainAccess) {

@@ -2,7 +2,6 @@
 import Link from 'next/link'
 import styles from './Header.module.scss'
 import { loginWithGoogle, logout } from '@/perfect-seo-shared-components/utils/supabase/actions'
-import { useRouter } from 'next/navigation'
 import classNames from 'classnames'
 import useViewport from '@/perfect-seo-shared-components/hooks/useViewport'
 import { useDispatch, useSelector } from 'react-redux'
@@ -15,7 +14,7 @@ import { Brands } from '@/perfect-seo-shared-components/assets/Brands'
 import { renderIcon, renderLogo } from '@/perfect-seo-shared-components/utils/brandUtilities'
 
 import { loadCreditData } from '@/perfect-seo-shared-components/store/thunks'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { RootState } from '@/perfect-seo-shared-components/lib/store'
 
 export interface HeaderProps {

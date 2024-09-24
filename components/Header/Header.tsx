@@ -17,6 +17,7 @@ import { renderIcon, renderLogo } from '@/perfect-seo-shared-components/utils/br
 import { loadCreditData } from '@/perfect-seo-shared-components/store/thunks'
 import { usePathname } from 'next/navigation'
 import { RootState } from '@/perfect-seo-shared-components/lib/store'
+import { signIn } from 'next-auth/react'
 
 export interface HeaderProps {
   links?: Links[],
@@ -59,7 +60,10 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
   const loginWithGoogleHandler = (e) => {
     e?.preventDefault();
     dispatch(setLoading(true))
-    loginWithGoogle()
+    signIn('google', { callbackUrl: window.location.href })
+      .then(res => {
+        console.log(res)
+      })
   }
 
   const signOutHandler = (e) => {

@@ -17,7 +17,7 @@ export type RootState = {
 const initialState: RootState = {
   user: null,
   points: 0,
-  isLoading: true,
+  isLoading: false,
   isLoggedIn: false,
   isAdmin: false,
   profile: null

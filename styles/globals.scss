@@ -4871,3 +4871,8 @@ a.text-white {
 .flip-vertical {
   transform: scaleY(-1);
 }
+
+.btn-warning[data-state="active"] {
+  background-color: $primary;
+  color: white;
+}

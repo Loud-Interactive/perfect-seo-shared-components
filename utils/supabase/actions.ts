@@ -1,5 +1,4 @@
 import { createClient } from '@/perfect-seo-shared-components/utils/supabase/client'
-import { useDispatch } from 'react-redux'
 
 export const login = (formData: any) => {
   const supabase = createClient()
@@ -36,8 +35,9 @@ export const loginWithGoogle = () => {
   return supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: window.location.toString(),
-      scopes: "openid email profile https://www.googleapis.com/auth/webmasters.readonly "
+      scopes: "openid email profile https://www.googleapis.com/auth/webmasters.readonly",
     },
+
+
   })
 }

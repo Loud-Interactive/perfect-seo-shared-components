@@ -25,7 +25,7 @@ export const Brands: Array<Brand> = [
     url: 'https://factcheckPerfect.ai',
     logo: '/svg/factcheckPerfect.svg',
     icon: '/svg/factcheckPerfect-icon.svg',
-    status: BrandStatus.COMING_SOON,
+    status: BrandStatus.LIVE,
     primary: "#179BAE",
     summary: "factcheckPerfect.ai helps businesses verify their articles and content for accuracy and credibility using AI."
   },

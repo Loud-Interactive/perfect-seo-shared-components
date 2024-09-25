@@ -27,6 +27,8 @@ export const Brands: Array<Brand> = [
     icon: '/svg/factcheckPerfect-icon.svg',
     status: BrandStatus.LIVE,
     primary: "#179BAE",
+    stagingUrl: "https://factchecker-perfect.vercel.app/",
+    developmentUrl: "https://factchecker-perfect-git-development-loud-interactives-projects.vercel.app/",
     summary: "factcheckPerfect.ai helps businesses verify their articles and content for accuracy and credibility using AI."
   },
   {

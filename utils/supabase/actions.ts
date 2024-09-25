@@ -36,6 +36,7 @@ export const loginWithGoogle = () => {
     provider: 'google',
     options: {
       scopes: "openid email profile https://www.googleapis.com/auth/webmasters.readonly",
+      redirectTo: window.location.toString(),
     },
 
 

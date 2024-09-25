@@ -25,6 +25,7 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
     getPreviousPlans(domain_name)
       .then(res => {
         let newData = res.data.filter(obj => {
+          console.log(obj)
           return obj.status && obj.target_keyword
         })
         setData(newData)
@@ -63,6 +64,7 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
     }
     return (
       <div className='d-flex justify-content-end'>
+        {obj?.guid}
         {(status === 'Finished') ?
 
           <button className="btn btn-primary" onClick={clickHandler} title={`View GUID: ${obj.guid}`}>View Plan</button>
@@ -72,7 +74,8 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
           </span>
         }
         {/* <button className='btn btn-warning d-flex align-items-center justify-content-center ms-2' onClick={deleteClickHandler} title={`View GUID: ${obj.guid}`}><i className="bi bi-trash pt-1" /></button> */}
-      </div>)
+      </div>
+    )
   }
 
   const filteredData = useMemo(() => {
@@ -121,6 +124,10 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
         setDeleteModal(null)
         fetchPlans()
       })
+      .catch(err => {
+        setDeleteModal(null)
+      }
+      )
   }
   return (
     <div className={styles.wrap}>

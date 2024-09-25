@@ -4872,6 +4872,11 @@ a.text-white {
   transform: scaleY(-1);
 }
 
+.btn-warning[data-state="active"] {
+  background-color: $primary;
+  color: white;
+}
+
 .fixed {
   position: fixed;
 }

@@ -13,7 +13,7 @@ import SearchSelect from '@/perfect-seo-shared-components/components/SearchSelec
 import Loader from '@/components/Templates/Loader/Loader'
 import { createClient } from '@/perfect-seo-shared-components/utils/supabase/client'
 import { urlSanitization } from '@/perfect-seo-shared-components/utils/conversion-utilities';
-import useManageUser from '@/perfect-seo-shared-components/hooks/useManageUser';
+import BulkContentPlanGenerator from '../BulkContentGenerator/BulkContentGenerator';
 export interface MyContentProps {
   currentDomain?: string;
   hideTitle?: boolean;
@@ -24,17 +24,16 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
   const searchParams = useSearchParams();
   const queryParam = searchParams.get('tab');
   const router = useRouter();
-  const { fetchData } = useManageUser(en?.product)
   const pathname = usePathname()
   const [domain, setDomain] = useState(currentDomain || profile?.domains[0])
   const [selected, setSelected] = useState(null)
   const [domains, setDomains] = useState([])
 
   useEffect(() => {
-    if (user?.id && domain) {
+    if (user?.email && domain) {
       supabase
         .from('user_history')
-        .insert({ user_id: user.id, domain: domain, transaction_data: { page: 'my-content', tab: selectedTab || queryParam || 'posts' }, product: en?.product })
+        .insert({ email: user.email, domain: domain, transaction_data: { page: 'my-content', tab: selectedTab || queryParam || 'posts' }, product: en?.product })
         .select('*')
     }
   }, [domain, selectedTab, user])
@@ -64,6 +63,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
   const TabData = [
     { key: "posts", title: "Generated Posts" },
     { key: "content-plan", title: "Content Plans" },
+    { key: "bulk-upload", title: "Bulk Upload" },
   ]
   const searchUserChangeHandler = (e) => {
     if (e) {
@@ -99,10 +99,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
             .insert([
               { 'domain': urlSanitization(domain) }
             ])
-            .select()
-            .then(res => {
-              fetchData()
-            })
+            .select();
         }
       })
   }
@@ -164,9 +161,9 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
     <div className='container-xl content-fluid'>
       {!hideTitle && <div className='row d-flex justify-content-between'>
         <div className='col'>
-          <h1 className="text-3xl font-bold text-start mb-5"><TypeWriterText string={`Content for ${domain}`} withBlink /></h1>
+          <h1 className="text-3xl font-bold text-start mb-5"><TypeWriterText string={selectedTab === 'bulk-upload' ? 'Upload for all domains' : `Content for ${domain}`} withBlink /></h1>
         </div>
-        {(!currentDomain && profile?.domains?.length > 1) && <div className='col-12 col-md-4 mb-3'>
+        {(!currentDomain && profile?.domains?.length > 1 && selectedTab !== 'bulk-upload') && <div className='col-12 col-md-4 mb-3'>
           <SearchSelect
             onChange={searchUserChangeHandler}
             options={domainsList}
@@ -200,7 +197,11 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
               <PlansList active={selectedTab === 'content-plan'} domain_name={domain} />
             </div>
           </div>
-
+          <div className={`tab-pane fade ${selectedTab === 'bulk-upload' && 'show active'}`} id="bulk-upload" role="tabpanel" aria-labelledby="bulk-upload-tab">
+            <div className='tab p-3'>
+              <BulkContentPlanGenerator />
+            </div>
+          </div>
         </div>
       </div>
     </div >

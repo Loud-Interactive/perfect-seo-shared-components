@@ -35,7 +35,6 @@ const PostsList = ({ domain_name, active }: PostsListProps) => {
   const deleteHandler = (guid) => {
     deleteContentOutline(guid)
       .then(res => {
-        console.log(res)
         getPosts()
         setDeleteModal(null)
       })

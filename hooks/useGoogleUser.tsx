@@ -1,3 +1,4 @@
+'use client'
 import { RootState } from '@/perfect-seo-shared-components/lib/store'
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from 'react'
@@ -6,20 +7,48 @@ import { createClient } from '@/perfect-seo-shared-components/utils/supabase/cli
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 import { urlSanitization } from '../utils/conversion-utilities';
+import { useSession } from 'next-auth/react';
 
-const useManageUser = (appKey) => {
-
+const useGoogleUser = (appKey) => {
   const { user, isLoading } = useSelector((state: RootState) => state);
-  const [userData, setUserData] = useState<any>(null)
   const [token, setToken] = useState(null)
+  const [userData, setUserData] = useState<any>(null)
   const dispatch = useDispatch();
   const supabase = createClient()
+
+  const { data: session, status } = useSession()
+
+  //set status based on loading of session
+  useEffect(() => {
+    let sessionData: any = session;
+    switch (status) {
+      case 'loading':
+        dispatch(setLoading(true));
+        break;
+      case 'authenticated':
+        dispatch(setLoading(false));
+        dispatch(setLoggedIn(true));
+        break;
+      case 'unauthenticated':
+        dispatch(setLoading(false));
+        dispatch(setLoggedIn(false));
+        break;
+    }
+    if (session) {
+      if (session?.user) {
+        dispatch(setUser(session.user))
+      }
+    }
+    if (sessionData?.access_token) {
+      setToken(sessionData.access_token)
+    }
+  }, [status])
 
   const updateUser = () => {
     supabase
       .from('profiles')
       .select("*")
-      .eq('id', user.id)
+      .eq('email', user.email)
       .select()
       .then(res => {
         if (res?.data && res?.data?.length > 0) {
@@ -41,28 +70,8 @@ const useManageUser = (appKey) => {
   }
 
   useEffect(() => {
-    if (user) {
+    if (user?.email) {
       updateUser()
-    }
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, _session) => {
-      supabase.auth.startAutoRefresh()
-      localStorage.setItem('supabase.auth.token', _session?.access_token)
-      localStorage.setItem('supabase.provider.token', _session?.provider_token)
-      if (event === "SIGNED_OUT") {
-        return;
-      }
-      if (_session?.provider_token) {
-        setToken(_session?.provider_token)
-      }
-      else if (_session?.refresh_token) {
-        supabase.auth.refreshSession({ refresh_token: _session.refresh_token })
-      }
-
-    })
-    return () => {
-      subscription.unsubscribe()
     }
   }, [user])
 
@@ -106,6 +115,7 @@ const useManageUser = (appKey) => {
     }
     else return []
   }
+
   const fetchData = async () => {
     if (userData && token) {
       if (!userData.full_name) {
@@ -168,52 +178,34 @@ const useManageUser = (appKey) => {
       supabase
         .from('profiles')
         .update(profileObj)
-        .eq('id', userData.id)
+        .eq('email', user?.email)
         .select("*")
     }
   };
 
   useEffect(() => {
     let profiles;
-    if (userData && token) {
-      fetchData();
-    }
     if (userData) {
-      profiles = supabase.channel('custom-filter-channel')
-        .on(
-          'postgres_changes',
-          { event: '*', schema: 'public', table: 'profiles', filter: `id=eq.${user?.id}` },
-          (payload) => {
-            dispatch(setProfile(payload.new))
-          }
-        )
-        .subscribe()
+      fetchData();
+      // profiles = supabase.channel('custom-filter-channel')
+      //   .on(
+      //     'postgres_changes',
+      //     { event: '*', schema: 'public', table: 'profiles', filter: `email=eq.${user?.email}` },
+      //     (payload) => {
+      //       dispatch(setProfile(payload.new))
+      //     }
+      //   )
+      //   .subscribe()
     }
     return () => {
-      if (profiles) {
-        profiles.unsubscribe()
-      }
+      // if (profiles) {
+      //   profiles.unsubscribe()
+      // }
     }
-  }, [userData, token])
+  }, [userData])
 
-  useEffect(() => {
-    supabase.auth.getUser()
-      .then((res) => {
-        if (res.data.user === null) {
-          dispatch(setLoading(false))
-        }
-        else if (res.error !== null) {
-          dispatch(reset())
-        } else {
-          dispatch(setLoggedIn(true))
-          dispatch(setUser(res.data.user))
-        }
-        return dispatch(setLoading(false))
-      })
 
-  }, [])
-
-  return ({ userData, token, updateUser, checkDomain, fetchAllDomains, fetchData, getDecodedAccessToken })
+  return ({ userData, updateUser, checkDomain, fetchAllDomains, getDecodedAccessToken })
 }
 
-export default useManageUser;
+export default useGoogleUser;

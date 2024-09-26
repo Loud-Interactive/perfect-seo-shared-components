@@ -1,21 +1,21 @@
 'use client'
+import { signIn, useSession } from "next-auth/react"
 import Link from 'next/link'
 import styles from './Header.module.scss'
 import { loginWithGoogle, logout } from '@/perfect-seo-shared-components/utils/supabase/actions'
 import classNames from 'classnames'
 import useViewport from '@/perfect-seo-shared-components/hooks/useViewport'
 import { useDispatch, useSelector } from 'react-redux'
-import { reset, setLoading } from '@/perfect-seo-shared-components/lib/features/User'
+import { reset, setLoading, updatePoints } from '@/perfect-seo-shared-components/lib/features/User'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { Brand, BrandStatus, Links, LinkType } from '@/perfect-seo-shared-components/data/types'
 import { useEffect, useMemo, useState } from 'react'
-import useManageUser from '@/perfect-seo-shared-components/hooks/useManageUser'
 import { Brands } from '@/perfect-seo-shared-components/assets/Brands'
 import { renderIcon, renderLogo } from '@/perfect-seo-shared-components/utils/brandUtilities'
-
-import { loadCreditData } from '@/perfect-seo-shared-components/store/thunks'
 import { usePathname, useRouter } from 'next/navigation'
 import { RootState } from '@/perfect-seo-shared-components/lib/store'
+import useGoogleUser from "@/perfect-seo-shared-components/hooks/useGoogleUser"
+import { addUserCredit, checkUserCredits, createUserCreditAccount } from "@/perfect-seo-shared-components/services/services"
 
 export interface HeaderProps {
   links?: Links[],
@@ -33,14 +33,41 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
   const [currentPage, setCurrentPage] = useState('')
   const pathname = usePathname()
 
-  const brand = Brands.find((brand) => brand.title === current)
-  useEffect(() => {
-    if (user && getCredits) {
-      dispatch(loadCreditData(user?.email) as any); // Add 'as any' to cast the action to 'UnknownAction'
-    }
-  }, [user, getCredits, dispatch]) // Add 'dispatch' to the dependency array
+  const loadCreditData = (email: string) => {
 
-  useManageUser(current)
+    checkUserCredits(email).then((res) => {
+      dispatch(updatePoints(res?.data?.credits))
+    })
+      .catch(err => {
+        createUserCreditAccount(email)
+          .then(res1 => {
+            if (res1?.data?.credits === 0) {
+              addUserCredit(email, 9000)
+                .then(res2 => {
+                  dispatch(updatePoints(res2?.data?.credits))
+                })
+            } else {
+              dispatch(updatePoints(res1?.data?.credits))
+            }
+          })
+          .catch(err => {
+            console.log("Error in creating user credits", err)
+          })
+      })
+
+  };
+
+
+  const brand = Brands.find((brand) => brand.title === current)
+
+  useEffect(() => {
+    if (user?.email && getCredits) {
+      loadCreditData(user.email)
+    }
+  }, [user, getCredits])
+
+  useGoogleUser(current)
+
 
   useEffect(() => {
     const updateRoute = (url) => {
@@ -58,7 +85,9 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
   const loginWithGoogleHandler = (e) => {
     e?.preventDefault();
     dispatch(setLoading(true))
-    loginWithGoogle()
+
+    signIn('google', { callbackUrl: `${window.location.origin}/` })
+
   }
 
   const signOutHandler = (e) => {

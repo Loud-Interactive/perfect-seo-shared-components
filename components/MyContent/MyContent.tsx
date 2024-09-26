@@ -14,6 +14,7 @@ import Loader from '@/components/Templates/Loader/Loader'
 import { createClient } from '@/perfect-seo-shared-components/utils/supabase/client'
 import { urlSanitization } from '@/perfect-seo-shared-components/utils/conversion-utilities';
 import useManageUser from '@/perfect-seo-shared-components/hooks/useManageUser';
+import BulkContentPlanGenerator from '../BulkContentGenerator/BulkContentGenerator';
 export interface MyContentProps {
   currentDomain?: string;
   hideTitle?: boolean;
@@ -64,6 +65,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
   const TabData = [
     { key: "posts", title: "Generated Posts" },
     { key: "content-plan", title: "Content Plans" },
+    { key: "bulk-upload", title: "Bulk Upload" },
   ]
   const searchUserChangeHandler = (e) => {
     if (e) {
@@ -200,7 +202,11 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
               <PlansList active={selectedTab === 'content-plan'} domain_name={domain} />
             </div>
           </div>
-
+          <div className={`tab-pane fade ${selectedTab === 'bulk-upload' && 'show active'}`} id="bulk-upload" role="tabpanel" aria-labelledby="bulk-upload-tab">
+            <div className='tab p-3'>
+              <BulkContentPlanGenerator />
+            </div>
+          </div>
         </div>
       </div>
     </div >

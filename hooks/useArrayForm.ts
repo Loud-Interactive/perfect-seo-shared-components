@@ -3,7 +3,7 @@ import { FormController } from './useForm';
 
 export interface ArrayFormConfig {
   arrayKey: string,
-  objectTemplate: object,
+  objectTemplate: any,
   requiredKeys?: string[],
   validatedKeys?: string[],
   form: FormController
@@ -22,8 +22,8 @@ export interface ArrayFormController {
 }
 
 export default function useArrayForm(form): ArrayFormController {
-  const [objectData, setObjectData] = useState<Object>(null);
-  const [config, setConfig] = useState<ArrayFormConfig>(null);
+  const [objectData, setObjectData] = useState<any>({});
+  const [config, setConfig] = useState<ArrayFormConfig>({ arrayKey: '', objectTemplate: {}, form: form });
 
   // Prevents Update Loops 
   useEffect(() => {
@@ -38,8 +38,8 @@ export default function useArrayForm(form): ArrayFormController {
   }, [form?.getState]);
 
   // converts an object to array
-  const objectDataToArray = (object) => {
-    let arr = [];
+  const objectDataToArray = (object: any) => {
+    let arr: any[] = [];
 
     if (typeof object === 'object' && object) {
       let keyArray = Object.keys(object);
@@ -47,7 +47,7 @@ export default function useArrayForm(form): ArrayFormController {
       if (keyArray.length > 0) {
         for (var idx in keyArray) {
           let obj = keyArray[idx];
-          let objParts = obj?.split('-');
+          let objParts = obj.split('-');
           let i = objParts[1];
           let key = objParts[0];
 
@@ -67,7 +67,7 @@ export default function useArrayForm(form): ArrayFormController {
   };
 
   // hook for state of array 
-  const [arrayState, setTheArrayState] = useState([]);
+  const [arrayState, setTheArrayState] = useState<any[]>([]);
 
   useEffect(() => {
     if (JSON.stringify(objectDataToArray(objectData)) !== JSON.stringify(arrayState)) {
@@ -103,8 +103,8 @@ export default function useArrayForm(form): ArrayFormController {
   const requiredFields = useMemo(() => {
     if (config && objectData) {
       let dataKeys = Object.keys(objectData);
-      let newArray = dataKeys.map(obj => {
-        let key = obj?.split('-')[0];
+      let newArray: any[] = dataKeys.map(obj => {
+        let key = obj.split('-')[0];
 
         if (config.requiredKeys) {
           if (config.requiredKeys.includes(key)) {
@@ -114,7 +114,7 @@ export default function useArrayForm(form): ArrayFormController {
       });
 
       return newArray;
-    } else return null;
+    } else return [];
   }, [config, objectData]);
 
   // creates validator fields for validation 
@@ -122,18 +122,20 @@ export default function useArrayForm(form): ArrayFormController {
     if (config && objectData !== null) {
       if (config.validatedKeys) {
         let dataKeys = Object.keys(objectData);
-        let newArray = dataKeys.map(obj => {
-          let key = obj?.split('-')[0];
+        let newArray: any[] = dataKeys.map(obj => {
+          let key = obj.split('-')[0];
 
-          if (config.validatedKeys.includes(key) && key !== undefined) {
+          if (config?.validatedKeys?.includes(key) && key !== undefined) {
             return obj.toString();
           }
         });
 
         return newArray.filter(obj => obj !== undefined);
-      } else return null;
+      } else
+        return [];
 
     }
+    else return [];
   }, [config, objectData]);
 
   // Adds an object to your form and sets from 

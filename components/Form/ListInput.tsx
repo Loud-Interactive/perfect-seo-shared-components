@@ -20,13 +20,13 @@ interface ListInputProps extends React.HTMLProps<HTMLInputElement> {
 
 const ListInput = ({
   borderless,
-  bottomSpacing,
+  bottomSpacing = true,
   error,
   icon,
   label,
   fieldName,
   required,
-  type,
+  type = 'text',
   validator,
   className,
   hideErrorMessage,
@@ -44,17 +44,9 @@ const ListInput = ({
 
   const inputClass = '-input';
 
-  const [values, setValues] = useState([])
+  const [values, setValues] = useState<string[]>([])
   const [addOn, setAddOn] = useState("")
 
-  const inputClassNames = classNames(`${inputClass} form-control`, {
-    [`${inputClass}_withIcon`]: !!icon,
-    [`${inputClass}_withError`]: hasErrors,
-    [`${inputClass}_borderless`]: !!borderless,
-    [`${inputClass}_readOnly`]: props.readOnly || props.disabled,
-    [`${inputClass}_bottomSpacing`]: bottomSpacing,
-    [className]: className,
-  });
 
   const ariaProps = {
     'aria-invalid': hasErrors,
@@ -170,9 +162,5 @@ const ListInput = ({
   );
 };
 
-ListInput.defaultProps = {
-  type: 'text',
-  bottomSpacing: true,
-};
 
 export default ListInput;

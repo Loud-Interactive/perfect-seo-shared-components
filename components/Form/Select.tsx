@@ -28,7 +28,7 @@ export const Select = ({
   type,
   className,
   disabled,
-  bottomSpacing,
+  bottomSpacing = true,
   readOnly,
   placeholder,
   ...props
@@ -56,7 +56,7 @@ export const Select = ({
   const [selectedValue, setSelectedValue] = useState(value);
 
   useEffect(() => {
-    if (value !== (null || undefined) && value) {
+    if (value) {
       setSelectedValue(value);
     } else {
       setSelectedValue('default');
@@ -75,10 +75,10 @@ export const Select = ({
   const inputClass = 'select-input';
 
   const inputClassNames = classNames(`${inputClass} form-select form-control`, {
-    [`${inputClass}_withSelection`]: selectedValue !== ('default' || null || undefined),
+    [`${inputClass}_withSelection`]: (selectedValue !== 'default' && selectedValue),
     [`${inputClass}_withIcon`]: !!icon,
     [`${inputClass}_withError`]: hasErrors,
-    [className]: className,
+    [`${className}`]: className,
   });
 
   const ariaProps = {
@@ -124,8 +124,4 @@ export const Select = ({
       )}
     </FormField>
   );
-};
-
-Select.defaultProps = {
-  bottomSpacing: true,
 };

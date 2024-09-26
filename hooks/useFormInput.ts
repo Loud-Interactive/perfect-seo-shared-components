@@ -20,10 +20,10 @@ interface FormInputData {
 /**
  * TODO: @description
  */
-export default function useFormInput({ fieldName, error, required, validator }: FormInputConfig): FormInputData {
+export default function useFormInput({ fieldName, error, required = false, validator }: FormInputConfig): FormInputData {
   const form = useContext(FormContext);
   const fieldErrors = form.getFieldErrors(fieldName);
-  const inputRef = useRef(null);
+  const inputRef = useRef<HTMLElement>(null!);
 
   const errors = error
     ? [error, ...fieldErrors]
@@ -33,8 +33,8 @@ export default function useFormInput({ fieldName, error, required, validator }: 
 
   useEffect(() => {
     form.register(fieldName, {
-      ref: inputRef.current,
-      required,
+      ref: inputRef?.current,
+      required: required || false,
       validator,
     });
 

@@ -14,15 +14,17 @@ interface TextAreaInputProps extends React.HTMLProps<HTMLTextAreaElement> {
   className?: string;
   hideErrorMessage?: boolean;
   bottomSpacing?: boolean;
+  button?: any;
 }
 
 const TextArea = ({
   error,
   label,
   fieldName,
-  required,
+  required = false,
   validator,
   bottomSpacing,
+  type = "text",
   className,
   ...props
 }: TextAreaInputProps) => {
@@ -37,7 +39,9 @@ const TextArea = ({
 
   const inputClassNames = classNames(`${inputClass} form-control`, {
     [`${inputClass}_withError`]: hasErrors,
-    [className]: className
+    [`${className}`]: className,
+    [`${inputClass}_disabled`]: props.disabled,
+    [`${inputClass}_button`]: props.button,
   });
 
   const ariaProps = {
@@ -65,6 +69,7 @@ const TextArea = ({
           id={fieldName}
           ref={inputRef}
         />
+        {props.button && <div className='input-button'>{props.button}</div>}
       </div>
       {hasErrors && (
         <FieldErrors
@@ -76,9 +81,6 @@ const TextArea = ({
   );
 };
 
-TextArea.defaultProps = {
-  type: 'text',
-  required: false,
-};
+
 
 export default TextArea;

@@ -1,14 +1,14 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, ReactNode } from 'react';
 
 interface FormErrorProps {
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 const FormError = ({ children }: FormErrorProps) => {
-  const containerRef = useRef(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    containerRef.current.focus();
+    containerRef?.current?.focus();
   }, []);
 
   return (

@@ -16,17 +16,18 @@ interface TextInputProps extends React.HTMLProps<HTMLInputElement> {
   autoComplete?: string
   bottomSpacing?: boolean
   button?: any;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const TextInput = ({
   borderless,
-  bottomSpacing,
+  bottomSpacing = true,
   error,
   icon,
   label,
   fieldName,
   required,
-  type,
+  type = 'text',
   validator,
   className,
   hideErrorMessage,
@@ -51,7 +52,7 @@ const TextInput = ({
     [`${inputClass}_readOnly`]: props.readOnly || props.disabled,
     [`${inputClass}_bottomSpacing`]: bottomSpacing,
     [`${inputClass}_button`]: props.button,
-    [className]: className,
+    [`${className}`]: className,
   });
 
   const ariaProps = {
@@ -102,9 +103,6 @@ const TextInput = ({
   );
 };
 
-TextInput.defaultProps = {
-  type: 'text',
-  bottomSpacing: true,
-};
+
 
 export default TextInput;

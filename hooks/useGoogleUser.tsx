@@ -6,20 +6,47 @@ import { createClient } from '@/perfect-seo-shared-components/utils/supabase/cli
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 import { urlSanitization } from '../utils/conversion-utilities';
+import { useSession } from 'next-auth/react';
+import { cookies } from 'next/headers';
+import { getDomainsFromGoogle } from '../services/services';
 
-const useManageUser = (appKey) => {
+const useGoogleUser = (appKey) => {
+
 
   const { user, isLoading } = useSelector((state: RootState) => state);
   const [userData, setUserData] = useState<any>(null)
-  const [token, setToken] = useState(null)
   const dispatch = useDispatch();
   const supabase = createClient()
+
+  const { data: session, status } = useSession()
+
+  //set status based on loading of session
+  useEffect(() => {
+    switch (status) {
+      case 'loading':
+        dispatch(setLoading(true));
+        break;
+      case 'authenticated':
+        dispatch(setLoading(false));
+        dispatch(setLoggedIn(true));
+        break;
+      case 'unauthenticated':
+        dispatch(setLoading(false));
+        dispatch(setLoggedIn(false));
+        break;
+    }
+    if (session) {
+      if (session?.user) {
+        dispatch(setUser(session.user))
+      }
+    }
+  }, [status, session])
 
   const updateUser = () => {
     supabase
       .from('profiles')
       .select("*")
-      .eq('id', user.id)
+      .eq('email', user.email)
       .select()
       .then(res => {
         if (res?.data && res?.data?.length > 0) {
@@ -41,28 +68,8 @@ const useManageUser = (appKey) => {
   }
 
   useEffect(() => {
-    if (user) {
+    if (user?.email) {
       updateUser()
-    }
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, _session) => {
-      supabase.auth.startAutoRefresh()
-      localStorage.setItem('supabase.auth.token', _session?.access_token)
-      localStorage.setItem('supabase.provider.token', _session?.provider_token)
-      if (event === "SIGNED_OUT") {
-        return;
-      }
-      if (_session?.provider_token) {
-        setToken(_session?.provider_token)
-      }
-      else if (_session?.refresh_token) {
-        supabase.auth.refreshSession({ refresh_token: _session.refresh_token })
-      }
-
-    })
-    return () => {
-      subscription.unsubscribe()
     }
   }, [user])
 
@@ -91,30 +98,29 @@ const useManageUser = (appKey) => {
         }
       })
   }
-  const fetchAllDomains = async () => {
-    const { data } = await axios.get('https://www.googleapis.com/webmasters/v3/sites', { headers: { Authorization: `Bearer ${token}` } })
-    if (data?.siteEntry) {
-      return data.siteEntry.map(obj => {
-        return ({
-          type: obj.siteUrl.split(":")[0],
-          siteUrl: urlSanitization(obj.siteUrl.split(":")[1]),
-          permissionLevel: obj.permissionLevel,
-          originalUrl: obj.siteUrl.split(":")[1]
-        })
-      })
 
-    }
-    else return []
-  }
+
   const fetchData = async () => {
-    if (userData && token) {
+    if (userData) {
       if (!userData.full_name) {
         userData.full_name = userData?.user_matadata?.full_name
       }
       if (!userData?.email) {
         userData.email = user.email
       }
-      let domain_access = await fetchAllDomains()
+      let { data } = await getDomainsFromGoogle()
+      let domain_access = []
+      if (data?.siteEntry) {
+        domain_access = data.siteEntry.map(obj => {
+          return ({
+            type: obj.siteUrl.split(":")[0],
+            siteUrl: urlSanitization(obj.siteUrl.split(":")[1]),
+            permissionLevel: obj.permissionLevel,
+            originalUrl: obj.siteUrl.split(":")[1]
+          })
+        })
+
+      }
       if (userData?.domain_access) {
         domain_access = [...domain_access, ...userData?.domain_access.filter(obj => obj?.permissionLevel === "added")]
       }
@@ -168,21 +174,19 @@ const useManageUser = (appKey) => {
       supabase
         .from('profiles')
         .update(profileObj)
-        .eq('id', userData.id)
+        .eq('email', user?.email)
         .select("*")
     }
   };
 
   useEffect(() => {
     let profiles;
-    if (userData && token) {
-      fetchData();
-    }
     if (userData) {
+      fetchData();
       profiles = supabase.channel('custom-filter-channel')
         .on(
           'postgres_changes',
-          { event: '*', schema: 'public', table: 'profiles', filter: `id=eq.${user?.id}` },
+          { event: '*', schema: 'public', table: 'profiles', filter: `email=eq.${user?.email}` },
           (payload) => {
             dispatch(setProfile(payload.new))
           }
@@ -194,26 +198,10 @@ const useManageUser = (appKey) => {
         profiles.unsubscribe()
       }
     }
-  }, [userData, token])
+  }, [userData])
 
-  useEffect(() => {
-    supabase.auth.getUser()
-      .then((res) => {
-        if (res.data.user === null) {
-          dispatch(setLoading(false))
-        }
-        else if (res.error !== null) {
-          dispatch(reset())
-        } else {
-          dispatch(setLoggedIn(true))
-          dispatch(setUser(res.data.user))
-        }
-        return dispatch(setLoading(false))
-      })
 
-  }, [])
-
-  return ({ userData, token, updateUser, checkDomain, fetchAllDomains, fetchData, getDecodedAccessToken })
+  return ({ userData, updateUser, checkDomain, fetchData, getDecodedAccessToken })
 }
 
-export default useManageUser;
+export default useGoogleUser;

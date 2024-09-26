@@ -3,8 +3,14 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
+export interface User {
+  email: string,
+  image: string,
+  name: string,
+}
+
 export type RootState = {
-  user: any,
+  user: User | null,
   points: number,
   isLoading: boolean,
   isLoggedIn: boolean,
@@ -17,7 +23,7 @@ export type RootState = {
 const initialState: RootState = {
   user: null,
   points: 0,
-  isLoading: false,
+  isLoading: true,
   isLoggedIn: false,
   isAdmin: false,
   profile: null

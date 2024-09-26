@@ -6,7 +6,7 @@ import { loginWithGoogle, logout } from '@/perfect-seo-shared-components/utils/s
 import classNames from 'classnames'
 import useViewport from '@/perfect-seo-shared-components/hooks/useViewport'
 import { useDispatch, useSelector } from 'react-redux'
-import { reset, setLoading } from '@/perfect-seo-shared-components/lib/features/User'
+import { reset, setLoading, setLoggedIn } from '@/perfect-seo-shared-components/lib/features/User'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { Brand, BrandStatus, Links, LinkType } from '@/perfect-seo-shared-components/data/types'
 import { useEffect, useMemo, useState } from 'react'
@@ -17,6 +17,7 @@ import { renderIcon, renderLogo } from '@/perfect-seo-shared-components/utils/br
 import { loadCreditData } from '@/perfect-seo-shared-components/store/thunks'
 import { usePathname, useRouter } from 'next/navigation'
 import { RootState } from '@/perfect-seo-shared-components/lib/store'
+import useGoogleUser from "@/perfect-seo-shared-components/hooks/useGoogleUser"
 
 export interface HeaderProps {
   links?: Links[],
@@ -42,11 +43,8 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
   }, [user, getCredits, dispatch]) // Add 'dispatch' to the dependency array
 
   // useManageUser(current)
-  const { data: session, status } = useSession()
-  useEffect(() => {
-    console.log("session", session)
-    console.log("status", status)
-  }, [status, session])
+  useGoogleUser(current)
+
 
   useEffect(() => {
     const updateRoute = (url) => {

@@ -32,10 +32,10 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
   const [domains, setDomains] = useState([])
 
   useEffect(() => {
-    if (user?.id && domain) {
+    if (user?.email && domain) {
       supabase
         .from('user_history')
-        .insert({ user_id: user.id, domain: domain, transaction_data: { page: 'my-content', tab: selectedTab || queryParam || 'posts' }, product: en?.product })
+        .insert({ email: user.email, domain: domain, transaction_data: { page: 'my-content', tab: selectedTab || queryParam || 'posts' }, product: en?.product })
         .select('*')
     }
   }, [domain, selectedTab, user])

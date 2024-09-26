@@ -4834,7 +4834,7 @@ a.text-white {
   }
 }
 
-.standard-button {
+.btn-standard {
   height: 50px;
   display: flex;
   align-items: center;
@@ -4909,4 +4909,11 @@ a.text-white {
 
 .cursor-pointer {
   cursor: pointer !important;
+}
+
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  column-gap: 8px;
 }

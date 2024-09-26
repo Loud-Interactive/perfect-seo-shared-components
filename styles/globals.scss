@@ -4917,3 +4917,10 @@ a.text-white {
   justify-content: center;
   column-gap: 8px;
 }
+
+.hero-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}

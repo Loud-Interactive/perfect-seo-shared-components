@@ -13,7 +13,6 @@ import SearchSelect from '@/perfect-seo-shared-components/components/SearchSelec
 import Loader from '@/components/Templates/Loader/Loader'
 import { createClient } from '@/perfect-seo-shared-components/utils/supabase/client'
 import { urlSanitization } from '@/perfect-seo-shared-components/utils/conversion-utilities';
-import useManageUser from '@/perfect-seo-shared-components/hooks/useManageUser';
 import BulkContentPlanGenerator from '../BulkContentGenerator/BulkContentGenerator';
 export interface MyContentProps {
   currentDomain?: string;
@@ -25,17 +24,16 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
   const searchParams = useSearchParams();
   const queryParam = searchParams.get('tab');
   const router = useRouter();
-  const { fetchData } = useManageUser(en?.product)
   const pathname = usePathname()
   const [domain, setDomain] = useState(currentDomain || profile?.domains[0])
   const [selected, setSelected] = useState(null)
   const [domains, setDomains] = useState([])
 
   useEffect(() => {
-    if (user?.id && domain) {
+    if (user?.email && domain) {
       supabase
         .from('user_history')
-        .insert({ user_id: user.id, domain: domain, transaction_data: { page: 'my-content', tab: selectedTab || queryParam || 'posts' }, product: en?.product })
+        .insert({ email: user.email, domain: domain, transaction_data: { page: 'my-content', tab: selectedTab || queryParam || 'posts' }, product: en?.product })
         .select('*')
     }
   }, [domain, selectedTab, user])
@@ -101,10 +99,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
             .insert([
               { 'domain': urlSanitization(domain) }
             ])
-            .select()
-            .then(res => {
-              fetchData()
-            })
+            .select();
         }
       })
   }

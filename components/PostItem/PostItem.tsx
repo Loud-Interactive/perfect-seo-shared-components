@@ -162,7 +162,7 @@ const PostItem = ({ post, refresh }) => {
 
   return (
     <div className="card bg-secondary p-3" title={post?.title}>
-      <div className="row d-flex g-3 align-items-end">
+      <div className="row d-flex g-3 d-flex align-items-start">
         <div className="col-12 col-lg-6">
           <div className="row g-3">
             <div className="col-12">
@@ -173,22 +173,18 @@ const PostItem = ({ post, refresh }) => {
               </p>
               <strong className="text-primary me-1">Title</strong>  {localPost?.title}
             </div>
-            <div className="col-12">
-              {(showUrl || localPost?.live_post_url) &&
-                <><TextInput
-                  bottomSpacing={false} fieldName="live-url" value={liveUrl} onChange={(e) => { setSaved(false); setLiveUrl(e.target.value) }} label="Live Post Url" button={<URLSaveButton />} />
-                  {urlError && <div className="text-danger">{urlError}</div>}
-                </>
+            {(showUrl || localPost?.live_post_url) && <div className="col-12">
 
-              }
+              <TextInput
+                bottomSpacing={false} fieldName="live-url" value={liveUrl} onChange={(e) => { setSaved(false); setLiveUrl(e.target.value) }} label="Live Post Url" button={<URLSaveButton />} />
+              {urlError && <div className="text-danger">{urlError}</div>}
             </div>
+            }
           </div>
         </div>
         <div className="col-12 col-lg-6">
           <div className='row d-flex justify-content-end'>
             <div className="input-group d-flex justify-content-end">
-              {(!showUrl && !post?.live_post_url) &&
-                <button className="btn btn-warning btn-standard" onClick={() => { setShowUrl(true) }} title="Add Live Url"><i className="bi bi-link" /></button>}
               {(post?.google_doc_link && post?.html_link) &&
                 <>
                   <a
@@ -247,6 +243,8 @@ const PostItem = ({ post, refresh }) => {
                       </DropdownMenu.Content>
                     </DropdownMenu.Portal>
                   </DropdownMenu.Root>}
+                {(!showUrl && !post?.live_post_url) &&
+                  <button className="btn btn-warning btn-standard" onClick={() => { setShowUrl(true) }} title="Add Live Url"><i className="bi bi-link" /></button>}
                 {localPost?.status !== "Complete" && <div className='col-12 text-end text-primary px-0'>
                   <TypeWriterText string={status} withBlink />
                 </div>}

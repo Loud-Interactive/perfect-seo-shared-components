@@ -1,8 +1,6 @@
-'use server'
 import axios from "axios";
 import * as Request from "@/perfect-seo-shared-components/data/requestTypes";
 import { urlSanitization } from "@/perfect-seo-shared-components/utils/conversion-utilities";
-import { cookies } from "next/headers";
 export interface PlanItemProps {
   brand_name: string;
   domain_name: string;
@@ -251,11 +249,4 @@ export const generateVoicePrompts = (domain) => {
 
 export const saveDetails = (data) => {
   return axios.post('https://voice-perfect-api.replit.app/SaveUserDetails', data)
-}
-
-export const getDomainsFromGoogle = () => {
-  const cookieStore = cookies();
-  const token = cookieStore.get('next-auth.csrf-token')
-  return axios.get('https://www.googleapis.com/webmasters/v3/sites', { headers: { Authorization: `Bearer ${token}` } })
-
 }

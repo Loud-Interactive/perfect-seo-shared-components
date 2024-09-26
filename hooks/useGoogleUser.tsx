@@ -1,3 +1,4 @@
+'use client'
 import { RootState } from '@/perfect-seo-shared-components/lib/store'
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from 'react'
@@ -7,13 +8,10 @@ import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 import { urlSanitization } from '../utils/conversion-utilities';
 import { useSession } from 'next-auth/react';
-import { cookies } from 'next/headers';
-import { getDomainsFromGoogle } from '../services/services';
 
 const useGoogleUser = (appKey) => {
-
-
   const { user, isLoading } = useSelector((state: RootState) => state);
+  const [token, setToken] = useState(null)
   const [userData, setUserData] = useState<any>(null)
   const dispatch = useDispatch();
   const supabase = createClient()
@@ -22,6 +20,7 @@ const useGoogleUser = (appKey) => {
 
   //set status based on loading of session
   useEffect(() => {
+    let sessionData: any = session;
     switch (status) {
       case 'loading':
         dispatch(setLoading(true));
@@ -40,7 +39,10 @@ const useGoogleUser = (appKey) => {
         dispatch(setUser(session.user))
       }
     }
-  }, [status, session])
+    if (sessionData?.access_token) {
+      setToken(sessionData.access_token)
+    }
+  }, [status])
 
   const updateUser = () => {
     supabase
@@ -98,29 +100,31 @@ const useGoogleUser = (appKey) => {
         }
       })
   }
+  const fetchAllDomains = async () => {
+    const { data } = await axios.get('https://www.googleapis.com/webmasters/v3/sites', { headers: { Authorization: `Bearer ${token}` } })
+    if (data?.siteEntry) {
+      return data.siteEntry.map(obj => {
+        return ({
+          type: obj.siteUrl.split(":")[0],
+          siteUrl: urlSanitization(obj.siteUrl.split(":")[1]),
+          permissionLevel: obj.permissionLevel,
+          originalUrl: obj.siteUrl.split(":")[1]
+        })
+      })
 
+    }
+    else return []
+  }
 
   const fetchData = async () => {
-    if (userData) {
+    if (userData && token) {
       if (!userData.full_name) {
         userData.full_name = userData?.user_matadata?.full_name
       }
       if (!userData?.email) {
         userData.email = user.email
       }
-      let { data } = await getDomainsFromGoogle()
-      let domain_access = []
-      if (data?.siteEntry) {
-        domain_access = data.siteEntry.map(obj => {
-          return ({
-            type: obj.siteUrl.split(":")[0],
-            siteUrl: urlSanitization(obj.siteUrl.split(":")[1]),
-            permissionLevel: obj.permissionLevel,
-            originalUrl: obj.siteUrl.split(":")[1]
-          })
-        })
-
-      }
+      let domain_access = await fetchAllDomains()
       if (userData?.domain_access) {
         domain_access = [...domain_access, ...userData?.domain_access.filter(obj => obj?.permissionLevel === "added")]
       }
@@ -183,25 +187,25 @@ const useGoogleUser = (appKey) => {
     let profiles;
     if (userData) {
       fetchData();
-      profiles = supabase.channel('custom-filter-channel')
-        .on(
-          'postgres_changes',
-          { event: '*', schema: 'public', table: 'profiles', filter: `email=eq.${user?.email}` },
-          (payload) => {
-            dispatch(setProfile(payload.new))
-          }
-        )
-        .subscribe()
+      // profiles = supabase.channel('custom-filter-channel')
+      //   .on(
+      //     'postgres_changes',
+      //     { event: '*', schema: 'public', table: 'profiles', filter: `email=eq.${user?.email}` },
+      //     (payload) => {
+      //       dispatch(setProfile(payload.new))
+      //     }
+      //   )
+      //   .subscribe()
     }
     return () => {
-      if (profiles) {
-        profiles.unsubscribe()
-      }
+      // if (profiles) {
+      //   profiles.unsubscribe()
+      // }
     }
   }, [userData])
 
 
-  return ({ userData, updateUser, checkDomain, fetchData, getDecodedAccessToken })
+  return ({ userData, updateUser, checkDomain, fetchAllDomains, getDecodedAccessToken })
 }
 
 export default useGoogleUser;

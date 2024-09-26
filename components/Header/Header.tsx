@@ -85,8 +85,8 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
   const loginWithGoogleHandler = (e) => {
     e?.preventDefault();
     dispatch(setLoading(true))
-    localStorage.setItem('redirect', window.location.pathname)
-    signIn('google')
+
+    signIn('google', { callbackUrl: `${window.location.origin}/` })
 
   }
 
@@ -120,16 +120,7 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
       return links
     }
     else if (isLoggedIn) {
-      try {
-        let redirect = localStorage.getItem('redirect');
-        if (redirect) {
-          localStorage.removeItem('redirect')
-          router.replace(redirect)
-        }
-      }
-      catch (e) {
-        console.log(e)
-      }
+
       return links.filter((link) => link.type !== LinkType.ADMIN)
     }
 

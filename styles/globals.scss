@@ -4924,3 +4924,9 @@ a.text-white {
   justify-content: center;
   align-items: center;
 }
+
+@include TabletUp {
+  .content-plan-row {
+    min-width: 330px;
+  }
+}

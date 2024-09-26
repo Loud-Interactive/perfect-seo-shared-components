@@ -1,4 +1,5 @@
 'use client'
+import { signIn, useSession } from "next-auth/react"
 import Link from 'next/link'
 import styles from './Header.module.scss'
 import { loginWithGoogle, logout } from '@/perfect-seo-shared-components/utils/supabase/actions'
@@ -40,7 +41,12 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
     }
   }, [user, getCredits, dispatch]) // Add 'dispatch' to the dependency array
 
-  useManageUser(current)
+  // useManageUser(current)
+  const { data: session, status } = useSession()
+  useEffect(() => {
+    console.log("session", session)
+    console.log("status", status)
+  }, [status, session])
 
   useEffect(() => {
     const updateRoute = (url) => {
@@ -58,7 +64,9 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
   const loginWithGoogleHandler = (e) => {
     e?.preventDefault();
     dispatch(setLoading(true))
-    loginWithGoogle()
+    // loginWithGoogle()
+    signIn('google', { callbackUrl: `${window.location.origin}/` })
+
   }
 
   const signOutHandler = (e) => {

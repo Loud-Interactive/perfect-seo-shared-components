@@ -219,7 +219,7 @@ const PostItem = ({ post, refresh }) => {
                     </DropdownMenu.Trigger>
 
                     <DropdownMenu.Portal>
-                      <DropdownMenu.Content align="end" className="bg-warning card">
+                      <DropdownMenu.Content align="end" className="bg-primary z-100 card">
                         <DropdownMenu.Item>
                           <a
                             href={`https://app.ahrefs.com/v2-site-explorer/organic-keywords?columns=CPC%7C%7CKD%7C%7CLastUpdated%7C%7COrganicTraffic%7C%7CPaidTraffic%7C%7CPosition%7C%7CPositionHistory%7C%7CSERP%7C%7CSF%7C%7CURL%7C%7CVolume&compareDate=dontCompare&country=us&currentDate=today&keywordRules=&limit=100&mode=prefix&offset=0&positionChanges=&serpFeatures=&sort=Volume&sortDirection=desc&target=${encodeURI(localPost?.live_post_url.replace("https://", '').replace("http://", "").replace("www.", ""))}%2F&urlRules=&volume_type=average`}

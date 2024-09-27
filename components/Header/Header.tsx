@@ -1,5 +1,5 @@
 'use client'
-import { signIn, useSession } from "next-auth/react"
+import { signIn, signOut, useSession } from "next-auth/react"
 import Link from 'next/link'
 import styles from './Header.module.scss'
 import { loginWithGoogle, logout } from '@/perfect-seo-shared-components/utils/supabase/actions'
@@ -92,16 +92,9 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
 
   const signOutHandler = (e) => {
     e.preventDefault()
-    logout()
+    signOut()
       .then(res => {
         setOpen(false)
-        if (res.error) {
-          console.log(res.error)
-        }
-        else {
-          dispatch(reset())
-          router.push('/')
-        }
       })
 
   }

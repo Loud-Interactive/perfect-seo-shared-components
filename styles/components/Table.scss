@@ -25,12 +25,12 @@
     display: flex;
     position: relative;
     max-width: 100vw;
-    overflow-x: auto;
+    width: 100%;
+    overflow-x: clip;
 
     &.loading {
       min-height: 150px;
     }
-
 
     tr {
       display: table-row;

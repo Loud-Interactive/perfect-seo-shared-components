@@ -2971,15 +2971,6 @@ hr {
   }
 }
 
-
-
-.callout-number {
-  /* font-family: 'VT323', monospace!important; */
-  font-size: 4em;
-  color: $secondary;
-  line-height: 1.2;
-}
-
 .mobile-only {
   @include TabletUp {
     display: none;
@@ -3030,8 +3021,7 @@ input {
 }
 
 .callout-number {
-  /* font-family: 'VT323', monospace!important; */
-  font-size: 4em;
+  font-size: 3em !important;
   color: white !important;
   font-weight: bolder !important;
   line-height: 1.2

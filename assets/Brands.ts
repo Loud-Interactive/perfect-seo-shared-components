@@ -61,10 +61,10 @@ export const Brands: Array<Brand> = [
     developmentUrl: "https://page-perfect-git-development-loud-interactives-projects.vercel.app/"
   },
   {
-    title: 'perfectSEO.ai',
-    url: 'https://perfectSEO.ai',
-    logo: '/svg/perfectSEO.svg',
-    icon: '/svg/perfectSEO-icon.svg',
+    title: 'SEOPerfect.ai',
+    url: 'https://SEOPerfect.ai',
+    logo: '/svg/SEOPerfect.svg',
+    icon: '/svg/SEOPerfect-icon.svg',
     status: BrandStatus.MASTER,
     stagingUrl: "https://perfect-seo.vercel.app/",
     developmentUrl: "https://perfect-seo-git-development-loud-interactives-projects.vercel.app/",

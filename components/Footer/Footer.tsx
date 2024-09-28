@@ -1,6 +1,6 @@
 import styles from './Footer.module.scss'
 import PerfectSEOBar from "../PerfectSEOBar/PerfectSEOBar"
-import { PerfectSEOLogo } from '@/perfect-seo-shared-components/assets/brandIcons'
+import { SEOPerfectLogo } from '@/perfect-seo-shared-components/assets/brandIcons'
 import moment from 'moment-timezone'
 
 const Footer = ({ current }) => {
@@ -15,8 +15,8 @@ const Footer = ({ current }) => {
             {/* <p><a href="/terms-and-conditions" target="_blank">Terms &amp; Conditions</a></p> */}
             <p><a href="mailto:sales@contentperfect.ai">sales@contentperfect.ai</a></p>
             <p>
-              <a href="https://perfectSEO.ai/" className={styles.logoLink}>
-                <PerfectSEOLogo />
+              <a href="https://SEOPerfect.ai/" className={styles.logoLink}>
+                <SEOPerfectLogo />
               </a></p>
             <p>© {moment().format("YYYY")} by Loud Interactive LLC</p>
           </div>

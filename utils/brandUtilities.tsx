@@ -1,5 +1,5 @@
 
-import { ContentPerfectLogo, PagePerfectLogo, VoicePerfectLogo, PerfectSEOLogo, PreferencesPerfectLogo, SynopsisPerfectLogo, SynopsisPerfectIcon, ContentPerfectIcon, VoicePerfectIcon, PagePerfectIcon, PreferencesPerfectIcon, SocialPerfectIcon, SocialPerfectLogo, FactCheckPerfectLogo, FactCheckPerfectIcon, ImagePerfectIcon, IndexPerfectIcon, ImagePerfectLogo, IndexPerfectLogo, PerfectSEOIcon } from "../assets/brandIcons"
+import { ContentPerfectLogo, PagePerfectLogo, VoicePerfectLogo, PerfectSEOLogo, PreferencesPerfectLogo, SynopsisPerfectLogo, SynopsisPerfectIcon, ContentPerfectIcon, VoicePerfectIcon, PagePerfectIcon, PreferencesPerfectIcon, SocialPerfectIcon, SocialPerfectLogo, FactCheckPerfectLogo, FactCheckPerfectIcon, ImagePerfectIcon, IndexPerfectIcon, ImagePerfectLogo, IndexPerfectLogo, PerfectSEOIcon, SEOPerfectIcon, SEOPerfectLogo } from "../assets/brandIcons"
 
 
 export const renderIcon = (appKey: string) => {
@@ -24,6 +24,8 @@ export const renderIcon = (appKey: string) => {
       return <IndexPerfectIcon />
     case 'perfectSEO.ai':
       return <PerfectSEOIcon />
+    case 'SEOPerfect.ai':
+      return <SEOPerfectIcon />
     default:
       return appKey
   }
@@ -40,8 +42,6 @@ export const renderLogo = (appKey: string) => {
       return <SynopsisPerfectLogo />
     case 'preferencesPerfect.ai':
       return <PreferencesPerfectLogo />
-    case 'perfectSEO.ai':
-      return <PerfectSEOLogo />
     case 'socialPerfect.ai':
       return <SocialPerfectLogo />
     case 'factcheckPerfect.ai':
@@ -52,6 +52,8 @@ export const renderLogo = (appKey: string) => {
       return <IndexPerfectLogo />
     case 'perfectSEO.ai':
       return <PerfectSEOLogo />
+    case 'SEOPerfect.ai':
+      return <SEOPerfectLogo />
     default:
       return appKey
   }

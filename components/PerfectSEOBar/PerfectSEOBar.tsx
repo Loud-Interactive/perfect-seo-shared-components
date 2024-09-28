@@ -1,4 +1,4 @@
-import { PerfectSEOLogo } from '@/perfect-seo-shared-components/assets/brandIcons';
+import { PerfectSEOLogo, SEOPerfectLogo } from '@/perfect-seo-shared-components/assets/brandIcons';
 import styles from './PerfectSEOBar.module.scss'
 import { renderIcon, renderLogo } from '@/perfect-seo-shared-components/utils/brandUtilities';
 import { Brands } from '@/perfect-seo-shared-components/assets/Brands';
@@ -11,15 +11,15 @@ const PerfectSEOBar = ({ current }) => {
       <div className='row d-flex justify-content-center mb-5'>
         <div className='col-auto'>
           <div className={styles.header}>
-            <h3>Looking for more SEO tools? Check out some of the other AI tools in the perfectSEO suite!</h3>
+            <h3>Looking for more SEO tools? Check out some of the other AI tools in the SEOPerfect suite!</h3>
           </div>
         </div>
         <div className="col-auto">
-          <a href="https://perfectSEO.ai/" target="_blank" rel="noreferrer">
+          <a href="https://SEOPerfect.ai/" target="_blank" rel="noreferrer">
             <div className={styles.hero}>
-              <img src="/svg/perfectSEO-icon.svg" className={styles.icon} />
+              <img src="/svg/SEOPerfect-icon.svg" className={styles.icon} />
               <div className={styles.iconFull}>
-                <PerfectSEOLogo />
+                <SEOPerfectLogo />
               </div>
             </div>
           </a>

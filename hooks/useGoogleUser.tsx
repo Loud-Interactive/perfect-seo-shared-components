@@ -187,20 +187,20 @@ const useGoogleUser = (appKey) => {
     let profiles;
     if (userData) {
       fetchData();
-      // profiles = supabase.channel('custom-filter-channel')
-      //   .on(
-      //     'postgres_changes',
-      //     { event: '*', schema: 'public', table: 'profiles', filter: `email=eq.${user?.email}` },
-      //     (payload) => {
-      //       dispatch(setProfile(payload.new))
-      //     }
-      //   )
-      //   .subscribe()
+      profiles = supabase.channel('custom-filter-channel')
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'profiles', filter: `email=eq.${user?.email}` },
+          (payload) => {
+            dispatch(setProfile(payload.new))
+          }
+        )
+        .subscribe()
     }
     return () => {
-      // if (profiles) {
-      //   profiles.unsubscribe()
-      // }
+      if (profiles) {
+        profiles.unsubscribe()
+      }
     }
   }, [userData])
 

@@ -124,9 +124,12 @@ const useGoogleUser = (appKey) => {
       if (!userData?.email) {
         userData.email = user.email
       }
-      let domain_access = await fetchAllDomains()
-      if (userData?.domain_access) {
-        domain_access = [...domain_access, ...userData?.domain_access.filter(obj => obj?.permissionLevel === "added")]
+      let domain_access = userData?.domain_access || [];
+      try {
+        domain_access = await fetchAllDomains()
+      }
+      catch (err) {
+        console.log(err)
       }
       let domains = domain_access.map(({ siteUrl }) => urlSanitization(siteUrl))
       if (!userData.domains) {

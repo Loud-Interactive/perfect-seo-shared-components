@@ -85,7 +85,7 @@ const ListInput = ({
     let newFormState = { ...form.getState };
     let newValues = [...values, addOn]
     setValues(newValues)
-    newFormState[fieldName] = newValues.join(", ")
+    newFormState[fieldName] = newValues.join(" | ")
     form.setState(newFormState)
     setAddOn('')
   }
@@ -95,7 +95,12 @@ const ListInput = ({
     setAddOn(e.target.value)
   }
 
-
+  const handleInputKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleAdd(e)
+    }
+  }
 
 
   return (
@@ -114,9 +119,9 @@ const ListInput = ({
 
             }
             return (
-              <li key={idx} className='d-flex align-items-center col-6'>
+              <li key={idx} className='d-flex align-items-center col-6 pe-4'>
                 {props?.disabled ? <i className="bi bi-dash" /> : <button onClick={deleteItemHandler} className='btn btn-transparent'><i className="bi bi-x text-primary" /></button>}
-                <span className='pb-1'>{val}
+                <span className='pb-1 text-wrap w-100'>{val}
                 </span>
               </li>
             )
@@ -131,6 +136,7 @@ const ListInput = ({
             name={`additional-${fieldName}`}
             placeholder={props.placeholder || `Add ${label}`}
             value={addOn}
+            onKeyDown={handleInputKeyDown}
             onChange={changeAddOnHandler}
           />
           <div className='input-button'>

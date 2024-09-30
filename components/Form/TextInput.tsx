@@ -62,6 +62,7 @@ const TextInput = ({
   };
 
   function onChange(e) {
+    e.preventDefault()
     form.handleInputChange(e);
     props.onChange?.(e);
   }
@@ -74,9 +75,10 @@ const TextInput = ({
           {...props}
           {...ariaProps}
           autoFocus={autoFocus}
-          value={props.value ?? form.getState[fieldName] ?? ''}
+          value={props.value || form.getState[fieldName] || ''}
           onChange={onChange}
           onPaste={onPaste}
+          onKeyDown={props.onKeyDown}
           className={inputClassNames}
           name={fieldName}
           id={fieldName}

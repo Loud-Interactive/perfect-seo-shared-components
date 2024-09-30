@@ -4776,7 +4776,8 @@ input[type="color"] {
 }
 
 .brand-logo {
-  max-width: 200px;
+  max-width: 250px;
+  object-fit: contain;
 }
 
 .input-button {

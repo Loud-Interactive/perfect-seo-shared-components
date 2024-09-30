@@ -33,7 +33,7 @@ export const trimSynopsis = (synopsis: any) => {
       return prev
     }
     else {
-      return { ...prev, [key]: synopsis[key] }
+      return { ...prev, [key]: synopsis[key] || null }
     }
   }, {})
   return newData

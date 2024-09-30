@@ -62,7 +62,6 @@ const TextInput = ({
   };
 
   function onChange(e) {
-    e.preventDefault()
     form.handleInputChange(e);
     props.onChange?.(e);
   }
@@ -85,7 +84,7 @@ const TextInput = ({
           ref={inputRef}
           autoComplete={autoComplete}
         />
-        {props.button && <div className='input-button'>{props.button}</div>}
+        {props.button && <div className='input-button' id="input-buttons">{props.button}</div>}
         {icon && (
           <div className="textInput-icon" id={`textInputIcon-${fieldName}`}>
             {icon}

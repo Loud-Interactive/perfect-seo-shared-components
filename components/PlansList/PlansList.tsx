@@ -63,8 +63,8 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
       setDeleteModal(obj.guid)
     }
     return (
-      <div className='d-flex justify-content-end'>
-        {obj?.guid}
+      <div className='d-flex justify-content-end align-items-center'>
+        <div className='me-2'>{obj?.guid}</div>
         {(status === 'Finished') ?
 
           <button className="btn btn-primary" onClick={clickHandler} title={`View GUID: ${obj.guid}`}>View Plan</button>

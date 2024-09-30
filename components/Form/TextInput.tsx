@@ -63,7 +63,9 @@ const TextInput = ({
 
   function onChange(e) {
     form.handleInputChange(e);
-    props.onChange?.(e);
+    if (props?.onChange) {
+      props.onChange?.(e)
+    }
   }
 
   return (

@@ -10,6 +10,7 @@
 
     &__menu {
       background-color: $dark;
+      z-index: 1000;
 
       &-list {
         overflow-x: hidden;

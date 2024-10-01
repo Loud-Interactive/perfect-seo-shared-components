@@ -134,18 +134,17 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
 
 
   useEffect(() => {
-    if (domainParam && domainsList?.length > 0) {
-      setSelected(domainsList.find(({ value }) => value === domainParam));
-      setDomain(domainParam)
+    if (domainsList?.length > 0) {
+      if (domainParam) {
+        setSelected(domainsList.find(({ value }) => value === domainParam));
+        setDomain(domainParam)
+      }
+      if (profile?.domains?.length > 0 && !currentDomain) {
+        setDomain(profile?.domains[0])
+        setSelected({ label: profile?.domains[0], value: profile?.domains[0] })
+      }
     }
-  }, [domainParam, domainsList])
-
-  useEffect(() => {
-    if (profile?.domains?.length > 0 && !currentDomain) {
-      setDomain(profile?.domains[0])
-      setSelected({ label: profile?.domains[0], value: profile?.domains[0] })
-    }
-  }, [profile?.domains, currentDomain])
+  }, [domainParam, domainsList, currentDomain, profile])
 
   const isAuthorized = useMemo(() => {
     let bool = false;

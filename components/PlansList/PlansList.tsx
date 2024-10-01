@@ -72,7 +72,7 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
             <TypeWriterText string={status} withBlink />
           </span>
         }
-        {/* <button className='btn btn-warning d-flex align-items-center justify-content-center ms-2' onClick={deleteClickHandler} title={`View GUID: ${obj.guid}`}><i className="bi bi-trash pt-1" /></button> */}
+        <button className='btn btn-warning d-flex align-items-center justify-content-center ms-2' onClick={deleteClickHandler} title={`View GUID: ${obj.guid}`}><i className="bi bi-trash pt-1" /></button>
       </div>
     )
   }

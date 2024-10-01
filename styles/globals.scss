@@ -4773,6 +4773,10 @@ input[type="color"] {
       color: white !important;
     }
   }
+
+  &:disabled {
+    opacity: .5 !important;
+  }
 }
 
 .brand-logo {

@@ -86,7 +86,7 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
     e?.preventDefault();
     dispatch(setLoading(true))
 
-    signIn('google', { callbackUrl: `${window.location.origin}/` })
+    signIn('google', { callbackUrl: `${window.location.href}/` })
 
   }
 

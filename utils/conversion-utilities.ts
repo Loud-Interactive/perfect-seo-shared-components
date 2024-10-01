@@ -47,6 +47,8 @@ export const findUniqueKeys = (newObj, oldObj) => {
   let finalObj = keys.reduce((prev, curr) => {
     if (newObj[curr] !== oldObj[curr]) {
       return ({ ...prev, [curr]: newObj[curr] })
+    } else if (newObj[curr] === false) {
+      return ({ ...prev, [curr]: false })
     }
     else {
       return prev

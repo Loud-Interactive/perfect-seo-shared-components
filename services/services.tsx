@@ -171,11 +171,20 @@ export const checkUserCredits = (email: string) => {
 export const getContentPlanOutlines = (guid: string) => {
   return axios.get(`https://planperfectapi.replit.app/get_content_plan_outlines/${guid}`,);
 }
+
 export const fetchOutlineStatus = (guid: string) => {
   return axios.get(
     `https://planperfectapi.replit.app/get_outline_status/${guid}`,
   );
 };
+
+
+export const patchContentPlans = (guid: string, data: any[]) => {
+  return axios.patch(
+    `https://planperfectapi.replit.app/update_outline/${guid}`, data
+  );
+}
+
 
 
 export const getBatchStatus = (guids: string[]) => {
@@ -212,7 +221,6 @@ export const updateGoogleDoc = (guid, url) => {
 export const submitDomain = (domain: string) => {
   return axios.get(`https://discoverdomainurls.replit.app/urlcount?domain=${urlSanitization(domain)}`, { headers: { Accept: '*/*' } })
 }
-
 
 export const validatePromoCode = (promoCode, total) => {
   return axios.get(`

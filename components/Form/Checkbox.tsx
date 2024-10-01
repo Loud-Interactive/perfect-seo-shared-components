@@ -77,7 +77,7 @@ const Checkbox = ({
           type="checkbox"
           onChange={changeHandler}
           onFocus={() => setFocused(true)}
-          onBlur={() => setFocused(false)}
+          onBlur={(e) => { setFocused(false); props?.onBlur(e); }}
           className="form-check-input"
           checked={checked}
           name={fieldName}

@@ -39,9 +39,9 @@ const Form = ({ children, controller, validation = false, onSave, className, id,
 
   const onSubmitHandler = (e) => {
     e.preventDefault()
-    if (onSubmit) {
-      onSubmit(e)
-    }
+    // if (onSubmit) {
+    //   onSubmit(e)
+    // }
   }
 
   return (

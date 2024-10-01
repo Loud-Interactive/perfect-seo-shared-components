@@ -63,7 +63,9 @@ const TextInput = ({
 
   function onChange(e) {
     form.handleInputChange(e);
-    props.onChange?.(e);
+    if (props?.onChange) {
+      props.onChange?.(e)
+    }
   }
 
   return (
@@ -74,16 +76,17 @@ const TextInput = ({
           {...props}
           {...ariaProps}
           autoFocus={autoFocus}
-          value={props.value ?? form.getState[fieldName] ?? ''}
+          value={props.value || form.getState[fieldName] || ''}
           onChange={onChange}
           onPaste={onPaste}
+          onKeyDown={props.onKeyDown}
           className={inputClassNames}
           name={fieldName}
           id={fieldName}
           ref={inputRef}
           autoComplete={autoComplete}
         />
-        {props.button && <div className='input-button'>{props.button}</div>}
+        {props.button && <div className='input-button' id="input-buttons">{props.button}</div>}
         {icon && (
           <div className="textInput-icon" id={`textInputIcon-${fieldName}`}>
             {icon}

@@ -4776,7 +4776,8 @@ input[type="color"] {
 }
 
 .brand-logo {
-  max-width: 200px;
+  max-width: 250px;
+  object-fit: contain;
 }
 
 .input-button {
@@ -4923,4 +4924,13 @@ a.text-white {
 
 .preserve-spacing {
   white-space: pre-wrap;
+}
+
+.text-wrap {
+  white-space: normal;
+  text-wrap: wrap;
+}
+
+.formBottomSpacing {
+  margin-bottom: 20px;
 }

@@ -134,7 +134,11 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
 
 
   useEffect(() => {
-    if (domainsList?.length > 0) {
+    if (currentDomain) {
+      setDomain(currentDomain)
+      setSelected({ label: currentDomain, value: currentDomain })
+    }
+    else if (domainsList?.length > 0) {
       if (domainParam) {
         setSelected(domainsList.find(({ value }) => value === domainParam));
         setDomain(domainParam)

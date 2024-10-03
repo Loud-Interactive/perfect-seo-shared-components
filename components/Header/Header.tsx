@@ -151,9 +151,10 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
 
               }
             </div>}
+            {user?.image && <div className="col-auto">     <img src={user?.image} className="user-icon" /></div>}
             <DropdownMenu.Root defaultOpen open={open} onOpenChange={openChangeHandler}>
               <DropdownMenu.Trigger className={styles.menuButton}>
-                {user?.image ? <img src={user?.image} className="user-icon" /> : <i className="bi text-primary bi-grid-3x3-gap-fill" />}
+                <i className="bi text-primary bi-grid-3x3-gap-fill" />
               </DropdownMenu.Trigger>
 
               <DropdownMenu.Portal>

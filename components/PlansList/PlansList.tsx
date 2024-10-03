@@ -8,6 +8,8 @@ import moment from 'moment-timezone'
 import useViewport from '@/perfect-seo-shared-components/hooks/useViewport'
 import Loader from '../Loader/Loader'
 import TypeWriterText from '@/perfect-seo-shared-components/components/TypeWriterText/TypeWriterText'
+import { useSelector } from 'react-redux'
+import { RootState } from '@/perfect-seo-shared-components/lib/store'
 
 export interface PlanListProps {
   domain_name: string;
@@ -20,6 +22,7 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
   const [deleteModal, setDeleteModal] = useState(null)
   const [filter, setFilter] = useState('all');
   const router = useRouter();
+  const { user } = useSelector((state: RootState) => state);
 
   const fetchPlans = () => {
     getPreviousPlans(domain_name)
@@ -99,18 +102,27 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
     setFilter(e.target.value)
   }
 
-
+  const renderTitle = (obj) => {
+    return (
+      <div>
+        <p className='mb-0'>
+          {obj.target_keyword}
+        </p>
+        {user?.email !== obj?.email && <span> by <span className="text-primary">{obj?.email}</span></span>}
+      </div>
+    )
+  }
 
   const columnArray: TableColumnArrayProps[] = useMemo(() => {
     if (phone || tablet) {
       return [
-        { id: 'target_keyword', Header: 'Target Keyword', accessor: 'target_keyword' },
+        { id: 'target_keyword', Header: 'Target Keyword', accessor: renderTitle },
         { id: 'guid', Header: 'GUID', accessor: renderStatusCell, headerClassName: 'text-end pe-3', cellClassName: 'max-325' },
       ];
     }
     else {
       return [
-        { id: 'target_keyword', Header: 'Target Keyword', accessor: 'target_keyword', disableSortBy: false },
+        { id: 'target_keyword', Header: 'Target Keyword', accessor: renderTitle, disableSortBy: false },
         { id: 'timestamp', Header: 'Timestamp', accessor: (obj) => moment(obj.timestamp + 'Z').format("dddd, MMMM Do, YYYY h:mma"), disableSortBy: false },
         { id: 'guid', Header: 'GUID', accessor: renderStatusCell, headerClassName: 'text-end pe-3', cellClassName: 'max-325' },
       ];

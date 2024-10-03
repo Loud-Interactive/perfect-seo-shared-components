@@ -37,7 +37,6 @@ const useGoogleUser = (appKey) => {
     if (session) {
       if (session?.user) {
         dispatch(setUser(session.user))
-        console.log(session.user)
       }
     }
     if (sessionData?.access_token) {
@@ -63,7 +62,7 @@ const useGoogleUser = (appKey) => {
       .eq('email', user?.email)
       .select("*")
       .then(res => {
-        console.log(res)
+
       })
   }
 
@@ -193,7 +192,6 @@ const useGoogleUser = (appKey) => {
 
         }
       }
-      console.log(products)
       domains = domains.sort((a, b) => a.localeCompare(b))
       domain_access = domain_access.sort((a, b) => a.siteUrl.localeCompare(b.siteUrl))
       domains = domains.filter((domain) => {
@@ -212,7 +210,6 @@ const useGoogleUser = (appKey) => {
         .eq('email', user?.email)
         .select("*")
         .then(res => {
-          console.log(res)
         })
     }
   };

@@ -67,6 +67,8 @@ const useGoogleUser = (appKey) => {
           setUserData({ email: user.email })
         }
       })
+    supabase
+      .from
   }
 
   useEffect(() => {
@@ -166,6 +168,7 @@ const useGoogleUser = (appKey) => {
 
         }
       }
+      console.log(products)
       domains = domains.sort((a, b) => a.localeCompare(b))
       domain_access = domain_access.sort((a, b) => a.siteUrl.localeCompare(b.siteUrl))
       domains = domains.filter((domain) => {
@@ -183,6 +186,9 @@ const useGoogleUser = (appKey) => {
         .update(profileObj)
         .eq('email', user?.email)
         .select("*")
+        .then(res => {
+          console.log(res)
+        })
     }
   };
 

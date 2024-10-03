@@ -54,7 +54,6 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
             console.log("Error in creating user credits", err)
           })
       })
-
   };
 
 

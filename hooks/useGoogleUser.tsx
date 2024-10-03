@@ -44,6 +44,28 @@ const useGoogleUser = (appKey) => {
     }
   }, [status])
 
+  const updateProducts = () => {
+    let products = userData.products
+    let key = appKey.replace(".ai", "");
+    if (products) {
+      if (products[key]) {
+        products[key] = new Date().toISOString()
+      }
+      else {
+        products = { ...products, [key]: new Date().toISOString() }
+
+      }
+    }
+    supabase
+      .from('profiles')
+      .update({ products: products })
+      .eq('email', user?.email)
+      .select("*")
+      .then(res => {
+        console.log(res)
+      })
+  }
+
   const updateUser = () => {
     supabase
       .from('profiles')
@@ -67,13 +89,16 @@ const useGoogleUser = (appKey) => {
           setUserData({ email: user.email })
         }
       })
-    supabase
-      .from
   }
 
   useEffect(() => {
+
     if (user?.email) {
       updateUser()
+      document.addEventListener("visibilitychange", updateProducts);
+    }
+    return () => {
+      document.removeEventListener("visibilitychange", updateProducts);
     }
   }, [user])
 

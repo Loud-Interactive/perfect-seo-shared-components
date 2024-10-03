@@ -23,6 +23,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
   const [selectedTab, setSelectedTab] = useState('posts')
   const searchParams = useSearchParams();
   const queryParam = searchParams.get('tab');
+  const domainParam = searchParams.get('domain');
   const router = useRouter();
   const pathname = usePathname()
   const [domain, setDomain] = useState(currentDomain || profile?.domains[0])
@@ -68,7 +69,18 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
   const searchUserChangeHandler = (e) => {
     if (e) {
       setDomain(e?.value);
+      router.replace(pathname + '?' + createQueryString('domain', e?.value))
       setSelected(e)
+    }
+    else {
+      setDomain(null);
+      setSelected(null)
+      if (queryParam) {
+        router.replace(pathname + '?tab=' + queryParam.toString())
+      }
+      else {
+        router.replace(pathname)
+      }
     }
   };
 
@@ -103,6 +115,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
         }
       })
   }
+
   const domainsList = useMemo(() => {
     let list;
     if (isAdmin) {
@@ -119,12 +132,23 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
 
   }, [profile?.domains, domains, isAdmin])
 
+
   useEffect(() => {
-    if (profile?.domains?.length > 0 && !currentDomain) {
-      setDomain(profile?.domains[0])
-      setSelected({ label: profile?.domains[0], value: profile?.domains[0] })
+    if (currentDomain) {
+      setDomain(currentDomain)
+      setSelected({ label: currentDomain, value: currentDomain })
     }
-  }, [profile?.domains, currentDomain])
+    else if (domainsList?.length > 0) {
+      if (domainParam) {
+        setSelected(domainsList.find(({ value }) => value === domainParam));
+        setDomain(domainParam)
+      }
+      if (profile?.domains?.length > 0 && !currentDomain) {
+        setDomain(profile?.domains[0])
+        setSelected({ label: profile?.domains[0], value: profile?.domains[0] })
+      }
+    }
+  }, [domainParam, domainsList, currentDomain, profile])
 
   const isAuthorized = useMemo(() => {
     let bool = false;
@@ -161,18 +185,18 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
     <div className='container-xl content-fluid'>
       {!hideTitle && <div className='row d-flex justify-content-between'>
         <div className='col'>
-          <h1 className="text-3xl font-bold text-start mb-5"><TypeWriterText string={selectedTab === 'bulk-upload' ? 'Upload for all domains' : `Content for ${domain}`} withBlink /></h1>
+          <h1 className="text-3xl font-bold text-start mb-5"><TypeWriterText string={selectedTab === 'bulk-upload' ? 'Upload for all domains' : selected ? `Content for ${domain}` : 'Select a domain to begin'} withBlink /></h1>
         </div>
         {(!currentDomain && profile?.domains?.length > 1 && selectedTab !== 'bulk-upload') && <div className='col-12 col-md-4 mb-3'>
           <SearchSelect
             onChange={searchUserChangeHandler}
             options={domainsList}
             value={selected}
-            placeholder="Search Domain..."
+            placeholder="Select a Domain"
           />
         </div>}
       </div>}
-      <div className={styles.tabWrap}>
+      {selected ? <div className={styles.tabWrap}>
         <ul className="nav nav-tabs mb-0">
           {TabData.map((tab) => {
 
@@ -203,7 +227,10 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
             </div>
           </div>
         </div>
-      </div>
+      </div> :
+        <div className="strip-padding container d-flex align-items-center justify-content-center">
+          <h2 className='text-center text-primary'><TypeWriterText string="No domain selected" withBlink /></h2>
+        </div>}
     </div >
   )
 }

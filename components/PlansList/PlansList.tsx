@@ -25,7 +25,6 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
     getPreviousPlans(domain_name)
       .then(res => {
         let newData = res.data.filter(obj => {
-          console.log(obj)
           return obj.status && obj.target_keyword
         })
         setData(newData)

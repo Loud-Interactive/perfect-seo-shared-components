@@ -23,7 +23,14 @@ const PostItem = ({ post, refresh }) => {
   const liveUrlUpdate = () => {
     setSaved(false)
     setUrlError(null)
-    if (new RegExp(emailValidator.toString()).test(liveUrl)) {
+    let valid;
+    if (liveUrl) {
+      valid = new RegExp(emailValidator.toString()).test(liveUrl)
+    }
+    else {
+      valid = true;
+    }
+    if (valid) {
       setSaving(true)
       if (localPost?.live_post_url !== liveUrl) {
         updateLiveUrl(localPost?.content_plan_outline_guid, liveUrl)
@@ -125,20 +132,17 @@ const PostItem = ({ post, refresh }) => {
   }
 
   const URLSaveButton = () => {
-    if (liveUrl) {
-      return (
-        <div className="d-flex h-100 align-items-center justify-content-center">
-          <button className="btn btn-transparent d-flex align-items-center justify-content-center" onClick={(e => { setLiveUrl(null) })} title="Clear Live Url"><i className="bi bi-x-circle" /></button>
-          <button className="btn btn-transparent d-flex align-items-center justify-content-center" onClick={liveUrlUpdate} title="Save Live Url" disabled={saving}>
+    return (
+      <div className="d-flex h-100 align-items-center justify-content-center">
+        {liveUrl && <button className="btn btn-transparent d-flex align-items-center justify-content-center" onClick={(e => { setLiveUrl(null) })} title="Clear Live Url"><i className="bi bi-x-circle" /></button>}
+        <button className="btn btn-transparent d-flex align-items-center justify-content-center" onClick={liveUrlUpdate} title="Save Live Url" disabled={saving}>
 
-            {saving ?
-              <div className="spinner-border spinner-border-sm" role="status">
-                <span className="visually-hidden">Loading...</span>
-              </div> : saved ? <i className="bi bi-check-circle-fill" /> : <i className="bi bi-floppy-fill" />}</button>
-        </div>
-      )
-    }
-    else return null
+          {saving ?
+            <div className="spinner-border spinner-border-sm" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </div> : saved ? <i className="bi bi-check-circle-fill" /> : <i className="bi bi-floppy-fill" />}</button>
+      </div>
+    )
   }
 
   const deleteHandler = () => {
@@ -238,6 +242,16 @@ const PostItem = ({ post, refresh }) => {
 
                           >
                             GSC Report
+                          </a>
+                        </DropdownMenu.Item>
+                        <DropdownMenu.Item>
+                          <a
+                            href={`https://factcheckPerfect.ai/fact-checks?url=${encodeURI(localPost?.live_post_url)}`}
+                            target="_blank"
+                            className="btn btn-transparent"
+
+                          >
+                            Fact-Check
                           </a>
                         </DropdownMenu.Item>
                       </DropdownMenu.Content>

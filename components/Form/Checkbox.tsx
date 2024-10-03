@@ -68,6 +68,12 @@ const Checkbox = ({
     return onValueChange?.(newChecked);
   };
 
+  const onBlurHandler = (e) => {
+    setFocused(false);
+    if (props?.onBlur) {
+      props?.onBlur(e);
+    }
+  }
   return (
     <FormField fieldName={fieldName} bottomSpacing={bottomSpacing} renderChildrenFirst withCheckbox className={props.className}>
       <div className="form-check">
@@ -77,7 +83,7 @@ const Checkbox = ({
           type="checkbox"
           onChange={changeHandler}
           onFocus={() => setFocused(true)}
-          onBlur={(e) => { setFocused(false); props?.onBlur(e); }}
+          onBlur={onBlurHandler}
           className="form-check-input"
           checked={checked}
           name={fieldName}

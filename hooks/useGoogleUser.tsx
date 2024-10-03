@@ -10,7 +10,7 @@ import { urlSanitization } from '../utils/conversion-utilities';
 import { useSession } from 'next-auth/react';
 
 const useGoogleUser = (appKey) => {
-  const { user, isLoading } = useSelector((state: RootState) => state);
+  const { user, isLoggedIn } = useSelector((state: RootState) => state);
   const [token, setToken] = useState(null)
   const [userData, setUserData] = useState<any>(null)
   const dispatch = useDispatch();
@@ -45,7 +45,7 @@ const useGoogleUser = (appKey) => {
   }, [status])
 
   const updateProducts = () => {
-    let products = userData.products
+    let products = { ...userData.products }
     let key = appKey.replace(".ai", "");
     if (products) {
       if (products[key]) {
@@ -90,15 +90,14 @@ const useGoogleUser = (appKey) => {
         }
       })
   }
-
   useEffect(() => {
-
+    if (session && userData && isLoggedIn) {
+      updateProducts()
+    }
+  }, [session, userData])
+  useEffect(() => {
     if (user?.email) {
       updateUser()
-      document.addEventListener("visibilitychange", updateProducts);
-    }
-    return () => {
-      document.removeEventListener("visibilitychange", updateProducts);
     }
   }, [user])
 

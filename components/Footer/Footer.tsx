@@ -6,7 +6,7 @@ import moment from 'moment-timezone'
 const Footer = ({ current }) => {
   return (
     <footer className="mb-5">
-      <div className="container-fluid">
+      <div className="container-fluid container-xl">
         <PerfectSEOBar current={current} />
       </div>
       <div className="container">

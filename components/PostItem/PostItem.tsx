@@ -8,6 +8,8 @@ import Link from "next/link"
 import * as Modal from '@/perfect-seo-shared-components/components/Modal/Modal'
 import { urlSanitization } from "@/perfect-seo-shared-components/utils/conversion-utilities"
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
+import { useSelector } from "react-redux"
+import { RootState } from "@/perfect-seo-shared-components/lib/store"
 
 const PostItem = ({ post, refresh }) => {
   const [liveUrl, setLiveUrl] = useState(post?.live_post_url)
@@ -19,6 +21,7 @@ const PostItem = ({ post, refresh }) => {
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const [completed, setCompleted] = useState(false)
+  const { user } = useSelector((state: RootState) => state);
 
   const liveUrlUpdate = () => {
     setSaved(false)
@@ -55,6 +58,7 @@ const PostItem = ({ post, refresh }) => {
   }
 
   useEffect(() => {
+    console.log(post, localPost)
     if (post?.live_post_url !== liveUrl) {
       setLiveUrl(post?.live_post_url)
       setShowUrl(true)
@@ -172,7 +176,7 @@ const PostItem = ({ post, refresh }) => {
             <div className="col-12">
               <p className="mb-1">
                 <small>
-                  <strong className="text-primary ">Created on</strong> {moment(`${localPost?.created_at}Z`).local().format("dddd, MMMM Do, YYYY h:mma")}
+                  <strong className="text-primary ">Created on</strong> {moment(`${localPost?.created_at}Z`).local().format("dddd, MMMM Do, YYYY h:mma")} {user?.email !== localPost?.email && <span> by <span className="text-primary">{localPost?.email}</span></span>}
                 </small>
               </p>
               <strong className="text-primary me-1">Title</strong>  {localPost?.title}

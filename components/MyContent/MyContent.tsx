@@ -176,7 +176,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
   }
   else if (!isAuthorized) {
     return (
-      <div className="container strip-padding d-flex align-items-center">
+      <div className="container-fluid container-xl strip-padding d-flex align-items-center">
         <h1 className="text-3xl font-bold text-center mb-3"><TypeWriterText string={isLoggedIn ? `You are not authorized to view content for ${currentDomain || selected?.value || 'this domain'}` : 'Log in to view your content'} withBlink /></h1>
       </div>
     )
@@ -228,7 +228,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
           </div>
         </div>
       </div> :
-        <div className="strip-padding container d-flex align-items-center justify-content-center">
+        <div className="strip-padding container-fluid container-xl d-flex align-items-center justify-content-center">
           <h2 className='text-center text-primary'><TypeWriterText string="No domain selected" withBlink /></h2>
         </div>}
     </div >

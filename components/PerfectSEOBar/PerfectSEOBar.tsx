@@ -7,7 +7,7 @@ import { Brand, BrandStatus } from '@/perfect-seo-shared-components/data/types';
 
 const PerfectSEOBar = ({ current }) => {
   return (
-    <div className="container">
+    <div className=container-fluid container-xl >
       <div className='row d-flex justify-content-center mb-5'>
         <div className='col-auto'>
           <div className={styles.header}>

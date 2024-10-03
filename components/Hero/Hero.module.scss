@@ -1,0 +1,41 @@
+@use 'common' as *;
+
+.heroSection {
+  /* Sizing */
+  width: 100vw;
+  min-height: 500px;
+  max-width: 100%;
+  background-color: black;
+
+  /* Flexbox stuff */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  /* Text styles */
+  text-align: center;
+  color: white;
+  position: relative;
+
+
+  &>div {
+    z-index: 1;
+  }
+
+
+  &::before {
+    content: "";
+    background-color: black;
+    background-image: url('/images/cute-robot.webp');
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+    opacity: 0.2;
+  }
+}

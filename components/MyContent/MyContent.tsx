@@ -10,7 +10,7 @@ import { useSearchParams } from 'next/navigation';
 import { useSelector } from 'react-redux'
 import { RootState } from '@/perfect-seo-shared-components/lib/store'
 import SearchSelect from '@/perfect-seo-shared-components/components/SearchSelect/SearchSelect'
-import Loader from '@/components/Templates/Loader/Loader'
+import Loader from '@/perfect-seo-shared-components/components/Loader/Loader'
 import { createClient } from '@/perfect-seo-shared-components/utils/supabase/client'
 import { urlSanitization } from '@/perfect-seo-shared-components/utils/conversion-utilities';
 import BulkContentPlanGenerator from '../BulkContentGenerator/BulkContentGenerator';

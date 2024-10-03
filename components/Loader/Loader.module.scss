@@ -1,0 +1,17 @@
+@use 'common' as *;
+
+.wrap {
+  box-sizing: border-box;
+  width: 100%;
+  height: inherit;
+  min-height: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loadingMessage {
+  width: 100%;
+  color: $primary;
+  text-align: center;
+}

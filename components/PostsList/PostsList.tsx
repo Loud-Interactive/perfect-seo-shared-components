@@ -4,7 +4,7 @@ import { deleteContentOutline, getPostsByDomain } from '@/perfect-seo-shared-com
 import * as Modal from '@/perfect-seo-shared-components/components/Modal/Modal'
 import moment from 'moment-timezone'
 import useViewport from '@/perfect-seo-shared-components/hooks/useViewport'
-import Loader from '../../../components/Templates/Loader/Loader'
+import Loader from '../Loader/Loader'
 import Link from 'next/link'
 import TypeWriterText from '@/perfect-seo-shared-components/components/TypeWriterText/TypeWriterText'
 import PostItem from '../PostItem/PostItem'

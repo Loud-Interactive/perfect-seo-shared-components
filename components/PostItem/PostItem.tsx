@@ -209,9 +209,10 @@ const PostItem = ({ post, refresh }) => {
               <>
                 <Link
                   href={`https://contentPerfect.ai/dashboard/${localPost?.content_plan_guid}`}
+                  title="View Content Plan"
                   className="btn btn-warning btn-standard d-flex justify-content-center align-items-center"
                 >
-                  View Content Plan
+                  <i className="bi bi-eye-fill me-1" />     <span className="d-none d-lg-block"> View Content Plan</span>
                 </Link>
 
                 <button className='btn btn-primary btn-standard d-flex justify-content-center align-items-center' onClick={deleteClickHandler} title={`View GUID: ${localPost?.guid}`}><i className="bi bi-trash pt-1" /></button>

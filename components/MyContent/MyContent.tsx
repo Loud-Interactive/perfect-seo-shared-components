@@ -231,7 +231,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
         <div className="strip-padding container-fluid container-xl d-flex align-items-center justify-content-center">
           <h2 className='text-center text-primary'><TypeWriterText string="No domain selected" withBlink /></h2>
         </div>}
-    </div >
+    </div>
   )
 }
 

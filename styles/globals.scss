@@ -4943,6 +4943,14 @@ a.text-white {
   align-items: center;
 }
 
+.hero-text {
+  font-size: 20px;
+
+  @include Phone {
+    font-size: 16px;
+  }
+}
+
 @include TabletUp {
   .content-plan-row {
     min-width: 330px;

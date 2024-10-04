@@ -42,8 +42,9 @@ export interface PostOutlineGenerateRequest {
 
 export interface GenerateContentPost {
   email: string,
-  keyword?: string,
+  keyword: string,
   seo_keyword: string,
+  content_plan_keyword: string,
   content_plan_guid: string,
   content_plan_outline_guid: string,
   client_name: string,

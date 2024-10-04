@@ -3019,6 +3019,44 @@ input {
   }
 }
 
+ul.why-list {
+  @include clear-list-properties;
+  margin-bottom: 16px;
+
+  li {
+    font-size: 22px;
+    padding: 8px 16px;
+    background-color: white;
+    border-radius: 8px;
+    min-height: 4em;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    width: 80%;
+    border: 4px transparent solid;
+
+    @include Phone {
+      width: 100%;
+    }
+
+    &:hover {
+      color: black;
+      border-color: black;
+    }
+
+    @include TabletUp {
+      &:nth-last-of-type(2) {
+        margin-left: 10%;
+      }
+
+      &:nth-last-of-type(1) {
+        margin-left: 20%;
+      }
+    }
+  }
+
+}
+
 .insert.blink {
   opacity: 0;
 }

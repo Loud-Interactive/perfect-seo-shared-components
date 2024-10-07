@@ -4924,16 +4924,6 @@ a.text-white {
 .btn-tab {
   height: 38px !important;
 
-  &:not(:last-of-type) {
-    border-radius: 8px 0 0 8px !important;
-    padding-right: 25px !important;
-  }
-
-  &:not(:first-of-type) {
-    border-radius: 0 8px 8px 0 !important;
-    padding-left: 25px !important;
-  }
-
   &[data-state="active"] {
     background-color: $primary;
     color: white;

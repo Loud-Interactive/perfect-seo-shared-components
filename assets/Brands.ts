@@ -48,6 +48,8 @@ export const Brands: Array<Brand> = [
     status: BrandStatus.COMING_SOON,
     summary: "indexPerfect.ai helps businesses identify the effectiveness of their website's indexation using AI.",
     primary: "#006400",
+    stagingUrl: "https://index-perfect.vercel.app/",
+    developmentUrl: "https://index-perfect-git-development-loud-interactives-projects.vercel.app"
   },
   {
     title: 'pagePerfect.ai',

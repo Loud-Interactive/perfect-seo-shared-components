@@ -108,6 +108,16 @@ export const createPost = (reqBody: Request.GenerateContentPost) => {
   return axios.post(`https://content-v5.replit.app/generate_content`, reqBody);
 };
 
+
+
+export function processTsvUrl(url: string) {
+  return axios.post<Request.ProcessTsvUrlResponse>('/process-tsv-url', { url }, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+}
+
 export const regenerateOutline = (
   content_plan_guid,
   post_title,

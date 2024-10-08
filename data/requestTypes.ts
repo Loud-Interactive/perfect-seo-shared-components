@@ -122,3 +122,8 @@ export interface FactCheckRequest {
   file?: any
   url?: string
 }
+
+export interface ProcessTsvUrlResponse {
+  message: string;
+  guids: string[];
+}

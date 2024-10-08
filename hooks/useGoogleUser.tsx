@@ -10,7 +10,7 @@ import { urlSanitization } from '../utils/conversion-utilities';
 import { useSession } from 'next-auth/react';
 import en from '@/assets/en.json';
 const useGoogleUser = (appKey) => {
-  const { user, isLoggedIn } = useSelector((state: RootState) => state);
+  const { user, isLoggedIn, profile } = useSelector((state: RootState) => state);
   const [token, setToken] = useState(null)
   const [userData, setUserData] = useState<any>(null)
   const dispatch = useDispatch();
@@ -22,14 +22,14 @@ const useGoogleUser = (appKey) => {
     // Do something with response data
     supabase
       .from('user_history')
-      .insert({ email: user.email, transaction_data: { ...response, dev_code: 'text' }, product: en.product })
+      .insert({ email: user?.email || profile?.email, transaction_data: { ...response, dev_code: 'text' }, product: en.product })
       .select('*')
     return response;
   }, function (error) {
     // Any status codes that falls outside the range of 2xx cause this function to trigger
     supabase
       .from('user_history')
-      .insert({ email: user.email, transaction_data: error, product: en.product })
+      .insert({ email: user?.email || profile?.email, transaction_data: error, product: en.product })
       .select('*')
 
     return Promise.reject(error);

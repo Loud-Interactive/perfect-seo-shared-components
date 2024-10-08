@@ -64,7 +64,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
   const TabData = [
     { key: "posts", title: "Generated Posts" },
     { key: "content-plan", title: "Content Plans" },
-    { key: "bulk-upload", title: "Bulk Upload" },
+    // { key: "bulk-upload", title: "Bulk Upload" },
   ]
   const searchUserChangeHandler = (e) => {
     if (e) {
@@ -218,12 +218,13 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
           </div>
           <div className={`tab-pane fade ${selectedTab === 'content-plan' && 'show active'}`} id="content-plan" role="tabpanel" aria-labelledby="content-plan-tab">
             <div className='tab p-3'>
+              <BulkContentPlanGenerator />
               <PlansList active={selectedTab === 'content-plan'} domain_name={domain} />
             </div>
           </div>
           <div className={`tab-pane fade ${selectedTab === 'bulk-upload' && 'show active'}`} id="bulk-upload" role="tabpanel" aria-labelledby="bulk-upload-tab">
             <div className='tab p-3'>
-              <BulkContentPlanGenerator />
+
             </div>
           </div>
         </div>

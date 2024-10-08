@@ -65,7 +65,7 @@ const BulkContentPlanGenerator: React.FC = () => {
 
   return (
     <div>
-      <h2 className='my-3 text-primary'><TypeWriterText withBlink string="Bulk Content Plan Generator" /></h2>
+      <h3 className='my-3 text-primary'><TypeWriterText withBlink string="Bulk Content Plan Generator" /></h3>
       <form onSubmit={handleSubmit}>
         <div className='input-group'>
           <input

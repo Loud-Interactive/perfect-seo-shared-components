@@ -8,13 +8,28 @@ import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 import { urlSanitization } from '../utils/conversion-utilities';
 import { useSession } from 'next-auth/react';
-
+import en from '@/assets/en.json';
 const useGoogleUser = (appKey) => {
   const { user, isLoggedIn } = useSelector((state: RootState) => state);
   const [token, setToken] = useState(null)
   const [userData, setUserData] = useState<any>(null)
   const dispatch = useDispatch();
   const supabase = createClient()
+
+  // Add a response interceptor
+  axios.interceptors.response.use(function (response) {
+    // Any status code that lie within the range of 2xx cause this function to trigger
+    // Do something with response data
+    return response;
+  }, function (error) {
+    // Any status codes that falls outside the range of 2xx cause this function to trigger
+    supabase
+      .from('user_history')
+      .insert({ email: user.email, transaction_data: error, product: en.product })
+      .select('*')
+
+    return Promise.reject(error);
+  });
 
   const { data: session, status } = useSession()
 

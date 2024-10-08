@@ -224,11 +224,6 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
               <PlansList active={selectedTab === 'content-plan'} domain_name={domain} />
             </div>
           </div>
-          <div className={`tab-pane fade ${selectedTab === 'bulk-upload' && 'show active'}`} id="bulk-upload" role="tabpanel" aria-labelledby="bulk-upload-tab">
-            <div className='tab p-3'>
-
-            </div>
-          </div>
         </div>
       </div> :
         <div className="strip-padding container-fluid container-xl d-flex align-items-center justify-content-center">

@@ -83,7 +83,7 @@ const BulkContentPlanGenerator: React.FC = () => {
       </form>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       <ul>
-        {items.map(item => (
+        {items?.length > 0 && items.map(item => (
           <li key={item.guid}>
             {item.domain_name} - {item.status || 'Processing'}
           </li>

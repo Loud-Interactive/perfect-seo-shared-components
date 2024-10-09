@@ -10,6 +10,11 @@ import style from './DnDLayout.module.scss'
 import "bootstrap-icons/font/bootstrap-icons.css";
 import Script from 'next/script';
 import { SessionProvider } from "next-auth/react"
+import axiosInstance from '@/perfect-seo-shared-components/utils/axiosInstance';
+import { RootState } from '@/perfect-seo-shared-components/lib/store';
+import { createClient } from '@/perfect-seo-shared-components/utils/supabase/client';
+import { useSelector } from 'react-redux';
+import en from '@/assets/en.json';
 
 
 interface DnDLayoutProps extends React.HTMLProps<HTMLDivElement> {
@@ -21,6 +26,21 @@ interface DnDLayoutProps extends React.HTMLProps<HTMLDivElement> {
 }
 
 const DnDLayout = ({ children, hideFooter, current, links, hasLogin = true, getCredits = false }: DnDLayoutProps) => {
+
+
+  const { user, profile } = useSelector((state: RootState) => state);
+  const supabase = createClient()
+
+  axiosInstance.interceptors.response.use(function (response) {
+    return response;
+  }, function (error) {
+
+    supabase
+      .from('user_history')
+      .insert({ email: user?.email || profile?.email, transaction_data: error, product: en.product })
+      .select('*')
+    return Promise.reject(error);
+  });
 
   return (
     <>

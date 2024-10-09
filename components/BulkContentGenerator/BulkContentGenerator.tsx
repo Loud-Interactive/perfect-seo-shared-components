@@ -17,23 +17,23 @@ const BulkContentPlanGenerator: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
-    try {
-      const response = await axios.post<IncomingPlanItemResponse[]>(
-        'https://planperfectapi.replit.app/process_tsv_from_url',
-        { url: tsvUrl }
-      );
+    axios.post<IncomingPlanItemResponse[]>(
+      `https://planperfectapi.replit.app/process_tsv_from_url?url=${encodeURI(tsvUrl)}`, {}
+    ).then(response => {
       setItems(response.data);
       startPollingStatus(response.data);
-    } catch (err) {
-      setError('Error processing TSV file');
-    } finally {
-      setLoading(false);
-    }
+      setLoading(false)
+    })
+
+      .catch((err) => {
+        setLoading(false);
+        setError(err?.response?.data?.detail || 'Error processing TSV file');
+      })
   };
 
   const startPollingStatus = (items: IncomingPlanItemResponse[]) => {
@@ -66,7 +66,7 @@ const BulkContentPlanGenerator: React.FC = () => {
   return (
     <div>
       <h3 className='my-3 text-primary'><TypeWriterText withBlink string="Bulk Content Plan Generator" /></h3>
-      <form onSubmit={handleSubmit}>
+      <form>
         <div className='input-group'>
           <input
             type="text"
@@ -76,7 +76,7 @@ const BulkContentPlanGenerator: React.FC = () => {
             required
             className='form-control'
           />
-          <button className="btn btn-primary" type="submit" disabled={loading}>
+          <button onClick={handleSubmit} className="btn btn-primary" type="submit" disabled={loading}>
             {loading ? 'Processing...' : 'Generate Content Plans'}
           </button>
         </div>

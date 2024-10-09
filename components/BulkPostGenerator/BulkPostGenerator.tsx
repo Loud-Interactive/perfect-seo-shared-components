@@ -25,7 +25,7 @@ const BulkPostGenerator = () => {
 
 
     try {
-      const response = await axios.post<ProcessTsvUrlResponse>('/process-tsv-url', { url: tsvUrl }, {
+      const response = await axios.post<ProcessTsvUrlResponse>('http://content-v5.replit.app/process-tsv-url', { url: tsvUrl }, {
         headers: {
           'Content-Type': 'application/json',
         },

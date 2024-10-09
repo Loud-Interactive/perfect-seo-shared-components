@@ -23,7 +23,7 @@ const BulkPostGenerator = () => {
     setLoading(true);
     setError(null);
 
-    axios.post<ProcessTsvUrlResponse>(`https://content-v5.replit.app/process-tsv-url?url=${encodeURI(tsvUrl)}`, {})
+    axios.post<ProcessTsvUrlResponse>(`https://content-v5.replit.app/process-tsv-url?url=${tsvUrl.replaceAll("&", "%26")}`, {})
       .then(response => {
         setItems(response.data.guids);
         startPollingStatus(response.data);

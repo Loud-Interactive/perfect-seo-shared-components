@@ -30,7 +30,7 @@ const BulkPostGenerator = () => {
           'Content-Type': 'application/json',
         },
       });
-
+      console.log(response.data.guids);
       setItems(response.data.guids);
       startPollingStatus(response.data);
     } catch (err) {

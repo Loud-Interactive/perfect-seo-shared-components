@@ -11,6 +11,7 @@ interface TypeWriterText {
 const TypeWriterText = ({ string, withBlink, loop = false }: TypeWriterText) => {
   const [text, setText] = useState(string)
   const [hiddenText, setHiddenText] = useState('')
+  // only run when showing 
   const { isIntersecting, ref } = useIntersectionObserver({
     threshold: 0.5,
   })
@@ -20,7 +21,8 @@ const TypeWriterText = ({ string, withBlink, loop = false }: TypeWriterText) => 
     let speed = 60;
     let interval;
     let index = 0
-    if (string && isIntersecting) {
+    if (string) {
+      // if (string && isIntersecting) {
       interval = setInterval(() => {
         if (index < string.length) {
           index++
@@ -40,7 +42,8 @@ const TypeWriterText = ({ string, withBlink, loop = false }: TypeWriterText) => 
     return () => {
       clearInterval(interval)
     }
-  }, [string, loop, isIntersecting])
+  }, [string, loop])
+  // }, [string, loop, isIntersecting])
 
 
   return (

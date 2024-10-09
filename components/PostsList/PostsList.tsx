@@ -45,7 +45,7 @@ const PostsList = ({ domain_name, active }: PostsListProps) => {
 
 
   const filteredData = useMemo(() => {
-    let newData;
+    let newData
     if (!data) {
       return null
     }
@@ -59,7 +59,7 @@ const PostsList = ({ domain_name, active }: PostsListProps) => {
       newData = data.filter((post) => post.status !== 'Finished')
     }
 
-    return newData
+    return newData.sort((a, b) => b.created_at.localeCompare(a.created_at))
   }, [data, filter])
 
   useEffect(() => {

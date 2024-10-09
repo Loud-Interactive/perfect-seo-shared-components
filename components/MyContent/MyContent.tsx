@@ -157,7 +157,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
       bool = true
     } else if (user?.email) {
       let domain = currentDomain || selected?.value
-      bool = (profile?.domains.includes(domain.toLowerCase()) || isAdmin)
+      bool = (profile?.domains.includes(domain?.toLowerCase()) || isAdmin)
     }
     return bool
   }, [user, isAdmin, currentDomain, selected])

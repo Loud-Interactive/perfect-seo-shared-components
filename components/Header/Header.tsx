@@ -123,9 +123,11 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
     setOpen(open)
   }
 
-  const menuButtonClasses = classNames(styles.menuButton, {
-    [styles.hasImage]: user?.image
-  })
+  const imageClickHandler = (e) => {
+    e.preventDefault();
+    setOpen(!open)
+  }
+
   return (
     <header className={styles.header}>
       <div className='container-fluid container-xl'>
@@ -154,11 +156,11 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
 
               }
             </div>}
+            {user?.image && <div className="col-auto me-3">
+              <img src={user?.image} className="user-icon cursor-pointer" onClick={imageClickHandler} />
+            </div>}
             <DropdownMenu.Root defaultOpen open={open} onOpenChange={openChangeHandler}>
-              <DropdownMenu.Trigger className={menuButtonClasses}>
-                {user?.image && <div className="col-auto me-3">
-                  <img src={user?.image} className="user-icon" />
-                </div>}
+              <DropdownMenu.Trigger className={styles.menuButton}>
                 <i className="bi text-primary bi-grid-3x3-gap-fill" />
               </DropdownMenu.Trigger>
 

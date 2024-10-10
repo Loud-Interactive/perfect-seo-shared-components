@@ -113,8 +113,10 @@
     justify-content: center;
     margin-bottom: 10px;
 
-    svg {
-      width: 100px;
+    @include Desktop {
+      svg {
+        width: 100px;
+      }
     }
 
 

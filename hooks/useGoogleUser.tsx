@@ -60,7 +60,7 @@ const useGoogleUser = (appKey) => {
     }
     supabase
       .from('profiles')
-      .update({ products: products })
+      .update({ products: products, updated_at: new Date().toISOString() })
       .eq('email', user?.email)
       .select("*")
       .then(res => {
@@ -219,7 +219,6 @@ const useGoogleUser = (appKey) => {
               .insert(profileObj)
               .select("*")
               .then(res => {
-
               })
           }
         })

@@ -30,7 +30,7 @@ const Layout = ({ children, hideFooter, current, links, hasLogin = true, getCred
 
     supabase
       .from('user_history')
-      .insert({ email: user?.email || profile?.email, transaction_data: error, product: en.product })
+      .insert({ email: user?.email || profile?.email, transaction_data: error, product: en.product, type: "Error" })
       .select('*')
     return Promise.reject(error);
   });

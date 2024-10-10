@@ -210,7 +210,7 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
                       </div>
                     </div>
                     <div className='card-body d-flex align-items-end'>
-                      <div className='row g-3'>
+                      <div className='row g-3 justify-content-center'>
                         <div className='col-12'>
                           <span className='fs-2'>Our Products</span>
                         </div>

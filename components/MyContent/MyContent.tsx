@@ -24,7 +24,6 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
   const [selectedTab, setSelectedTab] = useState('posts')
   const searchParams = useSearchParams();
   const queryParam = searchParams.get('tab');
-  const domainParam = searchParams.get('domain');
   const router = useRouter();
   const pathname = usePathname()
   const [domain, setDomain] = useState(currentDomain || profile?.domains[0])
@@ -70,18 +69,11 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
   const searchUserChangeHandler = (e) => {
     if (e) {
       setDomain(e?.value);
-      router.replace(pathname + '?' + createQueryString('domain', e?.value))
       setSelected(e)
     }
     else {
       setDomain(null);
       setSelected(null)
-      if (queryParam) {
-        router.replace(pathname + '?tab=' + queryParam.toString())
-      }
-      else {
-        router.replace(pathname)
-      }
     }
   };
 
@@ -139,17 +131,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
       setDomain(currentDomain)
       setSelected({ label: currentDomain, value: currentDomain })
     }
-    else if (domainsList?.length > 0) {
-      if (domainParam) {
-        setSelected(domainsList.find(({ value }) => value === domainParam));
-        setDomain(domainParam)
-      }
-      else if (profile?.domains?.length > 0 && !currentDomain) {
-        setDomain(profile?.domains[0])
-        setSelected({ label: profile?.domains[0], value: profile?.domains[0] })
-      }
-    }
-  }, [domainParam, domainsList, currentDomain, profile])
+  }, [domainsList, currentDomain, profile])
 
   const isAuthorized = useMemo(() => {
     let bool = false;

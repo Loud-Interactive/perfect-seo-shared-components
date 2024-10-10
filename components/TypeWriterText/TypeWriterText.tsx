@@ -49,9 +49,10 @@ const TypeWriterText = ({ string, withBlink, loop = false }: TypeWriterText) => 
   return (
     <span className={styles.inherit} ref={ref}>
       {text}
+      <span className="hidden">{hiddenText}</span>
       {withBlink &&
         <span className={styles.blink}>_</span>
-      }<span className="hidden">{hiddenText}</span>
+      }
     </span>
   )
 }

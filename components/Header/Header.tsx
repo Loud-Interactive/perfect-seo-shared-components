@@ -123,6 +123,9 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
     setOpen(open)
   }
 
+  const menuButtonClasses = classNames(styles.menuButton, {
+    [styles.hasImage]: user?.image
+  })
   return (
     <header className={styles.header}>
       <div className='container-fluid container-xl'>
@@ -151,11 +154,11 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
 
               }
             </div>}
-            {user?.image && <div className="col-auto me-3">
-              <img src={user?.image} className="user-icon" />
-            </div>}
             <DropdownMenu.Root defaultOpen open={open} onOpenChange={openChangeHandler}>
-              <DropdownMenu.Trigger className={styles.menuButton}>
+              <DropdownMenu.Trigger className={menuButtonClasses}>
+                {user?.image && <div className="col-auto me-3">
+                  <img src={user?.image} className="user-icon" />
+                </div>}
                 <i className="bi text-primary bi-grid-3x3-gap-fill" />
               </DropdownMenu.Trigger>
 

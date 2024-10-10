@@ -47,6 +47,7 @@ const useGoogleUser = (appKey) => {
 
   const updateProducts = () => {
     let products = { ...userData.products }
+    delete products?.perfectSEO
     let key = appKey.replace(".ai", "");
     if (products) {
       if (products[key]) {

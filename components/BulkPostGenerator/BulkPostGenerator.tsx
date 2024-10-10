@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import TypeWriterText from '../TypeWriterText/TypeWriterText';
 import { ProcessTsvUrlResponse } from '@/perfect-seo-shared-components/data/requestTypes';
+import PostStatusItem from './PostStatusItem';
 
 interface IncomingPlanItemResponse {
   guid: string;
@@ -13,8 +14,14 @@ interface IncomingPlanItemResponse {
 }
 
 const BulkPostGenerator = () => {
+  // [
+  //   "d22809ae-0c6f-40e7-b4cd-3c9d37fa7903",
+  //   "0023b9a6-cf77-46e8-a47d-03f7bdb098e7",
+  //   "947e9c5e-4401-4b4f-bafc-98d47f0071af",
+  //   "2d26112d-4fd8-47a4-b5e0-2a82753caa70"
+  // ]
   const [tsvUrl, setTsvUrl] = useState<string>('');
-  const [items, setItems] = useState<any>(null);
+  const [items, setItems] = useState<any>();
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -26,7 +33,7 @@ const BulkPostGenerator = () => {
     axios.post<ProcessTsvUrlResponse>(`https://content-v5.replit.app/process-tsv-url?url=${tsvUrl.replaceAll("&", "%26")}`, {})
       .then(response => {
         setItems(response.data.guids);
-        startPollingStatus(response.data);
+        console.log(response.data.guids)
         setLoading(false)
       })
 
@@ -37,32 +44,7 @@ const BulkPostGenerator = () => {
 
   };
 
-  const startPollingStatus = (data: ProcessTsvUrlResponse) => {
-    data.guids.forEach(item => {
-      pollItemStatus(item);
-    });
-  };
 
-  const pollItemStatus = async (guid: string) => {
-    const pollInterval = setInterval(async () => {
-      try {
-        const response = await axios.get(`https://content-status.replit.app/content/status/${guid}`);
-        const updatedItem = response.data;
-
-        setItems(prevItems =>
-          prevItems.map(item =>
-            item.guid === guid ? { ...item, status: updatedItem.status } : item
-          )
-        );
-
-        if (updatedItem.status === 'Finished' || updatedItem.status.startsWith('Error')) {
-          clearInterval(pollInterval);
-        }
-      } catch (err) {
-        console.error(`Error polling status for item ${guid}:`, err);
-      }
-    }, 5000); // Poll every 5 seconds
-  };
 
   return (
     <div>
@@ -83,13 +65,17 @@ const BulkPostGenerator = () => {
         </div>
       </form>
       {error && <p style={{ color: 'red' }}>{error}</p>}
-      <ul>
-        {items?.length > 0 && items.map(item => (
-          <li key={item.guid}>
-            {item.domain_name} - {item.status || 'Processing'}
-          </li>
+      {items?.length > 0 && <ul className='clear-list-properties row g-3 px-2'>
+        <li className="card p-3 bg-primary">
+          <div className="row d-flex align-items-center justify-content-between">
+            <div className="capitalize col-12 col-md-4 ">Title</div>
+            <div className="capitalize col-12 col-md-4">Domain</div>  <div className="capitalize col-12 col-md-4">Status</div>
+          </div>
+        </li>
+        {items.map(item => (
+          <PostStatusItem guid={item} key={item} />
         ))}
-      </ul>
+      </ul>}
     </div>
   );
 };

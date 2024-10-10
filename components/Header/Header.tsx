@@ -1,14 +1,13 @@
 'use client'
-import { signIn, signOut, useSession } from "next-auth/react"
+import { signIn, signOut } from "next-auth/react"
 import Link from 'next/link'
 import styles from './Header.module.scss'
-import { loginWithGoogle, logout } from '@/perfect-seo-shared-components/utils/supabase/actions'
 import classNames from 'classnames'
 import useViewport from '@/perfect-seo-shared-components/hooks/useViewport'
 import { useDispatch, useSelector } from 'react-redux'
-import { reset, setLoading, updatePoints } from '@/perfect-seo-shared-components/lib/features/User'
+import { setLoading, updatePoints } from '@/perfect-seo-shared-components/lib/features/User'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import { Brand, BrandStatus, Links, LinkType } from '@/perfect-seo-shared-components/data/types'
+import { BrandStatus, Links, LinkType } from '@/perfect-seo-shared-components/data/types'
 import { useEffect, useMemo, useState } from 'react'
 import { Brands } from '@/perfect-seo-shared-components/assets/Brands'
 import { renderIcon, renderLogo } from '@/perfect-seo-shared-components/utils/brandUtilities'
@@ -16,6 +15,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import { RootState } from '@/perfect-seo-shared-components/lib/store'
 import useGoogleUser from "@/perfect-seo-shared-components/hooks/useGoogleUser"
 import { addUserCredit, checkUserCredits, createUserCreditAccount } from "@/perfect-seo-shared-components/services/services"
+import { SEOPerfectLogo } from "@/perfect-seo-shared-components/assets/brandIcons"
 
 export interface HeaderProps {
   links?: Links[],
@@ -224,6 +224,11 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
                             </div>
                           )
                         })}
+                        <div className="col-8">
+                          <div className="h-100 pt-2">
+                            <a href='https://seoperfect.ai/' className="h-100 w-100 d-flex align-items-center" target="_blank">  <SEOPerfectLogo /></a>
+                          </div>
+                        </div>
                       </div>
 
                     </div>

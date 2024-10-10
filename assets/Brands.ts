@@ -45,7 +45,7 @@ export const Brands: Array<Brand> = [
     url: 'https://indexPerfect.ai',
     logo: '/svg/indexPerfect.svg',
     icon: '/svg/indexPerfect-icon.svg',
-    status: BrandStatus.COMING_SOON,
+    status: BrandStatus.LIVE,
     summary: "indexPerfect.ai helps businesses identify the effectiveness of their website's indexation using AI.",
     primary: "#006400",
     stagingUrl: "https://index-perfect.vercel.app/",

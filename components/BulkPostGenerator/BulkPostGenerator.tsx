@@ -18,27 +18,24 @@ const BulkPostGenerator = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
+    axios.post<ProcessTsvUrlResponse>(`https://content-v5.replit.app/process-tsv-url?url=${tsvUrl.replaceAll("&", "%26")}`, {})
+      .then(response => {
+        setItems(response.data.guids);
+        startPollingStatus(response.data);
+        setLoading(false)
+      })
 
-    try {
-      const response = await axios.post<ProcessTsvUrlResponse>('http://content-v5.replit.app/process-tsv-url', { url: tsvUrl }, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      console.log(response.data.guids);
-      setItems(response.data.guids);
-      startPollingStatus(response.data);
-    } catch (err) {
-      setError('Error processing TSV file');
-    } finally {
-      setLoading(false);
-    }
-  }
+      .catch((err) => {
+        setLoading(false);
+        setError(err?.response?.data?.detail || 'Error processing TSV file');
+      })
+
+  };
 
   const startPollingStatus = (data: ProcessTsvUrlResponse) => {
     data.guids.forEach(item => {
@@ -70,7 +67,7 @@ const BulkPostGenerator = () => {
   return (
     <div>
       <h3 className='my-3 text-primary'><TypeWriterText withBlink string="Bulk Post Generator" /></h3>
-      <form onSubmit={handleSubmit}>
+      <form>
         <div className='input-group'>
           <input
             type="text"
@@ -80,7 +77,7 @@ const BulkPostGenerator = () => {
             required
             className='form-control'
           />
-          <button className="btn btn-primary" type="submit" disabled={loading}>
+          <button className="btn btn-primary" onClick={handleSubmit} type="submit" disabled={loading}>
             {loading ? 'Processing...' : 'Generate Posts'}
           </button>
         </div>

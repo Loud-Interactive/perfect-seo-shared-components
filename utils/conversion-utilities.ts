@@ -6,7 +6,7 @@ export const urlSanitization = (url: string): string => {
   if (!url) return ""
   let newUrl = url.replaceAll("https://", "").replaceAll("http://", "").replaceAll("www.", "").replaceAll("//", "")
   newUrl = newUrl.split("/")[0]
-  return newUrl?.replaceAll("/", "").toLowerCase().replaceAll("sc-domain:", "")
+  return newUrl?.replaceAll("/", "")?.toLowerCase()?.replaceAll("sc-domain:", "")
 }
 
 export const trimSynopsis = (synopsis: any) => {

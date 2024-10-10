@@ -95,7 +95,7 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
       newData = data.filter((post) => post.status !== 'Finished')
     }
 
-    return newData
+    return newData.sort((a, b) => (b.timestamp + 'Z').localeCompare(a.timestamp + 'Z'))
   }, [data, filter])
 
   const handleFilterChange = (e) => {

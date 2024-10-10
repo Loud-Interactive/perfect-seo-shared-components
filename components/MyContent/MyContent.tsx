@@ -144,7 +144,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
         setSelected(domainsList.find(({ value }) => value === domainParam));
         setDomain(domainParam)
       }
-      if (profile?.domains?.length > 0 && !currentDomain) {
+      else if (profile?.domains?.length > 0 && !currentDomain) {
         setDomain(profile?.domains[0])
         setSelected({ label: profile?.domains[0], value: profile?.domains[0] })
       }
@@ -156,8 +156,19 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
     if (isAdmin) {
       bool = true
     } else if (user?.email) {
-      let domain = currentDomain || selected?.value
-      bool = (profile?.domains.includes(domain.toLowerCase()) || isAdmin)
+      if (selected?.value) {
+        let domain = currentDomain || selected?.value
+        bool = (profile?.domains.includes(domain?.toLowerCase()) || isAdmin)
+      }
+      else if (currentDomain) {
+        let domain = currentDomain
+        bool = (profile?.domains.includes(domain?.toLowerCase()) || isAdmin)
+      }
+      else {
+        bool = true
+      }
+
+
     }
     return bool
   }, [user, isAdmin, currentDomain, selected])

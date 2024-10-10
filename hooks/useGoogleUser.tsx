@@ -18,6 +18,7 @@ const useGoogleUser = (appKey) => {
 
   const { data: session, status } = useSession()
 
+
   //set status based on loading of session
   useEffect(() => {
     let sessionData: any = session;
@@ -95,6 +96,7 @@ const useGoogleUser = (appKey) => {
       updateProducts()
     }
   }, [session, userData])
+
   useEffect(() => {
     if (user?.email) {
       updateUser()
@@ -105,7 +107,7 @@ const useGoogleUser = (appKey) => {
     try {
       return jwtDecode(token);
     } catch (Error) {
-      return null;
+      return 'failed';
     }
   }
 
@@ -210,6 +212,15 @@ const useGoogleUser = (appKey) => {
         .eq('email', user?.email)
         .select("*")
         .then(res => {
+          if (res.data?.length === 0) {
+            supabase
+              .from('profiles')
+              .insert(profileObj)
+              .select("*")
+              .then(res => {
+
+              })
+          }
         })
     }
   };

@@ -260,11 +260,11 @@ const PostItem = ({ post, refresh }) => {
                   </DropdownMenu.Root>}
                 {(!showUrl && !post?.live_post_url) &&
                   <button className="btn btn-warning btn-standard" onClick={() => { setShowUrl(true) }} title="Add Live Url"><i className="bi bi-link" /></button>}
-                {localPost?.status !== "Complete" && <div className='col-12 text-end text-primary px-0'>
-                  <TypeWriterText string={status} withBlink />
-                </div>}
               </>
             </div>
+            {localPost?.status !== "Complete" && <div className='col-12 text-end text-primary mt-2'>
+              <TypeWriterText string={status} withBlink />
+            </div>}
           </div>
         </div>
       </div>

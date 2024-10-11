@@ -37,12 +37,17 @@ export const generateSynopsis = (domain) => {
 }
 
 // synopsisPerfect APIS 
-export const getSynopsisInfo = (domain, regenerate?) => {
+export const getSynopsisInfo = (domain, regenerate?, server?: boolean) => {
   let newDomain = urlSanitization(domain);
   if (regenerate) {
     newDomain += "?regenerate=true";
   }
-  return axios.get(`https://pp-api.replit.app/pairs/${newDomain}`, { headers: { 'Access-Control-Allow-Origin': '*' } })
+  if (server) {
+    return axios.get(`https://pp-api.replit.app/pairs/${newDomain}`, { headers: { 'Access-Control-Allow-Origin': '*' } })
+  }
+  else {
+    return axiosInstance.get(`https://pp-api.replit.app/pairs/${newDomain}`, { headers: { 'Access-Control-Allow-Origin': '*' } })
+  }
 };
 
 export const updateImpression = (domain: string, obj: Object) => {
@@ -68,8 +73,13 @@ export const getPlanStatus = (id: string) => {
   return axiosInstance.get(`${API_URL}/status/${id}`);
 };
 
-export const getCompletedPlan = (id: string) => {
-  return axiosInstance.get(`${API_URL}/get_content_plan/${id}`);
+export const getCompletedPlan = (id: string, server?: boolean) => {
+  if (server) {
+    return axios.get(`${API_URL}/get_content_plan/${id}`);
+  }
+  else {
+    return axiosInstance.get(`${API_URL}/get_content_plan/${id}`);
+  }
 };
 
 export const getContentPlanPost = (reqObj: Request.ContentPlanPostRequest) => {

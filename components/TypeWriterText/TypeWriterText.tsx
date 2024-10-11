@@ -21,8 +21,8 @@ const TypeWriterText = ({ string, withBlink, loop = false }: TypeWriterText) => 
     let speed = 60;
     let interval;
     let index = 0
-    if (string) {
-      // if (string && isIntersecting) {
+
+    if (string && isIntersecting) {
       interval = setInterval(() => {
         if (index < string.length) {
           index++
@@ -42,8 +42,8 @@ const TypeWriterText = ({ string, withBlink, loop = false }: TypeWriterText) => 
     return () => {
       clearInterval(interval)
     }
-  }, [string, loop])
-  // }, [string, loop, isIntersecting])
+
+  }, [string, loop, isIntersecting])
 
 
   return (

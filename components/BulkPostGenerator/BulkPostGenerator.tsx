@@ -30,7 +30,7 @@ const BulkPostGenerator = () => {
     setLoading(true);
     setError(null);
 
-    axiosInstance.post<ProcessTsvUrlResponse>(`https://content-v5.replit.app/process-tsv-url?url=${tsvUrl.replaceAll("&", "%26")}`, {})
+    axiosInstance.post<ProcessTsvUrlResponse>(`https://content-v5.replit.app/process-tsv-url?url=${tsvUrl}`, {})
       .then(response => {
         setItems(response.data.guids);
         console.log(response.data.guids)

@@ -26,6 +26,7 @@ const Layout = ({ children, hideFooter, current, links, hasLogin = true, getCred
   const supabase = createClient()
 
   axiosInstance.interceptors.response.use(function (response) {
+    console.log("interceptor received response")
     let email;
     try {
       email = localStorage.getItem('email')
@@ -37,6 +38,9 @@ const Layout = ({ children, hideFooter, current, links, hasLogin = true, getCred
       .from('user_history')
       .insert({ email, transaction_data: { ...response.data }, product: en?.product, type: "Response" })
       .select('*')
+      .then(res => {
+        console.log(res)
+      })
     return response;
   }, function (error) {
     let email;

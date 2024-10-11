@@ -1,3 +1,4 @@
+"use client"
 // import ErrorPage from "@/perfect-seo-shared-components/components/ErrorPage/ErrorPage"
 
 function Error({ statusCode, err }) {

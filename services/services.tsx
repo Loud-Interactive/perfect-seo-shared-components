@@ -1,6 +1,7 @@
 import axiosInstance from "@/perfect-seo-shared-components/utils/axiosInstance";
 import * as Request from "@/perfect-seo-shared-components/data/requestTypes";
 import { urlSanitization } from "@/perfect-seo-shared-components/utils/conversion-utilities";
+import axios from "axios";
 export interface PlanItemProps {
   brand_name: string;
   domain_name: string;
@@ -41,7 +42,7 @@ export const getSynopsisInfo = (domain, regenerate?) => {
   if (regenerate) {
     newDomain += "?regenerate=true";
   }
-  return axiosInstance.get(`https://pp-api.replit.app/pairs/${newDomain}`, { headers: { 'Access-Control-Allow-Origin': '*' } })
+  return axios.get(`https://pp-api.replit.app/pairs/${newDomain}`, { headers: { 'Access-Control-Allow-Origin': '*' } })
 };
 
 export const updateImpression = (domain: string, obj: Object) => {

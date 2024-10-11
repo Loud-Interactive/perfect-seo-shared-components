@@ -27,10 +27,16 @@ const Layout = ({ children, hideFooter, current, links, hasLogin = true, getCred
   axiosInstance.interceptors.response.use(function (response) {
     return response;
   }, function (error) {
-
+    let email;
+    try {
+      email = localStorage.getItem('email')
+    }
+    catch (e) {
+      email = user?.email || profile?.email
+    }
     supabase
       .from('user_history')
-      .insert({ email: user?.email || profile?.email, transaction_data: error, product: en.product, type: "Error" })
+      .insert({ email, transaction_data: { ...error.response }, product: en?.product, type: "Error" })
       .select('*')
     return Promise.reject(error);
   });

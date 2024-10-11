@@ -25,7 +25,12 @@ export const signup = (formData: any) => {
 }
 export const logout = () => {
   const supabase = createClient()
-  supabase.auth.stopAutoRefresh();
+  try {
+    localStorage.removeItem('email')
+  }
+  catch (e) {
+    console.log("email not found in local storage")
+  }
 
   return supabase.auth.signOut()
 }

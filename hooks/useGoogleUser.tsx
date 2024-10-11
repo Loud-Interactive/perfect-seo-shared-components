@@ -38,6 +38,7 @@ const useGoogleUser = (appKey) => {
     if (session) {
       if (session?.user) {
         dispatch(setUser(session.user))
+        localStorage.setItem('email', session.user.email)
       }
     }
     if (sessionData?.access_token) {

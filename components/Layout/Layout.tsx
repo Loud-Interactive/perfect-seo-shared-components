@@ -22,9 +22,21 @@ interface LayoutProps extends React.HTMLProps<HTMLDivElement> {
 
 const Layout = ({ children, hideFooter, current, links, hasLogin = true, getCredits = false }: LayoutProps) => {
   const { user, profile } = useSelector((state: RootState) => state);
+
   const supabase = createClient()
 
   axiosInstance.interceptors.response.use(function (response) {
+    let email;
+    try {
+      email = localStorage.getItem('email')
+    }
+    catch (e) {
+      email = user?.email || profile?.email
+    }
+    supabase
+      .from('user_history')
+      .insert({ email, transaction_data: { ...response.data }, product: en?.product, type: "Response" })
+      .select('*')
     return response;
   }, function (error) {
     let email;

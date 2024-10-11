@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import TypeWriterText from '../TypeWriterText/TypeWriterText';
 import { ProcessTsvUrlResponse } from '@/perfect-seo-shared-components/data/requestTypes';
 import PostStatusItem from './PostStatusItem';
+import axiosInstance from '@/perfect-seo-shared-components/utils/axiosInstance';
 
 interface IncomingPlanItemResponse {
   guid: string;
@@ -30,7 +30,7 @@ const BulkPostGenerator = () => {
     setLoading(true);
     setError(null);
 
-    axios.post<ProcessTsvUrlResponse>(`https://content-v5.replit.app/process-tsv-url?url=${tsvUrl.replaceAll("&", "%26")}`, {})
+    axiosInstance.post<ProcessTsvUrlResponse>(`https://content-v5.replit.app/process-tsv-url?url=${tsvUrl.replaceAll("&", "%26")}`, {})
       .then(response => {
         setItems(response.data.guids);
         console.log(response.data.guids)

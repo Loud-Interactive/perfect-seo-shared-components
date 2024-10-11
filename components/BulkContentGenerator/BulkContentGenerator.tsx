@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import TypeWriterText from '../TypeWriterText/TypeWriterText';
+import axiosInstance from '@/perfect-seo-shared-components/utils/axiosInstance';
 
 interface IncomingPlanItemResponse {
   guid: string;
@@ -22,7 +22,7 @@ const BulkContentPlanGenerator: React.FC = () => {
     setLoading(true);
     setError(null);
 
-    axios.post<IncomingPlanItemResponse[]>(
+    axiosInstance.post<IncomingPlanItemResponse[]>(
       `https://planperfectapi.replit.app/process_tsv_from_url?url=${tsvUrl.replaceAll("&", "%26")}`, {}
     ).then(response => {
       setItems(response.data);
@@ -45,7 +45,7 @@ const BulkContentPlanGenerator: React.FC = () => {
   const pollItemStatus = async (guid: string) => {
     const pollInterval = setInterval(async () => {
       try {
-        const response = await axios.get(`https://planperfectapi.replit.app/get_status/${guid}`);
+        const response = await axiosInstance.get(`https://planperfectapi.replit.app/get_status/${guid}`);
         const updatedItem = response.data;
 
         setItems(prevItems =>

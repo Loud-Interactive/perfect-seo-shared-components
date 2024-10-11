@@ -6,12 +6,6 @@ import style from './Layout.module.scss'
 import "bootstrap-icons/font/bootstrap-icons.css";
 import Script from 'next/script';
 import { SessionProvider } from "next-auth/react"
-import { createClient } from '@/perfect-seo-shared-components/utils/supabase/client';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/perfect-seo-shared-components/lib/store';
-import en from '@/assets/en.json';
-import axiosInstance from '@/perfect-seo-shared-components/utils/axiosInstance';
-
 interface LayoutProps extends React.HTMLProps<HTMLDivElement> {
   hideFooter?: boolean,
   current: string;
@@ -21,41 +15,6 @@ interface LayoutProps extends React.HTMLProps<HTMLDivElement> {
 }
 
 const Layout = ({ children, hideFooter, current, links, hasLogin = true, getCredits = false }: LayoutProps) => {
-  const { user, profile } = useSelector((state: RootState) => state);
-
-  const supabase = createClient()
-
-  axiosInstance.interceptors.response.use(function (response) {
-    console.log("interceptor received response")
-    let email;
-    try {
-      email = localStorage.getItem('email')
-    }
-    catch (e) {
-      email = user?.email || profile?.email
-    }
-    supabase
-      .from('user_history')
-      .insert({ email, transaction_data: { ...response.data }, product: en?.product, type: "Response" })
-      .select('*')
-      .then(res => {
-        console.log(res)
-      })
-    return response;
-  }, function (error) {
-    let email;
-    try {
-      email = localStorage.getItem('email')
-    }
-    catch (e) {
-      email = user?.email || profile?.email
-    }
-    supabase
-      .from('user_history')
-      .insert({ email, transaction_data: { ...error.response }, product: en?.product, type: "Error" })
-      .select('*')
-    return Promise.reject(error);
-  });
 
 
   return (

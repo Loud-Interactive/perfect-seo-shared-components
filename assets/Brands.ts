@@ -37,7 +37,7 @@ export const Brands: Array<Brand> = [
     logo: '/svg/imagePerfect.svg',
     icon: '/svg/imagePerfect-icon.svg',
     status: BrandStatus.COMING_SOON,
-    summary: "Discover the perfect images for your content via imagePerfect.AI. We will scan your page's content and provide you with the best image prompts and even provide you with the AI-generated images.",
+    summary: "Perfect image file names, alt text, image captions, and keyphrases for the document management system using AI.",
     primary: "#EF476F",
   },
   {
@@ -47,7 +47,7 @@ export const Brands: Array<Brand> = [
     icon: '/svg/indexPerfect-icon.svg',
     status: BrandStatus.LIVE,
     summary: "indexPerfect.ai helps businesses identify the effectiveness of their website's indexation using AI.",
-    primary: "#006400",
+    primary: "#f59f3c",
     stagingUrl: "https://index-perfect.vercel.app/",
     developmentUrl: "https://index-perfect-git-development-loud-interactives-projects.vercel.app"
   },
@@ -85,11 +85,12 @@ export const Brands: Array<Brand> = [
     developmentUrl: "https://preferences-perfect-git-development-loud-interactives-projects.vercel.app/"
   },
   {
-    title: 'profilePerfect.ai',
-    url: 'https://profilePerfect.ai',
-    logo: '/svg/profilePerfect.svg',
-    icon: '/svg/profilePerfect-icon.svg',
-    status: BrandStatus.PLANNED,
+    title: 'productPerfect.ai',
+    url: 'https://productPerfect.ai',
+    logo: '/svg/productPerfect.svg',
+    icon: '/svg/productPerfect-icon.svg',
+    summary: "Perfect your e-commerce product pages with more detailed product descriptions, features, specifications, and product information using AI.",
+    status: BrandStatus.COMING_SOON,
     primary: "#235789",
   },
   {

@@ -180,7 +180,6 @@ const useGoogleUser = (appKey) => {
     let domain_access = [];
     try {
       domain_access = await fetchAllDomains()
-      console.log("domain_access:", domain_access)
       if (domain_access === null) {
         return null;
       }

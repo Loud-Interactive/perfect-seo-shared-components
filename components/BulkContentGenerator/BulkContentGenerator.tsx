@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import TypeWriterText from '../TypeWriterText/TypeWriterText';
 import axiosInstance from '@/perfect-seo-shared-components/utils/axiosInstance';
+import { createClient } from '@/perfect-seo-shared-components/utils/supabase/client';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/perfect-seo-shared-components/lib/store';
 
 interface IncomingPlanItemResponse {
   guid: string;
@@ -16,7 +19,14 @@ const BulkContentPlanGenerator: React.FC = () => {
   const [items, setItems] = useState<IncomingPlanItemResponse[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const { user, profile } = useSelector((state: RootState) => state);
+  const supabase = createClient()
 
+  useEffect(() => {
+    if (profile?.bulk_content) {
+      setItems(profile.bulk_content)
+    }
+  }, [profile?.bulk_content])
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -27,6 +37,14 @@ const BulkContentPlanGenerator: React.FC = () => {
     ).then(response => {
       setItems(response.data);
       startPollingStatus(response.data);
+      supabase
+        .from('profiles')
+        .update({ bulk_content: response.data.map(item => item.guid) })
+        .eq('email', user?.email)
+        .select('*')
+        .then(res => {
+          console.log(res)
+        })
       setLoading(false)
     })
 

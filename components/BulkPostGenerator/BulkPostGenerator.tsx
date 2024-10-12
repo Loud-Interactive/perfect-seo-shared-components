@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import TypeWriterText from '../TypeWriterText/TypeWriterText';
 import { ProcessTsvUrlResponse } from '@/perfect-seo-shared-components/data/requestTypes';
 import PostStatusItem from './PostStatusItem';
 import axiosInstance from '@/perfect-seo-shared-components/utils/axiosInstance';
+import { createClient } from '@/perfect-seo-shared-components/utils/supabase/client';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/perfect-seo-shared-components/lib/store';
 
 interface IncomingPlanItemResponse {
   guid: string;
@@ -14,26 +17,36 @@ interface IncomingPlanItemResponse {
 }
 
 const BulkPostGenerator = () => {
-  // [
-  //   "d22809ae-0c6f-40e7-b4cd-3c9d37fa7903",
-  //   "0023b9a6-cf77-46e8-a47d-03f7bdb098e7",
-  //   "947e9c5e-4401-4b4f-bafc-98d47f0071af",
-  //   "2d26112d-4fd8-47a4-b5e0-2a82753caa70"
-  // ]
   const [tsvUrl, setTsvUrl] = useState<string>('');
   const [items, setItems] = useState<any>();
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const { user, profile } = useSelector((state: RootState) => state);
+  const supabase = createClient();
+
+  useEffect(() => {
+    if (profile?.bulk_posts) {
+      setItems(profile.bulk_posts)
+    }
+
+  }, [profile?.bulk_posts])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
-    axiosInstance.post<ProcessTsvUrlResponse>(`https://content-v5.replit.app/process-tsv-url?url=${tsvUrl}`, {})
+    axiosInstance.post<ProcessTsvUrlResponse>(`https://content-v5.replit.app/process-tsv-url?url=${tsvUrl.replaceAll("&", "%26")}`)
       .then(response => {
         setItems(response.data.guids);
-        console.log(response.data.guids)
+        supabase
+          .from('profiles')
+          .update({ bulk_posts: response.data.guids })
+          .eq('email', user?.email)
+          .select('*')
+          .then(res => {
+            console.log(res)
+          })
         setLoading(false)
       })
 

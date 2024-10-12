@@ -37,6 +37,7 @@ const useGoogleUser = (appKey) => {
     }
     if (session) {
       if (session?.user) {
+        console.log("dispatching user")
         dispatch(setUser(session.user))
         localStorage.setItem('email', session.user.email)
       }
@@ -45,6 +46,12 @@ const useGoogleUser = (appKey) => {
       setToken(sessionData.access_token)
     }
   }, [status])
+
+  useEffect(() => {
+    if (token) {
+      checkUserDomains();
+    }
+  }, [token])
 
   const updateProducts = () => {
     let products = { ...userData.products }
@@ -130,6 +137,7 @@ const useGoogleUser = (appKey) => {
         }
       })
   }
+
   const fetchAllDomains = async () => {
     const { data } = await axios.get('https://www.googleapis.com/webmasters/v3/sites', { headers: { Authorization: `Bearer ${token}` } })
     if (data?.siteEntry) {
@@ -146,6 +154,42 @@ const useGoogleUser = (appKey) => {
     else return []
   }
 
+  const checkUserDomains = async () => {
+    let domain_access = userData?.domain_access || [];
+    try {
+      domain_access = await fetchAllDomains()
+      let domains = domain_access.map(({ siteUrl }) => urlSanitization(siteUrl))
+
+
+      domains = domains.filter(obj => obj !== 'google' && obj !== "gmail").reduce((prev, curr) => {
+        if (prev.includes(curr)) return prev
+        else {
+          return [...prev, urlSanitization(curr)]
+        }
+      }, [])
+      domains = domains.sort((a, b) => a.localeCompare(b))
+      domain_access = domain_access.sort((a, b) => a.siteUrl.localeCompare(b.siteUrl))
+      domains = domains.filter((domain) => {
+        checkDomain(domain);
+        return domain !== ""
+      })
+
+      if (domain_access?.length > 0) {
+        let profileObj: any = { ...userData, domain_access, domains };
+        dispatch(setProfile(profileObj))
+        supabase
+          .from('profiles')
+          .insert(profileObj)
+          .select("*")
+          .then(res => {
+          })
+      }
+    }
+    catch (err) {
+      console.log(err)
+    }
+  }
+
   const fetchData = async () => {
     if (userData && token) {
       if (!userData.full_name) {
@@ -154,37 +198,8 @@ const useGoogleUser = (appKey) => {
       if (!userData?.email) {
         userData.email = user.email
       }
-      let domain_access = userData?.domain_access || [];
-      try {
-        domain_access = await fetchAllDomains()
-      }
-      catch (err) {
-        console.log(err)
-      }
-      let domains = domain_access.map(({ siteUrl }) => urlSanitization(siteUrl))
-      if (!userData.domains) {
-        domains = [...domains, userData?.email?.split("@")[1]]
-        if (userData?.user_metadata?.custom_claims) {
-          let customClaims = Object.keys(userData?.user_metadata.custom_claims).reduce((prev, curr) => {
-            if (userData?.user_metadata?.custom_claims[curr] !== domains[0]) {
-              return [...prev, userData?.user_metadata?.custom_claims[curr]]
-            }
-            else return prev
-          }, [])
-          domains = [...domains, ...customClaims]
-        }
 
-      }
-      else {
-        domains = [...domains, ...userData.domains.map(obj => urlSanitization(obj))]
-      }
 
-      domains = domains.filter(obj => obj !== 'google' && obj !== "gmail").reduce((prev, curr) => {
-        if (prev.includes(curr)) return prev
-        else {
-          return [...prev, urlSanitization(curr)]
-        }
-      }, [])
       let products = userData.products
       let key = appKey.replace(".ai", "");
       if (products) {
@@ -196,13 +211,7 @@ const useGoogleUser = (appKey) => {
 
         }
       }
-      domains = domains.sort((a, b) => a.localeCompare(b))
-      domain_access = domain_access.sort((a, b) => a.siteUrl.localeCompare(b.siteUrl))
-      domains = domains.filter((domain) => {
-        checkDomain(domain);
-        return domain !== ""
-      })
-      let profileObj: any = { email: userData.email, domains: domains, domain_access: domain_access, products: products };
+      let profileObj: any = { email: userData.email, products: products };
       profileObj.updated_at = new Date().toISOString()
       if (user) {
         profileObj.user_metadata = user

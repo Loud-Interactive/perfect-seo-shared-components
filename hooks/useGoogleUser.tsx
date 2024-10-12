@@ -175,12 +175,11 @@ const useGoogleUser = (appKey) => {
       })
 
       if (domain_access?.length > 0) {
-        console.log(domain_access)
         let profileObj: any = { ...userData, domain_access, domains };
         dispatch(setProfile(profileObj))
         supabase
           .from('profiles')
-          .insert(profileObj)
+          .update(profileObj)
           .select("*")
           .then(res => {
           })

@@ -159,8 +159,17 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
 
 
     }
+    if (bool === false && user?.email && (currentDomain || selected?.value)) {
+      supabase
+        .from('user_history')
+        .insert({ email: user.email, domain: currentDomain || selected?.value, transaction_data: { domains: domainsList || profile?.domain_access }, product: en.product, type: "Unauthorized My Content" })
+        .select('*')
+        .then(res => {
+        })
+    }
     return bool
   }, [user, isAdmin, currentDomain, selected, domainsList])
+
 
   useEffect(() => {
     if (isAdmin) {

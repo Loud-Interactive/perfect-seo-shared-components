@@ -66,6 +66,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
     { key: "content-plan", title: "Content Plans" },
     // { key: "bulk-upload", title: "Bulk Upload" },
   ]
+
   const searchUserChangeHandler = (e) => {
     if (e) {
       setDomain(e?.value);
@@ -115,7 +116,6 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
       list = domains?.sort((a, b) => a.domain.localeCompare(b.domain)).map(({ domain }) => ({ label: domain, value: domain }))
     }
     else if (profile?.domains) {
-      console.log(profile?.domains)
       list = [...profile?.domains];
       list = list?.sort((a, b) => a.localeCompare(b)).map((domain) => {
         checkDomain(domain)

@@ -38,7 +38,6 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
         .insert({ email: user.email, domain: domain, transaction_data: { page: 'my-content', tab: selectedTab || queryParam || 'posts' }, product: en?.product, type: "View Content" })
         .select('*')
         .then(res => {
-          console.log(res)
         })
     }
   }, [domain, selected, selectedTab, user?.email])
@@ -122,7 +121,6 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
       list = domains?.sort((a, b) => a.domain.localeCompare(b.domain)).map(({ domain }) => ({ label: domain, value: domain }))
     }
     else if (profile?.domain_access?.length > 0) {
-      console.log("domain_access in profile:", profile?.domain_access);
       list = [...profile.domain_access.map((domain) => {
         return domain?.siteUrl?.toLowerCase()
       })];
@@ -141,7 +139,6 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
       setDomain(currentDomain)
       setSelected({ label: currentDomain, value: currentDomain })
     } else if (domainsList?.length > 0) {
-      console.log("domainsList:", domainsList)
       setDomain(domainsList[0]?.value)
       setSelected(domainsList[0])
     }

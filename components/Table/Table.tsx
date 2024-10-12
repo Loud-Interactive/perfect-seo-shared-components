@@ -153,11 +153,11 @@ const Table = ({ isLoading,
     initialState: initialState,
   });
 
-  const tableWrapClassName = classNames('table-wrap',
+  const tableWrapClassName = classNames('table-wrap table-responsive',
     { 'loading': isLoading || (data === null && columns === null) || data?.length === 0 || columns?.length === 0 },
   );
 
-  const tableClassName = classNames('table',
+  const tableClassName = classNames('table table-responsive',
     {
       [`${className}`]: className,
       'table-drag': draggable,

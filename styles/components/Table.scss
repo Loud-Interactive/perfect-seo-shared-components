@@ -6,12 +6,9 @@
   @include TabletDown {
     overflow-x: hidden;
     max-width: 100vw;
-
-    &-wrap {
-      overflow-x: auto;
-    }
   }
 
+  margin-bottom: 2em;
   border-collapse: collapse;
   box-sizing: border-box;
   display: table;
@@ -21,12 +18,8 @@
 
   &-wrap {
     border-radius: 8px;
-    box-sizing: border-box;
-    display: flex;
     position: relative;
-    max-width: 100vw;
-    width: 100%;
-    overflow-x: clip;
+    box-sizing: border-box;
 
     &.loading {
       min-height: 150px;
@@ -217,18 +210,4 @@
     }
   }
 
-  [data-theme="host"] {
-    tbody tr {
-      background-color: white;
-      border: 1px solid $secondary;
-      border-radius: 8px;
-      overflow: hidden;
-    }
-
-    tfoot {
-      tr {
-        background-color: $secondary;
-      }
-    }
-  }
 }

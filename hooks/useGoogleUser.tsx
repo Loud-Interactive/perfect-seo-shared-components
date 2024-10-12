@@ -37,7 +37,6 @@ const useGoogleUser = (appKey) => {
     }
     if (session) {
       if (session?.user) {
-        console.log("dispatching user")
         dispatch(setUser(session.user))
         localStorage.setItem('email', session.user.email)
       }

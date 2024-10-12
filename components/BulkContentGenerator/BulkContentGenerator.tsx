@@ -27,6 +27,7 @@ const BulkContentPlanGenerator: React.FC = () => {
       setItems(profile.bulk_content)
     }
   }, [profile?.bulk_content])
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);

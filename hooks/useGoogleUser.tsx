@@ -9,6 +9,7 @@ import axios from 'axios';
 import { urlSanitization } from '../utils/conversion-utilities';
 import { useSession } from 'next-auth/react';
 import en from '@/assets/en.json';
+import Google from 'next-auth/providers/google';
 const useGoogleUser = (appKey) => {
   const { user, isLoggedIn, profile } = useSelector((state: RootState) => state);
   const [token, setToken] = useState(null)
@@ -46,12 +47,14 @@ const useGoogleUser = (appKey) => {
     }
   }, [status])
 
+  //Checks User Domains
   useEffect(() => {
     if (token && user?.email) {
       checkUserDomains();
     }
   }, [token, user?.email])
 
+  // updates product use 
   const updateProducts = () => {
     let products = { ...userData.products }
     delete products?.perfectSEO
@@ -62,7 +65,6 @@ const useGoogleUser = (appKey) => {
       }
       else {
         products = { ...products, [key]: new Date().toISOString() }
-
       }
     }
     supabase
@@ -71,10 +73,18 @@ const useGoogleUser = (appKey) => {
       .eq('email', user?.email)
       .select("*")
       .then(res => {
-
       })
   }
 
+
+  // updates products based on session and userdata
+  useEffect(() => {
+    if (session && userData && isLoggedIn) {
+      updateProducts()
+    }
+  }, [session])
+
+  // update user 
   const updateUser = () => {
     supabase
       .from('profiles')
@@ -87,30 +97,30 @@ const useGoogleUser = (appKey) => {
             setUserData(res.data[0])
             dispatch(setAdmin(res.data[0]?.admin))
           }
-          else if (user?.email) {
-            setUserData({ email: user.email })
-          }
-          else {
-            setUserData({})
-          }
         }
-        else {
-          setUserData({ email: user.email })
+        else if (res?.data?.length === 0) {
+          let profileObj = { email: user.email }
+          supabase
+            .from('profiles')
+            .insert(profileObj)
+            .select("*")
+            .then(res => {
+              if (!res.error) {
+                setUserData(profileObj)
+              }
+            })
         }
       })
   }
-  useEffect(() => {
-    if (session && userData && isLoggedIn) {
-      updateProducts()
-    }
-  }, [session, userData])
 
+  // update user if email is available 
   useEffect(() => {
     if (user?.email) {
       updateUser()
     }
   }, [user])
 
+  // gets decoded token 
   function getDecodedAccessToken(token: string): any {
     try {
       return jwtDecode(token);
@@ -119,6 +129,7 @@ const useGoogleUser = (appKey) => {
     }
   }
 
+  // checks domain to add to loud list 
   const checkDomain = (domain) => {
     supabase
       .from('domains')
@@ -137,6 +148,7 @@ const useGoogleUser = (appKey) => {
       })
   }
 
+  // pulls all domains from Google 
   const fetchAllDomains = async () => {
     const { data } = await axios.get('https://www.googleapis.com/webmasters/v3/sites', { headers: { Authorization: `Bearer ${token}` } })
     if (data?.siteEntry) {
@@ -150,9 +162,10 @@ const useGoogleUser = (appKey) => {
       })
 
     }
-    else return []
+    else return null
   }
 
+  // checks user domains 
   const checkUserDomains = async () => {
     let domain_access = userData?.domain_access || [];
     try {
@@ -190,61 +203,15 @@ const useGoogleUser = (appKey) => {
     }
   }
 
-  const fetchData = async () => {
-    if (userData && token) {
-      if (!userData.full_name) {
-        userData.full_name = userData?.user_matadata?.full_name
-      }
-      if (!userData?.email) {
-        userData.email = user.email
-      }
-
-
-      let products = userData.products
-      let key = appKey.replace(".ai", "");
-      if (products) {
-        if (products[key]) {
-          products[key] = new Date().toISOString()
-        }
-        else {
-          products = { ...products, [key]: new Date().toISOString() }
-
-        }
-      }
-      let profileObj: any = { email: userData.email, products: products };
-      profileObj.updated_at = new Date().toISOString()
-      if (user) {
-        profileObj.user_metadata = user
-      }
-      dispatch(setProfile(profileObj))
-      supabase
-        .from('profiles')
-        .update(profileObj)
-        .eq('email', user?.email)
-        .select("*")
-        .then(res => {
-          if (res.data?.length === 0) {
-            supabase
-              .from('profiles')
-              .insert(profileObj)
-              .select("*")
-              .then(res => {
-              })
-          }
-        })
-    }
-  };
-
   useEffect(() => {
     let profiles;
     if (userData) {
-      fetchData();
       profiles = supabase.channel('custom-filter-channel')
         .on(
           'postgres_changes',
           { event: '*', schema: 'public', table: 'profiles', filter: `email=eq.${user?.email}` },
           (payload) => {
-            dispatch(setProfile(payload.new))
+            updateUser()
           }
         )
         .subscribe()

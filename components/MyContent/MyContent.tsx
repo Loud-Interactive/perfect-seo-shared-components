@@ -31,13 +31,17 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
   const [domains, setDomains] = useState([])
 
   useEffect(() => {
+
     if (user?.email && domain) {
       supabase
         .from('user_history')
         .insert({ email: user.email, domain: domain, transaction_data: { page: 'my-content', tab: selectedTab || queryParam || 'posts' }, product: en?.product, type: "View Content" })
         .select('*')
+        .then(res => {
+          console.log(res)
+        })
     }
-  }, [domain, selectedTab, user])
+  }, [domain, selected, selectedTab, user?.email])
 
   const createQueryString = useCallback(
     (name: string, value: string) => {
@@ -92,22 +96,25 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
       });
   };
   const checkDomain = (domain) => {
-    supabase
-      .from('domains')
-      .select("*")
-      .eq('domain', urlSanitization(domain))
-      .select()
-      .then(res => {
-        if (res.data.length === 0) {
-          console.log(`Domain not found, now adding ${domain}`)
-          supabase
-            .from('domains')
-            .insert([
-              { 'domain': urlSanitization(domain) }
-            ])
-            .select();
-        }
-      })
+    if (domain) {
+      console.log(urlSanitization(domain))
+      supabase
+        .from('domains')
+        .select("*")
+        .eq('domain', urlSanitization(domain))
+        .then(res => {
+          if (res.data.length === 0) {
+            supabase
+              .from('domains')
+              .insert([
+                { 'domain': urlSanitization(domain) }
+              ])
+              .select("*")
+              .then(res => {
+              })
+          }
+        })
+    }
   }
 
   const domainsList = useMemo(() => {

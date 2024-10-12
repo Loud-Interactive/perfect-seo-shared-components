@@ -123,7 +123,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
       list = domains?.sort((a, b) => a.domain.localeCompare(b.domain)).map(({ domain }) => ({ label: domain, value: domain }))
     }
     else if (profile?.domain_access?.length > 0) {
-      list = [...profile?.domain_access.map((domain) => domain?.toLowerCase())];
+      list = [...profile?.domain_access.map(({ domain }) => domain?.toLowerCase())];
       list = list?.sort((a, b) => a.localeCompare(b)).map((domain) => {
         checkDomain(domain)
         return ({ label: domain, value: domain })
@@ -153,11 +153,11 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
       bool = true
     } else if (profile?.domains?.length > 0) {
       if (currentDomain) {
-        let domain = currentDomain
+        let domain = currentDomain;
         bool = (profile?.domains.includes(domain?.toLowerCase()))
       }
       else if (selected?.value) {
-        let domain = selected?.value
+        let domain = selected.value
         bool = (profile?.domains?.includes(domain?.toLowerCase()))
       }
       else {

@@ -97,7 +97,6 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
   };
   const checkDomain = (domain) => {
     if (domain) {
-      console.log(urlSanitization(domain))
       supabase
         .from('domains')
         .select("*")
@@ -123,8 +122,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
       list = domains?.sort((a, b) => a.domain.localeCompare(b.domain)).map(({ domain }) => ({ label: domain, value: domain }))
     }
     else if (profile?.domain_access?.length > 0) {
-      console.log(profile?.domain_access)
-      list = [...profile?.domain_access.map(({ domain }) => domain?.toLowerCase())];
+      list = [...profile.domain_access.map(({ domain }) => domain?.toLowerCase())];
       list = list?.sort((a, b) => a.localeCompare(b)).map((domain) => {
         checkDomain(domain)
         return ({ label: domain, value: domain })
@@ -139,10 +137,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
     if (currentDomain) {
       setDomain(currentDomain)
       setSelected({ label: currentDomain, value: currentDomain })
-    } else if (domainsList?.length === 1) {
-      setDomain(domainsList[0]?.value)
-      setSelected(domainsList[0])
-    } else if (!isAdmin && domainsList?.length > 1) {
+    } else if (domainsList?.length > 0) {
       setDomain(domainsList[0]?.value)
       setSelected(domainsList[0])
     }
@@ -205,7 +200,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
         <div className='col'>
           <h1 className="text-3xl font-bold text-start mb-5"><TypeWriterText string={selectedTab === 'bulk-upload' ? 'Upload for all domains' : selected ? `Content for ${domain}` : 'Select a domain to begin'} withBlink /></h1>
         </div>
-        {(!currentDomain && (profile?.domains?.length || profile?.domain_access?.length > 0) > 1 && selectedTab !== 'bulk-upload') && <div className='col-12 col-md-4 mb-3'>
+        {(!currentDomain && profile?.domain_access?.length > 0 && selectedTab !== 'bulk-upload') && <div className='col-12 col-md-4 mb-3'>
           <SearchSelect
             onChange={searchUserChangeHandler}
             options={domainsList}

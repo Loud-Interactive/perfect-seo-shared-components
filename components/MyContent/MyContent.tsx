@@ -138,6 +138,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
       setDomain(currentDomain)
       setSelected({ label: currentDomain, value: currentDomain })
     } else if (domainsList?.length > 0) {
+      console.log("domainsList:", domainsList)
       setDomain(domainsList[0]?.value)
       setSelected(domainsList[0])
     }

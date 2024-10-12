@@ -26,7 +26,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
   const queryParam = searchParams.get('tab');
   const router = useRouter();
   const pathname = usePathname()
-  const [domain, setDomain] = useState(currentDomain || profile?.domains[0])
+  const [domain, setDomain] = useState(currentDomain || null)
   const [selected, setSelected] = useState(null)
   const [domains, setDomains] = useState([])
 
@@ -115,8 +115,9 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
       list = domains?.sort((a, b) => a.domain.localeCompare(b.domain)).map(({ domain }) => ({ label: domain, value: domain }))
     }
     else if (profile?.domains) {
+      console.log(profile?.domains)
       list = [...profile?.domains];
-      list = domains?.sort((a, b) => a.localeCompare(b)).map((domain) => {
+      list = list?.sort((a, b) => a.localeCompare(b)).map((domain) => {
         checkDomain(domain)
         return ({ label: domain, value: domain })
       })
@@ -130,6 +131,12 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
     if (currentDomain) {
       setDomain(currentDomain)
       setSelected({ label: currentDomain, value: currentDomain })
+    } else if (domainsList?.length === 1) {
+      setDomain(domainsList[0]?.value)
+      setSelected(domainsList[0])
+    } else if (!isAdmin && domainsList?.length > 1) {
+      setDomain(domainsList[0]?.value)
+      setSelected(domainsList[0])
     }
   }, [domainsList, currentDomain, profile])
 
@@ -138,13 +145,13 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
     if (isAdmin) {
       bool = true
     } else if (user?.email) {
-      if (selected?.value) {
-        let domain = currentDomain || selected?.value
-        bool = (profile?.domains.includes(domain?.toLowerCase()) || isAdmin)
-      }
-      else if (currentDomain) {
+      if (currentDomain) {
         let domain = currentDomain
-        bool = (profile?.domains.includes(domain?.toLowerCase()) || isAdmin)
+        bool = (profile?.domains.includes(domain?.toLowerCase()))
+      }
+      else if (selected?.value) {
+        let domain = selected?.value
+        bool = (profile?.domains?.includes(domain?.toLowerCase()))
       }
       else {
         bool = true
@@ -153,7 +160,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
 
     }
     return bool
-  }, [user, isAdmin, currentDomain, selected])
+  }, [user, isAdmin, currentDomain, selected, domainsList])
 
   useEffect(() => {
     if (isAdmin) {

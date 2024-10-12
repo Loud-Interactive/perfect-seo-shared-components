@@ -1,10 +1,10 @@
-// import AdminLogin from "@/perfect-seo-shared-components/components/AdminLogin/AdminLogin";
+// import AdminPage from "@/perfect-seo-shared-components/components/AdminPage/AdminPage";
+
 
 const AdminLoginPage = () => {
-  return (
-    <>
-      {/* <AdminLogin /> */}
-    </>
+  return (<>
+    {/* <AdminPage /> */}
+  </>
   )
 }
 export default AdminLoginPage;

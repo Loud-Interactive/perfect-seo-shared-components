@@ -21,7 +21,6 @@ const TypeWriterText = ({ string, withBlink, loop = false }: TypeWriterText) => 
     let speed = 60;
     let interval;
     let index = 0
-
     if (string && isIntersecting) {
       interval = setInterval(() => {
         if (index < string.length) {

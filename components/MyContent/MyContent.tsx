@@ -204,7 +204,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
         <div className='col'>
           <h1 className="text-3xl font-bold text-start mb-5"><TypeWriterText string={selectedTab === 'bulk-upload' ? 'Upload for all domains' : selected ? `Content for ${domain}` : 'Select a domain to begin'} withBlink /></h1>
         </div>
-        {(!currentDomain && profile?.domains?.length > 1 && selectedTab !== 'bulk-upload') && <div className='col-12 col-md-4 mb-3'>
+        {(!currentDomain && (profile?.domains?.length || profile?.domain_access?.length > 0) > 1 && selectedTab !== 'bulk-upload') && <div className='col-12 col-md-4 mb-3'>
           <SearchSelect
             onChange={searchUserChangeHandler}
             options={domainsList}

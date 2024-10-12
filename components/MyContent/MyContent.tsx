@@ -122,6 +122,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
       list = domains?.sort((a, b) => a.domain.localeCompare(b.domain)).map(({ domain }) => ({ label: domain, value: domain }))
     }
     else if (profile?.domain_access?.length > 0) {
+      console.log("domain_access in profile:", profile?.domain_access);
       list = [...profile.domain_access.map(({ domain }) => {
         console.log(domain);
         return domain?.toLowerCase()

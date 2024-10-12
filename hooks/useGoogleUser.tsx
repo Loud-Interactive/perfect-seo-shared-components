@@ -221,7 +221,7 @@ const useGoogleUser = (appKey) => {
   useEffect(() => {
     let profiles;
     if (userData) {
-      if (!profile?.full_name && user.name) {
+      if (!profile?.full_name && user?.name) {
         supabase
           .from('profiles')
           .update({ full_name: user.name })

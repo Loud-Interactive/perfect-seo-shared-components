@@ -45,6 +45,9 @@ const useGoogleUser = (appKey) => {
     if (sessionData?.access_token) {
       setToken(sessionData.access_token)
     }
+    else {
+      setToken(null)
+    }
   }, [status])
 
   //Checks User Domains
@@ -150,19 +153,25 @@ const useGoogleUser = (appKey) => {
 
   // pulls all domains from Google 
   const fetchAllDomains = async () => {
-    const { data } = await axios.get('https://www.googleapis.com/webmasters/v3/sites', { headers: { Authorization: `Bearer ${token}` } })
-    if (data?.siteEntry) {
-      return data.siteEntry.map(obj => {
-        return ({
-          type: obj.siteUrl.split(":")[0],
-          siteUrl: urlSanitization(obj.siteUrl.split(":")[1]),
-          permissionLevel: obj.permissionLevel,
-          originalUrl: obj.siteUrl.split(":")[1]
+    try {
+      const { data } = await axios.get('https://www.googleapis.com/webmasters/v3/sites', { headers: { Authorization: `Bearer ${token}` } })
+      if (data?.siteEntry) {
+        return data.siteEntry.map(obj => {
+          return ({
+            type: obj.siteUrl.split(":")[0],
+            siteUrl: urlSanitization(obj.siteUrl.split(":")[1]),
+            permissionLevel: obj.permissionLevel,
+            originalUrl: obj.siteUrl.split(":")[1]
+          })
         })
-      })
 
+      }
+      else return null
     }
-    else return null
+    catch (err) {
+      console.log(err)
+      return null
+    }
   }
 
   // checks user domains 

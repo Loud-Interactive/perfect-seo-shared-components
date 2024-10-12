@@ -122,7 +122,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
     if (isAdmin) {
       list = domains?.sort((a, b) => a.domain.localeCompare(b.domain)).map(({ domain }) => ({ label: domain, value: domain }))
     }
-    else if (profile?.domain_access) {
+    else if (profile?.domain_access?.length > 0) {
       list = [...profile?.domain_access.map((domain) => domain?.toLowerCase())];
       list = list?.sort((a, b) => a.localeCompare(b)).map((domain) => {
         checkDomain(domain)
@@ -151,7 +151,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
     let bool = false;
     if (isAdmin) {
       bool = true
-    } else if (user?.email) {
+    } else if (profile?.domains?.length > 0) {
       if (currentDomain) {
         let domain = currentDomain
         bool = (profile?.domains.includes(domain?.toLowerCase()))
@@ -175,7 +175,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
         })
     }
     return bool
-  }, [user, isAdmin, currentDomain, selected, domainsList])
+  }, [user, isAdmin, currentDomain, selected, domainsList, profile?.domains])
 
 
   useEffect(() => {

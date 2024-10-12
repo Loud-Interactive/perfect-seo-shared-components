@@ -176,7 +176,7 @@ const useGoogleUser = (appKey) => {
 
   // checks user domains 
   const checkUserDomains = async () => {
-    let domain_access = userData?.domain_access || [];
+    let domain_access = [];
     try {
       domain_access = await fetchAllDomains()
       let domains = []

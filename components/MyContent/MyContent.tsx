@@ -67,7 +67,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
   const TabData = [
     { key: "posts", title: "Generated Posts" },
     { key: "content-plan", title: "Content Plans" },
-    // { key: "bulk-upload", title: "Bulk Upload" },
+    { key: "bulk-generation", title: "Bulk Generation" },
   ]
 
   const searchUserChangeHandler = (e) => {
@@ -199,9 +199,9 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
     <div className='container-xl content-fluid'>
       {!hideTitle && <div className='row d-flex justify-content-between'>
         <div className='col'>
-          <h1 className="text-3xl font-bold text-start mb-5"><TypeWriterText string={selectedTab === 'bulk-upload' ? 'Upload for all domains' : selected ? `Content for ${domain}` : 'Select a domain to begin'} withBlink /></h1>
+          <h1 className="text-3xl font-bold text-start mb-5"><TypeWriterText string={selectedTab === 'bulk-generation' ? 'Upload for all domains' : selected ? `Content for ${domain}` : 'Select a domain to begin'} withBlink /></h1>
         </div>
-        {(!currentDomain && profile?.domain_access?.length > 0 && selectedTab !== 'bulk-upload') && <div className='col-12 col-md-4 mb-3'>
+        {(!currentDomain && profile?.domain_access?.length > 0 && selectedTab !== 'bulk-generation') && <div className='col-12 col-md-4 mb-3'>
           <SearchSelect
             onChange={searchUserChangeHandler}
             options={domainsList}
@@ -227,14 +227,20 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
         <div className="tab-content bg-dark mb-3" id="myTabContent">
           <div className={`tab-pane fade ${selectedTab === 'posts' && 'show active'}`} id="posts" role="tabpanel" aria-labelledby="posts-tab">
             <div className='tab p-3'>
-              <BulkPostGenerator />
               <PostsList active={selectedTab === 'posts'} domain_name={domain} />
             </div>
           </div>
           <div className={`tab-pane fade ${selectedTab === 'content-plan' && 'show active'}`} id="content-plan" role="tabpanel" aria-labelledby="content-plan-tab">
             <div className='tab p-3'>
-              <BulkContentPlanGenerator />
               <PlansList active={selectedTab === 'content-plan'} domain_name={domain} />
+            </div>
+          </div>
+          <div className={`tab-pane fade ${selectedTab === 'bulk-generation' && 'show active'}`} id="bulk-generation" role="tabpanel" aria-labelledby="bulk-generation-tab">
+            <div className='tab p-3'>
+              <div className='mb-5'>
+                <BulkPostGenerator />
+              </div>
+              <BulkContentPlanGenerator />
             </div>
           </div>
         </div>

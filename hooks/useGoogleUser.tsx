@@ -221,6 +221,17 @@ const useGoogleUser = (appKey) => {
   useEffect(() => {
     let profiles;
     if (userData) {
+      if (!profile?.full_name && user.name) {
+        supabase
+          .from('profiles')
+          .update({ full_name: user.name })
+          .eq('email', user?.email)
+          .select("*")
+          .then(res => {
+            let profileObj = { ...userData, full_name: user.name }
+            dispatch(setProfile(profileObj));
+          })
+      }
       profiles = supabase.channel('custom-filter-channel')
         .on(
           'postgres_changes',

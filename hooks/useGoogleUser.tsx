@@ -179,23 +179,25 @@ const useGoogleUser = (appKey) => {
     let domain_access = userData?.domain_access || [];
     try {
       domain_access = await fetchAllDomains()
-      let domains = domain_access.map(({ siteUrl }) => urlSanitization(siteUrl))
+      let domains = []
 
-
-      domains = domains.filter(obj => obj !== 'google' && obj !== "gmail").reduce((prev, curr) => {
-        if (prev.includes(curr)) return prev
-        else {
-          return [...prev, urlSanitization(curr)]
-        }
-      }, [])
-      domains = domains.sort((a, b) => a.localeCompare(b))
       domain_access = domain_access.sort((a, b) => a.siteUrl.localeCompare(b.siteUrl))
-      domains = domains.filter((domain) => {
-        checkDomain(domain);
-        return domain !== ""
-      })
 
       if (domain_access?.length > 0) {
+        domains = domain_access.map(({ siteUrl }) => urlSanitization(siteUrl))
+
+
+        domains = domains.filter(obj => obj !== 'google' && obj !== "gmail").reduce((prev, curr) => {
+          if (prev.includes(curr)) return prev
+          else {
+            return [...prev, urlSanitization(curr)]
+          }
+        }, [])
+        domains = domains.sort((a, b) => a.localeCompare(b))
+        domains = domains.filter((domain) => {
+          checkDomain(domain);
+          return domain !== ""
+        })
         let profileObj: any = { ...userData, domain_access, domains };
         dispatch(setProfile(profileObj))
         supabase

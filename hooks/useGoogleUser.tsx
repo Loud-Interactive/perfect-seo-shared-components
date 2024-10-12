@@ -47,10 +47,10 @@ const useGoogleUser = (appKey) => {
   }, [status])
 
   useEffect(() => {
-    if (token) {
+    if (token && user?.email) {
       checkUserDomains();
     }
-  }, [token])
+  }, [token, user?.email])
 
   const updateProducts = () => {
     let products = { ...userData.products }
@@ -179,6 +179,7 @@ const useGoogleUser = (appKey) => {
         supabase
           .from('profiles')
           .update(profileObj)
+          .eq('email', user?.email)
           .select("*")
           .then(res => {
           })

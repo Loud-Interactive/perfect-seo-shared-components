@@ -179,7 +179,9 @@ const useGoogleUser = (appKey) => {
     let domain_access = [];
     try {
       domain_access = await fetchAllDomains()
-      if (domain_access === null) return null;
+      if (domain_access === null) {
+        return null;
+      }
       let domains = []
 
       domain_access = domain_access.sort((a, b) => a.siteUrl.localeCompare(b.siteUrl))

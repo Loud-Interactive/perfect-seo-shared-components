@@ -75,6 +75,7 @@ const PostItem = ({ post, refresh }) => {
         if (res.data.status) {
           if (res.data.status !== status) {
             setStatus(res.data.status);
+            setLocalPost(res.data)
           }
           else if (completedStatus.includes(res.data.status)) {
             setStatus(res.data.status)

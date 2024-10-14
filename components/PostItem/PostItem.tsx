@@ -67,6 +67,7 @@ const PostItem = ({ post, refresh }) => {
         }
       }
     }
+    console.log(post)
   }, [post, completed])
 
   const fetchStatus = () => {

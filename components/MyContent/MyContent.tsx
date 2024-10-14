@@ -129,14 +129,16 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
         return ({ label: domain, value: domain })
       })
     }
-    return list.reduce((acc, current) => {
-      if (!acc.find(item => item.value === current.value)) {
-        return [...acc, current]
-      }
-      else {
-        return acc
-      }
-    }, [])
+    if (list?.length > 0) {
+      return list.reduce((acc, current) => {
+        if (!acc.find(item => item.value === current.value)) {
+          return [...acc, current]
+        }
+        else {
+          return acc
+        }
+      }, [])
+    } else return list
 
   }, [profile?.domain_access, domains, isAdmin])
 

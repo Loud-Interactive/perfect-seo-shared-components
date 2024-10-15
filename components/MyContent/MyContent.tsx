@@ -181,7 +181,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
         })
     }
     return bool
-  }, [user, isAdmin, currentDomain, selected, domainsList, profile?.domains])
+  }, [user?.email, isAdmin, currentDomain, selected, domainsList, profile?.domains])
 
 
   useEffect(() => {

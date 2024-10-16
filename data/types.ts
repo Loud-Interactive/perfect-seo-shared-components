@@ -226,3 +226,50 @@ export interface User {
   domain: string,
   email: string,
 };
+
+
+export interface PostUploadItem {
+  additional_data_URL?: string;
+  brand_name?: string
+  custom_outline?: string
+  domain_name: string
+  email: string;
+  excluded_topics?: string;
+  outline_post_title?: string
+  outline_section1_headline?: string
+  outline_section1_subheadline1?: string
+  outline_section1_subheadline2?: string
+  outline_section1_subheadline3?: string
+  outline_section1_subheadline4?: string
+  outline_section2_headline?: string
+  outline_section2_subheadline1?: string
+  outline_section2_subheadline2?: string
+  outline_section2_subheadline3?: string
+  outline_section2_subheadline4?: string
+  outline_section3_headline?: string
+  outline_section3_subheadline1?: string
+  outline_section3_subheadline2?: string
+  outline_section3_subheadline3?: string
+  outline_section3_subheadline4?: string
+  outline_section4_headline?: string
+  outline_section4_subheadline1?: string
+  outline_section4_subheadline2?: string
+  outline_section4_subheadline3?: string
+  outline_section4_subheadline4?: string
+  outline_section5_headline?: string
+  outline_section5_subheadline1?: string
+  outline_section5_subheadline2?: string
+  outline_section5_subheadline3?: string
+  outline_section5_subheadline4?: string
+  outline_section6_headline?: string
+  outline_section6_subheadline1?: string
+  outline_section6_subheadline2?: string
+  outline_section6_subheadline3?: string
+  outline_section6_subheadline4?: string
+  outline_url?: string
+  target_keyword?: string
+  voice_url?: string;
+  writing_language?: string
+  status?: string;
+  guid?: string;
+}

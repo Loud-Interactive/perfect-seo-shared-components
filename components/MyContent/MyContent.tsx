@@ -211,7 +211,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
         <div className='col'>
           <h1 className="text-3xl font-bold text-start mb-5"><TypeWriterText string={selectedTab === 'bulk-generation' ? 'Upload for all domains' : selected ? `Content for ${domain}` : 'Select a domain to begin'} withBlink /></h1>
         </div>
-        {(!currentDomain && profile?.domain_access?.length > 0) && <div className='col-12 col-md-4 mb-3'>
+        {(!currentDomain && profile?.domain_access?.length > 0 && selectedTab !== 'bulk-generation') && <div className='col-12 col-md-4 mb-3'>
           <SearchSelect
             onChange={searchUserChangeHandler}
             options={domainsList}
@@ -248,7 +248,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
           <div className={`tab-pane fade ${selectedTab === 'bulk-generation' && 'show active'}`} id="bulk-generation" role="tabpanel" aria-labelledby="bulk-generation-tab">
             <div className='tab p-3'>
               <div className='mb-5'>
-                <BulkPostComponent domain={selected.value} />
+                <BulkPostComponent />
               </div>
               <hr />
               <BulkContentPlanGenerator />

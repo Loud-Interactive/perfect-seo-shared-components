@@ -4,8 +4,9 @@ import axiosInstance from '@/perfect-seo-shared-components/utils/axiosInstance';
 import { createClient } from '@/perfect-seo-shared-components/utils/supabase/client';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/perfect-seo-shared-components/lib/store';
+import ContentStatusItem from './ContentStatusItem';
 
-interface IncomingPlanItemResponse {
+export interface IncomingPlanItemResponse {
   guid: string;
   domain_name: string;
   brand_name: string;
@@ -62,6 +63,26 @@ const BulkContentPlanGenerator: React.FC = () => {
     });
   };
 
+  const updateBulkContent = (guids: string[]) => {
+    supabase
+      .from('profiles')
+      .update({ bulk_content_guids: guids })
+      .eq('email', user?.email)
+      .select('*')
+      .then(res => {
+        setItems(res.data[0].bulk_content_guids)
+      })
+  }
+  const deleteContent = (guid: string) => {
+    let index = items.map(({ guid }) => guid).indexOf(guid)
+    let newItems = [
+      ...items.slice(0, index),
+      ...items.slice(index + 1),
+    ];
+    updateBulkContent(newItems.map(({ guid }) => guid))
+  }
+
+
   const pollItemStatus = async (guid: string) => {
     const pollInterval = setInterval(async () => {
       try {
@@ -87,6 +108,8 @@ const BulkContentPlanGenerator: React.FC = () => {
     e.preventDefault();
     setShowItems(!showItems);
   }
+
+
 
   return (
     <div>
@@ -115,11 +138,9 @@ const BulkContentPlanGenerator: React.FC = () => {
         </div>
       </form>
       {error && <p style={{ color: 'red' }}>{error}</p>}
-      {showItems && items?.length > 0 && <ul>
+      {showItems && items?.length > 0 && <ul className='clear-list-properties row g-3 px-2'>
         {items.map(item => (
-          <li key={item.guid}>
-            {item.domain_name} - {item.status || 'Processing'}
-          </li>
+          <ContentStatusItem guid={item} key={item?.guid} deleteContent={deleteContent} />
         ))}
       </ul>}
     </div >

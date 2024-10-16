@@ -6,6 +6,7 @@ import axiosInstance from '@/perfect-seo-shared-components/utils/axiosInstance';
 import { createClient } from '@/perfect-seo-shared-components/utils/supabase/client';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/perfect-seo-shared-components/lib/store';
+import d3 from 'd3';
 
 interface IncomingPlanItemResponse {
   guid: string;
@@ -31,11 +32,34 @@ const BulkPostGenerator = () => {
 
   }, [profile?.bulk_posts])
 
+  const updateBulkPosts = (guids: string[]) => {
+    supabase
+      .from('profiles')
+      .update({ bulk_posts: guids })
+      .eq('email', user?.email)
+      .select('*')
+      .then(res => {
+        setItems(res.data[0].bulk_posts)
+      })
+  }
+
+  const deletePost = (guid: string) => {
+    let index = items.indexOf(guid)
+    let newItems = [
+      ...items.slice(0, index),
+      ...items.slice(index + 1),
+    ];
+    updateBulkPosts(newItems)
+  }
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-
+    return d3.tsv(tsvUrl, function (data) {
+      console.log(data)
+      // use data here
+    });
     axiosInstance.post<ProcessTsvUrlResponse>(`https://content-v5.replit.app/process-tsv-url?url=${tsvUrl.replaceAll("&", "%26")}`)
       .then(response => {
         setItems(response.data.guids);
@@ -61,7 +85,7 @@ const BulkPostGenerator = () => {
 
   return (
     <div>
-      <h3 className='my-3 text-primary'><TypeWriterText withBlink string="Bulk Post Generator" /></h3>
+      <h3 className='my-3 text-primary d-flex align-items-center'><TypeWriterText withBlink string="Bulk Post Generator" />{items?.length > 0 && <span className='badge rounded-pill text-bg-primary ms-3'>{items.length}</span>}</h3>
       <form>
         <div className='input-group'>
           <input
@@ -86,7 +110,7 @@ const BulkPostGenerator = () => {
           </div>
         </li>
         {items.map(item => (
-          <PostStatusItem guid={item} key={item} />
+          <PostStatusItem guid={item} key={item} deletePost={deletePost} />
         ))}
       </ul>}
     </div>

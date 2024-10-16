@@ -11,7 +11,6 @@ const PostStatusItem = ({ guid, data, deletePost, idx }) => {
   const pullStatus = () => {
     getPostStatus(guid).then(res => {
       setStatus(res.data.status)
-
       setItem(res.data)
     })
       .catch(err => {
@@ -22,7 +21,7 @@ const PostStatusItem = ({ guid, data, deletePost, idx }) => {
 
   useEffect(() => {
     let interval;
-    if (guid && !error && status !== 'draft') {
+    if (guid && !error) {
       console.log
       pullStatus()
       interval = setInterval(() => {

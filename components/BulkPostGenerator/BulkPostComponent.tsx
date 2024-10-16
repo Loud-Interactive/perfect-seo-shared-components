@@ -79,24 +79,16 @@ const BulkPostComponent = () => {
       delete tsv.columns;
       arrayForm.setArrayState(tsv);
       setTsv(tsv)
-      supabase
-        .from('profiles')
-        .update({
-          bulk_posts: [...items, tsv.map((post) => {
-            return ({ ...post, status: 'draft' })
-          })]
-        })
-        .eq('email', user?.email)
-        .select('*')
+      submitHandler(tsv)
     }
     )
-    submitHandler()
+
 
   };
   // https://docs.google.com/spreadsheets/d/e/2PACX-1vSUZ44bbN_Hvn9LkjhU_BEr4dBh9vrQf6ppHQDCEIQntG0DaD8T6rOCeq3deUcmSq9IZ9u0XxgaSRd4/pub?gid=0&single=true&output=tsv
-  const submitHandler = () => {
+  const submitHandler = (file) => {
     setLoading(true)
-    axiosInstance.post<ProcessTsvUrlResponse>(`https://content-v5.replit.app/process-tsv`, { body: tsv })
+    axiosInstance.post<ProcessTsvUrlResponse>(`https://content-v5.replit.app/process-tsv`, file)
       .then(response => {
         console.log(response)
         setItems(response.data.guids);

@@ -248,7 +248,8 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
           <div className={`tab-pane fade ${selectedTab === 'bulk-generation' && 'show active'}`} id="bulk-generation" role="tabpanel" aria-labelledby="bulk-generation-tab">
             <div className='tab p-3'>
               <div className='mb-5'>
-                <BulkPostGenerator />
+                {/* <BulkPostGenerator /> */}
+                <BulkPostComponent />
               </div>
               <hr />
               <BulkContentPlanGenerator />

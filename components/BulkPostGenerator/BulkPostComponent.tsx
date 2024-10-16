@@ -7,6 +7,8 @@ import { createClient } from '@/perfect-seo-shared-components/utils/supabase/cli
 import { useSelector } from 'react-redux';
 import { RootState } from '@/perfect-seo-shared-components/lib/store';
 import * as d3 from "d3";
+import useForm from '@/perfect-seo-shared-components/hooks/useForm';
+import useArrayForm from '@/perfect-seo-shared-components/hooks/useArrayForm';
 
 interface IncomingPlanItemResponse {
   guid: string;
@@ -17,68 +19,80 @@ interface IncomingPlanItemResponse {
   status?: string;
 }
 
-const BulkPostGenerator = () => {
+const BulkPostComponent = ({ domain }) => {
   const [tsvUrl, setTsvUrl] = useState<string>('');
-  const [items, setItems] = useState<any>();
+  const [items, setItems] = useState<IncomingPlanItemResponse[]>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const { user, profile } = useSelector((state: RootState) => state);
   const supabase = createClient();
   const [showItems, setShowItems] = useState<boolean>(true);
+  const [urls, setUrls] = useState(null)
+  const form = useForm();
+  const arrayForm = useArrayForm(form)
 
   useEffect(() => {
-    if (profile?.bulk_posts_guids) {
-      setItems(profile.bulk_posts_guids)
+    if (profile?.bulk_posts) {
+      setItems(profile.bulk_posts)
     }
 
-  }, [profile?.bulk_posts_guids])
+  }, [profile?.bulk_posts])
 
-  const updateBulkPosts = (guids: string[]) => {
+  const updateBulkPosts = (items: IncomingPlanItemResponse[]) => {
     supabase
       .from('profiles')
-      .update({ bulk_posts_guids: guids })
+      .update({ bulk_posts: items })
       .eq('email', user?.email)
       .select('*')
       .then(res => {
-        setItems(res.data[0].bulk_posts_guids)
+        setItems(res.data[0].bulk_posts)
       })
   }
 
-  const deletePost = (guid: string) => {
-    let index = items.indexOf(guid)
+  const deletePost = (idx: number) => {
     let newItems = [
-      ...items.slice(0, index),
-      ...items.slice(index + 1),
+      ...items.slice(0, idx),
+      ...items.slice(idx + 1),
     ];
     updateBulkPosts(newItems)
   }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
+    // setLoading(true);
     setError(null);
-    return console.log(d3.tsvParse(tsvUrl));
+
+    axiosInstance.get(tsvUrl).then(response => {
+      let tsv = d3.tsvParse(response.data)
+      delete tsv.columns;
+      arrayForm.setArrayState(tsv)
+    }
+    )
+
+  };
+  // https://docs.google.com/spreadsheets/d/e/2PACX-1vSUZ44bbN_Hvn9LkjhU_BEr4dBh9vrQf6ppHQDCEIQntG0DaD8T6rOCeq3deUcmSq9IZ9u0XxgaSRd4/pub?gid=0&single=true&output=tsv
+  const submitHandler = () => {
     axiosInstance.post<ProcessTsvUrlResponse>(`https://content-v5.replit.app/process-tsv-url?url=${tsvUrl.replaceAll("&", "%26")}`)
       .then(response => {
-        setItems(response.data.guids);
-        supabase
-          .from('profiles')
-          .update({ bulk_posts_guids: response.data.guids })
-          .eq('email', user?.email)
-          .select('*')
-          .then(res => {
-            console.log(res)
-          })
-        setLoading(false)
+        console.log(response.data)
+
+        // setItems(response.data);
+        // supabase
+        //   .from('profiles')
+        //   .update({ bulk_posts: response.data.guids })
+        //   .eq('email', user?.email)
+        //   .select('*')
+        //   .then(res => {
+        //     console.log(res)
+        //   })
+        // setLoading(false)
       })
 
       .catch((err) => {
         setLoading(false);
         setError(err?.response?.data?.detail || 'Error processing TSV file');
       })
-
-  };
-
+  }
   const toggleShowItems = (e) => {
     e.preventDefault();
     setShowItems(!showItems);
@@ -110,6 +124,11 @@ const BulkPostGenerator = () => {
           </button>
         </div>
       </form>
+      {arrayForm?.getArrayState?.length > 0 && arrayForm.getArrayState.map((data, idx) => {
+        return (
+          <p key={data.guid}>{data.guid}</p>
+        )
+      })}
       {error && <p style={{ color: 'red' }}>{error}</p>}
       {
         showItems && items?.length > 0 && <ul className='clear-list-properties row g-3 px-2'>
@@ -120,7 +139,7 @@ const BulkPostGenerator = () => {
             </div>
           </li>
           {items.map(item => (
-            <PostStatusItem guid={item} key={item} deletePost={deletePost} />
+            <PostStatusItem data={item} guid={item?.guid} key={item?.guid} deletePost={deletePost} />
           ))}
         </ul>
       }
@@ -128,4 +147,4 @@ const BulkPostGenerator = () => {
   );
 };
 
-export default BulkPostGenerator
+export default BulkPostComponent

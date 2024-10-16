@@ -5,6 +5,7 @@ import { createClient } from '@/perfect-seo-shared-components/utils/supabase/cli
 import { useSelector } from 'react-redux';
 import { RootState } from '@/perfect-seo-shared-components/lib/store';
 import ContentStatusItem from './ContentStatusItem';
+import * as d3 from "d3";
 
 export interface IncomingPlanItemResponse {
   guid: string;
@@ -34,7 +35,6 @@ const BulkContentPlanGenerator: React.FC = () => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-
     axiosInstance.post<IncomingPlanItemResponse[]>(
       `https://planperfectapi.replit.app/process_tsv_from_url?url=${tsvUrl.replaceAll("&", "%26")}`, {}
     ).then(response => {

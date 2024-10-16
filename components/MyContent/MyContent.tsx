@@ -15,6 +15,7 @@ import { createClient } from '@/perfect-seo-shared-components/utils/supabase/cli
 import { urlSanitization } from '@/perfect-seo-shared-components/utils/conversion-utilities';
 import BulkContentPlanGenerator from '../BulkContentGenerator/BulkContentGenerator';
 import BulkPostGenerator from '../BulkPostGenerator/BulkPostGenerator';
+import BulkPostComponent from '../BulkPostGenerator/BulkPostComponent';
 export interface MyContentProps {
   currentDomain?: string;
   hideTitle?: boolean;
@@ -210,7 +211,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
         <div className='col'>
           <h1 className="text-3xl font-bold text-start mb-5"><TypeWriterText string={selectedTab === 'bulk-generation' ? 'Upload for all domains' : selected ? `Content for ${domain}` : 'Select a domain to begin'} withBlink /></h1>
         </div>
-        {(!currentDomain && profile?.domain_access?.length > 0 && selectedTab !== 'bulk-generation') && <div className='col-12 col-md-4 mb-3'>
+        {(!currentDomain && profile?.domain_access?.length > 0) && <div className='col-12 col-md-4 mb-3'>
           <SearchSelect
             onChange={searchUserChangeHandler}
             options={domainsList}
@@ -247,7 +248,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
           <div className={`tab-pane fade ${selectedTab === 'bulk-generation' && 'show active'}`} id="bulk-generation" role="tabpanel" aria-labelledby="bulk-generation-tab">
             <div className='tab p-3'>
               <div className='mb-5'>
-                <BulkPostGenerator />
+                <BulkPostComponent domain={selected.value} />
               </div>
               <hr />
               <BulkContentPlanGenerator />

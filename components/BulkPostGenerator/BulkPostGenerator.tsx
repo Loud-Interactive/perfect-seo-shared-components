@@ -118,8 +118,8 @@ const BulkPostGenerator = () => {
               <div className="capitalize col-12 col-md-4">Domain</div>  <div className="capitalize col-12 col-md-4">Status</div>
             </div>
           </li>
-          {items.map(item => (
-            <PostStatusItem guid={item} key={item} deletePost={deletePost} />
+          {items.map((item, idx) => (
+            <PostStatusItem data={item} idx={idx} guid={item} key={item} deletePost={deletePost} />
           ))}
         </ul>
       }

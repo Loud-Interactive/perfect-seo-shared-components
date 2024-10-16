@@ -17,7 +17,7 @@ interface IncomingPlanItemResponse {
   status?: string;
 }
 
-const BulkPostGenerator = () => {
+const BulkPostComponent = () => {
   const [tsvUrl, setTsvUrl] = useState<string>('');
   const [items, setItems] = useState<any>();
   const [loading, setLoading] = useState<boolean>(false);
@@ -115,4 +115,4 @@ const BulkPostGenerator = () => {
   );
 };
 
-export default BulkPostGenerator
+export default BulkPostComponent

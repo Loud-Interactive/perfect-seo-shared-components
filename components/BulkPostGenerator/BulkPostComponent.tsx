@@ -27,20 +27,20 @@ const BulkPostComponent = () => {
   const [showItems, setShowItems] = useState<boolean>(false);
 
   useEffect(() => {
-    if (profile?.bulk_posts) {
-      setItems(profile.bulk_posts)
+    if (profile?.bulk_posts_guids) {
+      setItems(profile.bulk_posts_guids)
     }
 
-  }, [profile?.bulk_posts])
+  }, [profile?.bulk_posts_guids])
 
   const updateBulkPosts = (guids: string[]) => {
     supabase
       .from('profiles')
-      .update({ bulk_posts: guids })
+      .update({ bulk_posts_guids: guids })
       .eq('email', user?.email)
       .select('*')
       .then(res => {
-        setItems(res.data[0].bulk_posts)
+        setItems(res.data[0].bulk_posts_guids)
       })
   }
 
@@ -63,7 +63,7 @@ const BulkPostComponent = () => {
         setItems(response.data.guids);
         supabase
           .from('profiles')
-          .update({ bulk_posts: response.data.guids })
+          .update({ bulk_posts_guids: response.data.guids })
           .eq('email', user?.email)
           .select('*')
           .then(res => {

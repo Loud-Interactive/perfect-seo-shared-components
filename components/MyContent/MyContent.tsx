@@ -249,6 +249,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
               <div className='mb-5'>
                 <BulkPostGenerator />
               </div>
+              <hr />
               <BulkContentPlanGenerator />
             </div>
           </div>

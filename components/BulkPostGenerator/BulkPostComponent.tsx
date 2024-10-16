@@ -17,14 +17,14 @@ interface IncomingPlanItemResponse {
   status?: string;
 }
 
-const BulkPostComponent = () => {
+const BulkPostGenerator = () => {
   const [tsvUrl, setTsvUrl] = useState<string>('');
   const [items, setItems] = useState<any>();
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const { user, profile } = useSelector((state: RootState) => state);
   const supabase = createClient();
-  const [showItems, setShowItems] = useState<boolean>(false);
+  const [showItems, setShowItems] = useState<boolean>(true);
 
   useEffect(() => {
     if (profile?.bulk_posts_guids) {
@@ -79,11 +79,22 @@ const BulkPostComponent = () => {
 
   };
 
-
+  const toggleShowItems = (e) => {
+    e.preventDefault();
+    setShowItems(!showItems);
+  }
 
   return (
     <div>
-      <h3 className='my-3 text-primary d-flex align-items-center'><TypeWriterText withBlink string="Bulk Post Generator" />{items?.length > 0 && <span className='badge rounded-pill text-bg-primary ms-3'>{items.length}</span>}</h3>
+      <div className='d-flex justify-content-between align-items-center my-3'>
+        <h3 className='text-primary'><TypeWriterText withBlink string="Bulk Post Generator" /></h3>
+        {items?.length > 0 && <div className='d-flex align-items-center'>
+          <p className='mb-0'>
+            <a className='text-white' onClick={toggleShowItems}>{showItems ? 'Hide Items' : 'Show Items'}</a>
+            <span className='badge rounded-pill text-bg-primary ms-3 mb-1'>{items.length}</span>
+          </p>
+        </div>}
+      </div>
       <form>
         <div className='input-group'>
           <input
@@ -100,19 +111,21 @@ const BulkPostComponent = () => {
         </div>
       </form>
       {error && <p style={{ color: 'red' }}>{error}</p>}
-      {items?.length > 0 && <ul className='clear-list-properties row g-3 px-2'>
-        <li className="card p-3 bg-primary d-none d-md-block">
-          <div className="row d-flex align-items-center justify-content-between">
-            <div className="capitalize col-12 col-md-4 ">Title</div>
-            <div className="capitalize col-12 col-md-4">Domain</div>  <div className="capitalize col-12 col-md-4">Status</div>
-          </div>
-        </li>
-        {items.map(item => (
-          <PostStatusItem guid={item} key={item} deletePost={deletePost} />
-        ))}
-      </ul>}
-    </div>
+      {
+        showItems && items?.length > 0 && <ul className='clear-list-properties row g-3 px-2'>
+          <li className="card p-3 bg-primary d-none d-md-block">
+            <div className="row d-flex align-items-center justify-content-between">
+              <div className="capitalize col-12 col-md-4 ">Title</div>
+              <div className="capitalize col-12 col-md-4">Domain</div>  <div className="capitalize col-12 col-md-4">Status</div>
+            </div>
+          </li>
+          {items.map(item => (
+            <PostStatusItem guid={item} key={item} deletePost={deletePost} />
+          ))}
+        </ul>
+      }
+    </div >
   );
 };
 
-export default BulkPostComponent
+export default BulkPostGenerator

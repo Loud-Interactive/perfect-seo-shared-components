@@ -24,6 +24,7 @@ const BulkPostGenerator = () => {
   const [error, setError] = useState<string | null>(null);
   const { user, profile } = useSelector((state: RootState) => state);
   const supabase = createClient();
+  const [showItems, setShowItems] = useState<boolean>(false);
 
   useEffect(() => {
     if (profile?.bulk_posts) {
@@ -103,7 +104,7 @@ const BulkPostGenerator = () => {
       </form>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       {items?.length > 0 && <ul className='clear-list-properties row g-3 px-2'>
-        <li className="card p-3 bg-primary">
+        <li className="card p-3 bg-primary d-none d-md-block">
           <div className="row d-flex align-items-center justify-content-between">
             <div className="capitalize col-12 col-md-4 ">Title</div>
             <div className="capitalize col-12 col-md-4">Domain</div>  <div className="capitalize col-12 col-md-4">Status</div>

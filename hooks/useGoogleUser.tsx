@@ -8,8 +8,6 @@ import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 import { urlSanitization } from '../utils/conversion-utilities';
 import { useSession } from 'next-auth/react';
-import en from '@/assets/en.json';
-import Google from 'next-auth/providers/google';
 const useGoogleUser = (appKey) => {
   const { user, isLoggedIn, profile } = useSelector((state: RootState) => state);
   const [token, setToken] = useState(null)

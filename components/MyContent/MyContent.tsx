@@ -14,7 +14,6 @@ import Loader from '@/perfect-seo-shared-components/components/Loader/Loader'
 import { createClient } from '@/perfect-seo-shared-components/utils/supabase/client'
 import { urlSanitization } from '@/perfect-seo-shared-components/utils/conversion-utilities';
 import BulkContentPlanGenerator from '../BulkContentGenerator/BulkContentGenerator';
-import BulkPostGenerator from '../BulkPostGenerator/BulkPostGenerator';
 import BulkPostComponent from '../BulkPostGenerator/BulkPostComponent';
 export interface MyContentProps {
   currentDomain?: string;
@@ -248,7 +247,6 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
           <div className={`tab-pane fade ${selectedTab === 'bulk-generation' && 'show active'}`} id="bulk-generation" role="tabpanel" aria-labelledby="bulk-generation-tab">
             <div className='tab p-3'>
               <div className='mb-5'>
-                {/* <BulkPostGenerator /> */}
                 <BulkPostComponent />
               </div>
               <hr />

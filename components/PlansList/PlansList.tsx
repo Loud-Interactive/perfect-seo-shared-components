@@ -28,7 +28,7 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
     getPreviousPlans(domain_name)
       .then(res => {
         let newData = res.data.filter(obj => {
-          return obj.status && obj.target_keyword
+          return obj.status
         })
         setData(newData)
         setLoading(false)
@@ -46,14 +46,14 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
     }
   }, [domain_name, active])
 
-
+  const completeStatuses = ["Finished", "Your Content Plan Has Been Created"]
 
   const renderStatusCell = (obj) => {
 
     const { status } = obj;
     const clickHandler = (e) => {
       e.preventDefault();
-      if (status === 'Finished') {
+      if (completeStatuses.includes(status)) {
         router.push(`/dashboard/${obj.guid}`)
       }
       else {
@@ -67,7 +67,7 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
     return (
       <div className='d-flex justify-content-end align-items-center'>
         <div className='me-2'>{obj?.guid}</div>
-        {(status === 'Finished') ?
+        {(completeStatuses.includes(status)) ?
 
           <button className="btn btn-primary" onClick={clickHandler} title={`View GUID: ${obj.guid}`}>View Plan</button>
           :

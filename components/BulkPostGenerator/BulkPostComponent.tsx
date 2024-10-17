@@ -146,10 +146,9 @@ const BulkPostComponent = () => {
   return (
     <div className='row d-flex justify-content-between align-items-start g-3'>
       <div className='d-flex justify-content-between align-items-center mt-3'>
-        <h3 className='text-primary mb-0'><TypeWriterText withBlink string="Bulk Post Generator" /></h3>
+        <h3 className='text-white mb-0'><TypeWriterText withBlink string="Bulk Post Generator" /></h3>
         {items?.length > 0 && <div className='d-flex align-items-center'>
           <p className='mb-0'>
-            <a className='text-white' onClick={toggleShowItems}>{showItems ? 'Hide Items' : 'Show Items'}</a>
             <span className='badge rounded-pill text-bg-primary ms-3 mb-1'>{items?.length}</span>
           </p>
         </div>}
@@ -196,7 +195,13 @@ const BulkPostComponent = () => {
       </div>
 
       <div className='col-12'>
-        <h4>Bulk Post Statuses</h4>
+        <div className='row d-flex align-items-end justify-content-between g-3'>
+          <h4 className='col mb-0 text-white'>Bulk Posts</h4>
+          {items.length > 0 && <div className='col-auto'>
+            <a className='text-primary' onClick={toggleShowItems}>{showItems ? 'Hide Items' : 'Show Items'}</a>
+          </div>}
+
+        </div>
         {
           items?.length > 0 ? showItems ? <ul className='clear-list-properties row g-3 px-2'>
             <li className="card p-3 bg-primary d-none d-md-block">

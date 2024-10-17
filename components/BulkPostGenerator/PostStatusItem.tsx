@@ -45,7 +45,7 @@ const PostStatusItem = ({ guid, item, deletePost, idx }) => {
           :
           <>
             <div className="text-capitalize col-12 col-md-3"><span className="d-md-none text-primary me-1"><strong>Title</strong></span> {item?.title}</div>
-            <div className="text-capitalize col-12 col-md-3"><span className="d-md-none text-primary me-1"><strong>Domain</strong></span> {item?.client_domain}</div>
+            <div className="col-12 col-md-3"><span className="d-md-none text-primary me-1"><strong>Domain</strong></span> {item?.client_domain}</div>
             <div className="col-10 col-md-4 d-flex align-items-center">
               <div className="text-capitalize text-primary"><span className="d-md-none text-primary me-1"><strong>Status</strong></span><TypeWriterText withBlink string={status} /></div>
             </div>

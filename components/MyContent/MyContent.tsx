@@ -209,7 +209,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
     <div className='container-xl content-fluid'>
       {!hideTitle && <div className='row d-flex justify-content-between'>
         <div className='col'>
-          <h1 className="text-3xl font-bold text-start mb-5"><TypeWriterText string={selectedTab === 'bulk-generation' ? 'Upload for all domains' : selected ? `Content for ${domain}` : 'Select a domain to begin'} withBlink /></h1>
+          <h1 className="text-start mb-5"><TypeWriterText string={selectedTab === 'bulk-generation' ? 'Upload for all domains' : selected ? `Content for ${domain}` : 'Select a domain to begin'} withBlink /></h1>
         </div>
         {(!currentDomain && profile?.domain_access?.length > 0 && selectedTab !== 'bulk-generation') && <div className='col-12 col-md-4 mb-3'>
           <SearchSelect

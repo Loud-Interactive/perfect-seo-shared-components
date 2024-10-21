@@ -280,6 +280,18 @@ export const saveDetails = (data) => {
   return axiosInstance.post('https://voice-perfect-api.replit.app/SaveUserDetails', data)
 }
 
+
+// Social Perfect apis 
 export const getSocialContent = (url: string) => {
   return axiosInstance.post('https://socialperfectapi.replit.app/get-content', { url });
+};
+
+export const createSocialPost = async (postData: Request.SocialPostCreate) => {
+  return axiosInstance.post('https://socialperfectapi.replit.app/create_post', postData)
+};
+
+
+export const getSocialPost = async (id: string) => {
+  return axiosInstance.get(`https://socialperfectapi.replit.app/socialposts/${id}`);
+
 };

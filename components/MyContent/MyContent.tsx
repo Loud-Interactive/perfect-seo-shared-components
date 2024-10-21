@@ -247,6 +247,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
             onChange={searchUserChangeHandler}
             options={domainsList}
             value={selected}
+            isClearable={false}
             placeholder="Select a Domain"
           />
           {!isDefaultDomain && <a className='text-primary mt-2' onClick={addDefaultHandler}>Make Default</a>}

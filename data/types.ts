@@ -273,3 +273,19 @@ export interface PostUploadItem {
   status?: string;
   guid?: string;
 }
+
+
+
+export interface SettingsProps {
+  global: GlobalSettingsProps,
+  contentPerfect: any
+}
+
+export interface GlobalSettingsProps {
+  defaultDomain: string,
+}
+
+export interface ContentPerfectSettingsProps {
+  defaultDomain: string,
+  hideDashboardHeader: boolean;
+}

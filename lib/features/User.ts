@@ -1,6 +1,6 @@
 "use client";
 
-import { SettingsProps } from "@/types";
+import { SettingsProps } from "@/perfect-seo-shared-components/data/types";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 

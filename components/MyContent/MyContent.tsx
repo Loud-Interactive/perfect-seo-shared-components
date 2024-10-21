@@ -16,6 +16,7 @@ import { urlSanitization } from '@/perfect-seo-shared-components/utils/conversio
 import BulkContentPlanGenerator from '../BulkContentGenerator/BulkContentGenerator';
 import BulkPostComponent from '../BulkPostGenerator/BulkPostComponent';
 import CheckGoogleDomains from '../CheckGoogleDomains/CheckGoogleDomains';
+import useGoogleUser from '@/perfect-seo-shared-components/hooks/useGoogleUser';
 export interface MyContentProps {
   currentDomain?: string;
   hideTitle?: boolean;
@@ -32,6 +33,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
   const [domains, setDomains] = useState([])
   const [reverify, setReverify] = useState(false)
 
+  const { fetchAllDomains } = useGoogleUser(en.product)
 
   const isDefaultDomain = useMemo(() => {
     let bool = false;
@@ -214,6 +216,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
         .insert({ email: user.email, domain: currentDomain || selected?.value, transaction_data: { domains: domainsList || profile?.domain_access }, product: en.product, type: "Unauthorized My Content" })
         .select('*')
         .then(res => {
+          fetchAllDomains()
         })
     }
     return bool

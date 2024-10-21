@@ -8,7 +8,7 @@ import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 import { urlSanitization } from '../utils/conversion-utilities';
 import { useSession } from 'next-auth/react';
-import { SettingsProps } from '@/types';
+import { SettingsProps } from '../data/types';
 const useGoogleUser = (appKey) => {
   const { user, isLoggedIn, profile } = useSelector((state: RootState) => state);
   const [token, setToken] = useState(null)
@@ -38,15 +38,13 @@ const useGoogleUser = (appKey) => {
             .select("*")
             .then(res => {
               if (!res.error) {
-                console.log(res.data)
+
               }
             })
         }
       })
   }
-  useEffect(() => {
-    console.log(profile)
-  }, [profile])
+
 
   useEffect(() => {
     let settingsChannel;

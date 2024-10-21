@@ -20,7 +20,7 @@ export interface MyContentProps {
   hideTitle?: boolean;
 }
 const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
-  const { user, isAdmin, isLoading, isLoggedIn, profile } = useSelector((state: RootState) => state);
+  const { user, isAdmin, isLoading, isLoggedIn, profile, settings } = useSelector((state: RootState) => state);
   const [selectedTab, setSelectedTab] = useState('posts')
   const searchParams = useSearchParams();
   const queryParam = searchParams.get('tab');
@@ -30,8 +30,33 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
   const [selected, setSelected] = useState(null)
   const [domains, setDomains] = useState([])
 
-  useEffect(() => {
 
+  const isDefaultDomain = useMemo(() => {
+    let bool = false;
+    if (settings?.global?.defaultDomain) {
+      if (selected?.value === settings?.global?.defaultDomain) {
+        bool = true
+      }
+    }
+    return bool
+  }, [settings, selected])
+
+  const addDefaultHandler = (e) => {
+    e.preventDefault();
+    let global = settings?.global || {}
+    supabase
+      .from('settings')
+      .update({ global: { ...global, defaultDomain: selected?.value } })
+      .eq('email', user.email)
+      .select("*")
+      .then(res => {
+        if (!res.error) {
+          console.log(res.data)
+        }
+      })
+  }
+
+  useEffect(() => {
     if (user?.email && domain) {
       supabase
         .from('user_history')
@@ -184,6 +209,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
   }, [user?.email, isAdmin, currentDomain, selected, domainsList, profile?.domains])
 
 
+
   useEffect(() => {
     if (isAdmin) {
       fetchDomains();
@@ -217,6 +243,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
             value={selected}
             placeholder="Select a Domain"
           />
+          {!isDefaultDomain && <a className='text-primary mt-2' onClick={addDefaultHandler}>Make Default</a>}
         </div>}
       </div>}
       {selected ? <div className={styles.tabWrap}>

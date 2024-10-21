@@ -1,5 +1,6 @@
 "use client";
 
+import { SettingsProps } from "@/types";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
@@ -17,6 +18,7 @@ export type RootState = {
   isAdmin: boolean
   domain?: string;
   profile: any;
+  settings: SettingsProps
 };
 
 
@@ -26,7 +28,8 @@ const initialState: RootState = {
   isLoading: true,
   isLoggedIn: false,
   isAdmin: false,
-  profile: null
+  profile: null,
+  settings: null
 };
 
 export const UserSlice = createSlice({
@@ -49,6 +52,12 @@ export const UserSlice = createSlice({
       return {
         ...state,
         points: action.payload,
+      }
+    },
+    setUserSettings: (state, action: PayloadAction<SettingsProps>) => {
+      return {
+        ...state,
+        settings: action.payload,
       }
     },
     setLoggedIn: (state, action: PayloadAction<boolean>) => {
@@ -83,5 +92,5 @@ export const UserSlice = createSlice({
 });
 // Action creators are generated for each case reducer function
 
-export const { setUser, setProfile, updatePoints, setLoggedIn, setLoading, setAdmin, setDomain, reset } = UserSlice.actions;
+export const { setUser, setProfile, updatePoints, setLoggedIn, setLoading, setAdmin, setDomain, reset, setUserSettings } = UserSlice.actions;
 export default UserSlice.reducer;

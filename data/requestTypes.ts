@@ -127,3 +127,15 @@ export interface ProcessTsvUrlResponse {
   message: string;
   guids: string[];
 }
+
+export interface SocialPostCreate {
+  target_domain: string;
+  client_name: string;
+  post_url?: string;
+  post_content: string;
+}
+
+export interface SocialPost extends SocialPostCreate {
+  id: string;
+  created_date: string;
+}

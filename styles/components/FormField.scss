@@ -13,6 +13,19 @@
   }
 }
 
+.bg-secondary,
+.bg-dark {
+  .formField:hover {
+    .formField-label {
+      color: $primary;
+
+      span {
+        color: $primary;
+      }
+    }
+  }
+}
+
 .formField {
   box-sizing: border-box;
   flex: 1 0 0%;

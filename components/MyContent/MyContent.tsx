@@ -173,10 +173,16 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
       setDomain(currentDomain)
       setSelected({ label: currentDomain, value: currentDomain })
     } else if (domainsList?.length > 0) {
-      setDomain(domainsList[0]?.value)
-      setSelected(domainsList[0])
+      if (settings?.global?.defaultDomain) {
+        setDomain(settings.global.defaultDomain)
+        setSelected({ label: settings.global.defaultDomain, value: settings.global.defaultDomain })
+      }
+      else {
+        setDomain(domainsList[0]?.value)
+        setSelected(domainsList[0])
+      }
     }
-  }, [domainsList, currentDomain, profile])
+  }, [domainsList, currentDomain, profile, settings])
 
   const isAuthorized = useMemo(() => {
     let bool = false;

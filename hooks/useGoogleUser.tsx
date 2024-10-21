@@ -28,7 +28,6 @@ const useGoogleUser = (appKey) => {
         if (res?.data && res?.data?.length > 0) {
           if (res?.data[0]) {
             dispatch(setUserSettings(res.data[0]))
-            console.log(res.data[0])
           }
         }
         else if (res?.data?.length === 0) {

@@ -279,3 +279,7 @@ export const generateVoicePrompts = (domain) => {
 export const saveDetails = (data) => {
   return axiosInstance.post('https://voice-perfect-api.replit.app/SaveUserDetails', data)
 }
+
+export const getSocialContent = (url: string) => {
+  return axiosInstance.post('https://socialperfectapi.replit.app/get-content', { url }, { headers: { "Content-Type": "multipart/form-data;" } });
+};

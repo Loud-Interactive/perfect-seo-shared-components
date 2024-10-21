@@ -22,7 +22,7 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
   const [deleteModal, setDeleteModal] = useState(null)
   const [filter, setFilter] = useState('all');
   const router = useRouter();
-  const { user } = useSelector((state: RootState) => state);
+  const { user, isAdmin } = useSelector((state: RootState) => state);
 
   const fetchPlans = () => {
     getPreviousPlans(domain_name)
@@ -66,7 +66,7 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
     }
     return (
       <div className='d-flex justify-content-end align-items-center'>
-        <div className='me-2'>{obj?.guid}</div>
+        {isAdmin && <div className='me-2'>{obj?.guid}</div>}
         {(completeStatuses.includes(status)) ?
 
           <button className="btn btn-primary" onClick={clickHandler} title={`View GUID: ${obj.guid}`}>View Plan</button>

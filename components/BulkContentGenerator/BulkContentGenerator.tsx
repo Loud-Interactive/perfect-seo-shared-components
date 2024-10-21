@@ -124,7 +124,7 @@ const BulkContentPlanGenerator: React.FC = () => {
         </div>}
       </div>
       <form>
-        <div className='input-group'>
+        <div className='input-group mb-1'>
           <input
             type="text"
             value={tsvUrl}
@@ -137,6 +137,9 @@ const BulkContentPlanGenerator: React.FC = () => {
             {loading ? 'Processing...' : 'Generate Content Plans'}
           </button>
         </div>
+        <a className='text-primary' href="https://docs.google.com/spreadsheets/d/1sN9iTF8qL5NDUhQ9NIzLgByXdjLVRthoS5S7xhD0zg8/copy" target="_blank">
+          <small>Get Google Sheets Template</small>
+        </a>
       </form>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       {showItems && items?.length > 0 && <ul className='clear-list-properties row g-3 px-2'>

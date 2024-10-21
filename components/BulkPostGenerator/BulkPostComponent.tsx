@@ -157,7 +157,7 @@ const BulkPostComponent = () => {
         <div className='row d-flex justify-content-between align-items-start g-3'>
           <div className='col-10 col-lg-8'>
             <form>
-              <div className='input-group'>
+              <div className='input-group mb-1'>
                 <input
                   type="text"
                   value={tsvUrl}
@@ -170,6 +170,9 @@ const BulkPostComponent = () => {
                   {isUploading ? 'Uploading...' : 'Upload'}
                 </button>
               </div>
+              <a className='text-primary' href="https://docs.google.com/spreadsheets/d/1ImKmOBeFWHCkKcEhpaE7ZHvWfTA0JFcnF1GTtuRMQ7s/copy" target="_blank">
+                <small>Get Google Sheets Template</small>
+              </a>
             </form>
           </div>
           <div className='col-2 col-lg-4 d-flex justify-content-end'>

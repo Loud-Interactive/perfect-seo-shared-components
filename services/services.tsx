@@ -281,5 +281,5 @@ export const saveDetails = (data) => {
 }
 
 export const getSocialContent = (url: string) => {
-  return axiosInstance.post('https://socialperfectapi.replit.app/get-content', { url }, { headers: { "Content-Type": "multipart/form-data;" } });
+  return axiosInstance.post('https://socialperfectapi.replit.app/get-content', { url });
 };

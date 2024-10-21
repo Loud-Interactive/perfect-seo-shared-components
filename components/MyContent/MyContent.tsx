@@ -30,6 +30,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
   const [domain, setDomain] = useState(currentDomain || null)
   const [selected, setSelected] = useState(null)
   const [domains, setDomains] = useState([])
+  const [reverify, setReverify] = useState(false)
 
 
   const isDefaultDomain = useMemo(() => {
@@ -238,8 +239,11 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
       <div className="container-fluid container-xl strip-padding">
         <div className='row d-flex align-items-center justify-content-center'>
           <h1 className="text-3xl font-bold text-center mb-3"><TypeWriterText string={isLoggedIn ? `You are not authorized to view content for ${currentDomain || selected?.value || 'this domain'}` : 'Log in to view your content'} withBlink /></h1>
-          <div className='col-12 col-lg-8'>
-            <CheckGoogleDomains />
+          <div className='col-12 col-lg-8 mt-3 d-flex justify-content-center'>
+            {reverify ?
+              <CheckGoogleDomains />
+              :
+              <button onClick={() => setReverify(true)} className='btn btn-primary'>Re-verify Domain Access</button>}
           </div>
         </div>
       </div>

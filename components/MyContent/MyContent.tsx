@@ -15,6 +15,7 @@ import { createClient } from '@/perfect-seo-shared-components/utils/supabase/cli
 import { urlSanitization } from '@/perfect-seo-shared-components/utils/conversion-utilities';
 import BulkContentPlanGenerator from '../BulkContentGenerator/BulkContentGenerator';
 import BulkPostComponent from '../BulkPostGenerator/BulkPostComponent';
+import CheckGoogleDomains from '../CheckGoogleDomains/CheckGoogleDomains';
 export interface MyContentProps {
   currentDomain?: string;
   hideTitle?: boolean;
@@ -185,7 +186,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
   }, [domainsList, currentDomain, profile, settings])
 
   const isAuthorized = useMemo(() => {
-    let bool = false;
+    let bool = true;
     if (isAdmin) {
       bool = true
     } else if (profile?.domains?.length > 0) {
@@ -202,6 +203,9 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
       }
 
 
+    }
+    else {
+      bool = false
     }
     if (bool === false && user?.email && (currentDomain || selected?.value) && (domainsList || profile?.domain_access)) {
       supabase
@@ -231,8 +235,13 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
   }
   else if (!isAuthorized) {
     return (
-      <div className="container-fluid container-xl strip-padding d-flex align-items-center">
-        <h1 className="text-3xl font-bold text-center mb-3"><TypeWriterText string={isLoggedIn ? `You are not authorized to view content for ${currentDomain || selected?.value || 'this domain'}` : 'Log in to view your content'} withBlink /></h1>
+      <div className="container-fluid container-xl strip-padding">
+        <div className='row d-flex align-items-center justify-content-center'>
+          <h1 className="text-3xl font-bold text-center mb-3"><TypeWriterText string={isLoggedIn ? `You are not authorized to view content for ${currentDomain || selected?.value || 'this domain'}` : 'Log in to view your content'} withBlink /></h1>
+          <div className='col-12 col-lg-8'>
+            <CheckGoogleDomains />
+          </div>
+        </div>
       </div>
     )
   }

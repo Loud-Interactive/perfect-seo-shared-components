@@ -99,7 +99,7 @@ const useGoogleUser = (appKey) => {
 
   //Checks User Domains
   useEffect(() => {
-    if (token && !(profile.domain_access || profile?.domains) && profile?.email) {
+    if (token && !(profile?.domain_access || profile?.domains) && profile?.email) {
       checkUserDomains();
     }
   }, [token, profile])

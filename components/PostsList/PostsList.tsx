@@ -84,7 +84,7 @@ const PostsList = ({ domain_name, active }: PostsListProps) => {
           <h2 className='text-primary mb-0'>
             <TypeWriterText string="Generated Posts" withBlink />
           </h2>
-          <p className='badge rounded-pill text-bg-primary ms-3 d-flex align-items-center mb-1'>{filteredData?.length}</p>
+          {filteredData?.length > 0 && <p className='badge rounded-pill text-bg-primary ms-3 d-flex align-items-center mb-1'>{filteredData.length}</p>}
         </div>
         <div className='col-auto me-2'>
           <div className="form-group">

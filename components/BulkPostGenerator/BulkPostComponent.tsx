@@ -51,7 +51,6 @@ const BulkPostComponent = () => {
   const pullStatus = () => {
     getBatchStatus(itemGuids)
       .then(res => {
-        console.log(res.data)
         setItems(res.data.map((item) => ({ ...item, guid: item.content_plan_outline_guid })))
       })
   }
@@ -94,7 +93,7 @@ const BulkPostComponent = () => {
       ...items.slice(0, idx),
       ...items.slice(idx + 1),
     ]
-    updateBulkPosts(newItems)
+    updateBulkPosts(newItems.map(({ guid }) => guid))
   }
 
   const handleUpload = (e: React.FormEvent) => {

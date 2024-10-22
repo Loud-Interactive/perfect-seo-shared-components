@@ -9,8 +9,16 @@ const ContentStatusItem = ({ guid, deleteContent }) => {
 
   const pullStatus = () => {
     getPlanStatus(guid).then(res => {
-      setStatus(res.data.status)
-      setItem(res.data)
+      if (res.data?.status) {
+        console.log(res.data)
+        setStatus(res.data.status)
+        setItem({ guid, ...res.data })
+      } else {
+        if (res.data[0]?.error) {
+          setError(res.data[0]?.error)
+        }
+      }
+
     })
       .catch(err => {
         console.log(err)
@@ -38,7 +46,7 @@ const ContentStatusItem = ({ guid, deleteContent }) => {
             <div className="text-capitalize text-warning col-12"><TypeWriterText withBlink string={error} /></div>
             :
             <>
-              <div className="text-capitalize col-12 col-md-4"><span className="d-md-none text-primary me-1"><strong>Keyword</strong></span> {item?.target_keyword}</div>
+              <div className="text-capitalize col-12 col-md-4"><span className="d-md-none text-primary me-1"><strong>Keyword</strong></span> {item?.seo_keyword}</div>
               <div className="text-capitalize col-12 col-md-4"><span className="d-md-none text-primary me-1"><strong>Domain</strong></span> {item?.domain_name}</div>
               <div className="col-12 col-md-4 d-flex align-items-center">
                 <div className="text-capitalize text-primary"><span className="d-md-none text-primary me-1"><strong>Status</strong></span><TypeWriterText withBlink string={status} /></div>

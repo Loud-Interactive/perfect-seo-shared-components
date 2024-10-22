@@ -18,7 +18,7 @@ export interface IncomingPlanItemResponse {
 
 const BulkContentPlanGenerator: React.FC = () => {
   const [tsvUrl, setTsvUrl] = useState<string>('');
-  const [items, setItems] = useState<IncomingPlanItemResponse[]>([]);
+  const [items, setItems] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const { user, profile } = useSelector((state: RootState) => state);
@@ -39,8 +39,7 @@ const BulkContentPlanGenerator: React.FC = () => {
     axiosInstance.post<IncomingPlanItemResponse[]>(
       `https://planperfectapi.replit.app/process_tsv_from_url?url=${tsvUrl.replaceAll("&", "%26")}`, {}
     ).then(response => {
-      setItems(response.data);
-      startPollingStatus(response.data);
+      setItems(response.data.map(item => item.guid));
       supabase
         .from('profiles')
         .update({ bulk_content_guids: response.data.map(item => item.guid) })
@@ -58,11 +57,6 @@ const BulkContentPlanGenerator: React.FC = () => {
       })
   };
 
-  const startPollingStatus = (items: IncomingPlanItemResponse[]) => {
-    items.forEach(item => {
-      pollItemStatus(item.guid);
-    });
-  };
 
   const updateBulkContent = (guids: string[]) => {
     supabase
@@ -75,35 +69,22 @@ const BulkContentPlanGenerator: React.FC = () => {
       })
   }
   const deleteContent = (guid: string) => {
-    let index = items.map(({ guid }) => guid).indexOf(guid)
-    let newItems = [
-      ...items.slice(0, index),
-      ...items.slice(index + 1),
-    ];
-    updateBulkContent(newItems.map(({ guid }) => guid))
+    console.log(items)
+    let index = items.indexOf(guid)
+    let newItems
+    if (index > 1) {
+      newItems = [
+        ...items.slice(0, index),
+        ...items.slice(index + 1),
+      ]
+    }
+    else {
+      newItems = items.slice(1)
+    }
+    updateBulkContent(newItems)
   }
 
 
-  const pollItemStatus = async (guid: string) => {
-    const pollInterval = setInterval(async () => {
-      try {
-        const response = await axiosInstance.get(`https://planperfectapi.replit.app/get_status/${guid}`);
-        const updatedItem = response.data;
-
-        setItems(prevItems =>
-          prevItems.map(item =>
-            item.guid === guid ? { ...item, status: updatedItem.status } : item
-          )
-        );
-
-        if (updatedItem.status === 'Finished' || updatedItem.status.startsWith('Error')) {
-          clearInterval(pollInterval);
-        }
-      } catch (err) {
-        console.error(`Error polling status for item ${guid}:`, err);
-      }
-    }, 5000); // Poll every 5 seconds
-  };
 
   const toggleShowItems = (e) => {
     e.preventDefault();
@@ -143,8 +124,8 @@ const BulkContentPlanGenerator: React.FC = () => {
       </form>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       {showItems && items?.length > 0 && <ul className='clear-list-properties row g-3 px-2'>
-        {items.map(item => (
-          <ContentStatusItem guid={item} key={item?.guid} deleteContent={deleteContent} />
+        {items.map((item, idx) => (
+          <ContentStatusItem guid={item} key={`status-item-${idx}`} deleteContent={deleteContent} />
         ))}
       </ul>}
     </div >

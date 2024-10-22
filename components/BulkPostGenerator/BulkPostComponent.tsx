@@ -214,7 +214,7 @@ const BulkPostComponent = () => {
               </div>
             </li>
             {items.map((item, idx) => (
-              <PostStatusItem item={item} guid={item?.guid} key={item?.guid} deletePost={deletePost} idx={idx} />
+              <PostStatusItem item={item} guid={item?.guid} key={idx} deletePost={deletePost} idx={idx} />
             ))}
           </ul> : null :
             <div className='card p-3 bg-secondary'>

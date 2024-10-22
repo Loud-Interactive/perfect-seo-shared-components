@@ -68,6 +68,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
         .insert({ email: user.email, domain: domain, transaction_data: { page: 'my-content', tab: selectedTab || queryParam || 'posts' }, product: en?.product, type: "View Content" })
         .select('*')
         .then(res => {
+          setDataTracked(true)
         })
     }
   }, [domain, selected, selectedTab, user?.email, dataTracked])

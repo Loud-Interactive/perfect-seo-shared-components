@@ -117,14 +117,14 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
     if (phone || tablet) {
       return [
         { id: 'target_keyword', Header: 'Target Keyword', accessor: renderTitle },
-        { id: 'guid', Header: 'GUID', accessor: renderStatusCell, headerClassName: 'text-end pe-3', cellClassName: 'max-325' },
+        { id: 'guid', Header: 'Actions', accessor: renderStatusCell, headerClassName: 'text-end pe-3', cellClassName: 'max-325' },
       ];
     }
     else {
       return [
         { id: 'target_keyword', Header: 'Target Keyword', accessor: renderTitle, disableSortBy: false },
         { id: 'timestamp', Header: 'Timestamp', accessor: (obj) => moment(obj.timestamp + 'Z').format("dddd, MMMM Do, YYYY h:mma"), disableSortBy: false },
-        { id: 'guid', Header: 'GUID', accessor: renderStatusCell, headerClassName: 'text-end pe-3', cellClassName: 'max-325' },
+        { id: 'guid', Header: 'Actions', accessor: renderStatusCell, headerClassName: 'text-end pe-3', cellClassName: 'max-325' },
       ];
     }
   }, [phone, tablet])
@@ -142,13 +142,14 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
   }
   return (
     <div className={styles.wrap}>
-      <div className='row d-flex justify-content-between align-items-center'>
-        <div className='col-12 col-md-auto'>
-          <h2 className='text-primary my-3'>
+      <div className='row d-flex justify-content-between align-items-end my-3'>
+        <div className='col-12 col-md-auto d-flex align-items-end'>
+          <h2 className='text-primary mb-0'>
             <TypeWriterText string="Content Plans" withBlink />
           </h2>
+          <p className='badge rounded-pill text-bg-primary ms-3 d-flex align-items-center mb-1'>{filteredData.length}</p>
         </div>
-        <div className='col-auto me-2 my-3'>
+        <div className='col-auto me-2'>
           <div className="form-group">
             <label className="form-label"><strong>Filter</strong></label>
             <select className="form-control" value={filter} onChange={handleFilterChange}>

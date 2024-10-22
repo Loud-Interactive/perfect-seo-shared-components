@@ -99,10 +99,10 @@ const useGoogleUser = (appKey) => {
 
   //Checks User Domains
   useEffect(() => {
-    if (token) {
+    if (token && !(profile.domain_access || profile?.domains) && profile?.email) {
       checkUserDomains();
     }
-  }, [token, user])
+  }, [token, profile])
 
   // updates product use 
   const updateProducts = () => {

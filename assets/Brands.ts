@@ -106,8 +106,10 @@ export const Brands: Array<Brand> = [
     url: 'https://socialPerfect.ai',
     logo: '/svg/socialPerfect.svg',
     icon: '/svg/socialPerfect-icon.svg',
-    status: BrandStatus.COMING_SOON,
+    status: BrandStatus.LIVE,
     summary: "Amplify your social media engagement by generating the right emoticon and hashtags to achieve the right tone",
+    stagingUrl: "https://social-perfect.vercel.app/",
+    developmentUrl: "https://social-perfect-git-development-loud-interactives-projects.vercel.app/",
     primary: "#CC6699"
   },
   {

@@ -3,9 +3,18 @@ import styles from './PerfectSEOBar.module.scss'
 import { renderIcon, renderLogo } from '@/perfect-seo-shared-components/utils/brandUtilities';
 import { Brands } from '@/perfect-seo-shared-components/assets/Brands';
 import { Brand, BrandStatus } from '@/perfect-seo-shared-components/data/types';
+import classNames from 'classnames';
+import useViewport from '@/perfect-seo-shared-components/hooks/useViewport';
 
 
 const PerfectSEOBar = ({ current }) => {
+  const { desktop } = useViewport()
+  const rowClasses = classNames('row d-flex',
+    {
+      'justify-content-between': desktop,
+      'justify-content-center': !desktop
+    },
+  )
   return (
     <div className="container-fluid container-xl">
       <div className='row d-flex justify-content-center mb-5'>
@@ -25,10 +34,10 @@ const PerfectSEOBar = ({ current }) => {
           </a>
         </div>
       </div>
-      <div className='row d-flex justify-content-center'>
+      <div className={rowClasses}>
         {Brands.filter(brand => brand.title !== current && brand.status === BrandStatus.LIVE).map((brand: Brand) => {
           return (
-            <div className='col-4 col-md-2' key={brand.title}>
+            <div className='col-4 col-md-3 col-lg-1' key={brand.title}>
               <a href={brand.url} target="_blank" className={styles.brandTile} rel="noreferrer" key={brand.title}>
                 <div className={styles.brandTileHeader}>
                   <div className={styles.brandTileIcon}>

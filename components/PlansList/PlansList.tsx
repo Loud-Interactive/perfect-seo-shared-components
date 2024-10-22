@@ -147,7 +147,7 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
           <h2 className='text-primary mb-0'>
             <TypeWriterText string="Content Plans" withBlink />
           </h2>
-          <p className='badge rounded-pill text-bg-primary ms-3 d-flex align-items-center mb-1'>{filteredData.length}</p>
+          <p className='badge rounded-pill text-bg-primary ms-3 d-flex align-items-center mb-1'>{filteredData?.length}</p>
         </div>
         <div className='col-auto me-2'>
           <div className="form-group">

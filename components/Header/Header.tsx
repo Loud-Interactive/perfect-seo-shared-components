@@ -215,7 +215,7 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
                       </div>
                     </div>
                     <div className='card-body d-flex align-items-end'>
-                      <div className='row g-3 justify-content-center'>
+                      <div className='row g-3 justify-content-start'>
                         <div className='col-12'>
                           <span className='fs-2'>Our Products</span>
                         </div>
@@ -229,7 +229,7 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
                             </div>
                           )
                         })}
-                        <div className="col-8">
+                        <div className="col-4">
                           <div className="h-100 pt-2">
                             <a href='https://seoperfect.ai/' className="h-100 w-100 d-flex align-items-center" target="_blank">  <SEOPerfectLogo /></a>
                           </div>

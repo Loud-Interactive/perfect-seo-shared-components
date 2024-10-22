@@ -256,6 +256,16 @@ const PostItem = ({ post, refresh }) => {
                             Fact-Check
                           </a>
                         </DropdownMenu.Item>
+                        <DropdownMenu.Item>
+                          <a
+                            href={`https://socialperfect.ai?url=${encodeURI(localPost?.live_post_url)}`}
+                            target="_blank"
+                            className="btn btn-transparent"
+
+                          >
+                            Generate Social Posts
+                          </a>
+                        </DropdownMenu.Item>
                       </DropdownMenu.Content>
                     </DropdownMenu.Portal>
                   </DropdownMenu.Root>}

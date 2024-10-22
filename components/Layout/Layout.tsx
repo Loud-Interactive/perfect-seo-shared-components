@@ -20,7 +20,7 @@ const Layout = ({ children, hideFooter, current, links, hasLogin = true, getCred
   return (
     <>
       <Script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossOrigin="anonymous" />
-      <SessionProvider refetchOnWindowFocus={true}>
+      <SessionProvider refetchInterval={20 * 60} refetchOnWindowFocus={true}>
         <Header current={current} links={links} hasLogin={hasLogin} getCredits={getCredits} />
         <main className={style.wrap}>
           {children}

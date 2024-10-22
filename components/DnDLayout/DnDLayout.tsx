@@ -44,7 +44,7 @@ const DnDLayout = ({ children, hideFooter, current, links, hasLogin = true, getC
 
   return (
     <>
-      <SessionProvider>
+      <SessionProvider refetchOnWindowFocus refetchInterval={20 * 60} >
         <BrowserView>
           <DndProvider backend={HTML5Backend} >
             <Header current={current} links={links} hasLogin={hasLogin} getCredits={getCredits} />

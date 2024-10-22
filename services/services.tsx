@@ -295,3 +295,12 @@ export const getSocialPost = async (id: string) => {
   return axiosInstance.get(`https://socialperfectapi.replit.app/socialposts/${id}`);
 
 };
+
+export const generateSocialPost = async (id: string, reqObj: Request.GenerateSocialPostProps) => {
+
+  return axiosInstance.post(`https://socialperfectapi.replit.app/generate_post/${id}`, reqObj, { headers: { 'Content-Type': 'application/json' } }
+  );
+
+}
+
+

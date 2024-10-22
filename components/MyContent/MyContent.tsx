@@ -62,7 +62,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
   }
 
   useEffect(() => {
-    if (user?.email && domain) {
+    if (user?.email && domain && !dataTracked) {
       supabase
         .from('user_history')
         .insert({ email: user.email, domain: domain, transaction_data: { page: 'my-content', tab: selectedTab || queryParam || 'posts' }, product: en?.product, type: "View Content" })
@@ -70,7 +70,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
         .then(res => {
         })
     }
-  }, [domain, selected, selectedTab, user?.email])
+  }, [domain, selected, selectedTab, user?.email, dataTracked])
 
   const createQueryString = useCallback(
     (name: string, value: string) => {
@@ -104,6 +104,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
     if (e) {
       setDomain(e?.value);
       setSelected(e)
+      setDataTracked(false)
     }
     else {
       setDomain(null);

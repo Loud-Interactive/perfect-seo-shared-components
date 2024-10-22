@@ -19,9 +19,6 @@ const PostsList = ({ domain_name, active }: PostsListProps) => {
   const [deleteModal, setDeleteModal] = useState(null)
   const [filter, setFilter] = useState('all');
 
-
-
-
   const getPosts = () => {
     if (domain_name && active) {
       getPostsByDomain(domain_name)
@@ -82,13 +79,14 @@ const PostsList = ({ domain_name, active }: PostsListProps) => {
 
   return (
     <div className={styles.wrap}>
-      <div className='row d-flex justify-content-between align-items-center'>
-        <div className='col-12 col-md-auto'>
-          <h2 className='text-primary my-3'>
+      <div className='row d-flex justify-content-between align-items-end my-3'>
+        <div className='col-12 col-md-auto d-flex align-items-end'>
+          <h2 className='text-primary mb-0'>
             <TypeWriterText string="Generated Posts" withBlink />
           </h2>
+          <p className='badge rounded-pill text-bg-primary ms-3 d-flex align-items-center mb-1'>{filteredData.length}</p>
         </div>
-        <div className='col-auto me-2 my-3'>
+        <div className='col-auto me-2'>
           <div className="form-group">
             <label className="form-label"><strong>Filter</strong></label>
             <select className="form-control" value={filter} onChange={handleFilterChange}>

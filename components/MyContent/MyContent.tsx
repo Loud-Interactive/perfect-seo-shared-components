@@ -17,6 +17,7 @@ import BulkContentPlanGenerator from '../BulkContentGenerator/BulkContentGenerat
 import BulkPostComponent from '../BulkPostGenerator/BulkPostComponent';
 import CheckGoogleDomains from '../CheckGoogleDomains/CheckGoogleDomains';
 import useGoogleUser from '@/perfect-seo-shared-components/hooks/useGoogleUser';
+import { getSynopsisInfo } from '@/perfect-seo-shared-components/services/services';
 export interface MyContentProps {
   currentDomain?: string;
   hideTitle?: boolean;
@@ -33,7 +34,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
   const [domains, setDomains] = useState([])
   const [reverify, setReverify] = useState(false)
   const [dataTracked, setDataTracked] = useState(false)
-
+  const [synopsis, setSynopsis] = useState(null)
   const { fetchAllDomains } = useGoogleUser(en.product)
 
   const isDefaultDomain = useMemo(() => {
@@ -68,6 +69,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
         .insert({ email: user.email, domain: domain, transaction_data: { page: 'my-content', tab: selectedTab || queryParam || 'posts' }, product: en?.product, type: "View Content" })
         .select('*')
         .then(res => {
+          setDataTracked(true)
         })
     }
   }, [domain, selected, selectedTab, user?.email, dataTracked])
@@ -224,13 +226,20 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
     return bool
   }, [user?.email, isAdmin, currentDomain, selected, domainsList, profile?.domains])
 
-
-
   useEffect(() => {
     if (isAdmin) {
       fetchDomains();
     }
   }, [isAdmin])
+
+  useEffect(() => {
+    if (currentDomain) {
+      getSynopsisInfo(currentDomain)
+        .then(res => {
+          setSynopsis(res?.data)
+        })
+    }
+  }, [currentDomain])
 
   if (isLoading) {
     return (
@@ -255,62 +264,83 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
     )
   }
   return (
-    <div className='container-xl content-fluid'>
-      {!hideTitle && <div className='row d-flex justify-content-between'>
-        <div className='col'>
-          <h1 className="text-start mb-5"><TypeWriterText string={selectedTab === 'bulk-generation' ? 'Upload for all domains' : selected ? `Content for ${domain}` : 'Select a domain to begin'} withBlink /></h1>
-        </div>
-        {(!currentDomain && profile?.domain_access?.length > 0 && selectedTab !== 'bulk-generation') && <div className='col-12 col-md-4 mb-3'>
-          <SearchSelect
-            onChange={searchUserChangeHandler}
-            options={domainsList}
-            value={selected}
-            isClearable={false}
-            placeholder="Select a Domain"
-          />
-          {!isDefaultDomain && <a className='text-primary mt-2' onClick={addDefaultHandler}>Make Default</a>}
-        </div>}
-      </div>}
-      {selected ? <div className={styles.tabWrap}>
-        <ul className="nav nav-tabs mb-0">
-          {TabData.map((tab) => {
-
-            const tabClasses = classNames('nav-link',
-              { 'active': tab.key === selectedTab })
-            let tabKey = `${tab.key}-tab`
-            return (
-              <li className="nav-item" key={tabKey}>
-                <button onClick={(e) => clickHandler(e, tab.key)} id={tabKey} data-bs-toggle={tab.key} data-bs-target="#outline" role={tab.key} aria-controls={tab.key} aria-selected={selectedTab === tab.key} className={tabClasses} name={tab.key}>{tab.title}</button>
-              </li>
-            )
-          })}
-        </ul>
-        <div className="tab-content bg-dark mb-3" id="myTabContent">
-          <div className={`tab-pane fade ${selectedTab === 'posts' && 'show active'}`} id="posts" role="tabpanel" aria-labelledby="posts-tab">
-            <div className='tab p-3'>
-              <PostsList active={selectedTab === 'posts'} domain_name={domain} />
-            </div>
-          </div>
-          <div className={`tab-pane fade ${selectedTab === 'content-plan' && 'show active'}`} id="content-plan" role="tabpanel" aria-labelledby="content-plan-tab">
-            <div className='tab p-3'>
-              <PlansList active={selectedTab === 'content-plan'} domain_name={domain} />
-            </div>
-          </div>
-          <div className={`tab-pane fade ${selectedTab === 'bulk-generation' && 'show active'}`} id="bulk-generation" role="tabpanel" aria-labelledby="bulk-generation-tab">
-            <div className='tab p-3'>
-              <div className='mb-5'>
-                <BulkPostComponent />
+    <>
+      {currentDomain &&
+        <div className='bg-primary mb-3'>
+          <div className='container-xl content-fluid py-3'>
+            <div className='row d-flex justify-content-between g-3'>
+              {synopsis?.logo_url && <div className='col-12 col-lg-3'>
+                <div className="card p-3 bg-light h-100 d-flex align-items-center justify-content-center">
+                  <img src={synopsis?.logo_url} className='w-100' />
+                </div>
+              </div>}
+              <div className='col'>
+                <h1 className="text-start mb-1"><TypeWriterText string={`Content for ${synopsis?.brand_name || domain}`} withBlink /></h1>
+                <p className='card p-3 mb-0'><strong>Synopsis</strong>{synopsis?.synopsis}</p>
               </div>
-              <hr />
-              <BulkContentPlanGenerator />
             </div>
           </div>
         </div>
-      </div> :
-        <div className="strip-padding container-fluid container-xl d-flex align-items-center justify-content-center">
-          <h2 className='text-center text-primary'><TypeWriterText string="No domain selected" withBlink /></h2>
-        </div>}
-    </div>
+      }
+      <div className='container-xl content-fluid'>
+        {!(hideTitle || currentDomain) &&
+          <div className='row d-flex justify-content-between'>
+            <div className='col'>
+              <h1 className="text-start mb-5"><TypeWriterText string={selectedTab === 'bulk-generation' ? 'Upload for all domains' : selected ? `Content for ${domain}` : 'Select a domain to begin'} withBlink /></h1>
+            </div>
+            {(profile?.domain_access?.length > 0 && selectedTab !== 'bulk-generation') && <div className='col-12 col-md-4 mb-3'>
+              <SearchSelect
+                onChange={searchUserChangeHandler}
+                options={domainsList}
+                value={selected}
+                isClearable={false}
+                placeholder="Select a Domain"
+              />
+              {!isDefaultDomain && <a className='text-primary mt-2' onClick={addDefaultHandler}>Make Default</a>}
+            </div>}
+          </div>
+        }
+        {selected ? <div className={styles.tabWrap}>
+          <ul className="nav nav-tabs mb-0">
+            {TabData.map((tab) => {
+
+              const tabClasses = classNames('nav-link',
+                { 'active': tab.key === selectedTab })
+              let tabKey = `${tab.key}-tab`
+              return (
+                <li className="nav-item" key={tabKey}>
+                  <button onClick={(e) => clickHandler(e, tab.key)} id={tabKey} data-bs-toggle={tab.key} data-bs-target="#outline" role={tab.key} aria-controls={tab.key} aria-selected={selectedTab === tab.key} className={tabClasses} name={tab.key}>{tab.title}</button>
+                </li>
+              )
+            })}
+          </ul>
+          <div className="tab-content bg-dark mb-3" id="myTabContent">
+            <div className={`tab-pane fade ${selectedTab === 'posts' && 'show active'}`} id="posts" role="tabpanel" aria-labelledby="posts-tab">
+              <div className='tab p-3'>
+                <PostsList active={selectedTab === 'posts'} domain_name={domain} />
+              </div>
+            </div>
+            <div className={`tab-pane fade ${selectedTab === 'content-plan' && 'show active'}`} id="content-plan" role="tabpanel" aria-labelledby="content-plan-tab">
+              <div className='tab p-3'>
+                <PlansList active={selectedTab === 'content-plan'} domain_name={domain} />
+              </div>
+            </div>
+            <div className={`tab-pane fade ${selectedTab === 'bulk-generation' && 'show active'}`} id="bulk-generation" role="tabpanel" aria-labelledby="bulk-generation-tab">
+              <div className='tab p-3'>
+                <div className='mb-5'>
+                  <BulkPostComponent />
+                </div>
+                <hr />
+                <BulkContentPlanGenerator />
+              </div>
+            </div>
+          </div>
+        </div> :
+          <div className="strip-padding container-fluid container-xl d-flex align-items-center justify-content-center">
+            <h2 className='text-center text-primary'><TypeWriterText string="No domain selected" withBlink /></h2>
+          </div>}
+      </div>
+    </>
   )
 }
 

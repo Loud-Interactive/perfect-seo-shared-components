@@ -51,8 +51,8 @@ const BulkPostComponent = () => {
   const pullStatus = () => {
     getBatchStatus(itemGuids)
       .then(res => {
-        console.log(res)
-        setItems(res.data.map((item) => ({ ...item, guid: item.content_plan_outline_id })))
+        console.log(res.data)
+        setItems(res.data.map((item) => ({ ...item, guid: item.content_plan_outline_guid })))
       })
   }
   useEffect(() => {
@@ -68,14 +68,18 @@ const BulkPostComponent = () => {
 
   }, [itemGuids])
 
-  const updateBulkPosts = (items: IncomingPlanItemResponse[]) => {
+  const updateBulkPosts = (newItems: IncomingPlanItemResponse[]) => {
+    setLoading(true)
     supabase
       .from('profiles')
-      .update({ bulk_posts_guids: items.map((item) => item.guid) })
+      .update({ bulk_posts_guids: newItems.map((item: any) => item.guid || item?.content_plan_outline_guid) })
       .eq('email', user?.email)
       .select('*')
       .then(res => {
-        setItems(res.data[0].bulk_posts)
+        if (res.data) {
+          setItemGuids(res.data[0].bulk_posts_guids)
+          setLoading(false)
+        }
       })
   }
 
@@ -89,7 +93,7 @@ const BulkPostComponent = () => {
     let newItems = [
       ...items.slice(0, idx),
       ...items.slice(idx + 1),
-    ];
+    ]
     updateBulkPosts(newItems)
   }
 
@@ -146,7 +150,7 @@ const BulkPostComponent = () => {
             .eq('email', user?.email || profile?.email)
             .select('*')
             .then(res => {
-              console.log(res)
+
             })
         })
 
@@ -217,7 +221,7 @@ const BulkPostComponent = () => {
       </div>
 
       <div className='col-12'>
-        <div className='row d-flex align-items-end justify-content-between g-3'>
+        <div className='row d-flex align-items-end justify-content-between g-3 mb-1 px-1'>
           <h4 className='col mb-0 text-white'>Bulk Posts</h4>
           {items.length > 0 && <div className='col-auto'>
             <a className='text-primary' onClick={toggleShowItems}>{showItems ? 'Hide Items' : 'Show Items'}</a>
@@ -235,7 +239,7 @@ const BulkPostComponent = () => {
             </li>
             {items.map((item, idx) => {
               return (
-                <PostStatusItem item={item} guid={item?.guid} key={idx} deletePost={deletePost} idx={idx} />
+                <PostStatusItem item={item} guid={item?.guid} key={idx} deletePost={deletePost} idx={idx} loading={loading} />
               )
             })}
           </ul> : null :

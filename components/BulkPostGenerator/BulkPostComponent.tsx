@@ -48,6 +48,25 @@ const BulkPostComponent = () => {
 
   }, [profile?.bulk_posts_guids])
 
+  const pullStatus = () => {
+    getBatchStatus(itemGuids)
+      .then(res => {
+        console.log(res)
+        setItems(res.data.map((item) => ({ ...item, guid: item.content_plan_outline_id })))
+      })
+  }
+  useEffect(() => {
+    let interval;
+    if (itemGuids) {
+
+      pullStatus()
+      interval = setInterval(() => {
+        pullStatus()
+      }, 5000)
+    }
+    return () => clearInterval(interval)
+
+  }, [itemGuids])
 
   const updateBulkPosts = (items: IncomingPlanItemResponse[]) => {
     supabase
@@ -206,16 +225,19 @@ const BulkPostComponent = () => {
 
         </div>
         {
-          items?.length > 0 ? showItems ? <ul className='clear-list-properties row g-3 px-2'>
-            <li className="card p-3 bg-primary d-none d-md-block">
+          items?.length > 0 ? showItems ? <ul className='clear-list-properties row g-1 px-2'>
+            <li className="card px-3 py-1 bg-primary d-none d-md-block">
               <div className="row d-flex align-items-center justify-content-between">
                 <div className="capitalize col-12 col-md-3">Title</div>
-                <div className="capitalize col-12 col-md-3">Domain</div>  <div className="capitalize col-12 col-md-6">Status</div>
+                <div className="capitalize col-12 col-md-3">Domain</div>
+                <div className="capitalize col-12 col-md-6 text-end">Status</div>
               </div>
             </li>
-            {items.map((item, idx) => (
-              <PostStatusItem item={item} guid={item?.guid} key={idx} deletePost={deletePost} idx={idx} />
-            ))}
+            {items.map((item, idx) => {
+              return (
+                <PostStatusItem item={item} guid={item?.guid} key={idx} deletePost={deletePost} idx={idx} />
+              )
+            })}
           </ul> : null :
             <div className='card p-3 bg-secondary'>
               <span>No bulk posts were found</span>

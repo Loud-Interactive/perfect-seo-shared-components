@@ -103,7 +103,10 @@ const useGoogleUser = (appKey) => {
           }
         }
         else if (res?.data?.length === 0) {
-          let profileObj = { email: user.email }
+          let profileObj: any = { email: user.email }
+          if (user.email.includes("atidiv") || user.email.includes('loud.us')) {
+            profileObj = { ...profileObj, admin: true }
+          }
           supabase
             .from('profiles')
             .insert(profileObj)

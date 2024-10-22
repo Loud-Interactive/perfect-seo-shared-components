@@ -16,6 +16,11 @@
     font-size: 16px;
     resize: none;
     width: 100%;
+    background-color: var(--bs-body-bg);
+    background-clip: padding-box;
+    border: var(--bs-border-width) solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius);
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 
     &_button {
       padding-right: 55px;

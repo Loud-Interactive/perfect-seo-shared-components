@@ -32,6 +32,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
   const [selected, setSelected] = useState(null)
   const [domains, setDomains] = useState([])
   const [reverify, setReverify] = useState(false)
+  const [dataTracked, setDataTracked] = useState(false)
 
   const { fetchAllDomains } = useGoogleUser(en.product)
 

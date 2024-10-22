@@ -2,14 +2,13 @@
 import { RootState } from '@/perfect-seo-shared-components/lib/store'
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from 'react'
-import { setAdmin, setLoading, setLoggedIn, setProfile, setUser } from '@/perfect-seo-shared-components/lib/features/User'
+import { setAdmin, setLoading, setLoggedIn, setProfile, setUser, setUserSettings } from '@/perfect-seo-shared-components/lib/features/User'
 import { createClient } from '@/perfect-seo-shared-components/utils/supabase/client'
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 import { urlSanitization } from '../utils/conversion-utilities';
 import { useSession } from 'next-auth/react';
-import en from '@/assets/en.json';
-import Google from 'next-auth/providers/google';
+import { SettingsProps } from '../data/types';
 const useGoogleUser = (appKey) => {
   const { user, isLoggedIn, profile } = useSelector((state: RootState) => state);
   const [token, setToken] = useState(null)
@@ -19,6 +18,54 @@ const useGoogleUser = (appKey) => {
 
   const { data: session, status } = useSession()
 
+  const getSettings = () => {
+    supabase
+      .from('settings')
+      .select("*")
+      .eq('email', user.email)
+      .select()
+      .then(res => {
+        if (res?.data && res?.data?.length > 0) {
+          if (res?.data[0]) {
+            dispatch(setUserSettings(res.data[0]))
+          }
+        }
+        else if (res?.data?.length === 0) {
+          let settingsObj = { email: user.email }
+          supabase
+            .from('settings')
+            .insert(settingsObj)
+            .select("*")
+            .then(res => {
+              if (!res.error) {
+
+              }
+            })
+        }
+      })
+  }
+
+
+  useEffect(() => {
+    let settingsChannel;
+    if (profile?.email && isLoggedIn) {
+      getSettings()
+      settingsChannel = supabase.channel('settings-channel')
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'settings', filter: `email=eq.${profile?.email}` },
+          (payload) => {
+            dispatch(setUserSettings(payload.new as SettingsProps))
+          }
+        )
+        .subscribe()
+    }
+    return () => {
+      if (settingsChannel) {
+        settingsChannel.unsubscribe()
+      }
+    }
+  }, [profile, isLoggedIn])
 
   //set status based on loading of session
   useEffect(() => {
@@ -52,10 +99,10 @@ const useGoogleUser = (appKey) => {
 
   //Checks User Domains
   useEffect(() => {
-    if (token && user?.email) {
+    if (token) {
       checkUserDomains();
     }
-  }, [token, user?.email])
+  }, [token, user])
 
   // updates product use 
   const updateProducts = () => {
@@ -210,7 +257,7 @@ const useGoogleUser = (appKey) => {
         supabase
           .from('profiles')
           .update(profileObj)
-          .eq('email', user?.email)
+          .eq('email', user?.email || profile?.email)
           .select("*")
           .then(res => {
           })
@@ -235,7 +282,7 @@ const useGoogleUser = (appKey) => {
             dispatch(setProfile(profileObj));
           })
       }
-      profiles = supabase.channel('custom-filter-channel')
+      profiles = supabase.channel('profile-channel')
         .on(
           'postgres_changes',
           { event: '*', schema: 'public', table: 'profiles', filter: `email=eq.${user?.email}` },

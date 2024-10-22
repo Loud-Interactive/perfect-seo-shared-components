@@ -26,11 +26,11 @@ const FormField = ({
     'formField_bottomSpacing': bottomSpacing,
   });
 
-  const labelNode = (
+  const labelNode = label ? (
     <label className="formField-label" htmlFor={fieldName} key={`${fieldName}-label`}>
       {label}
     </label>
-  );
+  ) : null;
 
   const childrenNode = (
     <React.Fragment key={`${fieldName}-children`}>{children}</React.Fragment>

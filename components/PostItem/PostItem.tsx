@@ -75,6 +75,7 @@ const PostItem = ({ post, refresh }) => {
         if (res.data.status) {
           if (res.data.status !== status) {
             setStatus(res.data.status);
+            setLocalPost(res.data)
           }
           else if (completedStatus.includes(res.data.status)) {
             setStatus(res.data.status)
@@ -207,13 +208,13 @@ const PostItem = ({ post, refresh }) => {
                   </a>
                 </>}
               <>
-                <Link
+                {localPost?.content_plan_guid && <Link
                   href={`https://contentPerfect.ai/dashboard/${localPost?.content_plan_guid}`}
                   title="View Content Plan"
                   className="btn btn-warning btn-standard d-flex justify-content-center align-items-center"
                 >
                   <i className="bi bi-eye-fill me-1" />     <span className="d-none d-lg-block"> View Content Plan</span>
-                </Link>
+                </Link>}
 
                 <button className='btn btn-primary btn-standard d-flex justify-content-center align-items-center' onClick={deleteClickHandler} title={`View GUID: ${localPost?.guid}`}><i className="bi bi-trash pt-1" /></button>
                 {
@@ -258,7 +259,7 @@ const PostItem = ({ post, refresh }) => {
                       </DropdownMenu.Content>
                     </DropdownMenu.Portal>
                   </DropdownMenu.Root>}
-                {(!showUrl && !post?.live_post_url) &&
+                {(!showUrl && !post?.live_post_url && completedStatus.includes(status)) &&
                   <button className="btn btn-warning btn-standard" onClick={() => { setShowUrl(true) }} title="Add Live Url"><i className="bi bi-link" /></button>}
               </>
             </div>

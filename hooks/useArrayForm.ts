@@ -113,7 +113,7 @@ export default function useArrayForm(form): ArrayFormController {
         }
       });
 
-      return newArray;
+      return newArray.filter((obj) => obj !== undefined);
     } else return [];
   }, [config, objectData]);
 

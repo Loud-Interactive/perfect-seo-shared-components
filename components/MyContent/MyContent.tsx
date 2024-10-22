@@ -14,13 +14,15 @@ import Loader from '@/perfect-seo-shared-components/components/Loader/Loader'
 import { createClient } from '@/perfect-seo-shared-components/utils/supabase/client'
 import { urlSanitization } from '@/perfect-seo-shared-components/utils/conversion-utilities';
 import BulkContentPlanGenerator from '../BulkContentGenerator/BulkContentGenerator';
-import BulkPostGenerator from '../BulkPostGenerator/BulkPostGenerator';
+import BulkPostComponent from '../BulkPostGenerator/BulkPostComponent';
+import CheckGoogleDomains from '../CheckGoogleDomains/CheckGoogleDomains';
+import useGoogleUser from '@/perfect-seo-shared-components/hooks/useGoogleUser';
 export interface MyContentProps {
   currentDomain?: string;
   hideTitle?: boolean;
 }
 const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
-  const { user, isAdmin, isLoading, isLoggedIn, profile } = useSelector((state: RootState) => state);
+  const { user, isAdmin, isLoading, isLoggedIn, profile, settings } = useSelector((state: RootState) => state);
   const [selectedTab, setSelectedTab] = useState('posts')
   const searchParams = useSearchParams();
   const queryParam = searchParams.get('tab');
@@ -29,9 +31,36 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
   const [domain, setDomain] = useState(currentDomain || null)
   const [selected, setSelected] = useState(null)
   const [domains, setDomains] = useState([])
+  const [reverify, setReverify] = useState(false)
+
+  const { fetchAllDomains } = useGoogleUser(en.product)
+
+  const isDefaultDomain = useMemo(() => {
+    let bool = false;
+    if (settings?.global?.defaultDomain) {
+      if (selected?.value === settings?.global?.defaultDomain) {
+        bool = true
+      }
+    }
+    return bool
+  }, [settings, selected])
+
+  const addDefaultHandler = (e) => {
+    e.preventDefault();
+    let global = settings?.global || {}
+    supabase
+      .from('settings')
+      .update({ global: { ...global, defaultDomain: selected?.value } })
+      .eq('email', user.email)
+      .select("*")
+      .then(res => {
+        if (!res.error) {
+          console.log(res.data)
+        }
+      })
+  }
 
   useEffect(() => {
-
     if (user?.email && domain) {
       supabase
         .from('user_history')
@@ -129,7 +158,16 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
         return ({ label: domain, value: domain })
       })
     }
-    return list;
+    if (list?.length > 0) {
+      return list.reduce((acc, current) => {
+        if (!acc.find(item => item.value === current.value)) {
+          return [...acc, current]
+        }
+        else {
+          return acc
+        }
+      }, [])
+    } else return list
 
   }, [profile?.domain_access, domains, isAdmin])
 
@@ -139,13 +177,19 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
       setDomain(currentDomain)
       setSelected({ label: currentDomain, value: currentDomain })
     } else if (domainsList?.length > 0) {
-      setDomain(domainsList[0]?.value)
-      setSelected(domainsList[0])
+      if (settings?.global?.defaultDomain) {
+        setDomain(settings.global.defaultDomain)
+        setSelected({ label: settings.global.defaultDomain, value: settings.global.defaultDomain })
+      }
+      else {
+        setDomain(domainsList[0]?.value)
+        setSelected(domainsList[0])
+      }
     }
-  }, [domainsList, currentDomain, profile])
+  }, [domainsList, currentDomain, profile, settings])
 
   const isAuthorized = useMemo(() => {
-    let bool = false;
+    let bool = true;
     if (isAdmin) {
       bool = true
     } else if (profile?.domains?.length > 0) {
@@ -163,16 +207,21 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
 
 
     }
-    if (bool === false && user?.email && (currentDomain || selected?.value)) {
+    else {
+      bool = false
+    }
+    if (bool === false && user?.email && (currentDomain || selected?.value) && (domainsList || profile?.domain_access)) {
       supabase
         .from('user_history')
         .insert({ email: user.email, domain: currentDomain || selected?.value, transaction_data: { domains: domainsList || profile?.domain_access }, product: en.product, type: "Unauthorized My Content" })
         .select('*')
         .then(res => {
+          fetchAllDomains()
         })
     }
     return bool
-  }, [user, isAdmin, currentDomain, selected, domainsList, profile?.domains])
+  }, [user?.email, isAdmin, currentDomain, selected, domainsList, profile?.domains])
+
 
 
   useEffect(() => {
@@ -190,8 +239,16 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
   }
   else if (!isAuthorized) {
     return (
-      <div className="container-fluid container-xl strip-padding d-flex align-items-center">
-        <h1 className="text-3xl font-bold text-center mb-3"><TypeWriterText string={isLoggedIn ? `You are not authorized to view content for ${currentDomain || selected?.value || 'this domain'}` : 'Log in to view your content'} withBlink /></h1>
+      <div className="container-fluid container-xl strip-padding">
+        <div className='row d-flex align-items-center justify-content-center'>
+          <h1 className="text-3xl font-bold text-center mb-3"><TypeWriterText string={isLoggedIn ? `You are not authorized to view content for ${currentDomain || selected?.value || 'this domain'}` : 'Log in to view your content'} withBlink /></h1>
+          <div className='col-12 col-lg-8 mt-3 d-flex justify-content-center'>
+            {reverify ?
+              <CheckGoogleDomains />
+              :
+              <button onClick={() => setReverify(true)} className='btn btn-primary'>Re-verify Domain Access</button>}
+          </div>
+        </div>
       </div>
     )
   }
@@ -199,15 +256,17 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
     <div className='container-xl content-fluid'>
       {!hideTitle && <div className='row d-flex justify-content-between'>
         <div className='col'>
-          <h1 className="text-3xl font-bold text-start mb-5"><TypeWriterText string={selectedTab === 'bulk-generation' ? 'Upload for all domains' : selected ? `Content for ${domain}` : 'Select a domain to begin'} withBlink /></h1>
+          <h1 className="text-start mb-5"><TypeWriterText string={selectedTab === 'bulk-generation' ? 'Upload for all domains' : selected ? `Content for ${domain}` : 'Select a domain to begin'} withBlink /></h1>
         </div>
         {(!currentDomain && profile?.domain_access?.length > 0 && selectedTab !== 'bulk-generation') && <div className='col-12 col-md-4 mb-3'>
           <SearchSelect
             onChange={searchUserChangeHandler}
             options={domainsList}
             value={selected}
+            isClearable={false}
             placeholder="Select a Domain"
           />
+          {!isDefaultDomain && <a className='text-primary mt-2' onClick={addDefaultHandler}>Make Default</a>}
         </div>}
       </div>}
       {selected ? <div className={styles.tabWrap}>
@@ -238,8 +297,9 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
           <div className={`tab-pane fade ${selectedTab === 'bulk-generation' && 'show active'}`} id="bulk-generation" role="tabpanel" aria-labelledby="bulk-generation-tab">
             <div className='tab p-3'>
               <div className='mb-5'>
-                <BulkPostGenerator />
+                <BulkPostComponent />
               </div>
+              <hr />
               <BulkContentPlanGenerator />
             </div>
           </div>

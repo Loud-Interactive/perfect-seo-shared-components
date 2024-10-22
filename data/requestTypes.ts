@@ -139,3 +139,12 @@ export interface SocialPost extends SocialPostCreate {
   id: string;
   created_date: string;
 }
+
+export interface GenerateSocialPostProps {
+  uuid: string,
+  target_domain: string,
+  client_name: string,
+  post_url: string,
+  platform: string,
+  post_content: string
+}

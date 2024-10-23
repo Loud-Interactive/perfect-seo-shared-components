@@ -102,7 +102,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
     { key: "bulk-generation", title: "Bulk Generation" },
   ]
 
-  const searchUserChangeHandler = (e) => {
+  const searchDomainChangeHandler = (e) => {
     if (e) {
       setDomain(e?.value);
       setSelected(e)
@@ -290,7 +290,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
             </div>
             {(profile?.domain_access?.length > 0 && selectedTab !== 'bulk-generation') && <div className='col-12 col-md-4 mb-3'>
               <SearchSelect
-                onChange={searchUserChangeHandler}
+                onChange={searchDomainChangeHandler}
                 options={domainsList}
                 value={selected}
                 isClearable={false}

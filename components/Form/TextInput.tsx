@@ -53,6 +53,7 @@ const TextInput = ({
     [`${inputClass}_bottomSpacing`]: bottomSpacing,
     [`${inputClass}_button`]: props.button,
     [`${className}`]: className,
+    'd-none': (props.hidden || props.disabled || props.readOnly) && type === "url"
   });
 
   const ariaProps = {

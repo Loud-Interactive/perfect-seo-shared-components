@@ -195,6 +195,10 @@ const BulkPostComponent = () => {
               <a className='text-primary' href="https://docs.google.com/spreadsheets/d/1ImKmOBeFWHCkKcEhpaE7ZHvWfTA0JFcnF1GTtuRMQ7s/copy" target="_blank">
                 <small>Get Google Sheets Template</small>
               </a>
+              <span className='mx-1'>|</span>
+              <a className='text-primary' href="https://www.youtube.com/watch?v=VAwiZCcKRuM" target="_blank">
+                <small>View Tutorial</small>
+              </a>
             </form>
           </div>
           <div className='col-2 col-lg-4 d-flex justify-content-end'>

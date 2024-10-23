@@ -119,7 +119,7 @@ const ListInput = ({
 
             }
             return (
-              <li key={idx} className='d-flex align-items-center col-6 pe-4'>
+              <li key={idx} className='d-flex align-items-center col-12 col-lg-6 pe-4'>
                 {props?.disabled ? <i className="bi bi-dash" /> : <button onClick={deleteItemHandler} className='btn btn-transparent'><i className="bi bi-x text-primary" /></button>}
                 <span className='pb-1 text-wrap w-100'>{val}
                 </span>
@@ -139,9 +139,7 @@ const ListInput = ({
             onKeyDown={handleInputKeyDown}
             onChange={changeAddOnHandler}
           />
-          <div className='input-button'>
-            <button className="btn btn-primary" type="button" disabled={!addOn} onClick={handleAdd}><i className="bi bi-plus" /></button>
-          </div>
+          <button className="btn btn-primary input-group-append" type="button" disabled={!addOn} onClick={handleAdd}><i className="bi bi-plus" /></button>
         </div>}
         <input
           type={type}

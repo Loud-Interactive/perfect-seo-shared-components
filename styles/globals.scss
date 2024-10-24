@@ -5010,3 +5010,23 @@ button.input-group-append {
   box-sizing: border-box;
   border: 2px solid $primary;
 }
+
+.text-lower {
+  text-transform: lowercase;
+}
+
+.sticky {
+  position: sticky;
+  top: 8px;
+}
+
+.relative {
+  position: relative;
+}
+
+.button-bar-group {
+  button {
+    min-height: 2em;
+    width: 100%;
+  }
+}

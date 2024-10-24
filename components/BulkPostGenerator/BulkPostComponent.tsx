@@ -219,7 +219,7 @@ const BulkPostComponent = () => {
       </div>
 
       <div className='col-12'>
-        <div className='row d-flex align-items-end justify-content-between g-3 mb-1 px-1'>
+        <div className='d-flex justify-content-between align-items-center my-3'>
 
           <h4 className='col mb-0 text-white'>Bulk Posts</h4>
           {items?.length > 0 && <div className='d-flex align-items-center'>

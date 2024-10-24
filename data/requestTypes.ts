@@ -37,7 +37,7 @@ export interface PostOutlineGenerateRequest {
   post_title: string,
   client_name: string,
   client_domain: string,
-
+  writing_language?: string
 }
 
 export interface GenerateContentPost {

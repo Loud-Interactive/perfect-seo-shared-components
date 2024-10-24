@@ -134,15 +134,20 @@ export const regenerateOutline = (
   post_title,
   client_domain,
   client_name,
+  other?
 ) => {
+  let reqObj = {
+    content_plan_guid: content_plan_guid,
+    post_title: post_title,
+    client_domain: client_domain,
+    client_name: client_name,
+  }
+  if (other) {
+    reqObj = { ...reqObj, ...other }
+  }
   return axiosInstance.post(
     `${API_URL}/regenerate_outline`,
-    {
-      content_plan_guid: content_plan_guid,
-      post_title: post_title,
-      client_domain: client_domain,
-      client_name: client_name,
-    },
+    reqObj,
     {
       headers: {
         "Content-Type": "application/json",

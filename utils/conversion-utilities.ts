@@ -87,7 +87,8 @@ export const convertFormDataToOutgoing = (data: ContentRequestFormProps): Conten
     inspiration_url_2: data?.url2,
     priority2: data?.priority2,
     inspiration_url_3: data?.url3,
-    priority3: data?.priority3
+    priority3: data?.priority3,
+    writing_language: data?.writing_language
   })
 
 }
@@ -106,7 +107,8 @@ export const convertIncomingToFormData = (data: ContentIncomingProps) => {
       url2: data?.inspiration_url_2,
       priority2: data?.priority2,
       url3: data?.inspiration_url_3,
-      priority3: data?.priority3
+      priority3: data?.priority3,
+      writing_language: data?.writing_language
     }
   )
 }

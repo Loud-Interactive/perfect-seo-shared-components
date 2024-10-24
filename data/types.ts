@@ -113,7 +113,8 @@ export interface ContentRequestFormProps {
   url2?: string,
   priority2?: 'high' | 'medium' | 'low'
   url3?: string,
-  priority3?: 'high' | 'medium' | 'low'
+  priority3?: 'high' | 'medium' | 'low',
+  writing_language?: string
 }
 
 export interface ContentIncomingProps {
@@ -129,6 +130,7 @@ export interface ContentIncomingProps {
   priority2?: 'high' | 'medium' | 'low'
   inspiration_url_3?: string,
   priority3?: 'high' | 'medium' | 'low'
+  writing_language?: string
 }
 
 export enum FormSteps {

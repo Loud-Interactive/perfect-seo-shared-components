@@ -38,7 +38,7 @@
     display: flex;
     justify-content: space-between;
 
-    @include Tablet {
+    @include Desktop {
       &:hover {
         .synopsisUpdate {
           opacity: 100;
@@ -50,7 +50,7 @@
   &Update {
     color: $primary !important;
 
-    @include Tablet {
+    @include Desktop {
       opacity: 0;
     }
   }

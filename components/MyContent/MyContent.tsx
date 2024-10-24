@@ -271,12 +271,21 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
             <div className='row d-flex justify-content-between g-3'>
               {synopsis?.logo_url && <div className='col-12 col-lg-3'>
                 <div className="card p-3 bg-secondary h-100 d-flex align-items-center justify-content-center">
-                  <img src={synopsis?.logo_url} className='w-100' />
+                  <div className={styles.logoWrap}>
+                    <img src={synopsis?.logo_url} className='w-75' />
+                    <div className={styles.logoUpdate}>
+                      <a href={`https://preferencesperfect.ai/domain/${domain}?tab=brand-identity`} className='text-primary' target='_blank'>Update Logo</a>
+                    </div>
+                  </div>
                 </div>
               </div>}
               <div className='col'>
                 <h1 className="text-start mb-1"><TypeWriterText string={`Content for ${synopsis?.brand_name || domain}`} withBlink /></h1>
-                <p className='card p-3 mb-0'><strong>Synopsis</strong>{synopsis?.synopsis}</p>
+                <div className='card p-3'>
+                  <div className={styles.synopsisHeader}>
+                    <strong>Synopsis</strong>            <a href={`https://preferencesperfect.ai/domain/${domain}`} className={styles.synopsisUpdate} target='_blank'>Update Synopsis</a>
+                  </div>
+                  <p className='mb-0'>{synopsis?.synopsis}</p></div>
               </div>
             </div>
           </div>

@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react"
 import styles from './TypeWriterText.module.scss'
 import { useIntersectionObserver } from 'usehooks-ts'
+import { on } from "events";
 
 interface TypeWriterText {
   string: string;
@@ -22,7 +23,7 @@ const TypeWriterText = ({ string, withBlink = true, loop = false, onIntersect = 
     let speed = 60;
     let interval;
     let index = 0
-    if (string && (isIntersecting && onIntersect)) {
+    if (string && ((isIntersecting && onIntersect) || !onIntersect)) {
       interval = setInterval(() => {
         if (index < string.length) {
           index++

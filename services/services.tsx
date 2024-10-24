@@ -301,5 +301,10 @@ export const generateSocialPost = async (reqObj: Request.GenerateSocialPostProps
   );
 
 }
+export const regenerateSocialPost = async (guid, platform) => {
+  return axiosInstance.post(`https://socialperfectapi.replit.app/regenerate_post/${guid}/${platform}`
+  );
+
+}
 
 

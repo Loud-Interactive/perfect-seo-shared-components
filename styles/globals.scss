@@ -5023,3 +5023,10 @@ button.input-group-append {
 .relative {
   position: relative;
 }
+
+.button-bar-group {
+  button {
+    min-height: 2em;
+    width: 100%;
+  }
+}

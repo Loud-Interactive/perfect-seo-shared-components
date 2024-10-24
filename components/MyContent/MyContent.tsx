@@ -270,7 +270,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
           <div className='container-xl content-fluid py-3'>
             <div className='row d-flex justify-content-between g-3'>
               {synopsis?.logo_url && <div className='col-12 col-lg-3'>
-                <div className="card p-3 bg-white h-100 d-flex align-items-center justify-content-center">
+                <div className="card p-3 bg-secondary h-100 d-flex align-items-center justify-content-center">
                   <img src={synopsis?.logo_url} className='w-100' />
                 </div>
               </div>}

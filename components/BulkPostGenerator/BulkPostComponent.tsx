@@ -220,12 +220,13 @@ const BulkPostComponent = () => {
 
       <div className='col-12'>
         <div className='row d-flex align-items-end justify-content-between g-3 mb-1 px-1'>
+
           <h4 className='col mb-0 text-white'>Bulk Posts</h4>
-          {items.length > 0 && <div className='col-auto'>
-            <a className='text-white' onClick={toggleShowItems}>{showItems ? 'Hide Items' : 'Show Items'}</a>
-            {items.length > 0 && <div className='col-auto'>
+          {items?.length > 0 && <div className='d-flex align-items-center'>
+            <p className='mb-0'>
+              <a className='text-white' onClick={toggleShowItems}>{showItems ? 'Hide Items' : 'Show Items'}</a>
               <span className='badge rounded-pill text-bg-primary ms-3 mb-1'>{items.length}</span>
-            </div>}
+            </p>
           </div>}
 
         </div>

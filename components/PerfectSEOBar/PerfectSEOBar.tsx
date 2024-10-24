@@ -9,7 +9,8 @@ import useViewport from '@/perfect-seo-shared-components/hooks/useViewport';
 
 const PerfectSEOBar = ({ current }) => {
   const { desktop } = useViewport()
-  const rowClasses = classNames('row d-flex',
+
+  const rowClasses = classNames('row d-flex w-100',
     {
       'justify-content-between': desktop,
       'justify-content-center': !desktop

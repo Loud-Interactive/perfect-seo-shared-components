@@ -143,3 +143,11 @@
     color: white;
   }
 }
+
+.brandWrap {
+  justify-content: center;
+
+  @include Desktop {
+    justify-content: space-between;
+  }
+}

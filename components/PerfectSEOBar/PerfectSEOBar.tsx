@@ -1,4 +1,4 @@
-import { PerfectSEOLogo, SEOPerfectLogo } from '@/perfect-seo-shared-components/assets/brandIcons';
+import { SEOPerfectLogo } from '@/perfect-seo-shared-components/assets/brandIcons';
 import styles from './PerfectSEOBar.module.scss'
 import { renderIcon, renderLogo } from '@/perfect-seo-shared-components/utils/brandUtilities';
 import { Brands } from '@/perfect-seo-shared-components/assets/Brands';
@@ -11,10 +11,7 @@ const PerfectSEOBar = ({ current }) => {
   const { desktop } = useViewport()
 
   const rowClasses = classNames('row d-flex w-100',
-    {
-      'justify-content-between': desktop,
-      'justify-content-center': !desktop
-    },
+    { [styles.brandWrap]: true }
   )
   return (
     <div className="container-fluid container-xl">

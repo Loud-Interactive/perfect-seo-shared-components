@@ -169,9 +169,9 @@ const BulkPostComponent = () => {
     <div className='row d-flex justify-content-between align-items-start g-3'>
       <div className='d-flex justify-content-between align-items-center mt-3'>
         <h3 className='text-white mb-0'><TypeWriterText withBlink string="Bulk Post Generator" /></h3>
-        {items?.length > 0 && <div className='d-flex align-items-center'>
+        {itemGuids?.length > 0 && <div className='d-flex align-items-center'>
           <p className='mb-0'>
-            <span className='badge rounded-pill text-bg-primary ms-3 mb-1'>{items?.length}</span>
+            <span className='badge rounded-pill text-bg-primary ms-3 mb-1'>{itemGuids?.length}</span>
           </p>
         </div>}
       </div>

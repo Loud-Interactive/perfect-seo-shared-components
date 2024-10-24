@@ -28,7 +28,7 @@ const ContentStatusItem = ({ guid, deleteContent }) => {
 
   useEffect(() => {
     let interval;
-    if (guid && !error && status !== "Finished") {
+    if (guid && status !== "Finished") {
       pullStatus()
       interval = setInterval(() => {
         pullStatus()
@@ -36,7 +36,7 @@ const ContentStatusItem = ({ guid, deleteContent }) => {
     }
     return () => clearInterval(interval)
 
-  }, [guid, error, status])
+  }, [guid, status])
 
   return (
     <li key={guid} className="card p-3 bg-secondary">

@@ -35,7 +35,7 @@ const PerfectSEOBar = ({ current }) => {
       <div className={rowClasses}>
         {Brands.filter(brand => brand.title !== current && brand.status === BrandStatus.LIVE).map((brand: Brand) => {
           return (
-            <div className='col-4 col-md-3 col-lg-1' key={brand.title}>
+            <div className='col-sm-4 col-md-3 col-xl' key={brand.title}>
               <a href={brand.url} target="_blank" className={styles.brandTile} rel="noreferrer" key={brand.title}>
                 <div className={styles.brandTileHeader}>
                   <div className={styles.brandTileIcon}>

@@ -10,7 +10,7 @@ const Footer = ({ current }) => {
         <PerfectSEOBar current={current} />
       </div>
       <div className="container-fluid container-xl">
-        <div className="row">
+        <div className="row mx-0">
           <div className="col-md-12 text-center">
             {/* <p><a href="/terms-and-conditions" target="_blank">Terms &amp; Conditions</a></p> */}
             <p><a href="mailto:sales@contentperfect.ai">sales@contentperfect.ai</a></p>

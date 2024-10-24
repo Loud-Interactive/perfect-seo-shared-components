@@ -60,7 +60,8 @@ export interface GenerateContentPost {
   inspiration_url_2?: string,
   priority2?: 'high' | 'medium' | 'low'
   inspiration_url_3?: string,
-  priority3?: 'high' | 'medium' | 'low'
+  priority3?: 'high' | 'medium' | 'low',
+  writing_language?: string,
 }
 
 export interface ContentPlanPostRequest {

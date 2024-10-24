@@ -16,7 +16,6 @@ export type RootState = {
   isLoading: boolean,
   isLoggedIn: boolean,
   isAdmin: boolean
-  domain?: string;
   profile: any;
   settings: SettingsProps
 };
@@ -29,7 +28,7 @@ const initialState: RootState = {
   isLoggedIn: false,
   isAdmin: false,
   profile: null,
-  settings: null
+  settings: null,
 };
 
 export const UserSlice = createSlice({
@@ -78,12 +77,6 @@ export const UserSlice = createSlice({
         isAdmin: action.payload,
       };
     },
-    setDomain: (state, action: PayloadAction<string>) => {
-      return {
-        ...state,
-        domain: action.payload,
-      };
-    },
     reset: () => {
       return { ...initialState, isLoading: false }
     }
@@ -92,5 +85,5 @@ export const UserSlice = createSlice({
 });
 // Action creators are generated for each case reducer function
 
-export const { setUser, setProfile, updatePoints, setLoggedIn, setLoading, setAdmin, setDomain, reset, setUserSettings } = UserSlice.actions;
+export const { setUser, setProfile, updatePoints, setLoggedIn, setLoading, setAdmin, reset, setUserSettings } = UserSlice.actions;
 export default UserSlice.reducer;

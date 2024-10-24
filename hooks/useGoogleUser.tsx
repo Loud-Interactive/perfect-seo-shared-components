@@ -142,14 +142,17 @@ const useGoogleUser = (appKey) => {
       .eq('email', user.email)
       .select()
       .then(res => {
+
         if (res?.data && res?.data?.length > 0) {
           if (res?.data[0]) {
+            console.log("profile found", res.data[0])
             setUserData(res.data[0])
             dispatch(setAdmin(res.data[0]?.admin))
             dispatch(setProfile(res.data[0]))
           }
         }
         else if (res?.data?.length === 0) {
+          console.log("profile not found")
           let profileObj: any = { email: user.email }
           if (user.email.includes("atidiv") || user.email.includes('loud.us')) {
             profileObj = { ...profileObj, admin: true }
@@ -159,6 +162,7 @@ const useGoogleUser = (appKey) => {
             .insert(profileObj)
             .select("*")
             .then(res => {
+              console.log("profile insert", res)
               if (!res.error) {
                 setUserData(profileObj)
               }
@@ -169,10 +173,10 @@ const useGoogleUser = (appKey) => {
 
   // update user if email is available 
   useEffect(() => {
-    if (user?.email) {
+    if (user?.email && !profile) {
       updateUser()
     }
-  }, [user])
+  }, [user?.email, profile])
 
   // gets decoded token 
   function getDecodedAccessToken(token: string): any {

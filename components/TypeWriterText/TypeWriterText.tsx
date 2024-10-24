@@ -7,8 +7,9 @@ interface TypeWriterText {
   string: string;
   withBlink?: boolean;
   loop?: boolean;
+  onIntersect?: boolean;
 }
-const TypeWriterText = ({ string, withBlink, loop = false }: TypeWriterText) => {
+const TypeWriterText = ({ string, withBlink = true, loop = false, onIntersect = true }: TypeWriterText) => {
   const [text, setText] = useState(string)
   const [hiddenText, setHiddenText] = useState('')
   // only run when showing 
@@ -21,7 +22,7 @@ const TypeWriterText = ({ string, withBlink, loop = false }: TypeWriterText) => 
     let speed = 60;
     let interval;
     let index = 0
-    if (string && isIntersecting) {
+    if (string && (isIntersecting && onIntersect)) {
       interval = setInterval(() => {
         if (index < string.length) {
           index++

@@ -31,9 +31,28 @@ const BulkContentComponent = ({ active = true }) => {
   const form = useForm();
   const arrayForm = useArrayForm(form)
 
+  const clearGuids = () => {
+    supabase
+      .from('profiles')
+      .update({ bulk_content_guids: null })
+      .eq('email', user?.email)
+      .select('*')
+      .then(res => {
+        if (res.data) {
+          setItems(res.data[0].bulk_content)
+          setLoading(false)
+        }
+      })
+  }
   useEffect(() => {
-    if (profile?.bulk_content && active) {
-      setItems(profile.bulk_content)
+    if (active) {
+      if (profile?.bulk_content) {
+        setItems(profile.bulk_content)
+      } else if (profile?.bulk_content_guids) {
+        setItems(profile.bulk_content_guids.map((item, idx) => ({ target_keyword: '', domain_name: '', voice_url: '', outline_url: '', status: 'pending', idx, guid: item })))
+        updateBulkContent(profile.bulk_content_guids.map((item, idx) => ({ target_keyword: '', domain_name: '', voice_url: '', outline_url: '', status: 'pending', idx, guid: item })))
+        clearGuids()
+      }
     }
 
   }, [profile?.bulk_content, active])

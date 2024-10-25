@@ -18,13 +18,16 @@ export interface IncomingPlanItemResponse {
 
 const BulkContentPlanGenerator: React.FC = () => {
   const [tsvUrl, setTsvUrl] = useState<string>('');
-  const [items, setItems] = useState<string[]>([]);
+  const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const { user, profile } = useSelector((state: RootState) => state);
   const supabase = createClient()
   const [showItems, setShowItems] = useState<boolean>(true);
 
+  const updateContent = (objs: any[]) => {
+
+  }
   useEffect(() => {
     if (profile?.bulk_content_guids) {
       setItems(profile.bulk_content_guids)
@@ -126,7 +129,7 @@ const BulkContentPlanGenerator: React.FC = () => {
       {error && <p style={{ color: 'red' }}>{error}</p>}
       {showItems && items?.length > 0 && <ul className='clear-list-properties row g-3 px-2'>
         {items.map((item, idx) => (
-          <ContentStatusItem guid={item} key={`status-item-${idx}`} deleteContent={deleteContent} />
+          <ContentStatusItem item={item} guid={item.guid} key={`status-item-${idx}`} deleteContent={deleteContent} />
         ))}
       </ul>}
     </div >

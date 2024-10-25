@@ -75,6 +75,9 @@ const ListInput = ({
     else if (value.includes(", ")) {
       setValues(value?.split(", "))
     }
+    else if (value.includes(",")) {
+      setValues(value?.split(","))
+    }
     else if (value) {
       setValues([value])
     }

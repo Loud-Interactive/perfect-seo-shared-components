@@ -18,6 +18,7 @@ import BulkPostComponent from '../BulkPostGenerator/BulkPostComponent';
 import CheckGoogleDomains from '../CheckGoogleDomains/CheckGoogleDomains';
 import useGoogleUser from '@/perfect-seo-shared-components/hooks/useGoogleUser';
 import { getSynopsisInfo } from '@/perfect-seo-shared-components/services/services';
+import BulkContentComponent from '../BulkContentGenerator/BulkContentComponent';
 export interface MyContentProps {
   currentDomain?: string;
   hideTitle?: boolean;
@@ -342,7 +343,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
             </div>
             <div className={`tab-pane fade ${selectedTab === 'bulk-content' && 'show active'}`} id="bulk-cnotent" role="tabpanel" aria-labelledby="bulk-content-tab">
               <div className='tab p-3'>
-                <BulkContentPlanGenerator />
+                <BulkContentComponent />
               </div>
             </div>
             <div className={`tab-pane fade ${selectedTab === 'bulk-posts' && 'show active'}`} id="bulk-posts" role="tabpanel" aria-labelledby="bulk-posts-tab">

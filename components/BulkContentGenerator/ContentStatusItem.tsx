@@ -2,9 +2,8 @@ import { getPlanStatus, getPostStatus } from "@/perfect-seo-shared-components/se
 import { useEffect, useState } from "react";
 import TypeWriterText from "../TypeWriterText/TypeWriterText";
 
-const ContentStatusItem = ({ guid, deleteContent }) => {
+const ContentStatusItem = ({ item, guid, deleteContent }) => {
   const [status, setStatus] = useState('Processing');
-  const [item, setItem] = useState<any>(null);
   const [error, setError] = useState(null)
 
   const pullStatus = () => {
@@ -12,7 +11,6 @@ const ContentStatusItem = ({ guid, deleteContent }) => {
       if (res.data?.status) {
         console.log(res.data)
         setStatus(res.data.status)
-        setItem({ guid, ...res.data })
       } else {
         if (res.data[0]?.error) {
           setError(res.data[0]?.error)

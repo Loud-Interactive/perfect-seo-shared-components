@@ -122,10 +122,10 @@ const BulkContentComponent = ({ active = true }) => {
       .then(response => {
         setTsvUrl(null)
         form.setState({})
-        setItems(response.data);
-        setLoading(false);
         let newObj = profile?.bulk_content || []
-        newObj = [...newObj, response.data]
+        newObj = [...newObj, response.data[0]]
+        setItems(newObj);
+        setLoading(false);
         supabase
           .from('profiles')
           .update({

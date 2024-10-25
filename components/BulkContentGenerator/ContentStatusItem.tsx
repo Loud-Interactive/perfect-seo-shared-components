@@ -45,10 +45,10 @@ const ContentStatusItem = ({ item, deleteContent, idx }) => {
           :
           <>
             <div className="text-capitalize col-12 col-md-4"><span className="d-md-none text-primary me-1"><strong>Keyword</strong></span> {item?.target_keyword}</div>
-            <div className=" col-12 col-md-4"><span className="d-md-none text-primary me-1"><strong>Domain</strong></span> {item?.domain_name}</div>
-            <div className="col-12 col-md-4 d-flex align-items-center justify-content-end">
+            <div className="capitalize d-none d-lg-block col-4">{item?.domain_name}</div>
+            <div className="col-12 col-md-8 d-flex align-items-center justify-content-end">
               <div className="text-capitalize text-primary"><span className="d-md-none text-primary me-1"><strong>Status</strong></span><TypeWriterText withBlink string={status} /></div>
-              {status === 'Complete' && <button disabled={loading} className="btn btn-primary ms-3" onClick={e => {
+              {status === 'Finished' && <button disabled={loading} className="btn btn-primary ms-3" onClick={e => {
                 e.preventDefault();
                 deleteContent(idx)
               }}>
@@ -56,7 +56,7 @@ const ContentStatusItem = ({ item, deleteContent, idx }) => {
               </button>}
             </div></>}
       </div>
-    </li>
+    </li >
   )
 }
 

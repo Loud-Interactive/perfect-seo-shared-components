@@ -235,8 +235,8 @@ const BulkPostComponent = ({ active = true }) => {
             <ul className='clear-list-properties row g-1 px-2'>
               <li className="card px-3 py-1 bg-primary d-none d-md-block">
                 <div className="row d-flex align-items-center justify-content-between">
-                  <div className="capitalize col-12 col-md-3">Title</div>
-                  <div className="capitalize col-12 col-md-3">Domain</div>
+                  <div className="capitalize col-12 col-md-6 col-lg-4">Title</div>
+                  <div className="d-none d-lg-block col-4">Domain</div>
                   <div className="capitalize col-12 col-md-6 text-end">Status</div>
                 </div>
               </li>

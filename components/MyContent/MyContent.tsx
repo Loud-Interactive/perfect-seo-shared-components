@@ -304,7 +304,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
             <div className='col'>
               <h1 className="text-start mb-5"><TypeWriterText string={selectedTab === 'bulk-generation' ? 'Upload for all domains' : selected ? `Content for ${domain}` : 'Select a domain to begin'} withBlink /></h1>
             </div>
-            {(profile?.domain_access?.length > 0 && selectedTab !== 'bulk-generation') && <div className='col-12 col-md-4 mb-3'>
+            {(profile?.domain_access?.length > 0 && ['bulk-content', 'bulk-posts'].includes(selectedTab) === false) && <div className='col-12 col-md-4 mb-3'>
               <SearchSelect
                 onChange={searchDomainChangeHandler}
                 options={domainsList}

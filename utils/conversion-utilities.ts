@@ -113,3 +113,6 @@ export const convertIncomingToFormData = (data: ContentIncomingProps) => {
   )
 }
 
+export function text2Binary(text) {
+  return text.split('').map((char) => char.charCodeAt(0).toString(2)).join(' ');
+}

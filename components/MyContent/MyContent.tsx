@@ -343,12 +343,12 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
             </div>
             <div className={`tab-pane fade ${selectedTab === 'bulk-content' && 'show active'}`} id="bulk-cnotent" role="tabpanel" aria-labelledby="bulk-content-tab">
               <div className='tab p-3'>
-                <BulkContentComponent />
+                <BulkContentComponent active={selectedTab === 'bulk-content'} />
               </div>
             </div>
             <div className={`tab-pane fade ${selectedTab === 'bulk-posts' && 'show active'}`} id="bulk-posts" role="tabpanel" aria-labelledby="bulk-posts-tab">
               <div className='tab p-3'>
-                <BulkPostComponent />
+                <BulkPostComponent active={selectedTab === 'bulk-posts'} />
               </div>
             </div>
           </div>

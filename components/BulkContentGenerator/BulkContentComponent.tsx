@@ -10,20 +10,12 @@ import useForm from '@/perfect-seo-shared-components/hooks/useForm';
 import useArrayForm from '@/perfect-seo-shared-components/hooks/useArrayForm';
 import Form from '../Form/Form';
 import Loader from '../Loader/Loader';
-import { getBatchStatus } from '@/perfect-seo-shared-components/services/services';
 import BulkContentDraftItem from './BulkContentDraftItem';
 import ContentStatusItem from './ContentStatusItem';
 
-interface IncomingPlanItemResponse {
-  guid: string;
-  domain_name: string;
-  brand_name: string;
-  target_keyword: string;
-  email: string;
-  status?: string;
-}
 
-const BulkContentComponent = () => {
+
+const BulkContentComponent = ({ active = true }) => {
   const [tsvUrl, setTsvUrl] = useState<string>('');
   const [items, setItems] = useState<any[]>([]);
 
@@ -35,17 +27,16 @@ const BulkContentComponent = () => {
 
   const { user, profile } = useSelector((state: RootState) => state);
   const supabase = createClient();
-  const [tsv, setTsv] = useState(null)
   const [showItems, setShowItems] = useState<boolean>(true);
   const form = useForm();
   const arrayForm = useArrayForm(form)
 
   useEffect(() => {
-    if (profile?.bulk_content) {
+    if (profile?.bulk_content && active) {
       setItems(profile.bulk_content)
     }
 
-  }, [profile?.bulk_content])
+  }, [profile?.bulk_content, active])
 
 
   const updateBulkContent = (newItems) => {
@@ -88,7 +79,6 @@ const BulkContentComponent = () => {
         let tsv = d3.tsvParse(response.data)
         delete tsv.columns;
         arrayForm.setArrayState(tsv);
-        setTsv(tsv)
         setIsUploading(false)
       })
       .catch(err => {
@@ -106,27 +96,31 @@ const BulkContentComponent = () => {
     let newData = arrayForm.getArrayState
     // if (form.validate({ requiredFields: arrayForm.getRequiredFields, validatorFields: arrayForm.getValidatedFields })) {
     setLoading(true)
-    axiosInstance.post<ProcessTsvUrlResponse>(`https://planperfectapi.replit.app/process_tsv_from_file`, d3.tsvFormat(newData))
+    var blob = new Blob([d3.tsvFormat(newData, Object.keys(newData[0]))], { type: "text/tab-seperated-values" });
+    var file = new File([blob], "upload.tsv", { type: "text/tab-seperated-values" });
+
+    axiosInstance.post(`https://planperfectapi.replit.app/process_tsv_from_file`, { file }, { headers: { 'Content-Type': 'multipart/form-data' } })
       .then(response => {
         setTsvUrl(null)
         form.setState({})
-        console.log(response.data)
-
+        setItems(response.data);
+        setLoading(false)
         supabase
           .from('profiles')
-          .upsert({
+          .update({
             bulk_content: response.data
           })
           .eq('email', user?.email || profile?.email)
           .select('*')
           .then(res => {
-
+            console.log(res)
           })
       })
 
       .catch((err) => {
         setLoading(false);
-        setError(err?.response?.data?.detail || 'Error processing TSV file');
+        console.log()
+        setError(err.response.data.detail.map((item: any) => `${item.msg} : ${item.loc[1]}`) || 'Error processing TSV file');
       })
     // }
   }
@@ -202,14 +196,14 @@ const BulkContentComponent = () => {
             <ul className='clear-list-properties row g-1 px-2'>
               <li className="card px-3 py-1 bg-primary d-none d-md-block">
                 <div className="row d-flex align-items-center justify-content-between">
-                  <div className="capitalize col-12 col-md-3">Title</div>
-                  <div className="capitalize col-12 col-md-3">Domain</div>
-                  <div className="capitalize col-12 col-md-6 text-end">Status</div>
+                  <div className="capitalize col-12 col-md-4">Title</div>
+                  <div className="capitalize col-12 col-md-4">Domain</div>
+                  <div className="capitalize col-12 col-md-4">Status</div>
                 </div>
               </li>
               {items.map((item, idx) => {
                 return (
-                  <ContentStatusItem item={item} guid={item?.guid} key={idx} deleteContent={deletePost} />
+                  <ContentStatusItem idx={idx} item={item} key={idx} deleteContent={deletePost} />
                 )
               })}
             </ul>

@@ -23,7 +23,7 @@ interface IncomingPlanItemResponse {
   status?: string;
 }
 
-const BulkPostComponent = () => {
+const BulkPostComponent = ({ active = true }) => {
   const [tsvUrl, setTsvUrl] = useState<string>('');
   const [items, setItems] = useState<any[]>([]);
   const [itemGuids, setItemGuids] = useState<string[]>([]);
@@ -42,11 +42,11 @@ const BulkPostComponent = () => {
   const arrayForm = useArrayForm(form)
 
   useEffect(() => {
-    if (profile?.bulk_posts_guids) {
+    if (profile?.bulk_posts_guids && active) {
       setItemGuids(profile.bulk_posts_guids)
     }
 
-  }, [profile?.bulk_posts_guids])
+  }, [profile?.bulk_posts_guids, active])
 
   const pullStatus = () => {
     getBatchStatus(itemGuids)

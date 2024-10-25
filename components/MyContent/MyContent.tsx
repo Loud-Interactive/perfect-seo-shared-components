@@ -99,7 +99,8 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
   const TabData = [
     { key: "posts", title: "Generated Posts" },
     { key: "content-plan", title: "Content Plans" },
-    { key: "bulk-generation", title: "Bulk Generation" },
+    { key: "bulk-content", title: "Bulk Content" },
+    { key: "bulk-posts", title: "Bulk Posts" },
   ]
 
   const searchDomainChangeHandler = (e) => {
@@ -334,13 +335,14 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
                 <PlansList active={selectedTab === 'content-plan'} domain_name={domain} />
               </div>
             </div>
-            <div className={`tab-pane fade ${selectedTab === 'bulk-generation' && 'show active'}`} id="bulk-generation" role="tabpanel" aria-labelledby="bulk-generation-tab">
+            <div className={`tab-pane fade ${selectedTab === 'bulk-content' && 'show active'}`} id="bulk-cnotent" role="tabpanel" aria-labelledby="bulk-content-tab">
               <div className='tab p-3'>
-                <div className='mb-5'>
-                  <BulkPostComponent />
-                </div>
-                <hr />
                 <BulkContentPlanGenerator />
+              </div>
+            </div>
+            <div className={`tab-pane fade ${selectedTab === 'bulk-posts' && 'show active'}`} id="bulk-posts" role="tabpanel" aria-labelledby="bulk-posts-tab">
+              <div className='tab p-3'>
+                <BulkPostComponent />
               </div>
             </div>
           </div>

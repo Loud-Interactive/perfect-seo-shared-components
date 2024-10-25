@@ -96,6 +96,7 @@ const BulkContentPlanGenerator: React.FC = () => {
   return (
     <div>
       <div className='d-flex justify-content-between align-items-center my-3'>
+
         <h3 className='text-white'><TypeWriterText withBlink string="Bulk Content Plan Generator" /></h3>
         {items?.length > 0 && <div className='d-flex align-items-center'>
           <p className='mb-0'>

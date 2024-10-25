@@ -219,6 +219,7 @@ const BulkPostComponent = () => {
       </div>
 
       <div className='col-12'>
+        <hr />
         <div className='d-flex justify-content-between align-items-center my-3'>
           <h4 className='col mb-0 text-white'>Bulk Posts</h4>
           {items?.length > 0 && <div className='d-flex align-items-center'>
@@ -230,20 +231,23 @@ const BulkPostComponent = () => {
 
         </div>
         {
-          items?.length > 0 ? showItems ? <ul className='clear-list-properties row g-1 px-2'>
-            <li className="card px-3 py-1 bg-primary d-none d-md-block">
-              <div className="row d-flex align-items-center justify-content-between">
-                <div className="capitalize col-12 col-md-3">Title</div>
-                <div className="capitalize col-12 col-md-3">Domain</div>
-                <div className="capitalize col-12 col-md-6 text-end">Status</div>
-              </div>
-            </li>
-            {items.map((item, idx) => {
-              return (
-                <PostStatusItem item={item} guid={item?.guid} key={idx} deletePost={deletePost} idx={idx} loading={loading} />
-              )
-            })}
-          </ul> : null :
+          items?.length > 0 ? showItems ? <>
+            <ul className='clear-list-properties row g-1 px-2'>
+              <li className="card px-3 py-1 bg-primary d-none d-md-block">
+                <div className="row d-flex align-items-center justify-content-between">
+                  <div className="capitalize col-12 col-md-3">Title</div>
+                  <div className="capitalize col-12 col-md-3">Domain</div>
+                  <div className="capitalize col-12 col-md-6 text-end">Status</div>
+                </div>
+              </li>
+              {items.map((item, idx) => {
+                return (
+                  <PostStatusItem item={item} guid={item?.guid} key={idx} deletePost={deletePost} idx={idx} loading={loading} />
+                )
+              })}
+            </ul>
+            <hr />
+          </> : null :
             <div className='card p-3 bg-secondary'>
               <span>No bulk posts were found</span>
             </div>

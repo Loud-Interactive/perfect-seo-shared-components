@@ -123,11 +123,13 @@ const BulkContentComponent = ({ active = true }) => {
         setTsvUrl(null)
         form.setState({})
         setItems(response.data);
-        setLoading(false)
+        setLoading(false);
+        let newObj = profile?.bulk_content || []
+        newObj = [...newObj, response.data]
         supabase
           .from('profiles')
           .update({
-            bulk_content: response.data
+            bulk_content: newObj
           })
           .eq('email', user?.email || profile?.email)
           .select('*')

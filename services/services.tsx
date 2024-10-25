@@ -108,11 +108,15 @@ export const getPreviousPlans = (domain_name) => {
   return axiosInstance.get(`${API_URL}/incoming_plan_items_by_domain/${domain_name}`);
 };
 
-export const updateContentPlan = (guid, reqObj) => {
-  return axiosInstance.post(`${API_URL}/update_content_plan`, {
+export const updateContentPlan = (guid, reqObj, other?) => {
+  let reqBody = {
     guid,
     content_plan_table: reqObj,
-  });
+  }
+  if (other) {
+    reqBody = { ...other, ...reqBody }
+  }
+  return axiosInstance.post(`${API_URL}/update_content_plan`, reqBody);
 };
 
 export const createPost = (reqBody: Request.GenerateContentPost) => {

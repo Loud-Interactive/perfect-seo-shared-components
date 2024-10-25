@@ -198,7 +198,7 @@ const BulkContentComponent = ({ active = true }) => {
                 <div className="row d-flex align-items-center justify-content-between">
                   <div className="capitalize col-12 col-md-4">Title</div>
                   <div className="capitalize d-none d-lg-block col-4">Domain</div>
-                  <div className="capitalize col-12 col-md-8 text-end">Status</div>
+                  <div className="capitalize col-12 col-md-8 col-lg-4 text-end">Status</div>
                 </div>
               </li>
               {items.map((item, idx) => {

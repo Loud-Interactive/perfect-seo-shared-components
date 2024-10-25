@@ -237,7 +237,7 @@ const BulkPostComponent = ({ active = true }) => {
                 <div className="row d-flex align-items-center justify-content-between">
                   <div className="capitalize col-12 col-md-6 col-lg-4">Title</div>
                   <div className="d-none d-lg-block col-4">Domain</div>
-                  <div className="capitalize col-12 col-md-6 text-end">Status</div>
+                  <div className="capitalize col-12 col-md-6 text-end col-lg-4">Status</div>
                 </div>
               </li>
               {items.map((item, idx) => {

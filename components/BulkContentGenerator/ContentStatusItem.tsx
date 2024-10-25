@@ -5,16 +5,29 @@ import TypeWriterText from "../TypeWriterText/TypeWriterText";
 const ContentStatusItem = ({ item, deleteContent, idx }) => {
   const [status, setStatus] = useState('Processing');
   const [error, setError] = useState(null)
+  const [retry, setRetry] = useState(false)
   const [loading, setLoading] = useState(false)
   const { guid } = item;
   const pullStatus = () => {
     getPlanStatus(guid).then(res => {
       if (res.data?.status) {
-        console.log(res.data)
         setStatus(res.data.status)
       } else {
         if (res.data[0]?.error) {
           setError(res.data[0]?.error)
+          if (!retry) {
+            setRetry(true)
+            setTimeout(() => {
+              getPostStatus(guid).then(res => {
+                if (res.data?.status) {
+                  setStatus(res.data.status)
+                } else {
+                  setError(res.data[0]?.error)
+                }
+              })
+            }, 5000)
+          }
+
         }
       }
 

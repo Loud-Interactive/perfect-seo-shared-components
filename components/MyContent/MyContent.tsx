@@ -97,10 +97,10 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
   }, [queryParam])
 
   const TabData = [
-    { key: "posts", title: "Generated Posts" },
-    { key: "content-plan", title: "Content Plans" },
     { key: "bulk-content", title: "Bulk Content" },
+    { key: "content-plan", title: "Content Plans" },
     { key: "bulk-posts", title: "Bulk Posts" },
+    { key: "posts", title: "Generated Posts" },
   ]
 
   const searchDomainChangeHandler = (e) => {

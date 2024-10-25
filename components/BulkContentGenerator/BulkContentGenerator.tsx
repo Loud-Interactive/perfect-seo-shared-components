@@ -129,7 +129,7 @@ const BulkContentPlanGenerator: React.FC = () => {
       {error && <p style={{ color: 'red' }}>{error}</p>}
       {showItems && items?.length > 0 && <ul className='clear-list-properties row g-3 px-2'>
         {items.map((item, idx) => (
-          <ContentStatusItem item={item} guid={item.guid} key={`status-item-${idx}`} deleteContent={deleteContent} />
+          <ContentStatusItem item={item} idx={idx} key={`status-item-${idx}`} deleteContent={deleteContent} />
         ))}
       </ul>}
     </div >

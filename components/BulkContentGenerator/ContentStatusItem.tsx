@@ -13,19 +13,13 @@ const ContentStatusItem = ({ item, deleteContent, idx }) => {
       if (res.data?.status) {
         setStatus(res.data.status)
       } else {
-        if (res.data[0]?.error) {
+        if (res.data) {
           setError(res.data[0]?.error)
           if (!retry) {
             setRetry(true)
             setTimeout(() => {
-              getPostStatus(guid).then(res => {
-                if (res.data?.status) {
-                  setStatus(res.data.status)
-                } else {
-                  setError(res.data[0]?.error)
-                }
-              })
-            }, 5000)
+              pullStatus()
+            }, 10000)
           }
 
         }
@@ -34,6 +28,12 @@ const ContentStatusItem = ({ item, deleteContent, idx }) => {
     })
       .catch(err => {
         console.log(err)
+        if (!retry) {
+          setRetry(true)
+          setTimeout(() => {
+            pullStatus()
+          }, 10000)
+        }
         setError(err.response.data.message)
       })
   }
@@ -41,6 +41,7 @@ const ContentStatusItem = ({ item, deleteContent, idx }) => {
   useEffect(() => {
     let interval;
     if (guid && status !== "Finished") {
+      setRetry(false)
       pullStatus()
       interval = setInterval(() => {
         pullStatus()

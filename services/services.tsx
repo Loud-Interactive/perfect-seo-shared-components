@@ -109,13 +109,16 @@ export const getPreviousPlans = (domain_name) => {
 };
 
 export const updateContentPlan = (guid, reqObj, other?) => {
-  let reqBody = {
+  let reqBody: any = {
     guid,
     content_plan_table: reqObj,
   }
   if (other) {
     reqBody = { ...other, ...reqBody }
+    delete reqBody.content_plan_json
+    delete reqBody?.content_plan
   }
+
   return axiosInstance.post(`${API_URL}/update_content_plan`, reqBody);
 };
 

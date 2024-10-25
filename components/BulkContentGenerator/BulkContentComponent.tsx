@@ -162,7 +162,7 @@ const BulkContentComponent = ({ active = true }) => {
             <form>
               <div className='input-group mb-1'>
                 <input
-                  type="text"
+                  type="url"
                   value={tsvUrl}
                   onChange={(e) => setTsvUrl(e.target.value)}
                   placeholder="Enter TSV file URL"

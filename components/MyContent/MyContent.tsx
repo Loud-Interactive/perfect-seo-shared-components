@@ -92,7 +92,12 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
 
   useEffect(() => {
     if (queryParam) {
-      setSelectedTab(queryParam)
+      if (queryParam === 'bulk-generation') {
+        router.replace(pathname)
+      }
+      else {
+        setSelectedTab(queryParam)
+      }
     }
   }, [queryParam])
 

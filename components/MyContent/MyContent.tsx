@@ -13,7 +13,6 @@ import SearchSelect from '@/perfect-seo-shared-components/components/SearchSelec
 import Loader from '@/perfect-seo-shared-components/components/Loader/Loader'
 import { createClient } from '@/perfect-seo-shared-components/utils/supabase/client'
 import { urlSanitization } from '@/perfect-seo-shared-components/utils/conversion-utilities';
-import BulkContentPlanGenerator from '../BulkContentGenerator/BulkContentGenerator';
 import BulkPostComponent from '../BulkPostGenerator/BulkPostComponent';
 import CheckGoogleDomains from '../CheckGoogleDomains/CheckGoogleDomains';
 import useGoogleUser from '@/perfect-seo-shared-components/hooks/useGoogleUser';
@@ -343,12 +342,12 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
             </div>
             <div className={`tab-pane fade ${selectedTab === 'bulk-content' && 'show active'}`} id="bulk-cnotent" role="tabpanel" aria-labelledby="bulk-content-tab">
               <div className='tab p-3'>
-                <BulkContentComponent active={selectedTab === 'bulk-content'} />
+                <BulkContentComponent currentDomain={currentDomain} active={selectedTab === 'bulk-content'} />
               </div>
             </div>
             <div className={`tab-pane fade ${selectedTab === 'bulk-posts' && 'show active'}`} id="bulk-posts" role="tabpanel" aria-labelledby="bulk-posts-tab">
               <div className='tab p-3'>
-                <BulkPostComponent active={selectedTab === 'bulk-posts'} />
+                <BulkPostComponent currentDomain={currentDomain} active={selectedTab === 'bulk-posts'} />
               </div>
             </div>
           </div>

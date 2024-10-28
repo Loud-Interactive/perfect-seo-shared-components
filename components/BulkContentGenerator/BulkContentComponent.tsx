@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import TypeWriterText from '../TypeWriterText/TypeWriterText';
-import { ProcessTsvUrlResponse } from '@/perfect-seo-shared-components/data/requestTypes';
 import axiosInstance from '@/perfect-seo-shared-components/utils/axiosInstance';
 import { createClient } from '@/perfect-seo-shared-components/utils/supabase/client';
 import { useSelector } from 'react-redux';
@@ -14,8 +13,13 @@ import BulkContentDraftItem from './BulkContentDraftItem';
 import ContentStatusItem from './ContentStatusItem';
 
 
+interface BulkContentComponentProps {
+  active: boolean;
+  currentDomain?: string;
+}
 
-const BulkContentComponent = ({ active = true }) => {
+
+const BulkContentComponent = ({ active, currentDomain }: BulkContentComponentProps) => {
   const [tsvUrl, setTsvUrl] = useState<string>('');
   const [items, setItems] = useState<any[]>([]);
 
@@ -97,6 +101,17 @@ const BulkContentComponent = ({ active = true }) => {
       .then(response => {
         let tsv = d3.tsvParse(response.data)
         delete tsv.columns;
+        tsv = tsv.reduce((prev, post) => {
+
+          let newPost = { ...post, custom_outline: post['custom_outline'] === 'y' ? true : false }
+          if (post['domain_name'] === '' && currentDomain) {
+            newPost['domain_name'] = currentDomain
+          }
+          if (post['email'] === '' && user?.email) {
+            newPost['email'] = user?.email
+          }
+          return [...prev, newPost]
+        }, [])
         arrayForm.setArrayState(tsv);
         setIsUploading(false)
       })
@@ -164,7 +179,7 @@ const BulkContentComponent = ({ active = true }) => {
                 <input
                   type="url"
                   value={tsvUrl}
-                  onChange={(e) => setTsvUrl(e.target.value)}
+                  onChange={(e) => { e.preventDefault(); setTsvUrl(e.target.value) }}
                   placeholder="Enter TSV file URL"
                   required
                   className='form-control'

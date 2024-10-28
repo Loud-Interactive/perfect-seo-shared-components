@@ -23,7 +23,11 @@ interface IncomingPlanItemResponse {
   status?: string;
 }
 
-const BulkPostComponent = ({ active = true }) => {
+interface BulkPostComponentProps {
+  active: boolean;
+  currentDomain?: string;
+}
+const BulkPostComponent = ({ active, currentDomain }: BulkPostComponentProps) => {
   const [tsvUrl, setTsvUrl] = useState<string>('');
   const [items, setItems] = useState<any[]>([]);
   const [itemGuids, setItemGuids] = useState<string[]>([]);
@@ -106,7 +110,17 @@ const BulkPostComponent = ({ active = true }) => {
       .then(response => {
         let tsv = d3.tsvParse(response.data)
         delete tsv.columns;
-        tsv = tsv.map((post) => ({ ...post, custom_outline: post['custom_outline'] === 'y' ? true : false }))
+        tsv = tsv.reduce((prev, post) => {
+
+          let newPost = { ...post, custom_outline: post['custom_outline'] === 'y' ? true : false }
+          if (post['domain_name'] === '' && currentDomain) {
+            newPost['domain_name'] = currentDomain
+          }
+          if (post['email'] === '' && user?.email) {
+            newPost['email'] = user?.email
+          }
+          return [...prev, newPost]
+        }, [])
         arrayForm.setArrayState(tsv);
         setTsv(tsv)
         setIsUploading(false)

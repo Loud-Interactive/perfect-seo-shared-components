@@ -19,33 +19,14 @@ export type RootState = {
 
 
 const initialState: RootState = {
-  user: { email: '', name: '', image: '' },
+  user: null,
   points: 0,
   isLoading: true,
   isLoggedIn: false,
   isAdmin: false,
-  profile: {
-    id: '',
-    updated_at: '',
-    full_name: '',
-    avatar_url: '',
-    domains: [],
-    email: '',
-    products: [],
-    admin: null,
-    domain_access: [],
-    user_metadata: {},
-    factchecks: [],
-    bulk_posts_guids: [],
-    bulk_content_guids: [],
-    index_ids: [],
-    social_posts: [],
-    bulk_content: []
-  },
-  settings: {
-    global: null, contentPerfect: null
-  },
-  domainsInfo: []
+  profile: null,
+  settings: null,
+  domainsInfo: null
 };
 
 export const UserSlice = createSlice({

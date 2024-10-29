@@ -58,10 +58,10 @@ const BulkPostComponent = ({ active, currentDomain }: BulkPostComponentProps) =>
         setItems(res.data.map((item) => ({ ...item, guid: item.content_plan_outline_guid })))
       })
   }
+
   useEffect(() => {
     let interval;
-    if (itemGuids) {
-
+    if (itemGuids?.length > 0 && active) {
       pullStatus()
       interval = setInterval(() => {
         pullStatus()
@@ -69,7 +69,7 @@ const BulkPostComponent = ({ active, currentDomain }: BulkPostComponentProps) =>
     }
     return () => clearInterval(interval)
 
-  }, [itemGuids])
+  }, [itemGuids, active])
 
   const updateBulkPosts = (newItems: IncomingPlanItemResponse[]) => {
     setLoading(true)

@@ -42,7 +42,9 @@ const initialState: RootState = {
     social_posts: [],
     bulk_content: []
   },
-  settings: null,
+  settings: {
+    global: null, contentPerfect: null
+  },
   domainsInfo: []
 };
 

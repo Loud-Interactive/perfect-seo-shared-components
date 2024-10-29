@@ -2,13 +2,14 @@
 import { RootState } from '@/perfect-seo-shared-components/lib/store'
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from 'react'
-import { setAdmin, setLoading, setLoggedIn, setProfile, setUser, setUserSettings } from '@/perfect-seo-shared-components/lib/features/User'
+import { setAdmin, setDomains, setLoading, setLoggedIn, setProfile, setUser, setUserSettings } from '@/perfect-seo-shared-components/lib/features/User'
 import { createClient } from '@/perfect-seo-shared-components/utils/supabase/client'
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 import { urlSanitization } from '../utils/conversion-utilities';
 import { useSession } from 'next-auth/react';
 import { SettingsProps } from '../data/types';
+import { getSynopsisInfo } from '../services/services';
 const useGoogleUser = (appKey) => {
   const { user, isLoggedIn, profile } = useSelector((state: RootState) => state);
   const [token, setToken] = useState(null)
@@ -225,6 +226,23 @@ const useGoogleUser = (appKey) => {
       return null
     }
   }
+
+  useEffect(() => {
+
+    if (profile?.domain_access) {
+      let domains = profile.domain_access.map(({ siteUrl }) => urlSanitization(siteUrl))
+      Promise.allSettled(
+        domains.map(getSynopsisInfo)).then((results) => {
+          let domains = results.map((result: any, index) => {
+
+            return result?.value?.data
+          }
+          )
+          dispatch(setDomains(domains))
+        }
+        )
+    }
+  }, [profile?.domain_access])
 
   // checks user domains 
   const checkUserDomains = async () => {

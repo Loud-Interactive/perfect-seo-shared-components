@@ -227,12 +227,15 @@ const useGoogleUser = (appKey) => {
     }
   }
 
+  const retrieveSynopsisInfo = async (domain) => {
+    return getSynopsisInfo(domain, false)
+  }
   useEffect(() => {
 
     if (profile?.domain_access && !domainsInfo) {
       let domains = profile.domain_access.map(({ siteUrl }) => urlSanitization(siteUrl))
       Promise.allSettled(
-        domains.map(getSynopsisInfo)).then((results) => {
+        domains.map(retrieveSynopsisInfo)).then((results) => {
           let domains = results.map((result: any, index) => {
             return result?.value?.data
           }

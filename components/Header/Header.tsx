@@ -25,7 +25,7 @@ export interface HeaderProps {
   getCredits?: boolean;
 }
 const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProps) => {
-  const { isLoggedIn, user, isAdmin, points, isLoading } = useSelector((state: RootState) => state);
+  const { isLoggedIn, user, isAdmin, points, isLoading, profile } = useSelector((state: RootState) => state);
   const [open, setOpen] = useState(true)
   const router = useRouter()
   const dispatch = useDispatch()
@@ -64,6 +64,12 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
       loadCreditData(user.email)
     }
   }, [user, getCredits])
+
+  useEffect(() => {
+    if (profile) {
+      console.log(Object.keys(profile))
+    }
+  }, [profile])
 
   useGoogleUser(current)
 

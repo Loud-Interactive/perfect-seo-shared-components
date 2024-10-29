@@ -1,36 +1,49 @@
 "use client";
 
-import { SettingsProps } from "@/perfect-seo-shared-components/data/types";
+import { SettingsProps, GoogleUser, Profile } from "@/perfect-seo-shared-components/data/types";
+
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
-export interface User {
-  email: string,
-  image: string,
-  name: string,
-}
 
 export type RootState = {
-  user: User | null,
+  user: GoogleUser,
   points: number,
   isLoading: boolean,
   isLoggedIn: boolean,
   isAdmin: boolean
   domainsInfo: any[];
-  profile: any;
+  profile: Profile;
   settings: SettingsProps
 };
 
 
 const initialState: RootState = {
-  user: null,
+  user: { email: '', name: '', image: '' },
   points: 0,
   isLoading: true,
   isLoggedIn: false,
   isAdmin: false,
-  profile: null,
+  profile: {
+    id: '',
+    updated_at: '',
+    full_name: '',
+    avatar_url: '',
+    domains: [],
+    email: '',
+    products: [],
+    admin: null,
+    domain_access: [],
+    user_metadata: {},
+    factchecks: [],
+    bulk_posts_guids: [],
+    bulk_content_guids: [],
+    index_ids: [],
+    social_posts: [],
+    bulk_content: []
+  },
   settings: null,
-  domainsInfo: null
+  domainsInfo: []
 };
 
 export const UserSlice = createSlice({

@@ -222,12 +222,6 @@ export interface Sitemap {
   "total_urls": number
 }
 
-export interface User {
-  firstName: string,
-  lastName: string,
-  domain: string,
-  email: string,
-};
 
 
 export interface PostUploadItem {
@@ -290,4 +284,29 @@ export interface GlobalSettingsProps {
 export interface ContentPerfectSettingsProps {
   defaultDomain: string,
   hideDashboardHeader: boolean;
+}
+
+export interface GoogleUser {
+  name: string,
+  email: string,
+  image?: string
+}
+
+export interface Profile {
+  id: string,
+  updated_at: string,
+  full_name: string,
+  avatar_url: string,
+  domains: string[],
+  email: string,
+  products: any[],
+  admin: boolean,
+  domain_access: any[],
+  user_metadata: any,
+  factchecks: any[],
+  bulk_posts_guids: string[],
+  bulk_content_guids: string[],
+  index_ids: string[],
+  social_posts: any[],
+  bulk_content: any[]
 }

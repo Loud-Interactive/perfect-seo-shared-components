@@ -214,7 +214,9 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
   const isAuthorized = useMemo(() => {
     let bool = true;
     if (isAdmin) {
-      bool = true
+      return true
+    } else if (profile?.admin === true) {
+      return true
     } else if (profile?.domains?.length > 0) {
       if (currentDomain) {
         let domain = currentDomain;

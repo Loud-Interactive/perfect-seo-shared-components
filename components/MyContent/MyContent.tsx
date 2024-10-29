@@ -302,11 +302,11 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
               </div>}
               <div className='col'>
                 <h1 className="text-start mb-1"><TypeWriterText string={`Content for ${synopsis?.brand_name || domain}`} withBlink /></h1>
-                <div className='card p-3'>
+                {synopsis?.snyopsis && <div className='card p-3'>
                   <div className={styles.synopsisHeader}>
                     <strong>Synopsis</strong>            <a href={`https://preferencesperfect.ai/domain/${domain}`} className={styles.synopsisUpdate} target='_blank'>Update Synopsis</a>
                   </div>
-                  <p className='mb-0'>{synopsis?.synopsis}</p></div>
+                  <p className='mb-0'>{synopsis?.synopsis}</p></div>}
               </div>
             </div>
           </div>

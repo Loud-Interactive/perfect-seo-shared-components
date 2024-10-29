@@ -16,7 +16,7 @@ export type RootState = {
   isLoading: boolean,
   isLoggedIn: boolean,
   isAdmin: boolean
-  domains: any[];
+  domainsInfo: any[];
   profile: any;
   settings: SettingsProps
 };
@@ -30,7 +30,7 @@ const initialState: RootState = {
   isAdmin: false,
   profile: null,
   settings: null,
-  domains: null
+  domainsInfo: null
 };
 
 export const UserSlice = createSlice({
@@ -82,7 +82,7 @@ export const UserSlice = createSlice({
     setDomains: (state, action: PayloadAction<any[]>) => {
       return {
         ...state,
-        domains: action.payload,
+        domainsInfo: action.payload,
       };
     },
     reset: () => {

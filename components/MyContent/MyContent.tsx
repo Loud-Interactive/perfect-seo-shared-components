@@ -23,7 +23,7 @@ export interface MyContentProps {
   hideTitle?: boolean;
 }
 const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
-  const { user, isAdmin, isLoading, isLoggedIn, profile, settings } = useSelector((state: RootState) => state);
+  const { user, isAdmin, isLoading, isLoggedIn, profile, settings, domainsInfo } = useSelector((state: RootState) => state);
   const [selectedTab, setSelectedTab] = useState('posts')
   const searchParams = useSearchParams();
   const queryParam = searchParams.get('tab');
@@ -34,8 +34,21 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
   const [domains, setDomains] = useState([])
   const [reverify, setReverify] = useState(false)
   const [dataTracked, setDataTracked] = useState(false)
-  const [synopsis, setSynopsis] = useState(null)
   const { fetchAllDomains } = useGoogleUser(en.product)
+
+  const synopsis = useMemo(() => {
+    let data = null;
+    if (currentDomain && domainsInfo) {
+      data = domainsInfo.find(obj => obj?.domain === currentDomain)
+      if (!data) {
+        getSynopsisInfo(currentDomain)
+          .then(res => {
+            data = res?.data
+          })
+      }
+    }
+    return data;
+  }, [currentDomain, domainsInfo])
 
   const isDefaultDomain = useMemo(() => {
     let bool = false;
@@ -238,14 +251,14 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
     }
   }, [isAdmin])
 
-  useEffect(() => {
-    if (currentDomain) {
-      getSynopsisInfo(currentDomain)
-        .then(res => {
-          setSynopsis(res?.data)
-        })
-    }
-  }, [currentDomain])
+  // useEffect(() => {
+  //   if (currentDomain) {
+  //     getSynopsisInfo(currentDomain)
+  //       .then(res => {
+  //         setSynopsis(res?.data)
+  //       })
+  //   }
+  // }, [currentDomain])
 
   if (isLoading) {
     return (

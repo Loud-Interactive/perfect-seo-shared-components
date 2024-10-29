@@ -11,7 +11,7 @@ import { useSession } from 'next-auth/react';
 import { SettingsProps } from '../data/types';
 import { getSynopsisInfo } from '../services/services';
 const useGoogleUser = (appKey) => {
-  const { user, isLoggedIn, profile } = useSelector((state: RootState) => state);
+  const { user, isLoggedIn, profile, domainsInfo } = useSelector((state: RootState) => state);
   const [token, setToken] = useState(null)
   const [userData, setUserData] = useState<any>(null)
   const dispatch = useDispatch();
@@ -229,12 +229,11 @@ const useGoogleUser = (appKey) => {
 
   useEffect(() => {
 
-    if (profile?.domain_access) {
+    if (profile?.domain_access && !domainsInfo) {
       let domains = profile.domain_access.map(({ siteUrl }) => urlSanitization(siteUrl))
       Promise.allSettled(
         domains.map(getSynopsisInfo)).then((results) => {
           let domains = results.map((result: any, index) => {
-
             return result?.value?.data
           }
           )

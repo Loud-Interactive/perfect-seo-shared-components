@@ -25,7 +25,7 @@ export interface MyContentProps {
 }
 const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
   const { user, isAdmin, isLoading, isLoggedIn, profile, settings, domainsInfo } = useSelector((state: RootState) => state);
-  const [selectedTab, setSelectedTab] = useState('posts')
+  const [selectedTab, setSelectedTab] = useState('content-plans')
   const searchParams = useSearchParams();
   const queryParam = searchParams.get('tab');
   const router = useRouter();
@@ -120,7 +120,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
   }, [queryParam])
 
   const TabData = [
-    { key: "content-plan", title: "Generated Content Plans" },
+    { key: "content-plans", title: "Generated Content Plans" },
     // { key: "outlines", title: "Generated Outlines" },
     { key: "posts", title: "Generated Posts" },
     // { key: "reports", title: "Stats & Reports" },
@@ -382,9 +382,9 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
                 <PostsList active={selectedTab === 'posts'} domain_name={domain} />
               </div>
             </div>
-            <div className={`tab-pane fade ${selectedTab === 'content-plan' && 'show active'}`} id="content-plan" role="tabpanel" aria-labelledby="content-plan-tab">
+            <div className={`tab-pane fade ${selectedTab === 'content-plans' && 'show active'}`} id="content-plans" role="tabpanel" aria-labelledby="content-plans-tab">
               <div className='tab p-3'>
-                <PlansList active={selectedTab === 'content-plan'} domain_name={domain} />
+                <PlansList active={selectedTab === 'content-plans'} domain_name={domain} />
               </div>
             </div>
             <div className={`tab-pane fade ${selectedTab === 'bulk-content' && 'show active'}`} id="bulk-cnotent" role="tabpanel" aria-labelledby="bulk-content-tab">

@@ -18,6 +18,7 @@ import CheckGoogleDomains from '../CheckGoogleDomains/CheckGoogleDomains';
 import useGoogleUser from '@/perfect-seo-shared-components/hooks/useGoogleUser';
 import { getSynopsisInfo } from '@/perfect-seo-shared-components/services/services';
 import BulkContentComponent from '../BulkContentGenerator/BulkContentComponent';
+import OutlinesList from '../OutlinesList/OutlinesList';
 export interface MyContentProps {
   currentDomain?: string;
   hideTitle?: boolean;
@@ -174,21 +175,21 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
   }
 
   const domainsList = useMemo(() => {
-    let list;
+    let list: any = []
     if (isAdmin) {
-      list = domains?.sort((a, b) => a.domain.localeCompare(b.domain)).map(({ domain }) => ({ label: domain, value: domain }))
+      list = [...list, ...domains?.sort((a, b) => a.domain.localeCompare(b.domain)).map(({ domain }) => ({ label: domain, value: domain }))]
     }
     else if (profile?.domain_access?.length > 0) {
-      list = [...profile.domain_access.map((domain) => {
+      list = [...list, ...profile.domain_access.map((domain) => {
         return domain?.siteUrl?.toLowerCase()
       })];
-      list = list?.sort((a, b) => a.localeCompare(b)).map((domain) => {
+      list = [...list, ...list?.sort((a, b) => a?.localeCompare(b)).map((domain) => {
         checkDomain(domain)
         return ({ label: domain, value: domain })
-      })
+      })];
     }
     if (list?.length > 0) {
-      return list.reduce((acc, current) => {
+      list = list.reduce((acc, current) => {
         if (!acc.find(item => item.value === current.value)) {
           return [...acc, current]
         }
@@ -196,7 +197,8 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
           return acc
         }
       }, [])
-    } else return list
+    }
+    return list
 
   }, [profile?.domain_access, domains, isAdmin])
 
@@ -209,10 +211,6 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
       if (settings?.global?.defaultDomain) {
         setDomain(settings.global.defaultDomain)
         setSelected({ label: settings.global.defaultDomain, value: settings.global.defaultDomain })
-      }
-      else {
-        setDomain(domainsList[0]?.value)
-        setSelected(domainsList[0])
       }
     }
   }, [domainsList, currentDomain, profile, settings])
@@ -258,6 +256,29 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
       fetchDomains();
     }
   }, [isAdmin])
+
+  useEffect(() => {
+    if (selectedTab === 'posts') {
+      if (settings?.global?.defaultDomain) {
+        setDomain(settings.global.defaultDomain)
+        setSelected({ label: settings.global.defaultDomain, value: settings.global.defaultDomain })
+      }
+      else {
+        setDomain(domainsList[0]?.value)
+        setSelected(domainsList[0])
+      }
+    }
+    else if (['bulk-content', 'bulk-posts'].includes(selectedTab)) {
+      if (currentDomain) {
+        setDomain(currentDomain)
+        setSelected({ label: currentDomain, value: currentDomain })
+      }
+      else {
+        setDomain(null);
+        setSelected(null)
+      }
+    }
+  }, [selectedTab])
 
   // useEffect(() => {
   //   if (currentDomain) {
@@ -322,21 +343,21 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
         {!(hideTitle || currentDomain) &&
           <div className='row d-flex justify-content-between'>
             <div className='col'>
-              <h1 className="text-start mb-5"><TypeWriterText string={selectedTab === 'bulk-generation' ? 'Upload for all domains' : selected ? `Content for ${domain}` : 'Select a domain to begin'} withBlink /></h1>
+              <h1 className="text-start mb-5"><TypeWriterText string={selectedTab.includes("bulk") ? 'Upload for all domains' : selected ? `Content for ${domain}` : 'Select a domain to begin'} withBlink /></h1>
             </div>
             {(profile?.domain_access?.length > 0 && ['bulk-content', 'bulk-posts'].includes(selectedTab) === false) && <div className='col-12 col-md-4 mb-3'>
               <SearchSelect
                 onChange={searchDomainChangeHandler}
                 options={domainsList}
                 value={selected}
-                isClearable={false}
+                isClearable={selectedTab !== 'posts'}
                 placeholder="Select a Domain"
               />
-              {!isDefaultDomain && <a className='text-primary mt-2' onClick={addDefaultHandler}>Make Default</a>}
+              {(!isDefaultDomain && selected) && <a className='text-primary mt-2' onClick={addDefaultHandler}>Make Default</a>}
             </div>}
           </div>
         }
-        {selected ? <div className={styles.tabWrap}>
+        <div className={styles.tabWrap}>
           <ul className="nav nav-tabs mb-0">
             {TabData.map((tab) => {
 
@@ -351,6 +372,11 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
             })}
           </ul>
           <div className="tab-content bg-dark mb-3" id="myTabContent">
+            <div className={`tab-pane fade ${selectedTab === 'outlines' && 'show active'}`} id="outlines" role="tabpanel" aria-labelledby="outlines-tab">
+              <div className='tab p-3'>
+                <OutlinesList active={selectedTab === 'outlines'} domain_name={domain} />
+              </div>
+            </div>
             <div className={`tab-pane fade ${selectedTab === 'posts' && 'show active'}`} id="posts" role="tabpanel" aria-labelledby="posts-tab">
               <div className='tab p-3'>
                 <PostsList active={selectedTab === 'posts'} domain_name={domain} />
@@ -372,10 +398,10 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
               </div>
             </div>
           </div>
-        </div> :
-          <div className="strip-padding container-fluid container-xl d-flex align-items-center justify-content-center">
+        </div>
+        {/* <div className="strip-padding container-fluid container-xl d-flex align-items-center justify-content-center">
             <h2 className='text-center text-primary'><TypeWriterText string="No domain selected" withBlink /></h2>
-          </div>}
+          </div> */}
       </div>
     </>
   )

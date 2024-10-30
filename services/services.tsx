@@ -324,3 +324,16 @@ export const regenerateSocialPost = async (guid, platform) => {
 }
 
 
+export const getContentPlanOutlinesByDomain = (domain: string) => {
+  return axiosInstance.get(`https://planperfectapi.replit.app//get_content_plan_outlines_by_domain/${domain}`);
+}
+export const getContentPlanOutlinesByEmail = (email: string) => {
+  return axiosInstance.get(`https://planperfectapi.replit.app/get_content_plan_outlines_by_email/${email}`);
+}
+
+export const getContentPlansByEmail = (email: string) => {
+  return axiosInstance.get(`https://planperfectapi.replit.app/get_content_plans_by_email/${email}`);
+}
+export const getContentPlansByDomain = (domain: string) => {
+  return axiosInstance.get(`https://planperfectapi.replit.app/get_content_plans_by_domain/${domain}`);
+}

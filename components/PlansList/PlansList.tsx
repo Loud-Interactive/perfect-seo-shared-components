@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import styles from './PlansList.module.scss'
 import Table, { TableColumnArrayProps } from '@/perfect-seo-shared-components/components/Table/Table'
-import { deleteContentPlan, getPreviousPlans } from '@/perfect-seo-shared-components/services/services'
+import { deleteContentPlan, getContentPlansByEmail, getPreviousPlans } from '@/perfect-seo-shared-components/services/services'
 import { useRouter } from 'next/navigation'
 import * as Modal from '@/perfect-seo-shared-components/components/Modal/Modal'
 import moment from 'moment-timezone'
@@ -25,20 +25,41 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
   const { user, isAdmin } = useSelector((state: RootState) => state);
 
   const fetchPlans = () => {
-    getPreviousPlans(domain_name)
-      .then(res => {
-        let newData = res.data.filter(obj => {
-          return obj.status
+    setData(null)
+    setLoading(true)
+    if (domain_name) {
+      console.log(domain_name)
+      getPreviousPlans(domain_name)
+        .then(res => {
+          let newData = res.data.filter(obj => {
+            return obj.status
+          })
+          setData(newData)
+          setLoading(false)
         })
-        setData(newData)
-        setLoading(false)
-      })
+    }
+    else {
+      getContentPlansByEmail(user?.email)
+        .then(res => {
+          let newData = res.data.filter(obj => {
+            return obj.status
+          }).map(obj => {
+            let newObj = obj;
+            newObj.target_keyword = newObj?.keyword
+            return newObj;
+          }
+          )
+          setData(newData)
+          setLoading(false)
+        })
+    }
   }
+
   useEffect(() => {
     let interval;
-    if (domain_name && active) {
+    if (active) {
       fetchPlans();
-      setInterval(fetchPlans, 60000)
+      interval = setInterval(fetchPlans, 300000)
     }
 
     return () => {
@@ -95,18 +116,20 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
       newData = data.filter((post) => post.status !== 'Finished')
     }
 
-    return newData.sort((a, b) => (b.timestamp + 'Z').localeCompare(a.timestamp + 'Z'))
+    return newData.sort((a, b) => (b?.timestamp + 'Z').localeCompare(a?.timestamp + 'Z'))
   }, [data, filter])
 
   const handleFilterChange = (e) => {
     setFilter(e.target.value)
   }
 
-  const renderTitle = (obj) => {
+  const RenderTitle = ({ obj }) => {
+
+
     return (
       <div>
         <p className='mb-0'>
-          {obj.target_keyword}
+          {obj.target_keyword} {(obj.domain_name !== domain_name) && <span className='badge bg-primary ms-2'>{obj.brand_name}</span>}
         </p>
         {user?.email !== obj?.email && <span> by <span className="text-primary">{obj?.email}</span></span>}
       </div>
@@ -116,18 +139,20 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
   const columnArray: TableColumnArrayProps[] = useMemo(() => {
     if (phone || tablet) {
       return [
-        { id: 'target_keyword', Header: 'Target Keyword', accessor: renderTitle },
+        {
+          id: 'target_keyword', Header: 'Target Keyword', accessor: (obj) => <RenderTitle obj={obj} />
+        },
         { id: 'guid', Header: 'Actions', accessor: renderStatusCell, headerClassName: 'text-end pe-3', cellClassName: 'max-325' },
       ];
     }
     else {
       return [
-        { id: 'target_keyword', Header: 'Target Keyword', accessor: renderTitle, disableSortBy: false },
+        { id: 'target_keyword', Header: 'Target Keyword', accessor: obj => <RenderTitle obj={obj} />, disableSortBy: false },
         { id: 'timestamp', Header: 'Timestamp', accessor: (obj) => moment(obj.timestamp + 'Z').format("dddd, MMMM Do, YYYY h:mma"), disableSortBy: false },
         { id: 'guid', Header: 'Actions', accessor: renderStatusCell, headerClassName: 'text-end pe-3', cellClassName: 'max-325' },
       ];
     }
-  }, [phone, tablet])
+  }, [phone, tablet, domain_name])
 
   const deleteHandler = (guid) => {
     deleteContentPlan(guid)
@@ -162,7 +187,7 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
       </div>
       {loading ? <Loader />
         : filteredData?.length > 0 ?
-          <Table rawData={filteredData} isLoading={loading} sortedBy={[{ id: 'timestamp', desc: true }]} columnArray={columnArray} />
+          <Table rawData={filteredData} isLoading={loading} columnArray={columnArray} />
           :
           <h5><TypeWriterText withBlink string="The are no results for the given parameters" /></h5>
       }

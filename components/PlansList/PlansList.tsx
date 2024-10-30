@@ -174,9 +174,9 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
           </h2>
           {filteredData?.length > 0 && <p className='badge rounded-pill text-bg-primary ms-3 d-flex align-items-center mb-1'>{filteredData.length}</p>}
         </div>
-        <div className='col-auto me-2'>
+        <div className='col-auto d-flex align-items-center'>
+          <label className="form-label mb-0 me-2"><strong>Filter</strong></label>
           <div className="form-group">
-            <label className="form-label"><strong>Filter</strong></label>
             <select className="form-control" value={filter} onChange={handleFilterChange}>
               <option value="all">All</option>
               <option value="completed">Completed</option>

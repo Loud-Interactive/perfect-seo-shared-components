@@ -50,6 +50,10 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
     return data;
   }, [currentDomain, domainsInfo])
 
+  useEffect(() => {
+    console.log(synopsis)
+  }, [synopsis])
+
   const isDefaultDomain = useMemo(() => {
     let bool = false;
     if (settings?.global?.defaultDomain) {
@@ -115,10 +119,12 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
   }, [queryParam])
 
   const TabData = [
-    { key: "bulk-content", title: "Bulk Content" },
-    { key: "content-plan", title: "Content Plans" },
-    { key: "bulk-posts", title: "Bulk Posts" },
+    { key: "content-plan", title: "Generated Content Plans" },
+    // { key: "outlines", title: "Generated Outlines" },
     { key: "posts", title: "Generated Posts" },
+    // { key: "reports", title: "Stats & Reports" },
+    { key: "bulk-content", title: "Bulk Content Plans" },
+    { key: "bulk-posts", title: "Bulk Posts" },
   ]
 
   const searchDomainChangeHandler = (e) => {
@@ -302,7 +308,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
               </div>}
               <div className='col'>
                 <h1 className="text-start mb-1"><TypeWriterText string={`Content for ${synopsis?.brand_name || domain}`} withBlink /></h1>
-                {synopsis?.snyopsis && <div className='card p-3'>
+                {synopsis?.synopsis && <div className='card p-3'>
                   <div className={styles.synopsisHeader}>
                     <strong>Synopsis</strong>            <a href={`https://preferencesperfect.ai/domain/${domain}`} className={styles.synopsisUpdate} target='_blank'>Update Synopsis</a>
                   </div>

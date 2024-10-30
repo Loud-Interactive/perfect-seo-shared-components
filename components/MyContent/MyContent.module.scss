@@ -48,6 +48,7 @@
   }
 
   &Update {
+    padding-bottom: .5em;
     color: $primary !important;
 
     @include Desktop {

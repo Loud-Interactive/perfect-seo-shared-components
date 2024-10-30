@@ -66,7 +66,7 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
     }
     return (
       <div className='d-flex justify-content-end align-items-center'>
-        {isAdmin && <div className='me-2'>{obj?.guid}</div>}
+        {/* {isAdmin && <div className='me-2'>{obj?.guid}</div>} */}
         {(completeStatuses.includes(status)) ?
 
           <button className="btn btn-primary" onClick={clickHandler} title={`View GUID: ${obj.guid}`}>View Plan</button>

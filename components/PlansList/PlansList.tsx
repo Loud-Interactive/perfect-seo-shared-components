@@ -25,8 +25,6 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
   const { user, isAdmin } = useSelector((state: RootState) => state);
 
   const fetchPlans = () => {
-    setData(null)
-    setLoading(true)
     if (domain_name) {
       console.log(domain_name)
       getPreviousPlans(domain_name)
@@ -58,6 +56,8 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
   useEffect(() => {
     let interval;
     if (active) {
+      setData(null)
+      setLoading(true)
       fetchPlans();
       interval = setInterval(fetchPlans, 300000)
     }

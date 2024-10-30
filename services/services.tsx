@@ -325,7 +325,7 @@ export const regenerateSocialPost = async (guid, platform) => {
 
 
 export const getContentPlanOutlinesByDomain = (domain: string) => {
-  return axiosInstance.get(`https://planperfectapi.replit.app//get_content_plan_outlines_by_domain/${domain}`);
+  return axiosInstance.get(`https://planperfectapi.replit.app/get_content_plan_outlines_by_domain/${domain}`);
 }
 export const getContentPlanOutlinesByEmail = (email: string) => {
   return axiosInstance.get(`https://planperfectapi.replit.app/get_content_plan_outlines_by_email/${email}`);

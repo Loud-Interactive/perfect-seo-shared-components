@@ -121,7 +121,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
 
   const TabData = [
     { key: "content-plans", title: "Generated Content Plans" },
-    // { key: "outlines", title: "Generated Outlines" },
+    { key: "outlines", title: "Generated Outlines" },
     { key: "posts", title: "Generated Posts" },
     // { key: "reports", title: "Stats & Reports" },
     { key: "bulk-content", title: "Bulk Content Plans" },

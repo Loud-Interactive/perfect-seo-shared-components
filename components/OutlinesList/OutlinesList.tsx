@@ -7,6 +7,7 @@ import TypeWriterText from '@/perfect-seo-shared-components/components/TypeWrite
 import PostItem from '../PostItem/PostItem'
 import { useSelector } from 'react-redux'
 import { RootState } from '@/perfect-seo-shared-components/lib/store'
+import OutlineItem from '../OutlineItem/OutlineItem'
 
 export interface OutlinesListProps {
   domain_name: string;
@@ -17,6 +18,7 @@ const OutlinesList = ({ domain_name, active }: OutlinesListProps) => {
   const [data, setData] = useState<any[]>()
   const [deleteModal, setDeleteModal] = useState(null)
   const [filter, setFilter] = useState('all');
+  const [filteredData, setFilteredData] = useState<any[]>()
   const { user } = useSelector((state: RootState) => state);
 
   const getOutlines = () => {
@@ -52,25 +54,25 @@ const OutlinesList = ({ domain_name, active }: OutlinesListProps) => {
   }
 
 
-  const filteredData = useMemo(() => {
+  useEffect(() => {
     let newData = [];
     if (!data) {
-      return null
+      return setFilteredData(null)
     }
     if (filter === 'all') {
       newData = data
     }
     else if (filter === 'completed') {
-      newData = data.filter((post) => post.status === 'Finished')
+      newData = data.filter((outline) => outline.status === 'Finished')
     }
     else if (filter === 'other') {
-      newData = data.filter((post) => post.status !== 'Finished')
+      newData = data.filter((outline) => outline.status !== 'Finished')
     }
     if (newData?.length > 0) {
       console.log(newData)
       newData = newData?.sort((a, b) => b?.created_at?.localeCompare(a?.created_at))
     }
-    return newData
+    return setFilteredData(newData)
   }, [data, filter])
 
   useEffect(() => {
@@ -115,13 +117,13 @@ const OutlinesList = ({ domain_name, active }: OutlinesListProps) => {
         : filteredData?.length > 0 ?
           <div className='row d-flex g-3'>
             {filteredData.map((obj, i) => {
-              return <PostItem post={obj} key={obj.content_plan_outline_guid} refresh={getOutlines} />
+              return <OutlineItem domain_name={domain_name} outline={obj} key={obj.content_plan_outline_guid} refresh={getOutlines} />
             })}</div> :
           <h5><TypeWriterText withBlink string="The are no results for the given parameters" /></h5>}
       <Modal.Overlay open={deleteModal} onClose={() => { setDeleteModal(null) }}>
         <Modal.Title title="Delete Plan" />
         <Modal.Description>
-          Are you sure you want to delete this post?
+          Are you sure you want to delete this outline?
           <div className='d-flex justify-content-between mt-5'>
             <button onClick={() => { setDeleteModal(null) }} className="btn btn-warning">Cancel</button>
             <button onClick={(e) => { e.preventDefault(); deleteHandler(deleteModal) }} className="btn btn-primary">Yes</button>

@@ -246,7 +246,7 @@ export const deleteContentOutline = (content_plan_outline_guid: string) => {
 }
 
 export const patchOutlineTitle = (guid: string, title: string) => {
-  return axiosInstance.patch(`https://content-status.replit.app/update_outline_title/${guid}`, { new_title: title });
+  return axiosInstance.patch(`https://planperfectapi.replit.app/update_outline_title/${guid}?new_title=${title.toString()}`, title);
 }
 
 export const updateLiveUrl = (guid, url) => {

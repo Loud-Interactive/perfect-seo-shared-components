@@ -116,7 +116,6 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
   // ]
   const handleTitleChange = (e, title) => {
     e?.preventDefault()
-    console.log(outline)
     let reqObj = { ...outline, outline_details: JSON.parse(outline.outline), post_title: title, guid: outline.guid }
     delete reqObj.outline
     delete reqObj.status

@@ -26,14 +26,14 @@ const OutlinesList = ({ domain_name, active }: OutlinesListProps) => {
       if (domain_name) {
         getContentPlanOutlinesByDomain(domain_name)
           .then(res => {
-            setData(res.data)
+            setData(res.data.items)
             setLoading(false)
           })
       }
       else {
         getContentPlanOutlinesByEmail(user?.email)
           .then(res => {
-            setData(res.data)
+            setData(res.data.items)
             setLoading(false)
           })
       }
@@ -67,7 +67,8 @@ const OutlinesList = ({ domain_name, active }: OutlinesListProps) => {
       newData = data.filter((post) => post.status !== 'Finished')
     }
     if (newData?.length > 0) {
-      newData = newData?.sort((a, b) => b?.created_at.localeCompare(a?.created_at))
+      console.log(newData)
+      newData = newData?.sort((a, b) => b?.created_at?.localeCompare(a?.created_at))
     }
     return newData
   }, [data, filter])

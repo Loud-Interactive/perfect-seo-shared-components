@@ -30,7 +30,13 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
         .then(res => {
           let newData = res.data.items.filter(obj => {
             return obj.status
-          })
+          }).map(obj => {
+
+            let newObj = obj;
+            newObj.target_keyword = newObj?.keyword || 'N/A'
+            return newObj;
+          }
+          )
           setData(newData)
           setLoading(false)
         })
@@ -41,8 +47,9 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
           let newData = res.data.items.filter(obj => {
             return obj.status
           }).map(obj => {
+
             let newObj = obj;
-            newObj.target_keyword = newObj?.keyword
+            newObj.target_keyword = newObj?.keyword || 'N/A'
             return newObj;
           }
           )

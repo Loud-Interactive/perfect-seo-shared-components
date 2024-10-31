@@ -53,7 +53,7 @@ const OutlinesList = ({ domain_name, active }: OutlinesListProps) => {
 
 
   const filteredData = useMemo(() => {
-    let newData
+    let newData = [];
     if (!data) {
       return null
     }
@@ -66,8 +66,10 @@ const OutlinesList = ({ domain_name, active }: OutlinesListProps) => {
     else if (filter === 'other') {
       newData = data.filter((post) => post.status !== 'Finished')
     }
-
-    return newData.sort((a, b) => b.created_at.localeCompare(a.created_at))
+    if (newData?.length > 0) {
+      newData = newData?.sort((a, b) => b?.created_at.localeCompare(a?.created_at))
+    }
+    return newData
   }, [data, filter])
 
   useEffect(() => {

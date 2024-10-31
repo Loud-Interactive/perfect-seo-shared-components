@@ -65,8 +65,8 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
     return bool
   }, [settings, selected])
 
-  const addDefaultHandler = (e) => {
-    e.preventDefault();
+  const addDefaultHandler = (e?) => {
+    e?.preventDefault();
     let global = settings?.global || {}
     supabase
       .from('settings')
@@ -75,7 +75,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
       .select("*")
       .then(res => {
         if (!res.error) {
-          console.log(res.data)
+
         }
       })
   }
@@ -211,6 +211,9 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
       if (domainsList.length === 1) {
         setDomain(domainsList[0]?.value)
         setSelected(domainsList[0])
+        if (!settings?.global?.defaultDomain) {
+          return addDefaultHandler()
+        }
       }
       else if (settings?.global?.defaultDomain) {
         setDomain(settings.global.defaultDomain)

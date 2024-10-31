@@ -106,12 +106,11 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
 
 
   const RenderTitle = ({ obj }) => {
-
-
+    let domain = obj.domain_name.replace("https://", "").replace("http://", "").replace("www.", "").replaceAll("/", "")
     return (
       <div>
         <p className='mb-0'>
-          {obj.target_keyword} {(obj.domain_name !== domain_name) && <span className='badge bg-primary ms-2'>{obj.brand_name}</span>}
+          {obj.target_keyword} {(domain !== domain_name) && <span className='badge bg-primary ms-2'>{obj.brand_name}</span>}
         </p>
         {user?.email !== obj?.email && <span> by <span className="text-primary">{obj?.email}</span></span>}
       </div>

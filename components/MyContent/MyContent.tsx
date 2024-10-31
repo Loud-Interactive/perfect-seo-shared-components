@@ -180,13 +180,13 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
       list = [...list, ...domains?.sort((a, b) => a.domain.localeCompare(b.domain)).map(({ domain }) => ({ label: domain, value: domain }))]
     }
     else if (profile?.domain_access?.length > 0) {
+      console.log(profile?.domain_access)
       list = [...list, ...profile.domain_access.map((domain) => {
         return domain?.siteUrl?.toLowerCase()
-      })];
-      list = [...list, ...list?.sort((a, b) => a?.localeCompare(b)).map((domain) => {
+      })].sort((a, b) => a?.localeCompare(b)).map((domain) => {
         checkDomain(domain)
         return ({ label: domain, value: domain })
-      })];
+      });
     }
     if (list?.length > 0) {
       list = list.reduce((acc, current) => {
@@ -208,7 +208,11 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
       setDomain(currentDomain)
       setSelected({ label: currentDomain, value: currentDomain })
     } else if (domainsList?.length > 0) {
-      if (settings?.global?.defaultDomain) {
+      if (domainsList.length === 1) {
+        setDomain(domainsList[0]?.value)
+        setSelected(domainsList[0])
+      }
+      else if (settings?.global?.defaultDomain) {
         setDomain(settings.global.defaultDomain)
         setSelected({ label: settings.global.defaultDomain, value: settings.global.defaultDomain })
       }

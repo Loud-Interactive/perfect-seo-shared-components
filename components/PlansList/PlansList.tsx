@@ -26,7 +26,6 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
 
   const fetchPlans = () => {
     if (domain_name) {
-      console.log(domain_name)
       getPreviousPlans(domain_name)
         .then(res => {
           let newData = res.data.filter(obj => {

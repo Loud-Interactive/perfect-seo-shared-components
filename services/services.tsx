@@ -213,7 +213,7 @@ export const fetchOutlineStatus = (guid: string) => {
 };
 
 
-export const patchContentPlans = (guid: string, data: any[]) => {
+export const patchContentPlans = (guid: string, data: any) => {
   return axiosInstance.patch(
     `https://planperfectapi.replit.app/update_outline/${guid}`, data
   );
@@ -243,6 +243,10 @@ export const deleteContentPlan = (guid: string) => {
 
 export const deleteContentOutline = (content_plan_outline_guid: string) => {
   return axiosInstance.delete(`https://content-status.replit.app/content/delete/${content_plan_outline_guid}`);
+}
+
+export const patchOutlineTitle = (guid: string, title: string) => {
+  return axiosInstance.patch(`https://content-status.replit.app/update_outline_title/${guid}`, { new_title: title });
 }
 
 export const updateLiveUrl = (guid, url) => {

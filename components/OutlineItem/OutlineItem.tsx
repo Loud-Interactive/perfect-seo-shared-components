@@ -1,20 +1,18 @@
 import { useEffect, useState } from "react"
 import TextInput from "../Form/TextInput"
 import { emailValidator } from "@/perfect-seo-shared-components/utils/validators"
-import { deleteContentOutline, fetchOutlineStatus, getPostStatus, updateLiveUrl } from "@/perfect-seo-shared-components/services/services"
+import { deleteContentOutline, fetchOutlineStatus, getPostStatus, patchContentPlans, patchOutlineTitle, saveContentPlanPost, updateLiveUrl } from "@/perfect-seo-shared-components/services/services"
 
 import TypeWriterText from "../TypeWriterText/TypeWriterText"
 import Link from "next/link"
 import * as Modal from '@/perfect-seo-shared-components/components/Modal/Modal'
+import CreateContentModal from "@/components/CreateContentModal/CreateContentModal"
 
-const OutlineItem = ({ outline, refresh, domain_name }) => {
+const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
   const [status, setStatus] = useState(outline?.status)
   const [localOutline, setLocalOutline] = useState(outline)
-  const [urlError, setUrlError] = useState(null)
   const [deleteModal, setDeleteModal] = useState(false)
-  const [showUrl, setShowUrl] = useState(false)
-  const [saving, setSaving] = useState(false)
-  const [saved, setSaved] = useState(false)
+  const [editModal, setEditModal] = useState(false)
   const [completed, setCompleted] = useState(false)
 
 
@@ -51,14 +49,13 @@ const OutlineItem = ({ outline, refresh, domain_name }) => {
         }
       })
       .catch((err) => {
-        console.log(err, outline["Post Title"]);
-        setStatus(`Error:${err.message}`);
+        console.log(err, outline["Post Title"] || outline.post_title);
         setStatus(err?.response?.data?.detail ? `Error: ${err?.response?.data?.detail}` : "Error: not found");
       });
   }
 
 
-  const completedStatus = ["complete"]
+  const completedStatus = ["completed"]
 
   useEffect(() => {
     let interval;
@@ -68,19 +65,26 @@ const OutlineItem = ({ outline, refresh, domain_name }) => {
     if (completedStatus.includes(status)) {
       if (completed) {
         setCompleted(true)
-
+        setStatus("completed")
       }
       else {
         return;
       }
     }
     else {
+      if (!status) {
+        fetchStatus();
+      }
       interval = setInterval(() => {
         fetchStatus()
       }, 10000)
     }
     return () => clearTimeout(interval)
   }, [status, completed])
+
+  useEffect(() => {
+    setModalOpen(editModal)
+  }, [editModal])
 
 
   const deleteClickHandler = (e) => {
@@ -110,6 +114,21 @@ const OutlineItem = ({ outline, refresh, domain_name }) => {
   //     "keyword",
   //     "outline"
   // ]
+  const handleTitleChange = (e, title) => {
+    e?.preventDefault()
+    console.log(outline)
+    let reqObj = { ...outline, outline_details: JSON.parse(outline.outline), post_title: title, guid: outline.guid }
+    delete reqObj.outline
+    delete reqObj.status
+    delete reqObj.brand_name
+    delete reqObj.keyword
+    reqObj.client_name = outline.brand_name
+    return saveContentPlanPost(reqObj)
+      .then(res => {
+        console.log(res);
+        return res
+      })
+  }
   return (
     <div className="card bg-secondary p-3" title={outline?.post_title}>
       <div className="row d-flex g-3 d-flex align-items-start">
@@ -136,17 +155,27 @@ const OutlineItem = ({ outline, refresh, domain_name }) => {
                 >
                   <i className="bi bi-eye-fill me-1" />     <span className="d-none d-lg-block"> View Content Plan</span>
                 </Link>}
+                <button
+                  title='edit outline'
+                  className="btn btn-warning btn-standard no-truncate"
+                  onClick={() => { setEditModal(true) }}
+                >
+                  <i className="bi bi-pencil-fill me-1" /> Edit
+                </button>
 
                 <button className='btn btn-primary btn-standard d-flex justify-content-center align-items-center' onClick={deleteClickHandler} title={`View GUID: ${localOutline?.guid}`}><i className="bi bi-trash pt-1" /></button>
 
               </>
             </div>
-            {localOutline?.status !== "complete" && <div className='col-12 text-end text-primary mt-2'>
+            {status !== "completed" && <div className='col-12 text-end text-primary mt-2'>
               <TypeWriterText string={status} withBlink />
             </div>}
           </div>
         </div>
       </div>
+      <Modal.Overlay open={editModal} onClose={() => { setEditModal(null) }}>
+        <CreateContentModal isAuthorized advancedData={{}} data={localOutline} onClose={() => { setEditModal(null); refresh(); }} index={1} titleChange={handleTitleChange} contentPlan={{ ...localOutline, guid: localOutline.content_plan_guid, 'Post Title': localOutline.post_title }} />
+      </Modal.Overlay>
       <Modal.Overlay open={deleteModal} onClose={() => { setDeleteModal(null) }}>
         <Modal.Title title="Delete Outline" />
         <Modal.Description>

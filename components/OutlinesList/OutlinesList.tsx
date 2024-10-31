@@ -20,8 +20,10 @@ const OutlinesList = ({ domain_name, active }: OutlinesListProps) => {
   const [deleteModal, setDeleteModal] = useState(null)
   const [filter, setFilter] = useState('all');
   const { user } = useSelector((state: RootState) => state);
+  const [modalOpen, setModalOpen] = useState(false)
 
   const paginator = usePaginator()
+
   const getOutlines = () => {
     setLoading(true);
     if (active) {
@@ -69,7 +71,7 @@ const OutlinesList = ({ domain_name, active }: OutlinesListProps) => {
 
   useEffect(() => {
     let interval;
-    if (active) {
+    if (active && !modalOpen) {
       getOutlines();
       interval = setInterval(getOutlines, 60000)
     }
@@ -77,7 +79,7 @@ const OutlinesList = ({ domain_name, active }: OutlinesListProps) => {
     return () => {
       clearInterval(interval);
     }
-  }, [domain_name, active, paginator.currentPage])
+  }, [domain_name, active, paginator.currentPage, modalOpen])
 
 
   if (!active) return null
@@ -96,7 +98,7 @@ const OutlinesList = ({ domain_name, active }: OutlinesListProps) => {
         : (data?.length > 0 || paginator.itemCount > 0) ?
           <div className='row d-flex justify-content-center g-3'>
             {data.map((obj, i) => {
-              return <OutlineItem domain_name={domain_name} outline={obj} key={obj.content_plan_outline_guid} refresh={getOutlines} />
+              return <OutlineItem setModalOpen={setModalOpen} domain_name={domain_name} outline={obj} key={obj.content_plan_outline_guid} refresh={getOutlines} />
             })}
             <div className='col-auto d-flex justify-content-center'>
               {paginator.renderComponent()}

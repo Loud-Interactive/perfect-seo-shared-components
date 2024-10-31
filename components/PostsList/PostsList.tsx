@@ -5,12 +5,14 @@ import * as Modal from '@/perfect-seo-shared-components/components/Modal/Modal'
 import Loader from '../Loader/Loader'
 import TypeWriterText from '@/perfect-seo-shared-components/components/TypeWriterText/TypeWriterText'
 import PostItem from '../PostItem/PostItem'
+import usePaginator from '@/perfect-seo-shared-components/hooks/usePaginator'
 
 export interface PostsListProps {
   domain_name: string;
   active: boolean;
 }
 const PostsList = ({ domain_name, active }: PostsListProps) => {
+  const paginator = usePaginator()
   const [loading, setLoading] = useState(true)
   const [data, setData] = useState<any[]>()
   const [deleteModal, setDeleteModal] = useState(null)
@@ -47,23 +49,7 @@ const PostsList = ({ domain_name, active }: PostsListProps) => {
   }
 
 
-  const filteredData = useMemo(() => {
-    let newData
-    if (!data) {
-      return null
-    }
-    if (filter === 'all') {
-      newData = data
-    }
-    else if (filter === 'completed') {
-      newData = data.filter((post) => post.status === 'Finished')
-    }
-    else if (filter === 'other') {
-      newData = data.filter((post) => post.status !== 'Finished')
-    }
 
-    return newData.sort((a, b) => b.created_at.localeCompare(a.created_at))
-  }, [data, filter])
 
   useEffect(() => {
     let interval;
@@ -77,9 +63,6 @@ const PostsList = ({ domain_name, active }: PostsListProps) => {
     }
   }, [domain_name, active])
 
-  const handleFilterChange = (e) => {
-    setFilter(e.target.value)
-  }
 
   if (!active) return null
 
@@ -94,25 +77,18 @@ const PostsList = ({ domain_name, active }: PostsListProps) => {
             <h2 className='text-primary mb-0'>
               <TypeWriterText string="Generated Posts" withBlink />
             </h2>
-            {filteredData?.length > 0 && <p className='badge rounded-pill text-bg-primary ms-3 d-flex align-items-center mb-1'>{filteredData.length}</p>}
-          </div>
-          <div className='col-auto d-flex align-items-center'>
-            <label className="form-label mb-0 me-2"><strong>Filter</strong></label>
-            <div className="form-group">
-              <select className="form-control" value={filter} onChange={handleFilterChange}>
-                <option value="all">All</option>
-                <option value="completed">Completed</option>
-                <option value="other">Processing</option>
-              </select>
-            </div>
+            {paginator.itemCount > 0 && <p className='badge rounded-pill text-bg-primary ms-3 d-flex align-items-center mb-1'>{paginator.itemCount}</p>}
           </div>
         </div>
         {loading ? <Loader />
-          : filteredData?.length > 0 ?
-            <div className='row d-flex g-3'>
-              {filteredData.map((obj, i) => {
+          : data?.length > 0 ?
+            <div className='row d-flex g-3 justify-content-center'>
+              {data.map((obj, i) => {
                 return <PostItem post={obj} key={obj.content_plan_outline_guid} refresh={getPosts} />
-              })}</div> :
+              })}
+              <div className='col-auto d-flex justify-content-center'>
+                {paginator.renderComponent()}
+              </div></div> :
             <h5><TypeWriterText withBlink string="The are no results for the given parameters" /></h5>}
         <Modal.Overlay open={deleteModal} onClose={() => { setDeleteModal(null) }}>
           <Modal.Title title="Delete Plan" />

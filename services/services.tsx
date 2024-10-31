@@ -332,9 +332,9 @@ export const getContentPlanOutlinesByEmail = (email: string, paginator: Paginati
   return axiosInstance.get(`https://planperfectapi.replit.app/get_content_plan_outlines_by_email/${email}${parseQueries(paginator)}`);
 }
 
-export const getContentPlansByEmail = (email: string) => {
-  return axiosInstance.get(`https://planperfectapi.replit.app/get_content_plans_by_email/${email}`);
+export const getContentPlansByEmail = (email: string, paginator: PaginationRequest) => {
+  return axiosInstance.get(`https://planperfectapi.replit.app/get_content_plans_by_email/${email}${parseQueries(paginator)}`);
 }
-export const getContentPlansByDomain = (domain: string) => {
-  return axiosInstance.get(`https://planperfectapi.replit.app/get_content_plans_by_domain/${domain}`);
+export const getContentPlansByDomain = (domain: string, paginator: PaginationRequest) => {
+  return axiosInstance.get(`https://planperfectapi.replit.app/get_content_plans_by_domain/${domain}${parseQueries(paginator)}`);
 }

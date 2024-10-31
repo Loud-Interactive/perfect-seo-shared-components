@@ -208,14 +208,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
       setDomain(currentDomain)
       setSelected({ label: currentDomain, value: currentDomain })
     } else if (domainsList?.length > 0) {
-      if (domainsList.length === 1) {
-        setDomain(domainsList[0]?.value)
-        setSelected(domainsList[0])
-        if (!settings?.global?.defaultDomain) {
-          return addDefaultHandler()
-        }
-      }
-      else if (settings?.global?.defaultDomain) {
+      if (settings?.global?.defaultDomain) {
         setDomain(settings.global.defaultDomain)
         setSelected({ label: settings.global.defaultDomain, value: settings.global.defaultDomain })
       }

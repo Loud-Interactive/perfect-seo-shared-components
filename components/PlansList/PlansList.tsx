@@ -10,6 +10,7 @@ import Loader from '../Loader/Loader'
 import TypeWriterText from '@/perfect-seo-shared-components/components/TypeWriterText/TypeWriterText'
 import { useSelector } from 'react-redux'
 import { RootState } from '@/perfect-seo-shared-components/lib/store'
+import usePaginator from '@/perfect-seo-shared-components/hooks/usePaginator'
 
 export interface PlanListProps {
   domain_name: string;
@@ -20,39 +21,36 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
   const [data, setData] = useState<any[]>()
   const { tablet, phone } = useViewport()
   const [deleteModal, setDeleteModal] = useState(null)
-  const [filter, setFilter] = useState('all');
   const router = useRouter();
   const { user, isAdmin } = useSelector((state: RootState) => state);
+  const paginator = usePaginator()
 
   const fetchPlans = () => {
     if (domain_name) {
-      getContentPlansByDomain(domain_name)
+      getContentPlansByDomain(domain_name, paginator.paginationObj)
         .then(res => {
-          let newData = res.data.items.filter(obj => {
-            return obj.status
-          }).map(obj => {
-
+          let newData = res.data.items.map(obj => {
             let newObj = obj;
             newObj.target_keyword = newObj?.keyword || 'N/A'
             return newObj;
           }
           )
+          paginator.setItemCount(res.data.total)
           setData(newData)
           setLoading(false)
         })
     }
     else {
-      getContentPlansByEmail(user?.email)
+      getContentPlansByEmail(user?.email, paginator.paginationObj)
         .then(res => {
-          let newData = res.data.items.filter(obj => {
-            return obj.status
-          }).map(obj => {
+          let newData = res.data.items.map(obj => {
 
             let newObj = obj;
             newObj.target_keyword = newObj?.keyword || 'N/A'
             return newObj;
           }
           )
+          paginator.setItemCount(res.data.total)
           setData(newData)
           setLoading(false)
         })
@@ -62,7 +60,6 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
   useEffect(() => {
     let interval;
     if (active) {
-      setData(null)
       setLoading(true)
       fetchPlans();
       interval = setInterval(fetchPlans, 300000)
@@ -71,7 +68,7 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
     return () => {
       clearInterval(interval);
     }
-  }, [domain_name, active])
+  }, [domain_name, active, paginator.currentPage])
 
   const completeStatuses = ["Finished", "Your Content Plan Has Been Created"]
 
@@ -107,29 +104,6 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
     )
   }
 
-  const filteredData = useMemo(() => {
-    let newData;
-    if (!data) {
-      return null
-    }
-    if (filter === 'all') {
-      newData = data
-    }
-    else if (filter === 'completed') {
-      newData = data.filter((post) => post.status === 'Finished')
-    }
-    else if (filter === 'other') {
-      newData = data.filter((post) => post.status !== 'Finished')
-    }
-    if (newData.length === 0) {
-      return []
-    }
-    return newData.sort((a, b) => (b?.timestamp + 'Z').localeCompare(a?.timestamp + 'Z'))
-  }, [data, filter])
-
-  const handleFilterChange = (e) => {
-    setFilter(e.target.value)
-  }
 
   const RenderTitle = ({ obj }) => {
 
@@ -180,22 +154,18 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
           <h2 className='text-primary mb-0'>
             <TypeWriterText string="Content Plans" withBlink />
           </h2>
-          {filteredData?.length > 0 && <p className='badge rounded-pill text-bg-primary ms-3 d-flex align-items-center mb-1'>{filteredData.length}</p>}
-        </div>
-        <div className='col-auto d-flex align-items-center'>
-          <label className="form-label mb-0 me-2"><strong>Filter</strong></label>
-          <div className="form-group">
-            <select className="form-control" value={filter} onChange={handleFilterChange}>
-              <option value="all">All</option>
-              <option value="completed">Completed</option>
-              <option value="other">Processing</option>
-            </select>
-          </div>
+          {domain_name}
+          {paginator?.itemCount > 0 && <p className='badge rounded-pill text-bg-primary ms-3 d-flex align-items-center mb-1'>{paginator?.itemCount}</p>}
         </div>
       </div>
       {loading ? <Loader />
-        : filteredData?.length > 0 ?
-          <Table rawData={filteredData} isLoading={loading} columnArray={columnArray} />
+        : data?.length > 0 ?
+          <div className='row d-flex justify-content-center'>
+            <Table rawData={data} isLoading={loading} columnArray={columnArray} />
+            <div className='col-auto d-flex justify-content-center'>
+              {paginator.renderComponent()}
+            </div>
+          </div>
           :
           <h5><TypeWriterText withBlink string="The are no results for the given parameters" /></h5>
       }

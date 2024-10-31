@@ -16,24 +16,15 @@ const PostsList = ({ domain_name, active }: PostsListProps) => {
   const [loading, setLoading] = useState(true)
   const [data, setData] = useState<any[]>()
   const [deleteModal, setDeleteModal] = useState(null)
-  const [filter, setFilter] = useState('all');
 
   const getPosts = () => {
     if (domain_name && active) {
-      if (domain_name === 'all') {
-        getPostsByDomain(domain_name)
-          .then(res => {
-            setData(res.data)
-            setLoading(false)
-          })
-      }
-      else {
-        getPostsByDomain(domain_name)
-          .then(res => {
-            setData(res.data)
-            setLoading(false)
-          })
-      }
+
+      getPostsByDomain(domain_name)
+        .then(res => {
+          setData(res.data)
+          setLoading(false)
+        })
     }
   }
 

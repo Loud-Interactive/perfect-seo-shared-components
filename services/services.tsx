@@ -227,9 +227,13 @@ export const getBatchStatus = (guids: string[]) => {
     guids,
   );
 };
-export const getPostsByDomain = (domain: string) => {
+export const getPostsByDomain = (domain: string, pagination?: PaginationRequest) => {
+  let url = `https://content-status.replit.app/content/domain/${domain}`;
+  if (pagination) {
+    url += parseQueries({ skip: pagination.page * 10, limit: 10 })
+  }
   return axiosInstance.get(
-    `https://content-status.replit.app/content/domain/${domain}`,
+    url,
   );
 };
 

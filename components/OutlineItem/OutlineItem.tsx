@@ -20,7 +20,6 @@ const OutlineItem = ({ outline, refresh, domain_name }) => {
 
 
   useEffect(() => {
-    console.log(outline)
     if (outline?.status !== status) {
       setStatus(outline?.status)
       if (completedStatus.includes(outline?.status)) {
@@ -54,6 +53,7 @@ const OutlineItem = ({ outline, refresh, domain_name }) => {
       .catch((err) => {
         console.log(err, outline["Post Title"]);
         setStatus(`Error:${err.message}`);
+        setStatus(err?.response?.data?.detail ? `Error: ${err?.response?.data?.detail}` : "Error: not found");
       });
   }
 

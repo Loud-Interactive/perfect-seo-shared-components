@@ -2,6 +2,7 @@ import axiosInstance from "@/perfect-seo-shared-components/utils/axiosInstance";
 import * as Request from "@/perfect-seo-shared-components/data/requestTypes";
 import { urlSanitization } from "@/perfect-seo-shared-components/utils/conversion-utilities";
 import axios from "axios";
+import { PaginationRequest } from "@/types";
 export interface PlanItemProps {
   brand_name: string;
   domain_name: string;
@@ -324,11 +325,11 @@ export const regenerateSocialPost = async (guid, platform) => {
 }
 
 
-export const getContentPlanOutlinesByDomain = (domain: string) => {
-  return axiosInstance.get(`https://planperfectapi.replit.app/get_content_plan_outlines_by_domain/${domain}`);
+export const getContentPlanOutlinesByDomain = (domain: string, paginator: PaginationRequest) => {
+  return axiosInstance.get(`https://planperfectapi.replit.app/get_content_plan_outlines_by_domain/${domain}${parseQueries(paginator)}`);
 }
-export const getContentPlanOutlinesByEmail = (email: string) => {
-  return axiosInstance.get(`https://planperfectapi.replit.app/get_content_plan_outlines_by_email/${email}`);
+export const getContentPlanOutlinesByEmail = (email: string, paginator: PaginationRequest) => {
+  return axiosInstance.get(`https://planperfectapi.replit.app/get_content_plan_outlines_by_email/${email}${parseQueries(paginator)}`);
 }
 
 export const getContentPlansByEmail = (email: string) => {

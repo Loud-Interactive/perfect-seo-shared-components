@@ -8,6 +8,7 @@ import PostItem from '../PostItem/PostItem'
 import { useSelector } from 'react-redux'
 import { RootState } from '@/perfect-seo-shared-components/lib/store'
 import OutlineItem from '../OutlineItem/OutlineItem'
+import usePaginator from '@/perfect-seo-shared-components/hooks/usePaginator'
 
 export interface OutlinesListProps {
   domain_name: string;
@@ -18,26 +19,37 @@ const OutlinesList = ({ domain_name, active }: OutlinesListProps) => {
   const [data, setData] = useState<any[]>()
   const [deleteModal, setDeleteModal] = useState(null)
   const [filter, setFilter] = useState('all');
-  const [filteredData, setFilteredData] = useState<any[]>()
   const { user } = useSelector((state: RootState) => state);
 
+  const paginator = usePaginator()
   const getOutlines = () => {
     setLoading(true);
-    setData(null)
     if (active) {
       if (domain_name) {
-        getContentPlanOutlinesByDomain(domain_name)
+        getContentPlanOutlinesByDomain(domain_name, paginator.paginationObj)
           .then(res => {
+            paginator.setItemCount(res.data.total)
             setData(res.data.items)
             setLoading(false)
           })
+          .catch(err => {
+            setLoading(false);
+            setData(null)
+          }
+          )
       }
       else {
-        getContentPlanOutlinesByEmail(user?.email)
+        getContentPlanOutlinesByEmail(user?.email, paginator.paginationObj)
           .then(res => {
+            paginator.setItemCount(res.data.total)
             setData(res.data.items)
             setLoading(false)
           })
+          .catch(err => {
+            setLoading(false);
+            setData(null)
+          }
+          )
       }
     }
   }
@@ -54,26 +66,6 @@ const OutlinesList = ({ domain_name, active }: OutlinesListProps) => {
   }
 
 
-  useEffect(() => {
-    let newData = [];
-    if (!data) {
-      return setFilteredData(null)
-    }
-    if (filter === 'all') {
-      newData = data
-    }
-    else if (filter === 'completed') {
-      newData = data.filter((outline) => outline.status === 'Finished')
-    }
-    else if (filter === 'other') {
-      newData = data.filter((outline) => outline.status !== 'Finished')
-    }
-    if (newData?.length > 0) {
-      console.log(newData)
-      newData = newData?.sort((a, b) => b?.created_at?.localeCompare(a?.created_at))
-    }
-    return setFilteredData(newData)
-  }, [data, filter])
 
   useEffect(() => {
     let interval;
@@ -85,11 +77,8 @@ const OutlinesList = ({ domain_name, active }: OutlinesListProps) => {
     return () => {
       clearInterval(interval);
     }
-  }, [domain_name, active])
+  }, [domain_name, active, paginator.currentPage])
 
-  const handleFilterChange = (e) => {
-    setFilter(e.target.value)
-  }
 
   if (!active) return null
 
@@ -100,26 +89,21 @@ const OutlinesList = ({ domain_name, active }: OutlinesListProps) => {
           <h2 className='text-primary mb-0'>
             <TypeWriterText string="Generated Outlines" withBlink />
           </h2>
-          {filteredData?.length > 0 && <p className='badge rounded-pill text-bg-primary ms-3 d-flex align-items-center mb-1'>{filteredData.length}</p>}
-        </div>
-        <div className='col-auto d-flex align-items-center'>
-          <label className="form-label mb-0 me-2"><strong>Filter</strong></label>
-          <div className="form-group">
-            <select className="form-control" value={filter} onChange={handleFilterChange}>
-              <option value="all">All</option>
-              <option value="completed">Completed</option>
-              <option value="other">Processing</option>
-            </select>
-          </div>
+          {paginator?.itemCount > 0 && <p className='badge rounded-pill text-bg-primary ms-3 d-flex align-items-center mb-1'>{paginator?.itemCount}</p>}
         </div>
       </div>
       {loading ? <Loader />
-        : filteredData?.length > 0 ?
-          <div className='row d-flex g-3'>
-            {filteredData.map((obj, i) => {
+        : (data?.length > 0 || paginator.itemCount > 0) ?
+          <div className='row d-flex justify-content-center g-3'>
+            {data.map((obj, i) => {
               return <OutlineItem domain_name={domain_name} outline={obj} key={obj.content_plan_outline_guid} refresh={getOutlines} />
-            })}</div> :
+            })}
+            <div className='col-auto d-flex justify-content-center'>
+              {paginator.renderComponent()}
+            </div>
+          </div> :
           <h5><TypeWriterText withBlink string="The are no results for the given parameters" /></h5>}
+
       <Modal.Overlay open={deleteModal} onClose={() => { setDeleteModal(null) }}>
         <Modal.Title title="Delete Plan" />
         <Modal.Description>

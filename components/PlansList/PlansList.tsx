@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import styles from './PlansList.module.scss'
 import Table, { TableColumnArrayProps } from '@/perfect-seo-shared-components/components/Table/Table'
-import { deleteContentPlan, getContentPlansByEmail, getPreviousPlans } from '@/perfect-seo-shared-components/services/services'
+import { deleteContentPlan, getContentPlansByDomain, getContentPlansByEmail, getPreviousPlans } from '@/perfect-seo-shared-components/services/services'
 import { useRouter } from 'next/navigation'
 import * as Modal from '@/perfect-seo-shared-components/components/Modal/Modal'
 import moment from 'moment-timezone'
@@ -26,9 +26,9 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
 
   const fetchPlans = () => {
     if (domain_name) {
-      getPreviousPlans(domain_name)
+      getContentPlansByDomain(domain_name)
         .then(res => {
-          let newData = res.data.filter(obj => {
+          let newData = res.data.items.filter(obj => {
             return obj.status
           })
           setData(newData)
@@ -38,7 +38,7 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
     else {
       getContentPlansByEmail(user?.email)
         .then(res => {
-          let newData = res.data.filter(obj => {
+          let newData = res.data.items.filter(obj => {
             return obj.status
           }).map(obj => {
             let newObj = obj;
@@ -114,7 +114,9 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
     else if (filter === 'other') {
       newData = data.filter((post) => post.status !== 'Finished')
     }
-
+    if (newData.length === 0) {
+      return []
+    }
     return newData.sort((a, b) => (b?.timestamp + 'Z').localeCompare(a?.timestamp + 'Z'))
   }, [data, filter])
 

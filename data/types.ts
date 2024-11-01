@@ -310,3 +310,9 @@ export interface Profile {
   social_posts: any[],
   bulk_content: any[]
 }
+
+export interface PaginationRequest {
+  page_size?: number,
+  page?: number
+}
+

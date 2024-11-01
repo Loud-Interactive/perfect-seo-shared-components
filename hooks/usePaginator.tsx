@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import React, { useMemo, useState } from 'react';
 import useViewport from './useViewport';
-import { PaginationRequest } from '@/types';
+import { PaginationRequest } from '@/perfect-seo-shared-components/data/types';
 
 export interface PaginatorMetricsProps {
   pages: number[]

@@ -4,7 +4,7 @@ import styles from "./CreateContentModal.module.scss";
 
 
 import OutlineRow from "./OutlineRow/OutlineRow";
-import { OutlineRowProps } from "@/types";
+import { OutlineRowProps } from '@/perfect-seo-shared-components/data/types'
 import useForm from "@/perfect-seo-shared-components/hooks/useForm";
 import Form from "@/perfect-seo-shared-components/components/Form/Form";
 import * as Modal from "@/perfect-seo-shared-components/components/Modal/Modal";

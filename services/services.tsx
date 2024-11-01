@@ -2,7 +2,7 @@ import axiosInstance from "@/perfect-seo-shared-components/utils/axiosInstance";
 import * as Request from "@/perfect-seo-shared-components/data/requestTypes";
 import { urlSanitization } from "@/perfect-seo-shared-components/utils/conversion-utilities";
 import axios from "axios";
-import { PaginationRequest } from "@/types";
+import { PaginationRequest } from "@/perfect-seo-shared-components/data/types";
 export interface PlanItemProps {
   brand_name: string;
   domain_name: string;

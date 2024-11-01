@@ -1,4 +1,3 @@
-import { DeleteIcon, DropdownArrow } from '@/assets/icons';
 import styles from './OutlineRow.module.scss';
 import TextInput from '@/perfect-seo-shared-components/components/Form/TextInput';
 import classNames from 'classnames';
@@ -116,10 +115,10 @@ const OutlineRow = ({ rows,
                 deleteHeadingHandler(index)
               }}
                 disabled={!isAuthorized}
-                className={`${styles.deleteButton} btn btn-warning ms-1`}><DeleteIcon /></button>
+                className={`${styles.deleteButton} btn btn-warning ms-1`}><i className="bi bi-trash" /></button>
               <button className={accordionClassname} onClick={accordionHandler} title={show ? 'Collapse' : 'Expand'}>
                 <span className={`${styles.dropDownArrow} ${show && 'flip-vertical'}`}>
-                  <DropdownArrow />
+                  <i className="bi bi-caret-down-fill" />
                 </span>
               </button>
             </div>
@@ -210,7 +209,7 @@ const SubheadingRow = ({ headingIndex, index, setSelected, selected, reorderRow,
             {isAuthorized && <button onClick={(e) => {
               e.preventDefault();
               deleteSubheadingHandler(index)
-            }} className={`${styles.deleteButton} btn btn-warning`}><DeleteIcon /></button>}
+            }} className={`${styles.deleteButton} btn btn-warning`}><i className="bi bi-trash" /></button>}
           </div>
         </div>
       </div>

@@ -6,7 +6,7 @@ import { deleteContentOutline, fetchOutlineStatus, getPostStatus, patchContentPl
 import TypeWriterText from "../TypeWriterText/TypeWriterText"
 import Link from "next/link"
 import * as Modal from '@/perfect-seo-shared-components/components/Modal/Modal'
-import CreateContentModal from "@/components/CreateContentModal/CreateContentModal"
+import CreateContentModal from "@/perfect-seo-shared-components/components/CreateContentModal/CreateContentModal"
 
 const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
   const [status, setStatus] = useState(outline?.status)

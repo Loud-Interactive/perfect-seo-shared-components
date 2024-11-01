@@ -1,0 +1,268 @@
+@use 'common' as *;
+
+.subHeadingHandlerButton {
+  padding-left: 110px;
+  padding-right: 60px;
+  width: 100%;
+  align-items: center;
+
+
+
+  display: flex;
+  flex-direction: column;
+
+  button {
+    width: max-content;
+    color: white;
+  }
+
+  @include TabletDown {
+    padding-left: 60px;
+    padding-right: 10px;
+
+    button {
+      width: 100%;
+    }
+  }
+}
+
+.row {
+
+  .dropDownArrow {
+    path {
+      fill: white !important;
+      opacity: 1;
+    }
+  }
+
+  .isDragging {
+    .subRow {
+      display: none;
+    }
+
+    .rowBody {
+      opacity: .75;
+    }
+
+    .rowHandle {
+      cursor: grabbing
+    }
+  }
+
+  &.isOver {
+    min-height: 2px;
+    border-color: $primary;
+
+    &.up {
+      border-top: 2px solid;
+    }
+
+    &.down {
+      border-bottom: 2px solid;
+    }
+  }
+
+  &Body {
+    display: flex;
+    flex-direction: column;
+    row-gap: 2px;
+    margin: 8px;
+    padding: 8px;
+    border-radius: 8px;
+    border: 2px solid rgba(white, .5);
+  }
+
+  &Handle {
+    display: flex;
+    height: 50px;
+
+    @include TabletUp {
+      aspect-ratio: 1;
+    }
+
+    align-items: center;
+    justify-content: center;
+    cursor: grab;
+
+    &:hover {
+      @include Desktop {
+        svg {
+          display: flex;
+        }
+
+        span {
+          display: none;
+        }
+      }
+
+    }
+
+    @include Desktop {
+      svg {
+        display: none;
+      }
+
+      span {
+        display: flex;
+      }
+    }
+
+
+
+    svg path {
+      fill: white;
+    }
+  }
+
+  &Index {
+    font-weight: bold;
+    display: none;
+  }
+
+  &Title {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    background-color: $secondary;
+    border-radius: 8px;
+    padding: 0px;
+    column-gap: 8px;
+  }
+
+
+}
+
+.subRow {
+
+
+  &.up {}
+
+  &.down {}
+
+  .isDragging {
+    .subRow {
+      display: none;
+    }
+
+    .subRowBody {
+      opacity: .75;
+    }
+
+    .subRowHandle {
+      cursor: dragging;
+    }
+  }
+
+  &.isOver {
+    min-height: 2px;
+    border-color: $primary;
+
+    &.up {
+      border-top: 2px solid;
+    }
+
+    &.down {
+      border-bottom: 2px solid;
+    }
+  }
+
+  &Body {
+    display: flex;
+    flex-direction: column;
+    row-gap: 2px;
+    margin-left: 20px;
+
+    @include TabletUp {
+      margin-left: 40px;
+    }
+
+    padding: 8px;
+    border-radius: 8px;
+  }
+
+
+
+  &Index {
+    width: 40px;
+    height: 40px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+  }
+
+  &Delete {
+    height: 100%;
+    border: none;
+    width: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    svg path {
+      fill: white;
+    }
+  }
+
+  &Handle {
+    display: flex;
+    height: 50px;
+
+    align-items: center;
+    justify-content: center;
+    cursor: grab;
+
+    @include TabletUp {
+      aspect-ratio: 1;
+    }
+
+    @include Desktop {
+      svg {
+        display: none;
+      }
+
+      span {
+        display: flex;
+      }
+
+      &:hover {
+        svg {
+          display: flex;
+        }
+
+        span {
+          display: none;
+        }
+      }
+    }
+
+    svg path {
+      fill: white;
+    }
+  }
+
+  &Title {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    background-color: $secondary;
+    border-radius: 8px;
+    padding: 0px;
+    column-gap: 8px;
+  }
+}
+
+.accordionButton,
+.deleteButton {
+  font-weight: bold;
+  height: 50px;
+
+  &:hover {
+    background-color: rgba($primary, .1);
+  }
+
+  font-size: larger;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

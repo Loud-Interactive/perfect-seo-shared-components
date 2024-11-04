@@ -75,7 +75,7 @@ const PostsList = ({ domain_name, active }: PostsListProps) => {
     return () => {
       clearInterval(interval);
     }
-  }, [domain_name, active, paginator.paginationObj])
+  }, [domain_name, active, paginator.currentPage, paginator.limit])
 
 
   if (!active) return null

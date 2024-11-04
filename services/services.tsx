@@ -238,10 +238,10 @@ export const getPostsByDomain = (domain: string, pagination?: PaginationRequest)
   let url = `https://content-status.replit.app/content/domain/${domain}`;
   if (pagination) {
     if (pagination.page > 1) {
-      url += parseQueries({ skip: (pagination.page * 10) - 1, limit: 10 })
+      url += parseQueries({ skip: (pagination.page * 10) - 1, limit: pagination?.page_size })
     }
     else {
-      url += parseQueries({ skip: pagination.page - 1, limit: 10 })
+      url += parseQueries({ skip: pagination.page - 1, limit: pagination?.page_size })
     }
 
   }

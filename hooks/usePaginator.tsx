@@ -50,29 +50,24 @@ const usePaginator = (): PaginatorController => {
   }, [phone, tablet]);
 
   const pageDataMetrics = useMemo((): PaginatorMetricsProps => {
-    console.log(itemCount, limit, groupMax)
     let pageCount = Math.ceil(itemCount / limit);
-    console.log(pageCount)
     let pages = new Array(pageCount).fill(1).map((obj, i) => i + 1);
     let groupStart, groupEnd;
     if (!itemCount || itemCount === 0) {
 
     }
     else if (pageCount <= groupMax) {
-      console.log(pageCount, itemCount, limit, groupMax, 1)
       groupEnd = pageCount;
       groupStart = 0;
     } else if (currentPage < groupMax) {
-      console.log(itemCount, 2)
       groupStart = 0;
       groupEnd = groupMax - 1;
     } else if (currentPage >= pageCount - groupMax + 3) {
-      console.log(itemCount, 3)
       groupStart = pageCount - groupMax + 1;
       groupEnd = pageCount;
 
     } else if (currentPage >= groupMax - 1 && currentPage < pageCount - groupMax + 2) {
-      console.log(itemCount, 4)
+
       groupEnd = currentPage + groupMax - 3;
       groupStart = currentPage - 1;
     }
@@ -154,7 +149,7 @@ const usePaginator = (): PaginatorController => {
               <label className='mb-0 no-wrap'>Page Size</label>
               <select className='form-select ms-2' value={limit} onChange={(e) => {
                 e.preventDefault();
-                setLimit(Number(e.target.value))
+                setLimit(+e?.target?.value)
               }
               }>
                 <option value={10}>10</option>

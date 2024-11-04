@@ -262,17 +262,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
   }, [isAdmin])
 
   useEffect(() => {
-    if (selectedTab === 'posts') {
-      if (settings?.global?.defaultDomain) {
-        setDomain(settings.global.defaultDomain)
-        setSelected({ label: settings.global.defaultDomain, value: settings.global.defaultDomain })
-      }
-      else {
-        setDomain(domainsList[0]?.value)
-        setSelected(domainsList[0])
-      }
-    }
-    else if (['bulk-content', 'bulk-posts'].includes(selectedTab)) {
+    if (['bulk-content', 'bulk-posts'].includes(selectedTab)) {
       if (currentDomain) {
         setDomain(currentDomain)
         setSelected({ label: currentDomain, value: currentDomain })
@@ -284,14 +274,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
     }
   }, [selectedTab])
 
-  // useEffect(() => {
-  //   if (currentDomain) {
-  //     getSynopsisInfo(currentDomain)
-  //       .then(res => {
-  //         setSynopsis(res?.data)
-  //       })
-  //   }
-  // }, [currentDomain])
+
 
   if (isLoading) {
     return (
@@ -354,7 +337,6 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
                 onChange={searchDomainChangeHandler}
                 options={domainsList}
                 value={selected}
-                isClearable={selectedTab !== 'posts'}
                 placeholder="Select a Domain"
               />
               {(!isDefaultDomain && selected) && <a className='text-primary mt-2' onClick={addDefaultHandler}>Make Default</a>}

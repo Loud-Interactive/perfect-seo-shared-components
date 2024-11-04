@@ -22,7 +22,7 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
   const { tablet, phone } = useViewport()
   const [deleteModal, setDeleteModal] = useState(null)
   const router = useRouter();
-  const { user, isAdmin } = useSelector((state: RootState) => state);
+  const { user } = useSelector((state: RootState) => state);
   const paginator = usePaginator()
 
   const fetchPlans = () => {
@@ -39,6 +39,11 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
           setData(newData)
           setLoading(false)
         })
+
+        .catch(err => {
+          setLoading(false);
+          setData(null)
+        })
     }
     else {
       getContentPlansByEmail(user?.email, paginator.paginationObj)
@@ -53,6 +58,11 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
           paginator.setItemCount(res.data.total)
           setData(newData)
           setLoading(false)
+        })
+
+        .catch(err => {
+          setLoading(false);
+          setData(null)
         })
     }
   }

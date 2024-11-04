@@ -1,30 +1,51 @@
 import { useEffect, useMemo, useState } from 'react'
 import styles from './PostsList.module.scss'
-import { deleteContentOutline, getPostsByDomain } from '@/perfect-seo-shared-components/services/services'
+import { deleteContentOutline, getPostsByDomain, getPostsByEmail } from '@/perfect-seo-shared-components/services/services'
 import * as Modal from '@/perfect-seo-shared-components/components/Modal/Modal'
 import Loader from '../Loader/Loader'
 import TypeWriterText from '@/perfect-seo-shared-components/components/TypeWriterText/TypeWriterText'
 import PostItem from '../PostItem/PostItem'
 import usePaginator from '@/perfect-seo-shared-components/hooks/usePaginator'
+import { useSelector } from 'react-redux'
+import { RootState } from '@/perfect-seo-shared-components/lib/store'
 
 export interface PostsListProps {
   domain_name: string;
   active: boolean;
 }
 const PostsList = ({ domain_name, active }: PostsListProps) => {
+  const { user } = useSelector((state: RootState) => state);
   const paginator = usePaginator()
   const [loading, setLoading] = useState(true)
   const [data, setData] = useState<any[]>()
   const [deleteModal, setDeleteModal] = useState(null)
 
   const getPosts = () => {
-    if (domain_name && active) {
+    if (active) {
+      if (domain_name) {
 
-      getPostsByDomain(domain_name, { ...paginator.paginationObj, page: paginator.currentPage })
-        .then(res => {
-          setData(res.data)
-          setLoading(false)
-        })
+        getPostsByDomain(domain_name, { ...paginator.paginationObj, page: paginator.currentPage })
+          .then(res => {
+            setData(res.data)
+            setLoading(false)
+          })
+          .catch(err => {
+            setLoading(false);
+            setData(null)
+          })
+      }
+      else {
+        getPostsByEmail(user?.email, { ...paginator.paginationObj, page: paginator.currentPage })
+          .then(res => {
+            setData(res.data)
+            setLoading(false)
+          })
+
+          .catch(err => {
+            setLoading(false);
+            setData(null)
+          })
+      }
     }
   }
 

@@ -249,6 +249,21 @@ export const getPostsByDomain = (domain: string, pagination?: PaginationRequest)
     url,
   );
 };
+export const getPostsByEmail = (email: string, pagination?: PaginationRequest) => {
+  let url = `https://content-status.replit.app/content/email/${email}`;
+  if (pagination) {
+    if (pagination.page > 1) {
+      url += parseQueries({ skip: (pagination.page * 10) - 1, limit: 10 })
+    }
+    else {
+      url += parseQueries({ skip: pagination.page - 1, limit: 10 })
+    }
+
+  }
+  return axiosInstance.get(
+    url,
+  );
+};
 
 export const deleteContentPlan = (guid: string) => {
   return axiosInstance.delete(`${API_URL}/delete_content_plan/${guid}`);
@@ -359,3 +374,4 @@ export const getContentPlansByEmail = (email: string, paginator: PaginationReque
 export const getContentPlansByDomain = (domain: string, paginator: PaginationRequest) => {
   return axiosInstance.get(`https://planperfectapi.replit.app/get_content_plans_by_domain/${domain}${parseQueries(paginator)}`);
 }
+

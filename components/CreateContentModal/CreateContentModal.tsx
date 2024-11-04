@@ -241,7 +241,7 @@ const CreateContentModal = ({
     let reqObj: GetPostOutlineRequest = {
       client_name: contentPlan?.brand_name,
       content_plan_guid: contentPlan?.guid,
-      post_title: postTitle || contentPlan['Post Title'] || contentPlan?.post_title,
+      post_title: data['Post Title'] || data?.post_title || postTitle,
       priority_code: contentPlan?.priorityCode || '',
       client_domain: contentPlan?.domain_name || contentPlan?.client_domain,
       inspiration_url_1: contentPlan?.inspiration_url_1,
@@ -338,12 +338,6 @@ const CreateContentModal = ({
   };
 
 
-  useEffect(() => {
-    setSaved(false);
-    if (!tableData && form.getState) {
-      processSections(form.getState);
-    }
-  }, [form.getState, tableData]);
 
   const submitWithEmail = () => {
     if (!user?.email || !receivingEmail) {

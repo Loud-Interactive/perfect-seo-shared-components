@@ -272,7 +272,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
         setSelected(null)
       }
     }
-  }, [selectedTab])
+  }, [])
 
 
 
@@ -330,7 +330,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
         {!(hideTitle || currentDomain) &&
           <div className='row d-flex justify-content-between'>
             <div className='col'>
-              <h1 className="text-start mb-5"><TypeWriterText string={selectedTab.includes("bulk") ? 'Upload for all domains' : selected ? `Content for ${domain}` : 'Select a domain to begin'} withBlink /></h1>
+              <h1 className="text-start mb-5"><TypeWriterText string={selectedTab.includes("bulk") ? 'Upload for all domains' : selected ? `Content for ${domain}` : 'Your Content'} withBlink /></h1>
             </div>
             {(profile?.domain_access?.length > 0 && ['bulk-content', 'bulk-posts'].includes(selectedTab) === false) && <div className='col-12 col-md-4 mb-3'>
               <SearchSelect

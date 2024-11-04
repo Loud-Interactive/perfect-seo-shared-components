@@ -9,7 +9,13 @@ import * as Modal from '@/perfect-seo-shared-components/components/Modal/Modal'
 import { urlSanitization } from "@/perfect-seo-shared-components/utils/conversion-utilities"
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 
-const PostItem = ({ post, refresh }) => {
+interface PostItemProps {
+  post: any,
+  refresh: () => void
+  domain_name?: string
+}
+
+const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
   const [liveUrl, setLiveUrl] = useState(post?.live_post_url)
   const [status, setStatus] = useState(post?.status)
   const [localPost, setLocalPost] = useState(post)
@@ -176,7 +182,8 @@ const PostItem = ({ post, refresh }) => {
                   <strong className="text-primary ">Created on</strong> {moment(`${localPost?.created_at}Z`).local().format("dddd, MMMM Do, YYYY h:mma")}
                 </small>
               </p>
-              <strong className="text-primary me-1">Title</strong>  {localPost?.title}
+              <p className="m-0">  <strong className="text-primary me-1">Title</strong>  {localPost?.title}{(localPost.client_domain !== domain_name) && <span className='badge bg-primary ms-2'>{localPost?.client_name}</span>}
+              </p>
             </div>
             {(showUrl || localPost?.live_post_url) && <div className="col-12">
 

@@ -26,7 +26,8 @@ const PostsList = ({ domain_name, active }: PostsListProps) => {
 
         getPostsByDomain(domain_name, { ...paginator.paginationObj, page: paginator.currentPage })
           .then(res => {
-            setData(res.data)
+            paginator.setItemCount(res.data.total)
+            setData(res.data.records)
             setLoading(false)
           })
           .catch(err => {
@@ -37,7 +38,8 @@ const PostsList = ({ domain_name, active }: PostsListProps) => {
       else {
         getPostsByEmail(user?.email, { ...paginator.paginationObj, page: paginator.currentPage })
           .then(res => {
-            setData(res.data)
+            paginator.setItemCount(res.data.total)
+            setData(res.data.records)
             setLoading(false)
           })
 
@@ -65,7 +67,7 @@ const PostsList = ({ domain_name, active }: PostsListProps) => {
 
   useEffect(() => {
     let interval;
-    if (domain_name && active) {
+    if (active) {
       getPosts();
       interval = setInterval(getPosts, 60000)
     }
@@ -73,14 +75,10 @@ const PostsList = ({ domain_name, active }: PostsListProps) => {
     return () => {
       clearInterval(interval);
     }
-  }, [domain_name, active])
+  }, [domain_name, active, paginator.currentPage])
 
 
   if (!active) return null
-
-  if (!domain_name) return (
-    <h5 className='my-5 text-center'><TypeWriterText withBlink string="Please select a domain to view posts" /></h5>
-  )
   else
     return (
       <div className={styles.wrap}>
@@ -96,7 +94,7 @@ const PostsList = ({ domain_name, active }: PostsListProps) => {
           : data?.length > 0 ?
             <div className='row d-flex g-3 justify-content-center'>
               {data.map((obj, i) => {
-                return <PostItem post={obj} key={obj.content_plan_outline_guid} refresh={getPosts} />
+                return <PostItem post={obj} key={obj.content_plan_outline_guid} refresh={getPosts} domain_name={domain_name} />
               })}
               <div className='col-auto d-flex justify-content-center'>
                 {paginator.renderComponent()}

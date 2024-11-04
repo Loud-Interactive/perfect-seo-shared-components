@@ -20,7 +20,7 @@ const PostsList = ({ domain_name, active }: PostsListProps) => {
   const getPosts = () => {
     if (domain_name && active) {
 
-      getPostsByDomain(domain_name)
+      getPostsByDomain(domain_name, { ...paginator.paginationObj, page: paginator.currentPage })
         .then(res => {
           setData(res.data)
           setLoading(false)

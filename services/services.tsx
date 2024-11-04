@@ -27,7 +27,14 @@ const headers = {
 
 const parseQueries = (obj: object) => {
   return Object.keys(obj).reduce(
-    (prev, curr) => prev + curr + "=" + obj[curr] + "&",
+    (prev, curr, i) => {
+      if (i === Object.keys(obj).length - 1) {
+        return prev + curr + "=" + obj[curr]
+      }
+      else {
+        return prev + curr + "=" + obj[curr] + "&"
+      }
+    },
     "?",
   );
 };
@@ -230,7 +237,13 @@ export const getBatchStatus = (guids: string[]) => {
 export const getPostsByDomain = (domain: string, pagination?: PaginationRequest) => {
   let url = `https://content-status.replit.app/content/domain/${domain}`;
   if (pagination) {
-    url += parseQueries({ skip: pagination.page * 10, limit: 10 })
+    if (pagination.page > 1) {
+      url += parseQueries({ skip: (pagination.page * 10) - 1, limit: 10 })
+    }
+    else {
+      url += parseQueries({ skip: pagination.page - 1, limit: 10 })
+    }
+
   }
   return axiosInstance.get(
     url,

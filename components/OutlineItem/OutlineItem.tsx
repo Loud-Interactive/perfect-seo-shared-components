@@ -7,6 +7,7 @@ import TypeWriterText from "../TypeWriterText/TypeWriterText"
 import Link from "next/link"
 import * as Modal from '@/perfect-seo-shared-components/components/Modal/Modal'
 import CreateContentModal from "@/perfect-seo-shared-components/components/CreateContentModal/CreateContentModal"
+import moment from "moment-timezone"
 
 const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
   const [status, setStatus] = useState(outline?.status)
@@ -139,6 +140,10 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
               <div>
                 {localOutline?.keyword && <strong className="text-primary me-2">Keyword</strong>}
                 {localOutline.keyword}
+              </div>
+              <div>
+                {localOutline?.created_at && <strong className="text-primary me-2">Date</strong>}
+                {moment(localOutline.created_at).format("dddd, MMM Do, YYYY h:mma")}
               </div>
             </div>
           </div>

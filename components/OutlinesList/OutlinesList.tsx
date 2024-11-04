@@ -18,7 +18,6 @@ const OutlinesList = ({ domain_name, active }: OutlinesListProps) => {
   const [loading, setLoading] = useState(true)
   const [data, setData] = useState<any[]>()
   const [deleteModal, setDeleteModal] = useState(null)
-  const [filter, setFilter] = useState('all');
   const { user } = useSelector((state: RootState) => state);
   const [modalOpen, setModalOpen] = useState(false)
 

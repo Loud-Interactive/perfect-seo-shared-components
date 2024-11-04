@@ -36,19 +36,23 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
   const [reverify, setReverify] = useState(false)
   const [dataTracked, setDataTracked] = useState(false)
   const { fetchAllDomains } = useGoogleUser(en.product)
+  const [synopsis, setSynopsis] = useState(null)
 
-  const synopsis = useMemo(() => {
+  useEffect(() => {
     let data = null;
     if (currentDomain && domainsInfo) {
       data = domainsInfo.find(obj => obj?.domain === currentDomain)
       if (!data) {
         getSynopsisInfo(currentDomain)
           .then(res => {
-            data = res?.data
+            setSynopsis(res?.data)
           })
       }
+      else {
+        setSynopsis(data)
+      }
     }
-    return data;
+
   }, [currentDomain, domainsInfo])
 
   useEffect(() => {

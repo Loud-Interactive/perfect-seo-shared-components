@@ -112,39 +112,59 @@ const usePaginator = (): PaginatorController => {
 
     if (pageCount > 1) {
       return (
-        <nav className="paginator d-flex align-items-center">
-          <button className={leftArrowButtonClasses} onClick={() => onClick((currentPage - 1))} disabled={currentPage === 1}><i className='bi bi-caret-left-fill' /></button>
-          <ul className="pagination mb-0">
-            {pageCount > groupMax && groupStart !== 0 ? <li className={pageOneClasses}>
-              <button className="page-link" onClick={() => onClick(1)} >1</button>
-            </li> : null}
-            {pageCount > groupMax && groupStart !== 0 ? <li className='page-item'>
-              <button className="page-link text-black disabled" disabled><i className="bi bi-three-dots" /></button>
-            </li> : null}
-            {pages.slice(groupStart, groupEnd).map((num, i) => {
-              const buttonClassNames = classNames('page-item', {
-                'active': num === currentPage,
-              });
+        <div className='row d-flex align-items-center justify-content-between g-3'>
+          <div className='col'>
+            <nav className="paginator d-flex align-items-center justify-content-start">
+              <button className={leftArrowButtonClasses} onClick={() => onClick((currentPage - 1))} disabled={currentPage === 1}><i className='bi bi-caret-left-fill' /></button>
+              <ul className="pagination mb-0">
+                {pageCount > groupMax && groupStart !== 0 ? <li className={pageOneClasses}>
+                  <button className="page-link" onClick={() => onClick(1)} >1</button>
+                </li> : null}
+                {pageCount > groupMax && groupStart !== 0 ? <li className='page-item'>
+                  <button className="page-link text-black disabled" disabled><i className="bi bi-three-dots" /></button>
+                </li> : null}
+                {pages.slice(groupStart, groupEnd).map((num, i) => {
+                  const buttonClassNames = classNames('page-item', {
+                    'active': num === currentPage,
+                  });
 
-              return (
-                <li className={buttonClassNames} key={i}>
-                  <button className='page-link' onClick={() => onClick((num))}>{num}</button>
-                </li>
-              );
-            })}
+                  return (
+                    <li className={buttonClassNames} key={i}>
+                      <button className='page-link' onClick={() => onClick((num))}>{num}</button>
+                    </li>
+                  );
+                })}
 
-            {(pageCount > groupMax && groupEnd !== pageCount) ?
-              <li className='page-item'>
-                <button className="page-link text-black disabled" disabled><i className="bi bi-three-dots" /></button>
-              </li> : null}
-            {(pageCount > groupMax && groupEnd !== pageCount) ?
-              <li className='page-item'>
-                <button className="page-link" onClick={() => onClick(pageCount)} >{pageCount}</button>
-              </li> : null}
-          </ul>
+                {(pageCount > groupMax && groupEnd !== pageCount) ?
+                  <li className='page-item'>
+                    <button className="page-link text-black disabled" disabled><i className="bi bi-three-dots" /></button>
+                  </li> : null}
+                {(pageCount > groupMax && groupEnd !== pageCount) ?
+                  <li className='page-item'>
+                    <button className="page-link" onClick={() => onClick(pageCount)} >{pageCount}</button>
+                  </li> : null}
+              </ul>
 
-          <button className={rightArrowButtonClasses} onClick={() => onClick((currentPage + 1))} disabled={currentPage === pageCount}><i className='bi bi-caret-right-fill' /></button>
-        </nav >
+
+              <button className={rightArrowButtonClasses} onClick={() => onClick((currentPage + 1))} disabled={currentPage === pageCount}><i className='bi bi-caret-right-fill' /></button>
+            </nav >
+          </div >
+          <div className='col-12 col-md-auto'>
+            <div className='d-flex align-items-center justify-content-start'>
+              <label className='mb-0 no-wrap'>Page Size</label>
+              <select className='form-select ms-2' value={limit} onChange={(e) => {
+                e.preventDefault();
+                setLimit(Number(e.target.value))
+              }
+              }>
+                <option value={10}>10</option>
+                <option value={25}>25</option>
+                <option value={50}>50</option>
+                <option value={100}>100</option>
+              </select>
+            </div>
+          </div>
+        </div >
       );
     } else return null;
   };

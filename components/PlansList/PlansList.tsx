@@ -78,7 +78,7 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
     return () => {
       clearInterval(interval);
     }
-  }, [domain_name, active, paginator.currentPage])
+  }, [domain_name, active, paginator.paginationObj])
 
   const completeStatuses = ["Finished", "Your Content Plan Has Been Created"]
 

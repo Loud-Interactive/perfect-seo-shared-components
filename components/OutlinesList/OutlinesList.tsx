@@ -78,7 +78,7 @@ const OutlinesList = ({ domain_name, active }: OutlinesListProps) => {
     return () => {
       clearInterval(interval);
     }
-  }, [domain_name, active, paginator.currentPage, modalOpen])
+  }, [domain_name, active, paginator.paginationObj, modalOpen])
 
 
   if (!active) return null

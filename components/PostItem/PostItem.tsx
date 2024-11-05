@@ -253,16 +253,27 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
                             GSC Report
                           </a>
                         </DropdownMenu.Item>
-                        <DropdownMenu.Item>
-                          <a
-                            href={`https://factcheckPerfect.ai/fact-checks?url=${encodeURI(localPost?.live_post_url)}&post_guid=${localPost?.content_plan_outline_guid}`}
-                            target="_blank"
-                            className="btn btn-transparent"
+                        {localPost?.factcheck_guid ?
+                          <DropdownMenu.Item>
+                            <a
+                              href={`https://factcheckPerfect.ai/fact-checks/${localPost?.factcheck_guid}`}
+                              target="_blank"
+                              className="btn btn-transparent"
 
-                          >
-                            Fact-Check
-                          </a>
-                        </DropdownMenu.Item>
+                            >
+                              Fact-Check
+                            </a>
+                          </DropdownMenu.Item>
+                          : <DropdownMenu.Item>
+                            <a
+                              href={`https://factcheckPerfect.ai/fact-checks?url=${encodeURI(localPost?.live_post_url)}&post_guid=${localPost?.content_plan_outline_guid}`}
+                              target="_blank"
+                              className="btn btn-transparent"
+
+                            >
+                              Fact-Check
+                            </a>
+                          </DropdownMenu.Item>}
                         <DropdownMenu.Item>
                           <a
                             href={`https://socialperfect.ai?url=${encodeURI(localPost?.live_post_url)}`}

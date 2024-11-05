@@ -215,7 +215,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
       setDomain(settings.global.defaultDomain)
       setSelected({ label: settings.global.defaultDomain, value: settings.global.defaultDomain })
     }
-  }, [currentDomain, settings])
+  }, [currentDomain])
 
   const isAuthorized = useMemo(() => {
     let bool = true;

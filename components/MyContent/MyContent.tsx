@@ -224,7 +224,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
     } else if (profile?.domains?.length > 0) {
       if (currentDomain) {
         let domain = currentDomain;
-        bool = (profile?.domains.includes(domain?.toLowerCase()))
+        bool = (profile?.domains?.includes(domain?.toLowerCase()))
       }
       else if (selected?.value) {
         let domain = selected.value

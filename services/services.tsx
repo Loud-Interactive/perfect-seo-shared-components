@@ -336,7 +336,7 @@ export const getSocialPost = async (id: string) => {
 
 };
 export const updateSocialPost = async (reqObj) => {
-  return axiosInstance.put(`https://socialperfectapi.replit.app/socialposts/${reqObj.id || reqObj.uuid}`, reqObj);
+  return axiosInstance.patch(`https://socialperfectapi.replit.app/socialposts/${reqObj.id || reqObj.uuid}`, reqObj);
 
 };
 

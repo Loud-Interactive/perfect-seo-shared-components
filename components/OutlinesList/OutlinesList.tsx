@@ -25,8 +25,8 @@ const OutlinesList = ({ domain_name, active }: OutlinesListProps) => {
 
   const getOutlines = () => {
     setLoading(true);
+    setData(null)
     if (active) {
-      setData(null)
       paginator.setItemCount(0)
       if (domain_name) {
         getContentPlanOutlinesByDomain(domain_name, paginator.paginationObj)

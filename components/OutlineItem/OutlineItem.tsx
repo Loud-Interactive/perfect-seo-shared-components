@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react"
-import TextInput from "../Form/TextInput"
-import { emailValidator } from "@/perfect-seo-shared-components/utils/validators"
-import { deleteContentOutline, deleteOutline, fetchOutlineStatus, getPostStatus, patchContentPlans, patchOutlineTitle, regenerateOutline, saveContentPlanPost, updateLiveUrl } from "@/perfect-seo-shared-components/services/services"
+import { deleteOutline, fetchOutlineStatus, regenerateOutline, saveContentPlanPost } from "@/perfect-seo-shared-components/services/services"
 
 import TypeWriterText from "../TypeWriterText/TypeWriterText"
 import Link from "next/link"
@@ -19,7 +17,6 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
 
 
   useEffect(() => {
-    console.log(outline)
     if (outline?.status !== status) {
       setStatus(outline?.status)
       if (completedStatus.includes(outline?.status)) {

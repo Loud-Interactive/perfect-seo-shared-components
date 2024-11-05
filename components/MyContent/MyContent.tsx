@@ -134,6 +134,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
 
   const searchDomainChangeHandler = (e) => {
     if (e) {
+      console.log(e)
       setDomain(e?.value);
       setSelected(e)
       setDataTracked(false)
@@ -334,7 +335,8 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
               <SearchSelect
                 onChange={searchDomainChangeHandler}
                 options={domainsList}
-                value={selected}
+                isLoading={!domainsList}
+                value={selected || null}
                 placeholder="Select a Domain"
               />
               {(!isDefaultDomain && selected) && <a className='text-primary mt-2' onClick={addDefaultHandler}>Make Default</a>}

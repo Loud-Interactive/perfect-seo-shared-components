@@ -154,11 +154,11 @@ export const regenerateOutline = (
 
   if (other) {
     console.log("other", other)
-    reqObj = { reqObj, ...other }
+    reqObj = { ...reqObj, ...other }
   }
   return axiosInstance.post(
     `https://content-v5.replit.app/generate_content_from_outline_guid`,
-    reqObj,
+    reqObj
   );
 };
 

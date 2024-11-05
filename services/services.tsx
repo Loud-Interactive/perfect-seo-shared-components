@@ -145,29 +145,20 @@ export function processTsvUrl(url: string) {
 }
 
 export const regenerateOutline = (
-  content_plan_guid,
-  post_title,
-  client_domain,
-  client_name,
+  content_plan_outline_guid,
   other?
 ) => {
   let reqObj = {
-    content_plan_guid: content_plan_guid,
-    post_title: post_title,
-    client_domain: client_domain,
-    client_name: client_name,
+    content_plan_outline_guid: content_plan_outline_guid,
   }
+
   if (other) {
-    reqObj = { ...reqObj, ...other }
+    console.log("other", other)
+    reqObj = { reqObj, ...other }
   }
   return axiosInstance.post(
-    `${API_URL}/regenerate_outline`,
+    `https://content-v5.replit.app/generate_content_from_outline_guid`,
     reqObj,
-    {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    },
   );
 };
 

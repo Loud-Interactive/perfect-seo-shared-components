@@ -235,7 +235,7 @@ const CreateContentModal = ({
     processSections([blankRow, ...newformData], true);
   };
 
-  const pullContentPlan = (initial?) => {
+  const pullOutline = (initial?) => {
     setLoading(true);
 
     let reqObj: GetPostOutlineRequest = {
@@ -292,7 +292,7 @@ const CreateContentModal = ({
 
   useEffect(() => {
     if (contentPlan) {
-      pullContentPlan(true);
+      pullOutline(true);
     }
   }, [contentPlan]);
 
@@ -378,14 +378,10 @@ const CreateContentModal = ({
   const regenerateClickHandler = () => {
     setLoading(true);
     regenerateOutline(
-      contentPlan.guid,
-      postTitle,
-      contentPlan.domain_name,
-      contentPlan.brand_name,
+      outlineGUID,
       advancedData
     )
       .then((result) => {
-        setOutlineGUID(result.data.guid);
         let newData = JSON.parse(result.data.outline);
         processSections(newData.sections, true);
         setLoading(false);

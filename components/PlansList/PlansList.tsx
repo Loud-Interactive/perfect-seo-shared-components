@@ -26,6 +26,8 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
   const paginator = usePaginator()
 
   const fetchPlans = () => {
+    setData(null)
+    paginator.setItemCount(0)
     if (domain_name) {
       getContentPlansByDomain(domain_name, paginator.paginationObj)
         .then(res => {

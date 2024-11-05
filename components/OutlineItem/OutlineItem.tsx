@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import TextInput from "../Form/TextInput"
 import { emailValidator } from "@/perfect-seo-shared-components/utils/validators"
-import { deleteContentOutline, deleteOutline, fetchOutlineStatus, getPostStatus, patchContentPlans, patchOutlineTitle, saveContentPlanPost, updateLiveUrl } from "@/perfect-seo-shared-components/services/services"
+import { deleteContentOutline, deleteOutline, fetchOutlineStatus, getPostStatus, patchContentPlans, patchOutlineTitle, regenerateOutline, saveContentPlanPost, updateLiveUrl } from "@/perfect-seo-shared-components/services/services"
 
 import TypeWriterText from "../TypeWriterText/TypeWriterText"
 import Link from "next/link"
@@ -15,10 +15,11 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
   const [deleteModal, setDeleteModal] = useState(false)
   const [editModal, setEditModal] = useState(false)
   const [completed, setCompleted] = useState(false)
-
+  const [loading, setLoading] = useState(false)
 
 
   useEffect(() => {
+    console.log(outline)
     if (outline?.status !== status) {
       setStatus(outline?.status)
       if (completedStatus.includes(outline?.status)) {
@@ -105,6 +106,21 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
       })
   }
 
+
+  const regenerateClickHandler = () => {
+    setLoading(true);
+    regenerateOutline(localOutline?.guid)
+      .then((result) => {
+        let newData = JSON.parse(result.data.outline);
+        console.log(newData)
+        setLocalOutline(newData)
+        setLoading(false);
+      })
+      .catch(() => {
+        setLoading(false);
+      });
+  };
+
   //   [
   //     "guid",
   //     "content_plan_guid",
@@ -168,8 +184,18 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
 
                 <button className='btn btn-primary btn-standard d-flex justify-content-center align-items-center' onClick={deleteClickHandler} title={`View GUID: ${localOutline?.guid}`}><i className="bi bi-trash pt-1" /></button>
 
+                <button
+                  className="btn btn-primary"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    regenerateClickHandler();
+                  }}
+                >
+                  regenerate outline
+                </button>
               </>
             </div>
+
             {status !== "completed" && <div className='col-12 text-end text-primary mt-2'>
               <TypeWriterText string={status} withBlink />
             </div>}

@@ -184,7 +184,7 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
 
                 <button className='btn btn-primary btn-standard d-flex justify-content-center align-items-center' onClick={deleteClickHandler} title={`View GUID: ${localOutline?.guid}`}><i className="bi bi-trash pt-1" /></button>
 
-                <button
+                {/* <button
                   className="btn btn-primary"
                   onClick={(e) => {
                     e.preventDefault();
@@ -192,7 +192,7 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
                   }}
                 >
                   regenerate outline
-                </button>
+                </button> */}
               </>
             </div>
 

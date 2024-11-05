@@ -1,3 +1,4 @@
+'use client'
 import { useEffect, useMemo, useState } from 'react'
 import styles from './PostsList.module.scss'
 import { deleteContentOutline, getPostsByDomain, getPostsByEmail } from '@/perfect-seo-shared-components/services/services'

@@ -1,3 +1,4 @@
+'use client'
 import { useEffect, useMemo, useState } from 'react'
 import styles from './OutlinesList.module.scss'
 import { deleteContentOutline, getContentPlanOutlinesByDomain, getContentPlanOutlinesByEmail } from '@/perfect-seo-shared-components/services/services'

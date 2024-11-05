@@ -25,7 +25,7 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const [completed, setCompleted] = useState(false)
-  console.log(post)
+
   const liveUrlUpdate = () => {
     setSaved(false)
     setUrlError(null)

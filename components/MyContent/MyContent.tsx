@@ -211,13 +211,11 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
     if (currentDomain) {
       setDomain(currentDomain)
       setSelected({ label: currentDomain, value: currentDomain })
-    } else if (domainsList?.length > 0) {
-      if (settings?.global?.defaultDomain) {
-        setDomain(settings.global.defaultDomain)
-        setSelected({ label: settings.global.defaultDomain, value: settings.global.defaultDomain })
-      }
+    } if (settings?.global?.defaultDomain && !domain && !selected) {
+      setDomain(settings.global.defaultDomain)
+      setSelected({ label: settings.global.defaultDomain, value: settings.global.defaultDomain })
     }
-  }, [domainsList, currentDomain, profile, settings])
+  }, [currentDomain, profile, settings])
 
   const isAuthorized = useMemo(() => {
     let bool = true;

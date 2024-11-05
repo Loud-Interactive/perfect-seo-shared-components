@@ -55,17 +55,12 @@ const BulkPostComponent = ({ active, currentDomain }: BulkPostComponentProps) =>
   const pullStatus = () => {
     getBatchStatus(itemGuids)
       .then(res => {
-        let completedGUIDs = res.data.filter((obj) => obj.status === 'Complete').map(({ content_plan_outline_guid }) => content_plan_outline_guid)
-        if (completedGUIDs?.length > 0) {
-          setItemGuids(itemGuids.filter((guid) => !completedGUIDs.includes(guid)))
-        }
         setItems(res.data.map((item) => ({ ...item, guid: item.content_plan_outline_guid })))
       })
   }
 
   useEffect(() => {
     let interval;
-    console.log(itemGuids)
     if (itemGuids?.length > 0 && active) {
       pullStatus()
       interval = setInterval(() => {

@@ -1,3 +1,4 @@
+'use client'
 import { useEffect, useState } from "react"
 import TextInput from "../Form/TextInput"
 import { emailValidator } from "@/perfect-seo-shared-components/utils/validators"

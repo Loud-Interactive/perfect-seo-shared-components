@@ -383,3 +383,7 @@ export const deleteOutline = (guid: string) => {
 export const patchContentPlan = (guid: string, data: any) => {
   return axiosInstance.patch(`https://planperfectapi.replit.app/patch_content_plan/${guid}`, data);
 }
+
+export const patchPost = (guid: string, field: string, value: string) => {
+  return axiosInstance.patch(`https://content-status.replit.app/content/update/${guid}/field`, { field, value });
+}

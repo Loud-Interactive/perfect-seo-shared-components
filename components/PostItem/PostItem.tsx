@@ -255,7 +255,7 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
                         </DropdownMenu.Item>
                         <DropdownMenu.Item>
                           <a
-                            href={`https://factcheckPerfect.ai/fact-checks?url=${encodeURI(localPost?.live_post_url)}`}
+                            href={`https://factcheckPerfect.ai/fact-checks?url=${encodeURI(localPost?.live_post_url)}&post_guid=${localPost?.content_plan_outline_guid}`}
                             target="_blank"
                             className="btn btn-transparent"
 

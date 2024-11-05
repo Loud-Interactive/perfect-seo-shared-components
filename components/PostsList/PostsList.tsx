@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import styles from './PostsList.module.scss'
 import { deleteContentOutline, getPostsByDomain, getPostsByEmail } from '@/perfect-seo-shared-components/services/services'
 import * as Modal from '@/perfect-seo-shared-components/components/Modal/Modal'
@@ -23,9 +23,8 @@ const PostsList = ({ domain_name, active }: PostsListProps) => {
 
   const getPosts = () => {
     if (active) {
-      setData(null)
-      paginator.setItemCount(0)
       if (domain_name) {
+
         getPostsByDomain(domain_name, { ...paginator.paginationObj, page: paginator.currentPage })
           .then(res => {
             paginator.setItemCount(res.data.total)
@@ -64,6 +63,9 @@ const PostsList = ({ domain_name, active }: PostsListProps) => {
       })
   }
 
+
+
+
   useEffect(() => {
     let interval;
     if (active) {
@@ -74,7 +76,7 @@ const PostsList = ({ domain_name, active }: PostsListProps) => {
     return () => {
       clearInterval(interval);
     }
-  }, [domain_name, user, active, paginator.currentPage, paginator.limit])
+  }, [domain_name, active, paginator.paginationObj])
 
 
   if (!active) return null

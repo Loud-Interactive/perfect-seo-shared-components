@@ -1,3 +1,4 @@
+'use client'
 import { useEffect, useState } from "react"
 import TextInput from "../Form/TextInput"
 import { emailValidator } from "@/perfect-seo-shared-components/utils/validators"
@@ -170,18 +171,6 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
     }
     return newUrl
   }
-  const renderViewUrl = () => {
-    let url;
-    try {
-      if (window?.location?.hostname === 'localhost') {
-        url = `http://localhost:3000/dashboard/${localPost?.content_plan_guid}`
-      }
-    }
-    catch (e) {
-      url = `https://contentPerfect.ai/dashboard/${localPost?.content_plan_guid}`
-    }
-    return url;
-  }
 
   return (
     <div className="card bg-secondary p-3" title={post?.title}>
@@ -228,7 +217,7 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
                 </>}
               <>
                 {localPost?.content_plan_guid && <Link
-                  href={renderViewUrl()}
+                  href={`https://contentPerfect.ai/dashboard/${localPost?.content_plan_guid}`}
                   title="View Content Plan"
                   className="btn btn-warning btn-standard d-flex justify-content-center align-items-center"
                 >
@@ -273,7 +262,7 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
                               className="btn btn-transparent"
 
                             >
-                              Fact-Check
+                              Fact-Check Results
                             </a>
                           </DropdownMenu.Item>
                           : <DropdownMenu.Item>
@@ -283,7 +272,7 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
                               className="btn btn-transparent"
 
                             >
-                              Fact-Check
+                              Fact-Check Post
                             </a>
                           </DropdownMenu.Item>}
                         <DropdownMenu.Item>

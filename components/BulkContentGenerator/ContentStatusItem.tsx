@@ -55,7 +55,16 @@ const ContentStatusItem = ({ item, deleteContent, idx }) => {
     <li className="card p-3 bg-secondary">
       <div className="row d-flex align-items-center justify-content-between g-3">
         {error ?
-          <div className="text-capitalize text-warning col-12"><TypeWriterText withBlink string={error} /></div>
+          <>          <div className="text-capitalize text-warning col-10 col-md-8"><TypeWriterText withBlink string={error} /></div>
+            <div className="col d-flex justify-content-end">
+              <button disabled={loading} className="btn btn-primary ms-3" onClick={e => {
+                e.preventDefault();
+                deleteContent(idx)
+              }}>
+                <i className="bi bi-x" /> Remove from Queue
+              </button>
+            </div>
+          </>
           :
           <>
             <div className="text-capitalize col-12 col-md-4"><span className="d-md-none text-primary me-1"><strong>Keyword</strong></span> {item?.target_keyword}</div>

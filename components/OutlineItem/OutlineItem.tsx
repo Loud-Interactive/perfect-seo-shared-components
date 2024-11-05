@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import TextInput from "../Form/TextInput"
 import { emailValidator } from "@/perfect-seo-shared-components/utils/validators"
-import { deleteContentOutline, fetchOutlineStatus, getPostStatus, patchContentPlans, patchOutlineTitle, saveContentPlanPost, updateLiveUrl } from "@/perfect-seo-shared-components/services/services"
+import { deleteContentOutline, deleteOutline, fetchOutlineStatus, getPostStatus, patchContentPlans, patchOutlineTitle, saveContentPlanPost, updateLiveUrl } from "@/perfect-seo-shared-components/services/services"
 
 import TypeWriterText from "../TypeWriterText/TypeWriterText"
 import Link from "next/link"
@@ -95,7 +95,7 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
 
 
   const deleteHandler = () => {
-    deleteContentOutline(localOutline?.guid)
+    deleteOutline(localOutline?.guid)
       .then(res => {
         refresh();
         setDeleteModal(false)

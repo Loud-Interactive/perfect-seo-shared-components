@@ -15,12 +15,12 @@ const ContentStatusItem = ({ item, deleteContent, idx }) => {
       } else {
         if (res.data) {
           setError(res.data[0]?.error)
-          if (!retry) {
-            setRetry(true)
-            setTimeout(() => {
-              pullStatus()
-            }, 10000)
-          }
+          // if (!retry) {
+          // setRetry(true)
+          // setTimeout(() => {
+          //   pullStatus()
+          // }, 10000)
+          // }
 
         }
       }
@@ -28,19 +28,19 @@ const ContentStatusItem = ({ item, deleteContent, idx }) => {
     })
       .catch(err => {
         console.log(err)
-        if (!retry) {
-          setRetry(true)
-          setTimeout(() => {
-            pullStatus()
-          }, 10000)
-        }
+        // if (!retry) {
+        //   setRetry(true)
+        //   setTimeout(() => {
+        //     pullStatus()
+        //   }, 10000)
+        // }
         setError(err.response.data.message)
       })
   }
 
   useEffect(() => {
     let interval;
-    if (guid && status !== "Finished") {
+    if (guid && ['Finished', 'GUID Not Found'].includes(status) === false && !error) {
       setRetry(false)
       pullStatus()
       interval = setInterval(() => {
@@ -49,7 +49,7 @@ const ContentStatusItem = ({ item, deleteContent, idx }) => {
     }
     return () => clearInterval(interval)
 
-  }, [guid, status])
+  }, [guid, status, error])
 
   return (
     <li className="card p-3 bg-secondary">

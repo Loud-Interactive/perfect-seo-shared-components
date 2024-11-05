@@ -376,5 +376,5 @@ export const patchContentPlan = (guid: string, data: any) => {
 }
 
 export const patchPost = (guid: string, field: string, value: string) => {
-  return axiosInstance.patch(`https://content-status.replit.app/content/update/${guid}/field`, { field, value });
+  return axiosInstance.patch(`https://content-status.replit.app/content/update/${guid}/field`, { field, value }, { headers: { 'Content-Type': 'application/json' } });
 }

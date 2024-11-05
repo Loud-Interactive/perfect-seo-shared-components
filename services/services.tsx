@@ -379,3 +379,7 @@ export const getContentPlansByDomain = (domain: string, paginator: PaginationReq
 export const deleteOutline = (guid: string) => {
   return axiosInstance.delete(`https://planperfectapi.replit.app/delete_outline/${guid}`);
 }
+
+export const patchContentPlan = (guid: string, data: any) => {
+  return axiosInstance.patch(`https://planperfectapi.replit.app/patch_content_plan/${guid}`, data);
+}

@@ -55,9 +55,6 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
 
   }, [currentDomain, domainsInfo])
 
-  useEffect(() => {
-    console.log(synopsis)
-  }, [synopsis])
 
   const isDefaultDomain = useMemo(() => {
     let bool = false;

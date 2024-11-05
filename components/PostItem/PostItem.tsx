@@ -25,7 +25,7 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const [completed, setCompleted] = useState(false)
-  console.log(post)
+
   const liveUrlUpdate = () => {
     setSaved(false)
     setUrlError(null)
@@ -170,6 +170,18 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
     }
     return newUrl
   }
+  const renderViewUrl = () => {
+    let url;
+    try {
+      if (window?.location?.hostname === 'localhost') {
+        url = `http://localhost:3000/dashboard/${localPost?.content_plan_guid}`
+      }
+    }
+    catch (e) {
+      url = `https://contentPerfect.ai/dashboard/${localPost?.content_plan_guid}`
+    }
+    return url;
+  }
 
   return (
     <div className="card bg-secondary p-3" title={post?.title}>
@@ -216,7 +228,7 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
                 </>}
               <>
                 {localPost?.content_plan_guid && <Link
-                  href={`https://contentPerfect.ai/dashboard/${localPost?.content_plan_guid}`}
+                  href={renderViewUrl()}
                   title="View Content Plan"
                   className="btn btn-warning btn-standard d-flex justify-content-center align-items-center"
                 >
@@ -253,16 +265,27 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
                             GSC Report
                           </a>
                         </DropdownMenu.Item>
-                        <DropdownMenu.Item>
-                          <a
-                            href={`https://factcheckPerfect.ai/fact-checks?url=${encodeURI(localPost?.live_post_url)}&post_guid=${localPost?.content_plan_outline_guid}`}
-                            target="_blank"
-                            className="btn btn-transparent"
+                        {localPost?.factcheck_guid ?
+                          <DropdownMenu.Item>
+                            <a
+                              href={`https://factcheckPerfect.ai/fact-checks/${localPost?.factcheck_guid}`}
+                              target="_blank"
+                              className="btn btn-transparent"
 
-                          >
-                            Fact-Check
-                          </a>
-                        </DropdownMenu.Item>
+                            >
+                              Fact-Check
+                            </a>
+                          </DropdownMenu.Item>
+                          : <DropdownMenu.Item>
+                            <a
+                              href={`https://factcheckPerfect.ai/fact-checks?url=${encodeURI(localPost?.live_post_url)}&post_guid=${localPost?.content_plan_outline_guid}`}
+                              target="_blank"
+                              className="btn btn-transparent"
+
+                            >
+                              Fact-Check
+                            </a>
+                          </DropdownMenu.Item>}
                         <DropdownMenu.Item>
                           <a
                             href={`https://socialperfect.ai?url=${encodeURI(localPost?.live_post_url)}`}

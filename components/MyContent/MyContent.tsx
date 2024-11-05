@@ -134,6 +134,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
 
   const searchDomainChangeHandler = (e) => {
     if (e) {
+      console.log(e)
       setDomain(e?.value);
       setSelected(e)
       setDataTracked(false)
@@ -211,13 +212,11 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
     if (currentDomain) {
       setDomain(currentDomain)
       setSelected({ label: currentDomain, value: currentDomain })
-    } else if (domainsList?.length > 0) {
-      if (settings?.global?.defaultDomain) {
-        setDomain(settings.global.defaultDomain)
-        setSelected({ label: settings.global.defaultDomain, value: settings.global.defaultDomain })
-      }
+    } if (settings?.global?.defaultDomain && !domain && !selected) {
+      setDomain(settings.global.defaultDomain)
+      setSelected({ label: settings.global.defaultDomain, value: settings.global.defaultDomain })
     }
-  }, [domainsList, currentDomain, profile, settings])
+  }, [currentDomain])
 
   const isAuthorized = useMemo(() => {
     let bool = true;
@@ -336,7 +335,8 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
               <SearchSelect
                 onChange={searchDomainChangeHandler}
                 options={domainsList}
-                value={selected}
+                isLoading={!domainsList}
+                value={selected || null}
                 placeholder="Select a Domain"
               />
               {(!isDefaultDomain && selected) && <a className='text-primary mt-2' onClick={addDefaultHandler}>Make Default</a>}

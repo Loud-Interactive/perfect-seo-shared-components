@@ -170,6 +170,18 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
     }
     return newUrl
   }
+  const renderViewUrl = () => {
+    let url;
+    try {
+      if (window?.location?.hostname === 'localhost') {
+        url = `http://localhost:3000/dashboard/${localPost?.content_plan_guid}`
+      }
+    }
+    catch (e) {
+      url = `https://contentPerfect.ai/dashboard/${localPost?.content_plan_guid}`
+    }
+    return url;
+  }
 
   return (
     <div className="card bg-secondary p-3" title={post?.title}>
@@ -216,7 +228,7 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
                 </>}
               <>
                 {localPost?.content_plan_guid && <Link
-                  href={`https://contentPerfect.ai/dashboard/${localPost?.content_plan_guid}`}
+                  href={renderViewUrl()}
                   title="View Content Plan"
                   className="btn btn-warning btn-standard d-flex justify-content-center align-items-center"
                 >

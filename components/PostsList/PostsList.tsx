@@ -22,9 +22,11 @@ const PostsList = ({ domain_name, active }: PostsListProps) => {
   const [deleteModal, setDeleteModal] = useState(null)
 
   const getPosts = () => {
+    console.log("getPosts")
     if (active) {
+      console.log("active")
       if (domain_name) {
-
+        console.log("by domain", domain_name)
         getPostsByDomain(domain_name, { ...paginator.paginationObj, page: paginator.currentPage })
           .then(res => {
             paginator.setItemCount(res.data.total)
@@ -37,6 +39,7 @@ const PostsList = ({ domain_name, active }: PostsListProps) => {
           })
       }
       else {
+        console.log("by email", user?.email)
         getPostsByEmail(user?.email, { ...paginator.paginationObj, page: paginator.currentPage })
           .then(res => {
             paginator.setItemCount(res.data.total)
@@ -76,7 +79,7 @@ const PostsList = ({ domain_name, active }: PostsListProps) => {
     return () => {
       clearInterval(interval);
     }
-  }, [domain_name, active, paginator.paginationObj])
+  }, [domain_name, active, paginator.currentPage, paginator.limit])
 
 
   if (!active) return null

@@ -273,7 +273,7 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
                               className="btn btn-transparent"
 
                             >
-                              Fact-Check
+                              Fact-Check Results
                             </a>
                           </DropdownMenu.Item>
                           : <DropdownMenu.Item>
@@ -283,7 +283,7 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
                               className="btn btn-transparent"
 
                             >
-                              Fact-Check
+                              Fact-Check Post
                             </a>
                           </DropdownMenu.Item>}
                         <DropdownMenu.Item>

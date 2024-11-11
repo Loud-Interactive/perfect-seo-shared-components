@@ -3,7 +3,7 @@ import TypeWriterText from "../TypeWriterText/TypeWriterText"
 import styles from './BrandHeader.module.scss'
 
 const BrandHeader = ({ synopsis }) => {
-  console.log(synopsis)
+
   const logoCardClasses = classNames('card p-3 h-100 d-flex align-items-center justify-content-center',
     {
       'bg-secondary': !synopsis?.logo_theme,

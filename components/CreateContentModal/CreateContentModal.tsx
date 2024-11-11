@@ -15,7 +15,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useSelector } from "react-redux";
 import { RootState } from '@/perfect-seo-shared-components/lib/store'
 import { GenerateContentPost, GetPostOutlineRequest, SaveContentPost } from "@/perfect-seo-shared-components/data/requestTypes";
-import { generateContentPlanOutline, getContentPlanOutline, saveContentPlanPost } from "@/perfect-seo-shared-components/services/services";
+import { fetchOutlineStatus, generateContentPlanOutline, getContentPlanOutline, saveContentPlanPost } from "@/perfect-seo-shared-components/services/services";
 import { createPost, regenerateOutline } from "@/perfect-seo-shared-components/services/services";
 import Loader from "@/perfect-seo-shared-components/components/Loader/Loader";
 
@@ -272,21 +272,14 @@ const CreateContentModal = ({
         }
       })
       .catch((err) => {
-        generateContentPlanOutline(reqObj)
-          .then((res) => {
-            let newData = JSON.parse(res.data);
-            if (typeof newData === "string") {
-              newData = JSON.parse(newData);
-            }
-            if (newData?.sections) {
-              processSections(newData.sections, initial);
-            }
-            setLoading(false);
-          })
-          .catch((err) => {
-            setLoading(false);
-            closeHandler()
-          });
+        if (data.guid) {
+          fetchOutlineStatus(data.guid)
+            .then(res => {
+              if (res?.data?.outline?.sections?.length > 0) {
+                processSections(res.data.outline.sections, initial);
+              }
+            })
+        }
       });
   };
 

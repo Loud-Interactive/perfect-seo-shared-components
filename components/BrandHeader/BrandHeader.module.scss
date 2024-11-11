@@ -1,0 +1,34 @@
+@use 'common' as *;
+
+.logo {
+  &Wrap {
+    position: relative;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    @include TabletDown {
+      padding-bottom: 2.25em;
+    }
+
+    @include Desktop {
+      &:hover {
+        .logoUpdate {
+          opacity: 100;
+        }
+      }
+    }
+  }
+
+  &Update {
+    position: absolute;
+    bottom: 0;
+
+    @include Desktop {
+      opacity: 0;
+      right: 0;
+    }
+  }
+}

@@ -1,18 +1,27 @@
 import { useState, useEffect } from 'react';
 import { updateImpression } from '../services/services';
+import axios from 'axios';
 
 const useLogoCheck = (logoUrl: string, domain) => {
   const [isDark, setIsDark] = useState<boolean | null>(null);
+
+  const checkForErrors = () => {
+    axios.get(logoUrl)
+      .catch((error) => {
+        updateImpression(domain, { logo_url: null })
+      });
+  }
 
   useEffect(() => {
     const checkLogo = async () => {
       const img = new Image();
       img.crossOrigin = 'Anonymous';
       img.src = logoUrl;
-
+      console.log(img.src)
       img.onload = () => {
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
+
         if (!ctx) return;
 
         canvas.width = img.width;
@@ -45,6 +54,7 @@ const useLogoCheck = (logoUrl: string, domain) => {
 
     if (logoUrl) {
       checkLogo();
+      checkForErrors()
     }
     else {
       setIsDark(null);

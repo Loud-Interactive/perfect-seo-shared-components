@@ -24,7 +24,6 @@ const useLogoCheck = (logoUrl: string, domain: string, form?: FormController) =>
       const img = new Image();
       img.crossOrigin = 'Anonymous';
       img.src = logoUrl;
-      console.log(img.src)
       img.onload = () => {
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
@@ -69,7 +68,6 @@ const useLogoCheck = (logoUrl: string, domain: string, form?: FormController) =>
         newData.primaryColor = rgbToHex(Number(primary[0]), Number(primary[1]), Number(primary[2]))
         newData.secondaryColor = secondaryColor ? rgbToHex(Number(secondaryColor[0]), Number(secondaryColor[1]), Number(secondaryColor[2])) : null
         newData.isDark = (brightness < 128);
-        console.log(brightness)
       };
 
       setData(newData);
@@ -101,10 +99,16 @@ const useLogoCheck = (logoUrl: string, domain: string, form?: FormController) =>
         if (data.isDark && form?.getState?.logo_theme !== 'light') {
           newImpression.logo_theme = 'light'
         }
-        else if (!data.isDark && form?.getState?.logo_theme !== 'dark') {
+        else if (data.isDark === false && form?.getState?.logo_theme !== 'dark') {
           newImpression.logo_theme = 'dark'
         }
       }
+      // if (data.width && Math.ceil(data?.width) !== form?.getState?.logo_width) {
+      //   newImpression.logo_width = Math.ceil(data.width)
+      // }
+      // if (data.height && Math.ceil(data.height) !== form?.getState?.logo_height) {
+      //   newImpression.logo_height = Math.ceil(data.height)
+      // }
       if (Object?.keys(newImpression)?.length > 0) {
         updateImpression(domain, newImpression)
         if (form) {
@@ -113,7 +117,7 @@ const useLogoCheck = (logoUrl: string, domain: string, form?: FormController) =>
       }
     }
 
-  }, [domain, data])
+  }, [data, domain])
 
   return data?.isDark;
 };

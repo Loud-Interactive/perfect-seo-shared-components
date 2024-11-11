@@ -159,7 +159,7 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
             {user?.image && <div className="col-auto me-3">
               <img src={user?.image} className="user-icon cursor-pointer" onClick={imageClickHandler} />
             </div>}
-            <DropdownMenu.Root defaultOpen open={open} onOpenChange={openChangeHandler}>
+            <DropdownMenu.Root modal defaultOpen open={open} onOpenChange={openChangeHandler}>
               <DropdownMenu.Trigger className={styles.menuButton}>
                 <i className="bi text-primary bi-grid-3x3-gap-fill" />
               </DropdownMenu.Trigger>

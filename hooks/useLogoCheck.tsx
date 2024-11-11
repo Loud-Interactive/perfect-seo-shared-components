@@ -1,11 +1,19 @@
 import { useState, useEffect } from 'react';
 import { updateImpression } from '../services/services';
 import { FormController } from './useForm';
+import axios from 'axios';
 
 const blankData = { primaryColor: null, secondaryColor: null, isDark: null, width: null, height: null, aspectRatio: null }
 
 const useLogoCheck = (logoUrl: string, domain: string, form?: FormController) => {
   const [data, setData] = useState(blankData);
+
+  const checkForErrors = () => {
+    axios.get(logoUrl)
+      .catch((error) => {
+        updateImpression(domain, { logo_url: null })
+      });
+  }
 
   useEffect(() => {
     const checkLogo = async () => {
@@ -16,10 +24,11 @@ const useLogoCheck = (logoUrl: string, domain: string, form?: FormController) =>
       const img = new Image();
       img.crossOrigin = 'Anonymous';
       img.src = logoUrl;
-
+      console.log(img.src)
       img.onload = () => {
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
+
         if (!ctx) return;
         newData.width = img.width
         newData.height = img.height
@@ -71,6 +80,7 @@ const useLogoCheck = (logoUrl: string, domain: string, form?: FormController) =>
 
     if (logoUrl) {
       checkLogo();
+      checkForErrors()
     }
     else {
       setData(blankData);

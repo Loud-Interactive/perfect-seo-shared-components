@@ -1,16 +1,33 @@
 import classNames from "classnames"
 import TypeWriterText from "../TypeWriterText/TypeWriterText"
 import styles from './BrandHeader.module.scss'
+import useLogoCheck from "@/perfect-seo-shared-components/hooks/useLogoCheck"
+import { useEffect } from "react"
+import { updateImpression } from "@/perfect-seo-shared-components/services/services"
 
 const BrandHeader = ({ synopsis }) => {
+  const isDark = useLogoCheck(synopsis?.logo_url, synopsis?.domain)
 
   const logoCardClasses = classNames('card p-3 h-100 d-flex align-items-center justify-content-center',
     {
       'bg-secondary': !synopsis?.logo_theme,
-      'bg-light': synopsis?.logo_theme === 'light',
-      'bg-dark': synopsis?.logo_theme === 'dark'
+      'bg-light': synopsis?.logo_theme === 'light' && !isDark,
+      'bg-dark': synopsis?.logo_theme === 'dark' || isDark
     }
   )
+
+
+
+  useEffect(() => {
+    if (synopsis?.logo_url && isDark !== null) {
+      if (isDark && synopsis.logo_theme !== 'dark') {
+        updateImpression(synopsis.domain, { 'logo_theme': 'dark' })
+      } else if (!isDark && synopsis.logo_theme !== 'light') {
+        updateImpression(synopsis.domain, { 'logo_theme': 'light' })
+      }
+    }
+  }, [isDark, synopsis?.logo_url])
+
   return (
     <div className='bg-primary mb-3'>
       <div className='container-xl content-fluid py-3'>

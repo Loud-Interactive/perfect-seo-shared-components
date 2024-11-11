@@ -29,6 +29,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
   const [selectedTab, setSelectedTab] = useState('content-plans')
   const searchParams = useSearchParams();
   const queryParam = searchParams.get('tab');
+  const domainParam = searchParams.get('domain');
   const router = useRouter();
   const pathname = usePathname()
   const [domain, setDomain] = useState(currentDomain || null)
@@ -41,10 +42,11 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
 
   useEffect(() => {
     let data = null;
-    if (currentDomain && domainsInfo) {
-      data = domainsInfo.find(obj => obj?.domain === currentDomain)
+    if ((currentDomain || domain) && domainsInfo) {
+      let checkDomain = currentDomain || domain
+      data = domainsInfo.find(obj => obj?.domain === checkDomain)
       if (!data) {
-        getSynopsisInfo(currentDomain)
+        getSynopsisInfo(checkDomain)
           .then(res => {
             setSynopsis(res?.data)
           })
@@ -54,7 +56,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
       }
     }
 
-  }, [currentDomain, domainsInfo])
+  }, [currentDomain, domainsInfo, domain])
 
 
   const isDefaultDomain = useMemo(() => {
@@ -121,6 +123,14 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
     }
   }, [queryParam])
 
+  useEffect(() => {
+    if (domainParam) {
+      setDomain(domainParam);
+      setSelected({ value: domainParam, label: domainParam })
+      setSynopsis(null)
+    }
+  }, [domainParam])
+
   const TabData = [
     { key: "content-plans", title: "Generated Content Plans" },
     { key: "outlines", title: "Generated Outlines" },
@@ -132,14 +142,17 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
 
   const searchDomainChangeHandler = (e) => {
     if (e) {
-      console.log(e)
+      setSynopsis(null)
       setDomain(e?.value);
       setSelected(e)
       setDataTracked(false)
+      router.replace(pathname + '?' + createQueryString("domain", e.value))
     }
     else {
       setDomain(null);
       setSelected(null)
+      setSynopsis(null)
+      router.replace(pathname)
     }
   };
 
@@ -297,27 +310,27 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
   }
   return (
     <>
-      {currentDomain &&
-        <BrandHeader synopsis={synopsis} />
-      }
-      <div className='container-xl content-fluid'>
-        {!(hideTitle || currentDomain) &&
-          <div className='row d-flex justify-content-between'>
-            <div className='col'>
-              <h1 className="text-start mb-5"><TypeWriterText string={selectedTab.includes("bulk") ? 'Upload for all domains' : selected ? `Content for ${domain}` : 'Your Content'} withBlink /></h1>
-            </div>
-            {(profile?.domain_access?.length > 0 && ['bulk-content', 'bulk-posts'].includes(selectedTab) === false) && <div className='col-12 col-md-4 mb-3'>
-              <SearchSelect
-                onChange={searchDomainChangeHandler}
-                options={domainsList}
-                isLoading={!domainsList}
-                value={selected || null}
-                placeholder="Select a Domain"
-              />
-              {(!isDefaultDomain && selected) && <a className='text-primary mt-2' onClick={addDefaultHandler}>Make Default</a>}
-            </div>}
+      {hideTitle ? null : <div className='row px-3 g-3 align-items-center justify-content-between'>
+        {synopsis ?
+          <>
+            <BrandHeader synopsis={synopsis} />
+          </> :
+          <div className='col'>
+            <h1 className="text-start mb-5"><TypeWriterText string={selectedTab.includes("bulk") ? 'Upload for all domains' : selected ? `Content for ${domain}` : 'Your Content'} withBlink /></h1>
           </div>
         }
+        {(profile?.domain_access?.length > 0 && ['bulk-content', 'bulk-posts'].includes(selectedTab) === false && !currentDomain) && <div className='col-12 col-md-4 mb-5'>
+          <SearchSelect
+            onChange={searchDomainChangeHandler}
+            options={domainsList}
+            isLoading={!domainsList}
+            value={selected || null}
+            placeholder="Select a Domain"
+          />
+          {(!isDefaultDomain && selected) && <a className='text-primary' onClick={addDefaultHandler}>Make Default</a>}
+        </div>}</div>}
+      <div className='container-xl content-fluid'>
+
         <div className={styles.tabWrap}>
           <ul className="nav nav-tabs mb-0">
             {TabData.map((tab) => {

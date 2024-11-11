@@ -7,8 +7,8 @@ const BrandHeader = ({ synopsis }) => {
   const logoCardClasses = classNames('card p-3 h-100 d-flex align-items-center justify-content-center',
     {
       'bg-secondary': !synopsis?.logo_theme,
-      'bg-dark': synopsis?.logo_theme === 'light',
-      'bg-light': synopsis?.logo_theme === 'dark'
+      'bg-light': synopsis?.logo_theme === 'light',
+      'bg-dark': synopsis?.logo_theme === 'dark'
     }
   )
   return (

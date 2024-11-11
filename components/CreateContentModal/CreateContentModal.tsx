@@ -237,6 +237,9 @@ const CreateContentModal = ({
 
   const pullOutline = (initial?) => {
     setLoading(true);
+    if (data.guid) {
+      setOutlineGUID(data.guid)
+    }
 
     let reqObj: GetPostOutlineRequest = {
       client_name: contentPlan?.brand_name,

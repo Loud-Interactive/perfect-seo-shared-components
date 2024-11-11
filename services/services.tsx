@@ -63,6 +63,7 @@ export const updateImpression = (domain: string, obj: Object) => {
     domain: domain,
     key_value_pairs: obj,
   };
+
   return axiosInstance.post("https://pp-api.replit.app/pairs", reqObj, { headers });
 };
 

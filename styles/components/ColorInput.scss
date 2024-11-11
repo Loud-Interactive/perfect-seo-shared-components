@@ -1,0 +1,64 @@
+@use "common" as *;
+
+.colorInput {
+  &-container {
+    align-items: center;
+    display: flex;
+    position: relative;
+  }
+
+  &-input {
+    font-weight: 400;
+    height: 35px !important;
+    width: 35px !important;
+
+
+    position: relative;
+
+    &_withIcon {
+      padding-left: 35px;
+    }
+
+    &_withError {
+      border-color: red !important;
+    }
+
+    &_borderless {
+      border: 1px solid transparent;
+    }
+
+    &_readOnly {
+      background-color: transparent !important;
+      border: none;
+      border-radius: initial;
+      padding: 6px 0 16px 0;
+      cursor: pointer;
+
+      &.colorInput-input_withIcon {
+        padding-left: 35px;
+      }
+
+      &:focus-visible {
+        outline: none !important
+      }
+    }
+
+    &_button {
+      padding-right: 55px;
+    }
+  }
+
+  &-icon {
+    display: flex;
+    pointer-events: none;
+    position: absolute;
+    left: 15px;
+    width: 20px;
+
+    >* {
+      // Ensure that nested icon elements (SVGs, imgs, etc.)
+      // all conform to the size of the icon container
+      width: 100%;
+    }
+  }
+}

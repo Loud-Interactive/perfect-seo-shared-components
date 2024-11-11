@@ -1,11 +1,18 @@
 import { useState, useEffect } from 'react';
 import { updateImpression } from '../services/services';
+import { FormController } from './useForm';
 
-const useLogoCheck = (logoUrl: string, domain) => {
-  const [isDark, setIsDark] = useState<boolean | null>(null);
+const blankData = { primaryColor: null, secondaryColor: null, isDark: null, width: null, height: null, aspectRatio: null }
+
+const useLogoCheck = (logoUrl: string, domain: string, form?: FormController) => {
+  const [data, setData] = useState(blankData);
 
   useEffect(() => {
     const checkLogo = async () => {
+      let newData = blankData;
+      function rgbToHex(r, g, b) {
+        return "#" + (1 << 24 | r << 16 | g << 8 | b).toString(16).slice(1);
+      }
       const img = new Image();
       img.crossOrigin = 'Anonymous';
       img.src = logoUrl;
@@ -14,13 +21,23 @@ const useLogoCheck = (logoUrl: string, domain) => {
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
         if (!ctx) return;
-
+        newData.width = img.width
+        newData.height = img.height
         canvas.width = img.width;
         canvas.height = img.height;
         ctx.drawImage(img, 0, 0, img.width, img.height);
 
         const imageData = ctx.getImageData(0, 0, img.width, img.height);
         const data = imageData.data;
+
+        const colorCount = {};
+        for (let i = 0; i < data.length; i += 4) {
+          if (data[i + 3] === 0) continue; // Skip transparent pixels
+          const rgb = `${data[i]},${data[i + 1]},${data[i + 2]}`;
+          colorCount[rgb] = (colorCount[rgb] || 0) + 1;
+        }
+
+
 
         let r = 0, g = 0, b = 0;
         for (let i = 0; i < data.length; i += 4) {
@@ -35,11 +52,20 @@ const useLogoCheck = (logoUrl: string, domain) => {
         b = Math.floor(b / pixelCount);
 
         const brightness = (r * 299 + g * 587 + b * 114) / 1000;
-        setIsDark(brightness < 128);
+        const sortedColors = Object.entries(colorCount).sort((a, b) => Number(b[1]) - Number(a[1]));
+
+        let secondaryColor = sortedColors[1] ? sortedColors[1][0].split(",") : null
+        let primary = sortedColors[0][0].split(',')
+
+        newData.primaryColor = rgbToHex(Number(primary[0]), Number(primary[1]), Number(primary[2]))
+        newData.secondaryColor = secondaryColor ? rgbToHex(Number(secondaryColor[0]), Number(secondaryColor[1]), Number(secondaryColor[2])) : null
+        newData.isDark = (brightness < 128);
+        console.log(brightness)
       };
 
+      setData(newData);
       img.onerror = () => {
-        setIsDark(null);
+        setData(blankData);
       };
     };
 
@@ -47,17 +73,39 @@ const useLogoCheck = (logoUrl: string, domain) => {
       checkLogo();
     }
     else {
-      setIsDark(null);
+      setData(blankData);
     }
   }, [logoUrl]);
 
-  useEffect(() => {
-    if (isDark !== null && domain) {
-      updateImpression(domain, { logo_theme: isDark ? 'dark' : 'light' })
-    }
-  }, [isDark, domain])
 
-  return isDark;
+  useEffect(() => {
+    if (data && domain) {
+      let newImpression: any = {}
+      if (data.primaryColor && data.primaryColor !== form?.getState?.brand_color_primary) {
+        newImpression.brand_color_primary = data.primaryColor
+      }
+      if (data.secondaryColor && data.secondaryColor !== form?.getState?.brand_color_primary) {
+        newImpression.brand_color_secondary = data.secondaryColor
+      }
+      if (data.isDark !== null) {
+        if (data.isDark && form?.getState?.logo_theme !== 'light') {
+          newImpression.logo_theme = 'light'
+        }
+        else if (!data.isDark && form?.getState?.logo_theme !== 'dark') {
+          newImpression.logo_theme = 'dark'
+        }
+      }
+      if (Object?.keys(newImpression)?.length > 0) {
+        updateImpression(domain, newImpression)
+        if (form) {
+          form.setState({ ...form.getState, ...newImpression })
+        }
+      }
+    }
+
+  }, [domain, data])
+
+  return data?.isDark;
 };
 
 export default useLogoCheck;

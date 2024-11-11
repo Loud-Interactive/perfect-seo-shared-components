@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
+import { updateImpression } from '../services/services';
 
-const useLogoCheck = (logoUrl: string) => {
+const useLogoCheck = (logoUrl: string, domain) => {
   const [isDark, setIsDark] = useState<boolean | null>(null);
 
   useEffect(() => {
@@ -45,7 +46,16 @@ const useLogoCheck = (logoUrl: string) => {
     if (logoUrl) {
       checkLogo();
     }
+    else {
+      setIsDark(null);
+    }
   }, [logoUrl]);
+
+  useEffect(() => {
+    if (isDark !== null && domain) {
+      updateImpression(domain, { logo_theme: isDark ? 'dark' : 'light' })
+    }
+  }, [isDark, domain])
 
   return isDark;
 };

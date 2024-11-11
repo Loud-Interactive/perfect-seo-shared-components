@@ -35,6 +35,14 @@ select {
 
 body {
   background-color: $secondary;
+
+  .modal-overlay {
+    display: none !important;
+
+    &:last-of-type {
+      display: flex !important;
+    }
+  }
 }
 
 

@@ -15,22 +15,11 @@ const BrandHeader = ({ synopsis, editable = true }: BrandHeaderProps) => {
   const logoCardClasses = classNames('card p-3 h-100 d-flex align-items-center justify-content-center',
     {
       'bg-secondary': !synopsis?.logo_theme,
-      'bg-light': synopsis?.logo_theme === 'light' && !isDark,
-      'bg-dark': synopsis?.logo_theme === 'dark' || isDark
+      'bg-light': synopsis?.logo_theme === 'light' && isDark,
+      'bg-dark': synopsis?.logo_theme === 'dark' || !isDark
     }
   )
 
-
-
-  useEffect(() => {
-    if (synopsis?.logo_url && isDark !== null) {
-      if (isDark && synopsis.logo_theme !== 'dark') {
-        updateImpression(synopsis.domain, { 'logo_theme': 'dark' })
-      } else if (!isDark && synopsis.logo_theme !== 'light') {
-        updateImpression(synopsis.domain, { 'logo_theme': 'light' })
-      }
-    }
-  }, [isDark, synopsis?.logo_url])
 
   return (
     <div className='bg-primary mb-3'>
@@ -39,7 +28,7 @@ const BrandHeader = ({ synopsis, editable = true }: BrandHeaderProps) => {
           {synopsis?.logo_url && <div className='col-12 col-lg-3'>
             <div className={logoCardClasses}>
               <div className={styles.logoWrap}>
-                <img src={synopsis?.logo_url} className='w-75' />
+                <img src={synopsis?.logo_url} />
                 {editable && <div className={styles.logoUpdate}>
                   <a href={`https://preferencesperfect.ai/domain/${synopsis?.domain}?tab=brand-identity`} className='text-primary' target='_blank'>Update Logo</a>
                 </div>}

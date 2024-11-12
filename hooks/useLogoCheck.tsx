@@ -43,6 +43,7 @@ const useLogoCheck = (logoUrl: string, domain: string, form?: FormController) =>
 
     let r = 0, g = 0, b = 0;
     for (let i = 0; i < data.length; i += 4) {
+      if (data[i + 3] === 0) continue; // Skip transparent pixels
       r += data[i];
       g += data[i + 1];
       b += data[i + 2];
@@ -55,13 +56,12 @@ const useLogoCheck = (logoUrl: string, domain: string, form?: FormController) =>
 
     const brightness = (r * 299 + g * 587 + b * 114) / 1000;
     const sortedColors = Object.entries(colorCount).sort((a, b) => Number(b[1]) - Number(a[1]));
-
     let secondaryColor = sortedColors[1] ? sortedColors[1][0].split(",") : null;
     let primary = sortedColors[0][0].split(',');
 
     newData.primaryColor = rgbToHex(Number(primary[0]), Number(primary[1]), Number(primary[2]));
     newData.secondaryColor = secondaryColor ? rgbToHex(Number(secondaryColor[0]), Number(secondaryColor[1]), Number(secondaryColor[2])) : null;
-    newData.isDark = (brightness < 128);
+    newData.isDark = (brightness < 116);
 
     return newData;
   };
@@ -70,7 +70,6 @@ const useLogoCheck = (logoUrl: string, domain: string, form?: FormController) =>
 
   useEffect(() => {
     const checkLogo = async () => {
-      console.log("logo is image");
       const img = new Image();
       img.crossOrigin = 'Anonymous';
       img.src = logoUrl;
@@ -85,7 +84,6 @@ const useLogoCheck = (logoUrl: string, domain: string, form?: FormController) =>
     };
 
     if (logoUrl) {
-      console.log("logo URL:", logoUrl);
       checkLogo();
       checkForErrors();
     } else {

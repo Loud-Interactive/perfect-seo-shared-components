@@ -20,6 +20,7 @@ import { getSynopsisInfo } from '@/perfect-seo-shared-components/services/servic
 import BulkContentComponent from '../BulkContentGenerator/BulkContentComponent';
 import OutlinesList from '../OutlinesList/OutlinesList';
 import BrandHeader from '../BrandHeader/BrandHeader';
+import LoadSpinner from '../LoadSpinner/LoadSpinner';
 export interface MyContentProps {
   currentDomain?: string;
   hideTitle?: boolean;
@@ -169,6 +170,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
 
       });
   };
+
   const checkDomain = (domain) => {
     if (domain) {
       supabase
@@ -223,14 +225,17 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
     if (currentDomain) {
       setDomain(currentDomain)
       setSelected({ label: currentDomain, value: currentDomain })
-    } if (settings?.global?.defaultDomain && !domain && !selected) {
+    } else if (settings?.global?.defaultDomain) {
       setDomain(settings.global.defaultDomain)
       setSelected({ label: settings.global.defaultDomain, value: settings.global.defaultDomain })
     }
-  }, [currentDomain])
+  }, [currentDomain, settings])
 
   const isAuthorized = useMemo(() => {
     let bool = true;
+    if (isLoading) {
+      return null
+    }
     if (isAdmin) {
       return true
     } else if (profile?.admin === true) {
@@ -253,7 +258,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
     else {
       bool = false
     }
-    if (bool === false && user?.email && (currentDomain || selected?.value) && (domainsList || profile?.domain_access)) {
+    if (bool === false && profile?.email && (currentDomain || selected?.value) && (domainsList || profile?.domain_access)) {
       supabase
         .from('user_history')
         .insert({ email: user.email, domain: currentDomain || selected?.value, transaction_data: { domains: domainsList || profile?.domain_access }, product: en.product, type: "Unauthorized My Content" })
@@ -263,7 +268,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
         })
     }
     return bool
-  }, [user?.email, isAdmin, currentDomain, selected, domainsList, profile?.domains])
+  }, [currentDomain, selected, domainsList, profile, isLoading])
 
   useEffect(() => {
     if (isAdmin) {
@@ -272,16 +277,16 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
   }, [isAdmin])
 
   useEffect(() => {
-    if (['bulk-content', 'bulk-posts'].includes(selectedTab)) {
-      if (currentDomain) {
-        setDomain(currentDomain)
-        setSelected({ label: currentDomain, value: currentDomain })
-      }
-      else {
-        setDomain(null);
-        setSelected(null)
-      }
-    }
+    // if (['bulk-content', 'bulk-posts'].includes(selectedTab)) {
+    //   if (currentDomain) {
+    //     setDomain(currentDomain)
+    //     setSelected({ label: currentDomain, value: currentDomain })
+    //   }
+    //   else {
+    //     setDomain(null);
+    //     setSelected(null)
+    //   }
+    // }
   }, [])
 
 
@@ -289,11 +294,11 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
   if (isLoading) {
     return (
       <div className='strip-padding'>
-        <Loader />
+        {/* <Loader /> */}
       </div>
     )
   }
-  else if (!isAuthorized) {
+  if (isAuthorized === false) {
     return (
       <div className="container-fluid container-xl strip-padding">
         <div className='row d-flex align-items-center justify-content-center'>
@@ -310,27 +315,32 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
   }
   return (
     <>
-      {hideTitle ? null : <div className='row px-3 g-3 align-items-center justify-content-between'>
-        {synopsis ?
-          <>
-            <BrandHeader synopsis={synopsis} />
-          </> :
-          <div className='col'>
-            <h1 className="text-start mb-5"><TypeWriterText string={selectedTab.includes("bulk") ? 'Upload for all domains' : selected ? `Content for ${domain}` : 'Your Content'} withBlink /></h1>
+      {hideTitle ? null :
+        <div className='container-fluid container-xl'>
+          <div className='row px-3 g-3 align-items-center justify-content-between'>
+            {synopsis ?
+              <>
+                <BrandHeader synopsis={synopsis} />
+              </> :
+              <div className='col'>
+                <h1 className="text-start mb-5"><TypeWriterText string={selectedTab.includes("bulk") ? 'Upload for all domains' : selected ? `Content for ${domain}` : 'Your Content'} withBlink /></h1>
+              </div>
+            }
+            {(profile?.domain_access?.length > 0 && ['bulk-content', 'bulk-posts'].includes(selectedTab) === false && !currentDomain) && <div className='col-12 col-md-4 mb-5'>
+              <SearchSelect
+                onChange={searchDomainChangeHandler}
+                options={domainsList}
+                isLoading={!domainsList}
+                value={selected || null}
+                placeholder="Select a Domain"
+              />
+              {(!isDefaultDomain && selected) && <a className='text-primary' onClick={addDefaultHandler}>Make Default</a>}
+            </div>}
           </div>
-        }
-        {(profile?.domain_access?.length > 0 && ['bulk-content', 'bulk-posts'].includes(selectedTab) === false && !currentDomain) && <div className='col-12 col-md-4 mb-5'>
-          <SearchSelect
-            onChange={searchDomainChangeHandler}
-            options={domainsList}
-            isLoading={!domainsList}
-            value={selected || null}
-            placeholder="Select a Domain"
-          />
-          {(!isDefaultDomain && selected) && <a className='text-primary' onClick={addDefaultHandler}>Make Default</a>}
-        </div>}</div>}
+        </div>
+      }
       <div className='container-xl content-fluid'>
-
+        {isLoading && <LoadSpinner />}
         <div className={styles.tabWrap}>
           <ul className="nav nav-tabs mb-0">
             {TabData.map((tab) => {
@@ -348,17 +358,17 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
           <div className="tab-content bg-dark mb-3" id="myTabContent">
             <div className={`tab-pane fade ${selectedTab === 'outlines' && 'show active'}`} id="outlines" role="tabpanel" aria-labelledby="outlines-tab">
               <div className='tab p-3'>
-                <OutlinesList active={selectedTab === 'outlines'} domain_name={domain} />
+                <OutlinesList active={selectedTab === 'outlines'} domain_name={currentDomain || domain} />
               </div>
             </div>
             <div className={`tab-pane fade ${selectedTab === 'posts' && 'show active'}`} id="posts" role="tabpanel" aria-labelledby="posts-tab">
               <div className='tab p-3'>
-                <PostsList active={selectedTab === 'posts'} domain_name={domain} />
+                <PostsList active={selectedTab === 'posts'} domain_name={currentDomain || domain} />
               </div>
             </div>
             <div className={`tab-pane fade ${selectedTab === 'content-plans' && 'show active'}`} id="content-plans" role="tabpanel" aria-labelledby="content-plans-tab">
               <div className='tab p-3'>
-                <PlansList active={selectedTab === 'content-plans'} domain_name={domain} />
+                <PlansList active={selectedTab === 'content-plans'} domain_name={currentDomain || domain} />
               </div>
             </div>
             <div className={`tab-pane fade ${selectedTab === 'bulk-content' && 'show active'}`} id="bulk-cnotent" role="tabpanel" aria-labelledby="bulk-content-tab">

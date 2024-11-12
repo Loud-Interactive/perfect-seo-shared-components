@@ -322,6 +322,7 @@ export interface PreferencesProps extends
   BusinessInfoProps,
   BrandTabProps,
   SettingsProps { }
+
 export interface TieredPreferencesProps {
   businessInfo: BusinessInfoProps,
   brand: BrandTabProps

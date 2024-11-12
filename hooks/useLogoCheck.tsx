@@ -119,7 +119,7 @@ const useLogoCheck = (logoUrl: string, domain: string, form?: FormController) =>
 
   }, [data, domain])
 
-  return data?.isDark;
+  return data.isDark;
 };
 
 export default useLogoCheck;

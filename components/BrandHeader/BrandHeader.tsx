@@ -20,6 +20,7 @@ const BrandHeader = ({ synopsis, editable = true }: BrandHeaderProps) => {
     }
   )
 
+  if (!synopsis || !synopsis?.domain) return null
 
   return (
     <div className='bg-primary mb-3'>

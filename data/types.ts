@@ -316,3 +316,74 @@ export interface PaginationRequest {
   page?: number
 }
 
+//Preferences Interfaces
+
+export interface PreferencesProps extends
+  BusinessInfoProps,
+  BrandTabProps,
+  SettingsProps { }
+export interface TieredPreferencesProps {
+  businessInfo: BusinessInfoProps,
+  brand: BrandTabProps
+  settings: SettingsProps
+}
+
+export interface BusinessInfoProps {
+  business_goals: string,
+  certifications_awards: string,
+  company_aka: string,
+  company_name: string,
+  company_revenue: string,
+  company_size: string,
+  customer_support_email: string,
+  distribution_channels: string,
+  founding_date: string,
+  general_inquries: string,
+  hq_address_1: string,
+  hq_address_2: string,
+  hq_address_3: string,
+  hq_city: string,
+  hq_country: string,
+  hq_postal_code: string,
+  hq_state: string,
+  investor_relations_email: string,
+  legal_structure: string,
+  mission: string,
+  other_email: string,
+  partnerships_email: string,
+  phone_number: string,
+  press_inquiries_email: string
+}
+
+export interface SettingsProps {
+  post_style_tag_main: string,
+  post_callout_left: string,
+  post_callout_right: string
+}
+
+export interface BrandTabProps {
+  business_goals: string,
+  certifications_awards: string,
+  company_aka: string,
+  company_name: string,
+  company_revenue: string,
+  company_size: string,
+  customer_support_email: string,
+  distribution_channels: string,
+  founding_date: string,
+  general_inquries: string,
+  hq_address_1: string,
+  hq_address_2: string,
+  hq_address_3: string,
+  hq_city: string,
+  hq_country: string,
+  hq_postal_code: string,
+  hq_state: string,
+  investor_relations_email: string,
+  legal_structure: string,
+  mission: string,
+  other_email: string,
+  partnerships_email: string,
+  phone_number: string,
+  press_inquiries_email: string
+}

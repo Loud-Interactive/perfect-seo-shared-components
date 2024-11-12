@@ -9,7 +9,8 @@
     align-items: center;
     justify-content: center;
 
-    img {
+    img,
+    svg {
       object-fit: contain;
       width: 100%;
     }

@@ -320,13 +320,171 @@ export interface PaginationRequest {
 
 export interface PreferencesProps extends
   BusinessInfoProps,
+  SocialProps,
   BrandTabProps,
-  SettingsProps { }
+  SettingsProps,
+  CommunicationsProps,
+  ProductAndServiceProps,
+  MarketAndAudienceProps,
+  CMSProps,
+  LandingPageFields,
+  OtherFieldsProps { }
 
 export interface TieredPreferencesProps {
-  businessInfo: BusinessInfoProps,
-  brand: BrandTabProps
-  settings: SettingsProps
+  'company-info': BusinessInfoProps,
+  "social-media": SocialProps,
+  'brand-identity': BrandTabProps
+  'blog-settings': SettingsProps,
+  'communications': CommunicationsProps
+  "products-and-services": ProductAndServiceProps,
+  "market-and-audience": MarketAndAudienceProps,
+  "cms": CMSProps,
+  "landing-pages": LandingPageFields,
+  "other": OtherFieldsProps
+}
+
+export interface LandingPageFields {
+  landing_page_name_1: string;
+  landing_page_url_1: string;
+  landing_page_name_2?: string;
+  landing_page_url_2?: string;
+  landing_page_name_3?: string;
+  landing_page_url_3?: string;
+}
+
+export interface CMSProps {
+  cms_brand: string;
+  cms_brand_website: string;
+  cms_username: string;
+  cms_application_password: string;
+  cms_posting_url: string;
+  cms_api_key: string;
+  cms_web_login_url: string;
+  cms_api_xml_url: string;
+  cms_api_sml_logic: string;
+}
+
+export interface MarketAndAudienceProps {
+  industry: string;
+  demographics_age: string;
+  demographics_gender: string;
+  demographics_income: string;
+  demographics_education: string;
+  market_focus: string;
+  client_persona: string;
+  competitor_names: string;
+  competitor_domains: string;
+  psychographics_interests: string;
+  psychographics_attitudes: string;
+  psychographics_values: string;
+  key_differentiators: string;
+}
+
+export interface ProductAndServiceProps {
+  "service_1_category": string,
+  "service_1_url": string,
+  "service_2_category": string,
+  "service_2_url": string,
+  "service_3_category": string,
+  "service_3_url": string,
+  "service_4_category": string,
+  "service_4_url": string,
+  "service_5_category": string,
+  "service_5_url": string,
+  "product_1_name": string,
+  "product_1_url": string,
+  "product_2_name": string,
+  "product_2_url": string,
+  "product_3_name": string,
+  "product_3_url": string,
+  "product_4_name": string,
+  "product_4_url": string,
+  "product_5_name": string,
+  "product_5_url": string
+}
+
+export interface SocialProps {
+  behance: string;
+  discord: string;
+  dribbble: string;
+  facebook: string;
+  flikr: string;
+  github: string;
+  instagram: string;
+  kik: string;
+  line: string;
+  linkedin: string;
+  medium: string;
+  pinterest: string;
+  qq: string;
+  quora: string;
+  reddit: string;
+  snapchat: string;
+  soundcloud: string;
+  spotify: string;
+  telegram: string;
+  tiktok: string;
+  tumblr: string;
+  twitch: string;
+  twitter: string;
+  vk: string;
+  vimeo: string;
+  wechat: string;
+  weibo: string;
+  whatsapp: string;
+  website_url: string;
+  youtube: string;
+  other_social: string;
+  twitter_username: string;
+  twitter_password: string;
+  facebook_username: string;
+  facebook_password: string;
+  instagram_username: string;
+  instagram_password: string;
+  linkedin_username: string;
+  linkedin_password: string;
+  tiktok_username: string;
+  tiktok_password: string;
+  twitter_sample_content_1: string;
+  twitter_sample_content_2: string;
+  twitter_sample_content_3: string;
+  facebook_sample_content_1: string;
+  facebook_sample_content_2: string;
+  facebook_sample_content_3: string;
+  instagram_sample_content_1: string;
+  instagram_sample_content_2: string;
+  instagram_sample_content_3: string;
+  linkedin_sample_content_1: string;
+  linkedin_sample_content_2: string;
+  linkedin_sample_content_3: string;
+  tiktok_sample_content_1: string;
+  tiktok_sample_content_2: string;
+  tiktok_sample_content_3: string;
+  preferred_hashtags: string;
+  industry_events: string;
+  influencers: string;
+  seasonal_themes: string;
+}
+
+export interface CommunicationsProps {
+  press_release_boilerplate: string;
+  crisis_communication_plan: string;
+  csr_initiatives: string;
+  avoid_topics: string;
+  image_generation_prompt: string;
+  image_video_guidelines_image_dimensions: string;
+  image_video_guidelines_image_styles: string;
+  image_video_guidelines_video_styles: string;
+  image_video_guidelines_video_dimensions: string;
+  cta_guidelines: string;
+  anchor_text: string;
+  example_link: string;
+  preferred_language: string;
+  secondary_language?: string;
+  third_language?: string;
+  first_person_voice: string;
+  second_person_voice: string;
+  third_person_voice: string;
 }
 
 export interface BusinessInfoProps {
@@ -353,38 +511,42 @@ export interface BusinessInfoProps {
   other_email: string,
   partnerships_email: string,
   phone_number: string,
-  press_inquiries_email: string
+  press_inquiries_email: string,
+  synopsis: string,
 }
 
 export interface SettingsProps {
-  post_style_tag_main: string,
+  HTML_Post_Template: string,
+  "JSON-LD_Schema_Post_Template": string,
+  hero_image_aspect_ratio: string,
+  hero_image_base_prompt: string,
+  include_conclusion: boolean,
   post_callout_left: string,
-  post_callout_right: string
+  post_callout_right: string,
+  post_style_tag_main: string
 }
 
 export interface BrandTabProps {
-  business_goals: string,
-  certifications_awards: string,
-  company_aka: string,
-  company_name: string,
-  company_revenue: string,
-  company_size: string,
-  customer_support_email: string,
-  distribution_channels: string,
-  founding_date: string,
-  general_inquries: string,
-  hq_address_1: string,
-  hq_address_2: string,
-  hq_address_3: string,
-  hq_city: string,
-  hq_country: string,
-  hq_postal_code: string,
-  hq_state: string,
-  investor_relations_email: string,
-  legal_structure: string,
-  mission: string,
-  other_email: string,
-  partnerships_email: string,
-  phone_number: string,
-  press_inquiries_email: string
+  logo_url: string;
+  elevator_pitch: string;
+  brand_values: string;
+  brand_personality: string;
+  usp: string;
+  brand_story: string;
+  content_themes: string;
+  logo_theme: string;
+  brand_color_primary: string;
+  brand_color_secondary: string;
+  logo_width: number;
+  logo_height: number;
+  logo_aspect_ratio: string;
+  rationale: string;
+  political_leaning: string;
+  trademark_words: string;
+  registered_words: string;
+}
+export interface OtherFieldsProps {
+  special_ai_instructions: string;
+  ab_testing_plans: string;
+  ab_testing_results: string;
 }

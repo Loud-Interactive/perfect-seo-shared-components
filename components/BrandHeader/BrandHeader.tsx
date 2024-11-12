@@ -15,14 +15,15 @@ const BrandHeader = ({ synopsis, editable = true }: BrandHeaderProps) => {
   const logoCardClasses = classNames('card p-3 h-100 d-flex align-items-center justify-content-center',
     {
       'bg-secondary': !synopsis?.logo_theme,
-      'bg-light': synopsis?.logo_theme === 'light' && isDark,
-      'bg-dark': synopsis?.logo_theme === 'dark' || !isDark
+      'bg-light': synopsis?.logo_theme === 'dark' || isDark === true,
+      'bg-dark': synopsis?.logo_theme === 'light' || isDark === false
     }
   )
 
+  if (!synopsis || !synopsis?.domain) return null
 
   return (
-    <div className='bg-primary mb-3'>
+    <div className='mb-3 bg-primary'>
       <div className='container-xl content-fluid py-3'>
         <div className='row d-flex justify-content-between g-3'>
           {synopsis?.logo_url && <div className='col-12 col-lg-3'>
@@ -31,10 +32,10 @@ const BrandHeader = ({ synopsis, editable = true }: BrandHeaderProps) => {
                 <img src={synopsis?.logo_url} />
                 {editable && <div className={styles.logoUpdate}>
                   <a href={`https://preferencesperfect.ai/domain/${synopsis?.domain}?tab=brand-identity`} className='text-primary' target='_blank'>Update Logo</a>
-                </div>}
-              </div>
-            </div>
-          </div>}
+                </div >}
+              </div >
+            </div >
+          </div >}
           <div className='col'>
             <h1 className="text-start mb-1"><TypeWriterText string={`Content for ${synopsis?.brand_name || synopsis?.domain}`} withBlink /></h1>
             {synopsis?.synopsis && <div className='card p-3'>
@@ -44,9 +45,9 @@ const BrandHeader = ({ synopsis, editable = true }: BrandHeaderProps) => {
               </div>
               <p className='mb-0'>{synopsis?.synopsis}</p></div>}
           </div>
-        </div>
-      </div>
-    </div>
+        </div >
+      </div >
+    </div >
   )
 }
 export default BrandHeader

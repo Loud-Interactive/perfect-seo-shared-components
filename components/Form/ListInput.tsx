@@ -16,6 +16,7 @@ interface ListInputProps extends React.HTMLProps<HTMLInputElement> {
   hideErrorMessage?: boolean;
   autoComplete?: string
   bottomSpacing?: boolean
+  long?: boolean
 }
 
 const ListInput = ({
@@ -32,6 +33,7 @@ const ListInput = ({
   hideErrorMessage,
   autoComplete,
   autoFocus,
+  long,
   onPaste,
   ...props
 }: ListInputProps) => {
@@ -105,12 +107,16 @@ const ListInput = ({
     }
   }
 
+  const itemClasses = classNames("d-flex align-items-start col-12",
+    { 'col-lg-6': !long }
+  )
+
 
   return (
 
     <FormField fieldName={fieldName} label={label} bottomSpacing={bottomSpacing}>
       <div className="listInput-container card p-3">
-        {values?.length > 0 && <ul className='clear-list-properties mb-2 d-flex row'>
+        {values?.length > 0 && <ul className='clear-list-properties mb-2 d-flex row g-0'>
           {values.map((val, idx) => {
             const deleteItemHandler = (e) => {
               e.preventDefault();
@@ -122,10 +128,10 @@ const ListInput = ({
 
             }
             return (
-              <li key={idx} className='d-flex align-items-center col-12 col-lg-6 pe-4'>
-                {props?.disabled ? <i className="bi bi-dash" /> : <button onClick={deleteItemHandler} className='btn btn-transparent'><i className="bi bi-x text-primary" /></button>}
-                <span className='pb-1 text-wrap w-100'>{val}
-                </span>
+              <li key={idx} className={itemClasses}>
+                {props?.disabled ? <i className="bi bi-dash" /> : <button onClick={deleteItemHandler} className='btn btn-transparent p-0'><i className="bi bi-x text-primary" /></button>}
+                <p className='pb-1 text-wrap w-100'>{val}
+                </p>
               </li>
             )
           })}

@@ -108,7 +108,7 @@ const useLogoCheck = (logoUrl: string, domain: string, form?: FormController) =>
       if (Object?.keys(newImpression)?.length > 0) {
         // updateImpression(domain, newImpression)
         if (form) {
-          form.setState({ ...form.getState, ...newImpression })
+          // form.setState({ ...form.getState, ...newImpression })
         }
       }
     }

@@ -5054,3 +5054,8 @@ button.input-group-append {
   background-color: rgba(black, .5);
   z-index: 2000;
 }
+
+.contain-img {
+  object-fit: contain;
+  width: 100%;
+}

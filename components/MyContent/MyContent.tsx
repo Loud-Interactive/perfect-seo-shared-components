@@ -1,7 +1,7 @@
 import en from '@/assets/en.json';
 import classNames from 'classnames'
 import styles from './MyContent.module.scss'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
 import TypeWriterText from '@/perfect-seo-shared-components/components/TypeWriterText/TypeWriterText'
 import { usePathname, useRouter } from 'next/navigation'
 import PostsList from '@/perfect-seo-shared-components/components/PostsList/PostsList'
@@ -358,27 +358,37 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
           <div className="tab-content bg-dark mb-3" id="myTabContent">
             <div className={`tab-pane fade ${selectedTab === 'outlines' && 'show active'}`} id="outlines" role="tabpanel" aria-labelledby="outlines-tab">
               <div className='tab p-3'>
-                <OutlinesList active={selectedTab === 'outlines'} domain_name={currentDomain || domain} />
+                <Suspense fallback={<LoadSpinner />}>
+                  <OutlinesList active={selectedTab === 'outlines'} domain_name={currentDomain || domain} />
+                </Suspense>
               </div>
             </div>
             <div className={`tab-pane fade ${selectedTab === 'posts' && 'show active'}`} id="posts" role="tabpanel" aria-labelledby="posts-tab">
               <div className='tab p-3'>
-                <PostsList active={selectedTab === 'posts'} domain_name={currentDomain || domain} />
+                <Suspense fallback={<LoadSpinner />}>
+                  <PostsList active={selectedTab === 'posts'} domain_name={currentDomain || domain} />
+                </Suspense>
               </div>
             </div>
             <div className={`tab-pane fade ${selectedTab === 'content-plans' && 'show active'}`} id="content-plans" role="tabpanel" aria-labelledby="content-plans-tab">
               <div className='tab p-3'>
-                <PlansList active={selectedTab === 'content-plans'} domain_name={currentDomain || domain} />
+                <Suspense fallback={<LoadSpinner />}>
+                  <PlansList active={selectedTab === 'content-plans'} domain_name={currentDomain || domain} />
+                </Suspense>
               </div>
             </div>
             <div className={`tab-pane fade ${selectedTab === 'bulk-content' && 'show active'}`} id="bulk-cnotent" role="tabpanel" aria-labelledby="bulk-content-tab">
               <div className='tab p-3'>
-                <BulkContentComponent currentDomain={currentDomain} active={selectedTab === 'bulk-content'} />
+                <Suspense fallback={<LoadSpinner />}>
+                  <BulkContentComponent currentDomain={currentDomain} active={selectedTab === 'bulk-content'} />
+                </Suspense>
               </div>
             </div>
             <div className={`tab-pane fade ${selectedTab === 'bulk-posts' && 'show active'}`} id="bulk-posts" role="tabpanel" aria-labelledby="bulk-posts-tab">
               <div className='tab p-3'>
-                <BulkPostComponent currentDomain={currentDomain} active={selectedTab === 'bulk-posts'} />
+                <Suspense fallback={<LoadSpinner />}>
+                  <BulkPostComponent currentDomain={currentDomain} active={selectedTab === 'bulk-posts'} />
+                </Suspense>
               </div>
             </div>
           </div>

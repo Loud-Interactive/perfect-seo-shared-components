@@ -11,7 +11,7 @@ const useLogoCheck = (logoUrl: string, domain: string, form?: FormController) =>
   const checkForErrors = () => {
     axios.get(logoUrl)
       .catch((error) => {
-        // updateImpression(domain, { logo_url: null });
+        updateImpression(domain, { logo_url: null });
       });
   };
 
@@ -93,7 +93,6 @@ const useLogoCheck = (logoUrl: string, domain: string, form?: FormController) =>
 
   useEffect(() => {
     if (data && domain) {
-      console.log("logo scan results:", data);
       let newImpression: any = {};
       if (data.primaryColor && !form?.getState?.brand_color_primary) {
         newImpression.brand_color_primary = data.primaryColor;
@@ -102,16 +101,16 @@ const useLogoCheck = (logoUrl: string, domain: string, form?: FormController) =>
         newImpression.brand_color_secondary = data.secondaryColor;
       }
       if (data.isDark !== null) {
-        if (data.isDark && form?.getState?.logo_theme !== 'light') {
+        if (data.isDark && !form?.getState?.logo_theme) {
           newImpression.logo_theme = 'light';
-        } else if (data.isDark === false && form?.getState?.logo_theme !== 'dark') {
+        } else if (data.isDark === false && !form?.getState?.logo_theme) {
           newImpression.logo_theme = 'dark';
         }
       }
       if (Object.keys(newImpression).length > 0) {
-        // updateImpression(domain, newImpression)
+        updateImpression(domain, newImpression)
         if (form) {
-          // form.setState({ ...form.getState, ...newImpression });
+          form.setState({ ...form.getState, ...newImpression });
         }
       }
     }

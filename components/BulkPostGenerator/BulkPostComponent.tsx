@@ -14,15 +14,9 @@ import BulkPostDraftItem from './BulkPostDraftItem';
 import Loader from '../Loader/Loader';
 import { getBatchStatus } from '@/perfect-seo-shared-components/services/services';
 import { selectProfile, selectUser } from '@/perfect-seo-shared-components/lib/features/User';
+import { IncomingPlanItemResponse } from '@/perfect-seo-shared-components/data/types';
 
-interface IncomingPlanItemResponse {
-  guid: string;
-  domain_name: string;
-  brand_name: string;
-  target_keyword: string;
-  email: string;
-  status?: string;
-}
+
 
 interface BulkPostComponentProps {
   active: boolean;
@@ -39,6 +33,7 @@ const BulkPostComponent = ({ active, currentDomain }: BulkPostComponentProps) =>
   const [error, setError] = useState<string | null>(null);
   const [uploadError, setUploadError] = useState<string | null>(null);
 
+  const [pendingGUIDS, setPendingGUIDS] = useState<string[]>([])
   const profile = useSelector(selectProfile);
   const user = useSelector(selectUser);
   const supabase = createClient();
@@ -55,17 +50,36 @@ const BulkPostComponent = ({ active, currentDomain }: BulkPostComponentProps) =>
   }, [profile?.bulk_posts_guids, active])
 
   const pullStatus = () => {
-    getBatchStatus(itemGuids)
+    getBatchStatus(pendingGUIDS)
       .then(res => {
-        let newItems = res.data.map((item) => ({ ...item, guid: item.content_plan_outline_guid }))
+        let newItems = items.reduce((prev, item) => {
+          let newItem = res.data.find((resItem) => resItem.guid === item.guid)
+          return [...prev, newItem]
+        }, [])
         setItems(newItems)
-        updateBulkPosts(newItems)
       })
   }
 
   useEffect(() => {
-    let interval;
+    const initialStatusPull = () => {
+      getBatchStatus(itemGuids)
+        .then(res => {
+          let newItems = res.data.map((item) => ({ ...item, guid: item.content_plan_outline_guid }))
+          let pendingGUIDS = res.data.filter((item) => item.status !== 'Complete').map((item) => item.content_plan_outline_guid)
+
+          setPendingGUIDS(pendingGUIDS)
+          setItems(newItems)
+        })
+    }
+
     if (itemGuids?.length > 0 && active) {
+      initialStatusPull()
+    }
+  }, [itemGuids])
+
+  useEffect(() => {
+    let interval;
+    if (pendingGUIDS?.length > 0 && active && items) {
       pullStatus()
       interval = setInterval(() => {
         pullStatus()
@@ -73,7 +87,7 @@ const BulkPostComponent = ({ active, currentDomain }: BulkPostComponentProps) =>
     }
     return () => clearInterval(interval)
 
-  }, [itemGuids, active])
+  }, [pendingGUIDS, active])
 
   const updateBulkPosts = (newItems: IncomingPlanItemResponse[]) => {
     setLoading(true)

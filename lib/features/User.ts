@@ -96,5 +96,7 @@ export const selectIsLoggedIn = (state: RootState) => state?.isLoggedIn;
 export const selectIsAdmin = (state: RootState) => state?.isAdmin;
 export const selectDomainsInfo = (state: RootState) => state?.domainsInfo;
 export const selectSettings = (state: RootState) => state?.settings;
+export const selectEmail = (state: RootState) => state?.profile?.email;
+export const selectDomains = (state: RootState) => state?.profile?.domain_access;
 
 export default UserSlice.reducer;

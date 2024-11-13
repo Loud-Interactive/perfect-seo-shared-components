@@ -1,8 +1,7 @@
 'use client'
-import { RootState } from '@/perfect-seo-shared-components/lib/store'
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from 'react'
-import { setAdmin, setDomains, setLoading, setLoggedIn, setProfile, setUser, setUserSettings } from '@/perfect-seo-shared-components/lib/features/User'
+import { selectDomainsInfo, selectIsLoggedIn, selectProfile, selectUser, setAdmin, setDomains, setLoading, setLoggedIn, setProfile, setUser, setUserSettings } from '@/perfect-seo-shared-components/lib/features/User'
 import { createClient } from '@/perfect-seo-shared-components/utils/supabase/client'
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
@@ -11,7 +10,10 @@ import { useSession } from 'next-auth/react';
 import { SettingsProps } from '../data/types';
 import { getSynopsisInfo } from '../services/services';
 const useGoogleUser = (appKey) => {
-  const { user, isLoggedIn, profile, domainsInfo } = useSelector((state: RootState) => state);
+  const isLoggedIn = useSelector(selectIsLoggedIn)
+  const profile = useSelector(selectProfile)
+  const user = useSelector(selectUser)
+  const domainsInfo = useSelector(selectDomainsInfo)
   const [token, setToken] = useState(null)
   const [userData, setUserData] = useState<any>(null)
   const dispatch = useDispatch();
@@ -86,6 +88,7 @@ const useGoogleUser = (appKey) => {
     }
     if (session) {
       if (session?.user) {
+        dispatch(setLoading(false))
         dispatch(setUser(session.user))
         localStorage.setItem('email', session.user.email)
       }

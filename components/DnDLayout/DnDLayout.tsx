@@ -15,6 +15,7 @@ import { RootState } from '@/perfect-seo-shared-components/lib/store';
 import { createClient } from '@/perfect-seo-shared-components/utils/supabase/client';
 import { useSelector } from 'react-redux';
 import en from '@/assets/en.json';
+import { selectEmail } from '@/perfect-seo-shared-components/lib/features/User';
 
 
 interface DnDLayoutProps extends React.HTMLProps<HTMLDivElement> {
@@ -27,8 +28,7 @@ interface DnDLayoutProps extends React.HTMLProps<HTMLDivElement> {
 
 const DnDLayout = ({ children, hideFooter, current, links, hasLogin = true, getCredits = false }: DnDLayoutProps) => {
 
-
-  const { user, profile } = useSelector((state: RootState) => state);
+  const email = useSelector(selectEmail)
   const supabase = createClient()
 
   axiosInstance.interceptors.response.use(function (response) {
@@ -37,7 +37,7 @@ const DnDLayout = ({ children, hideFooter, current, links, hasLogin = true, getC
 
     supabase
       .from('user_history')
-      .insert({ email: user?.email || profile?.email, transaction_data: error, product: en.product, type: "Error" })
+      .insert({ email: email, transaction_data: error, product: en.product, type: "Error" })
       .select('*')
     return Promise.reject(error);
   });

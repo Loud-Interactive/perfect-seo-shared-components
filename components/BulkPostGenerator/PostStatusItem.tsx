@@ -1,7 +1,5 @@
-import { getPostStatus } from "@/perfect-seo-shared-components/services/services";
 import { useEffect, useState } from "react";
 import TypeWriterText from "../TypeWriterText/TypeWriterText";
-import { IncomingPlanItemResponse } from "../BulkContentGenerator/BulkContentGenerator";
 
 const PostStatusItem = ({ guid, item, deletePost, idx, loading }) => {
   const [status, setStatus] = useState();

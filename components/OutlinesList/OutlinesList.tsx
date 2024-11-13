@@ -10,6 +10,7 @@ import { useSelector } from 'react-redux'
 import { RootState } from '@/perfect-seo-shared-components/lib/store'
 import OutlineItem from '../OutlineItem/OutlineItem'
 import usePaginator from '@/perfect-seo-shared-components/hooks/usePaginator'
+import { selectEmail } from '@/perfect-seo-shared-components/lib/features/User'
 
 export interface OutlinesListProps {
   domain_name: string;
@@ -19,7 +20,7 @@ const OutlinesList = ({ domain_name, active }: OutlinesListProps) => {
   const [loading, setLoading] = useState(true)
   const [data, setData] = useState<any[]>()
   const [deleteModal, setDeleteModal] = useState(null)
-  const { user } = useSelector((state: RootState) => state);
+  const email = useSelector(selectEmail)
   const [modalOpen, setModalOpen] = useState(false)
 
   const paginator = usePaginator()
@@ -43,7 +44,7 @@ const OutlinesList = ({ domain_name, active }: OutlinesListProps) => {
           )
       }
       else {
-        getContentPlanOutlinesByEmail(user?.email, paginator.paginationObj)
+        getContentPlanOutlinesByEmail(email, paginator.paginationObj)
           .then(res => {
             paginator.setItemCount(res.data.total)
             setData(res.data.items)

@@ -1,11 +1,11 @@
-import { reset } from "@/perfect-seo-shared-components/lib/features/User";
+import { reset, selectIsLoggedIn } from "@/perfect-seo-shared-components/lib/features/User";
 import { RootState } from "@/perfect-seo-shared-components/lib/store";
 import { loginWithGoogle, logout } from "@/perfect-seo-shared-components/utils/supabase/actions";
 import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 
 const AdminPage = () => {
-  const { isLoggedIn } = useSelector((state: RootState) => state);
+  const isLoggedIn = useSelector(selectIsLoggedIn);
   const router = useRouter()
   const dispatch = useDispatch()
 

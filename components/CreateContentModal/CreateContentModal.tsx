@@ -1,8 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
 import styles from "./CreateContentModal.module.scss";
-
-
 import OutlineRow from "./OutlineRow/OutlineRow";
 import { OutlineRowProps } from '@/perfect-seo-shared-components/data/types'
 import useForm from "@/perfect-seo-shared-components/hooks/useForm";
@@ -10,14 +8,13 @@ import Form from "@/perfect-seo-shared-components/components/Form/Form";
 import * as Modal from "@/perfect-seo-shared-components/components/Modal/Modal";
 import TextInput from "@/perfect-seo-shared-components/components/Form/TextInput";
 import useViewport from "@/perfect-seo-shared-components/hooks/useViewport";
-import { debounce } from "@/perfect-seo-shared-components/utils/global";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useSelector } from "react-redux";
-import { RootState } from '@/perfect-seo-shared-components/lib/store'
 import { GenerateContentPost, GetPostOutlineRequest, SaveContentPost } from "@/perfect-seo-shared-components/data/requestTypes";
-import { fetchOutlineStatus, generateContentPlanOutline, getContentPlanOutline, saveContentPlanPost } from "@/perfect-seo-shared-components/services/services";
+import { fetchOutlineStatus, getContentPlanOutline, saveContentPlanPost } from "@/perfect-seo-shared-components/services/services";
 import { createPost, regenerateOutline } from "@/perfect-seo-shared-components/services/services";
 import Loader from "@/perfect-seo-shared-components/components/Loader/Loader";
+import { selectEmail, selectPoints } from "@/perfect-seo-shared-components/lib/features/User";
 
 interface CreateContentModalProps {
   data: any;
@@ -57,8 +54,8 @@ const CreateContentModal = ({
   const [submitError, setSubmitError] = useState("");
 
   const router = useRouter();
-
-  const { user, points } = useSelector((state: RootState) => state);
+  const points = useSelector(selectPoints)
+  const email = useSelector(selectEmail)
   const searchParams = useSearchParams();
   const queryParam = searchParams.get('generate');
   const pathname = usePathname()
@@ -293,10 +290,10 @@ const CreateContentModal = ({
   }, [contentPlan]);
 
   useEffect(() => {
-    if (user?.email) {
-      setReceivingEmail(user.email);
+    if (email) {
+      setReceivingEmail(email);
     }
-  }, [user]);
+  }, [email]);
 
   const saveHandler = (click?: boolean) => {
     if (!loading) {
@@ -336,7 +333,7 @@ const CreateContentModal = ({
 
 
   const submitWithEmail = () => {
-    if (!user?.email || !receivingEmail) {
+    if (!email || !receivingEmail) {
       return;
     }
 
@@ -345,7 +342,7 @@ const CreateContentModal = ({
     setSubmitError(null)
     let reqBody: GenerateContentPost = {
       outline: { sections: [...convertToTableData(form.getState)] },
-      email: user.email,
+      email: email,
       seo_keyword: data.Keyword || data.keyword,
       content_plan_keyword: contentPlan?.target_keyword || data?.keyword,
       entity_voice: contentPlan?.entity_voice,

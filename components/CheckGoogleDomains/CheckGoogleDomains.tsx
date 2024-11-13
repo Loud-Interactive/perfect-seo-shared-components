@@ -1,11 +1,11 @@
 "use client"
 import useGoogleUser from "@/perfect-seo-shared-components/hooks/useGoogleUser";
-import { RootState } from "@/perfect-seo-shared-components/lib/store";
+import { selectDomains } from "@/perfect-seo-shared-components/lib/features/User";
 import { useMemo, useState } from "react"
 import { useSelector } from "react-redux";
 
 const CheckGoogleDomains = () => {
-  const { user, isAdmin, isLoading, isLoggedIn, profile, settings } = useSelector((state: RootState) => state);
+  const domain_access = useSelector(selectDomains)
   const { fetchAllDomains } = useGoogleUser('contentPerfect')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
@@ -23,9 +23,9 @@ const CheckGoogleDomains = () => {
 
   const domainRenderList = useMemo(() => {
     let consolidatedDomains = {}
-    if (profile?.domain_access) {
+    if (domain_access) {
 
-      profile?.domain_access.forEach((domain) => {
+      domain_access.forEach((domain) => {
 
         let keys = Object.keys(consolidatedDomains) || []
         if (keys.includes(domain.siteUrl)) {
@@ -38,7 +38,7 @@ const CheckGoogleDomains = () => {
       })
     }
     return { data: consolidatedDomains, keys: Object.keys(consolidatedDomains) }
-  }, [profile?.domain_access])
+  }, [domain_access])
 
   return (
     <div className="card bg-primary p-3">

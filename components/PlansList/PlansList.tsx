@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import styles from './PlansList.module.scss'
 import Table, { TableColumnArrayProps } from '@/perfect-seo-shared-components/components/Table/Table'
-import { deleteContentPlan, getContentPlansByDomain, getContentPlansByEmail, getPreviousPlans } from '@/perfect-seo-shared-components/services/services'
+import { deleteContentPlan, getContentPlansByDomain, getContentPlansByEmail } from '@/perfect-seo-shared-components/services/services'
 import { useRouter } from 'next/navigation'
 import * as Modal from '@/perfect-seo-shared-components/components/Modal/Modal'
 import moment from 'moment-timezone'
@@ -9,8 +9,8 @@ import useViewport from '@/perfect-seo-shared-components/hooks/useViewport'
 import Loader from '../Loader/Loader'
 import TypeWriterText from '@/perfect-seo-shared-components/components/TypeWriterText/TypeWriterText'
 import { useSelector } from 'react-redux'
-import { RootState } from '@/perfect-seo-shared-components/lib/store'
 import usePaginator from '@/perfect-seo-shared-components/hooks/usePaginator'
+import { selectEmail } from '@/perfect-seo-shared-components/lib/features/User'
 
 export interface PlanListProps {
   domain_name: string;
@@ -21,8 +21,9 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
   const [data, setData] = useState<any[]>()
   const { tablet, phone } = useViewport()
   const [deleteModal, setDeleteModal] = useState(null)
+  const email = useSelector(selectEmail)
   const router = useRouter();
-  const { user } = useSelector((state: RootState) => state);
+
   const paginator = usePaginator()
 
   const fetchPlans = () => {
@@ -48,7 +49,7 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
         })
     }
     else {
-      getContentPlansByEmail(user?.email, paginator.paginationObj)
+      getContentPlansByEmail(email, paginator.paginationObj)
         .then(res => {
           let newData = res.data.items.map(obj => {
 
@@ -124,7 +125,7 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
         <p className='mb-0'>
           {obj.target_keyword} {(domain !== domain_name) && <span className='badge bg-primary ms-2'>{obj.brand_name}</span>}
         </p>
-        {user?.email !== obj?.email && <span> by <span className="text-primary">{obj?.email}</span></span>}
+        {email !== obj?.email && <span> by <span className="text-primary">{obj?.email}</span></span>}
       </div>
     )
   }

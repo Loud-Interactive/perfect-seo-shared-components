@@ -550,3 +550,11 @@ export interface OtherFieldsProps {
   ab_testing_plans: string;
   ab_testing_results: string;
 }
+export interface IncomingPlanItemResponse {
+  guid: string;
+  domain_name: string;
+  brand_name: string;
+  target_keyword: string;
+  email: string;
+  status?: string;
+}

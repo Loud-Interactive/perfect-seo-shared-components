@@ -8,23 +8,21 @@ import TypeWriterText from '@/perfect-seo-shared-components/components/TypeWrite
 import PostItem from '../PostItem/PostItem'
 import usePaginator from '@/perfect-seo-shared-components/hooks/usePaginator'
 import { useSelector } from 'react-redux'
-import { RootState } from '@/perfect-seo-shared-components/lib/store'
+import { selectEmail } from '@/perfect-seo-shared-components/lib/features/User'
 
 export interface PostsListProps {
   domain_name: string;
   active: boolean;
 }
 const PostsList = ({ domain_name, active }: PostsListProps) => {
-  const { user } = useSelector((state: RootState) => state);
+  const email = useSelector(selectEmail)
   const paginator = usePaginator()
   const [loading, setLoading] = useState(true)
   const [data, setData] = useState<any[]>()
   const [deleteModal, setDeleteModal] = useState(null)
 
   const getPosts = () => {
-    console.log("getPosts")
     if (active) {
-      console.log("active")
       if (domain_name) {
         console.log("by domain", domain_name)
         getPostsByDomain(domain_name, { ...paginator.paginationObj, page: paginator.currentPage })
@@ -39,8 +37,8 @@ const PostsList = ({ domain_name, active }: PostsListProps) => {
           })
       }
       else {
-        console.log("by email", user?.email)
-        getPostsByEmail(user?.email, { ...paginator.paginationObj, page: paginator.currentPage })
+
+        getPostsByEmail(email, { ...paginator.paginationObj, page: paginator.currentPage })
           .then(res => {
             paginator.setItemCount(res.data.total)
             setData(res.data.records)

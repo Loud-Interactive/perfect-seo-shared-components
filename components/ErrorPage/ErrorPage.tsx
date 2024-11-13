@@ -5,10 +5,11 @@ import { useSelector } from "react-redux";
 import en from '@/assets/en.json'
 import { createClient } from "@/perfect-seo-shared-components/utils/supabase/client";
 import TypeWriterText from "@/perfect-seo-shared-components/components/TypeWriterText/TypeWriterText";
+import { selectEmail } from "@/perfect-seo-shared-components/lib/features/User";
 
 function ErrorPage({ statusCode, err }) {
 
-  const { user, profile } = useSelector((state: RootState) => state);
+  const email = useSelector(selectEmail)
   const supabase = createClient()
   useEffect(() => {
     let email;
@@ -16,7 +17,7 @@ function ErrorPage({ statusCode, err }) {
       email = localStorage.getItem('email')
     }
     catch (e) {
-      email = user?.email || profile?.email
+      email = email
     }
     supabase
       .from('user_history')

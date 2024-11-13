@@ -8,9 +8,7 @@ import PostsList from '@/perfect-seo-shared-components/components/PostsList/Post
 import PlansList from '@/perfect-seo-shared-components/components/PlansList/PlansList'
 import { useSearchParams } from 'next/navigation';
 import { useSelector } from 'react-redux'
-import { RootState } from '@/perfect-seo-shared-components/lib/store'
 import SearchSelect from '@/perfect-seo-shared-components/components/SearchSelect/SearchSelect'
-import Loader from '@/perfect-seo-shared-components/components/Loader/Loader'
 import { createClient } from '@/perfect-seo-shared-components/utils/supabase/client'
 import { urlSanitization } from '@/perfect-seo-shared-components/utils/conversion-utilities';
 import BulkPostComponent from '../BulkPostGenerator/BulkPostComponent';
@@ -21,18 +19,32 @@ import BulkContentComponent from '../BulkContentGenerator/BulkContentComponent';
 import OutlinesList from '../OutlinesList/OutlinesList';
 import BrandHeader from '../BrandHeader/BrandHeader';
 import LoadSpinner from '../LoadSpinner/LoadSpinner';
+import { selectDomains, selectDomainsInfo, selectEmail, selectIsAdmin, selectIsLoggedIn, selectSettings, selectUser } from '@/perfect-seo-shared-components/lib/features/User'
+import Loader from '../Loader/Loader';
+
 export interface MyContentProps {
   currentDomain?: string;
   hideTitle?: boolean;
 }
+
 const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
-  const { user, isAdmin, isLoading, isLoggedIn, profile, settings, domainsInfo } = useSelector((state: RootState) => state);
-  const [selectedTab, setSelectedTab] = useState('content-plans')
+  const router = useRouter();
+  const pathname = usePathname()
   const searchParams = useSearchParams();
   const queryParam = searchParams.get('tab');
   const domainParam = searchParams.get('domain');
-  const router = useRouter();
-  const pathname = usePathname()
+
+
+  const settings = useSelector(selectSettings);
+  const domainsInfo = useSelector(selectDomainsInfo)
+  const isLoggedIn = useSelector(selectIsLoggedIn)
+  const isAdmin = useSelector(selectIsAdmin)
+  const isLoading = useSelector(selectIsLoggedIn)
+  const domain_access = useSelector(selectDomains)
+  const email = useSelector(selectEmail)
+
+  const [selectedTab, setSelectedTab] = useState('content-plans')
+
   const [domain, setDomain] = useState(currentDomain || null)
   const [selected, setSelected] = useState(null)
   const [domains, setDomains] = useState([])
@@ -76,7 +88,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
     supabase
       .from('settings')
       .update({ global: { ...global, defaultDomain: selected?.value } })
-      .eq('email', user.email)
+      .eq('email', email)
       .select("*")
       .then(res => {
         if (!res.error) {
@@ -86,16 +98,16 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
   }
 
   useEffect(() => {
-    if (user?.email && domain && !dataTracked) {
+    if (email && domain && !dataTracked) {
       supabase
         .from('user_history')
-        .insert({ email: user.email, domain: domain, transaction_data: { page: 'my-content', tab: selectedTab || queryParam || 'posts' }, product: en?.product, type: "View Content" })
+        .insert({ email: email, domain: domain, transaction_data: { page: 'my-content', tab: selectedTab || queryParam || 'posts' }, product: en?.product, type: "View Content" })
         .select('*')
         .then(res => {
           setDataTracked(true)
         })
     }
-  }, [domain, selected, selectedTab, user?.email, dataTracked])
+  }, [domain, selected, selectedTab, email, dataTracked])
 
   const createQueryString = useCallback(
     (name: string, value: string) => {
@@ -197,9 +209,8 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
     if (isAdmin) {
       list = [...list, ...domains?.sort((a, b) => a.domain.localeCompare(b.domain)).map(({ domain }) => ({ label: domain, value: domain }))]
     }
-    else if (profile?.domain_access?.length > 0) {
-      console.log(profile?.domain_access)
-      list = [...list, ...profile.domain_access.map((domain) => {
+    else if (domain_access?.length > 0) {
+      list = [...list, ...domain_access.map((domain) => {
         return domain?.siteUrl?.toLowerCase()
       })].sort((a, b) => a?.localeCompare(b)).map((domain) => {
         checkDomain(domain)
@@ -218,7 +229,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
     }
     return list
 
-  }, [profile?.domain_access, domains, isAdmin])
+  }, [domain_access, domains, isAdmin])
 
 
   useEffect(() => {
@@ -238,16 +249,14 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
     }
     if (isAdmin) {
       return true
-    } else if (profile?.admin === true) {
-      return true
-    } else if (profile?.domains?.length > 0) {
+    } else if (domain_access && domain_access.map(({ siteUrl }) => siteUrl).length > 0) {
       if (currentDomain) {
         let domain = currentDomain;
-        bool = (profile?.domains?.includes(domain?.toLowerCase()))
+        bool = (domain_access.map(({ siteUrl }) => siteUrl).includes(domain?.toLowerCase()))
       }
       else if (selected?.value) {
         let domain = selected.value
-        bool = (profile?.domains?.includes(domain?.toLowerCase()))
+        bool = (domain_access.map(({ siteUrl }) => siteUrl).includes(domain?.toLowerCase()))
       }
       else {
         bool = true
@@ -258,17 +267,17 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
     else {
       bool = false
     }
-    if (bool === false && profile?.email && (currentDomain || selected?.value) && (domainsList || profile?.domain_access)) {
+    if (bool === false && email && (currentDomain || selected?.value) && (domainsList || domain_access)) {
       supabase
         .from('user_history')
-        .insert({ email: user.email, domain: currentDomain || selected?.value, transaction_data: { domains: domainsList || profile?.domain_access }, product: en.product, type: "Unauthorized My Content" })
+        .insert({ email: email, domain: currentDomain || selected?.value, transaction_data: { domains: domainsList || domain_access }, product: en.product, type: "Unauthorized My Content" })
         .select('*')
         .then(res => {
           fetchAllDomains()
         })
     }
     return bool
-  }, [currentDomain, selected, domainsList, profile, isLoading])
+  }, [currentDomain, selected, domainsList, domain_access, isLoading])
 
   useEffect(() => {
     if (isAdmin) {
@@ -294,11 +303,13 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
   if (isLoading) {
     return (
       <div className='strip-padding'>
-        {/* <Loader /> */}
+        <Loader />
+
+        {isLoading.toString()}
       </div>
     )
   }
-  if (isAuthorized === false) {
+  else if (isAuthorized === false) {
     return (
       <div className="container-fluid container-xl strip-padding">
         <div className='row d-flex align-items-center justify-content-center'>
@@ -326,7 +337,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
                 <h1 className="text-start mb-5"><TypeWriterText string={selectedTab.includes("bulk") ? 'Upload for all domains' : selected ? `Content for ${domain}` : 'Your Content'} withBlink /></h1>
               </div>
             }
-            {(profile?.domain_access?.length > 0 && ['bulk-content', 'bulk-posts'].includes(selectedTab) === false && !currentDomain) && <div className='col-12 col-md-4 mb-5'>
+            {(domain_access?.length > 0 && ['bulk-content', 'bulk-posts'].includes(selectedTab) === false && !currentDomain) && <div className='col-12 col-md-4 mb-5'>
               <SearchSelect
                 onChange={searchDomainChangeHandler}
                 options={domainsList}

@@ -5,7 +5,7 @@ import styles from './Header.module.scss'
 import classNames from 'classnames'
 import useViewport from '@/perfect-seo-shared-components/hooks/useViewport'
 import { useDispatch, useSelector } from 'react-redux'
-import { setLoading, updatePoints } from '@/perfect-seo-shared-components/lib/features/User'
+import { selectIsAdmin, selectIsLoggedIn, selectPoints, selectUser, setLoading, updatePoints } from '@/perfect-seo-shared-components/lib/features/User'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { BrandStatus, Links, LinkType } from '@/perfect-seo-shared-components/data/types'
 import { useEffect, useMemo, useState } from 'react'
@@ -25,7 +25,11 @@ export interface HeaderProps {
   getCredits?: boolean;
 }
 const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProps) => {
-  const { isLoggedIn, user, isAdmin, points, isLoading } = useSelector((state: RootState) => state);
+  const points = useSelector(selectPoints);
+  const isLoggedIn = useSelector(selectIsLoggedIn)
+  const isAdmin = useSelector(selectIsAdmin)
+  const isLoading = useSelector(selectIsLoggedIn)
+  const user = useSelector(selectUser)
   const [open, setOpen] = useState(true)
   const dispatch = useDispatch()
   const { phone } = useViewport()

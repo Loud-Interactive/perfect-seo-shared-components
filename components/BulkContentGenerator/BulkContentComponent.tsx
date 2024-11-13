@@ -3,7 +3,6 @@ import TypeWriterText from '../TypeWriterText/TypeWriterText';
 import axiosInstance from '@/perfect-seo-shared-components/utils/axiosInstance';
 import { createClient } from '@/perfect-seo-shared-components/utils/supabase/client';
 import { useSelector } from 'react-redux';
-import { RootState } from '@/perfect-seo-shared-components/lib/store';
 import * as d3 from "d3";
 import useForm from '@/perfect-seo-shared-components/hooks/useForm';
 import useArrayForm from '@/perfect-seo-shared-components/hooks/useArrayForm';
@@ -11,6 +10,7 @@ import Form from '../Form/Form';
 import Loader from '../Loader/Loader';
 import BulkContentDraftItem from './BulkContentDraftItem';
 import ContentStatusItem from './ContentStatusItem';
+import { selectProfile } from '@/perfect-seo-shared-components/lib/features/User';
 
 
 interface BulkContentComponentProps {
@@ -29,7 +29,7 @@ const BulkContentComponent = ({ active, currentDomain }: BulkContentComponentPro
   const [error, setError] = useState<string | null>(null);
   const [uploadError, setUploadError] = useState<string | null>(null);
 
-  const { user, profile } = useSelector((state: RootState) => state);
+  const profile = useSelector(selectProfile)
   const supabase = createClient();
   const [showItems, setShowItems] = useState<boolean>(true);
   const form = useForm();
@@ -39,7 +39,7 @@ const BulkContentComponent = ({ active, currentDomain }: BulkContentComponentPro
     supabase
       .from('profiles')
       .update({ bulk_content_guids: null })
-      .eq('email', user?.email)
+      .eq('email', profile?.email)
       .select('*')
       .then(res => {
         if (res.data) {
@@ -67,7 +67,7 @@ const BulkContentComponent = ({ active, currentDomain }: BulkContentComponentPro
     supabase
       .from('profiles')
       .update({ bulk_content: newItems })
-      .eq('email', user?.email)
+      .eq('email', profile?.email)
       .select('*')
       .then(res => {
         if (res.data) {
@@ -107,8 +107,8 @@ const BulkContentComponent = ({ active, currentDomain }: BulkContentComponentPro
           if (post['domain_name'] === '' && currentDomain) {
             newPost['domain_name'] = currentDomain
           }
-          if (post['email'] === '' && user?.email) {
-            newPost['email'] = user?.email
+          if (post['email'] === '' && profile?.email) {
+            newPost['email'] = profile?.email
           }
           return [...prev, newPost]
         }, [])
@@ -146,7 +146,7 @@ const BulkContentComponent = ({ active, currentDomain }: BulkContentComponentPro
           .update({
             bulk_content: newObj
           })
-          .eq('email', user?.email || profile?.email)
+          .eq('email', profile?.email || profile?.email)
           .select('*')
           .then(res => {
             console.log(res)

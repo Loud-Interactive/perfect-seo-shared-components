@@ -2,8 +2,54 @@ import { urlValidator } from "@/perfect-seo-shared-components/utils/validators";
 import Checkbox from "../Form/Checkbox";
 import TextInput from "../Form/TextInput";
 import { useEffect, useState } from "react";
+import SearchSelect from "../SearchSelect/SearchSelect";
 
 const BulkPostDraftItem = ({ item: PostUploadItem, idx, form, arrayForm }) => {
+  const [selected, setSelected] = useState({ label: 'English', value: 'English' });
+  const languageOptions = [
+    "English",
+    "Arabic",
+    "Bengali",
+    "Bulgarian",
+    "Chinese (Simplified)",
+    "Chinese (Traditional)",
+    "Czech",
+    "Danish",
+    "Dutch",
+    "English",
+    "Finnish",
+    "French",
+    "German",
+    "Greek",
+    "Hebrew",
+    "Hindi",
+    "Hungarian",
+    "Indonesian",
+    "Italian",
+    "Japanese",
+    "Korean",
+    "Malay",
+    "Norwegian",
+    "Polish",
+    "Portuguese",
+    "Romanian",
+    "Russian",
+    "Slovak",
+    "Spanish",
+    "Swedish",
+    "Thai",
+    "Turkish",
+    "Ukrainian",
+    "Urdu",
+    "Vietnamese"
+  ].map((language) => ({ label: language, value: language }))
+
+  const languageChangeHandler = (e) => {
+    setSelected(e);
+    let formState = form.getState;
+    formState.writing_language = e.value;
+    form.setState(formState)
+  }
 
   const [showCustomOutline, setShowCustomOutline] = useState(false);
   //     Keyword, Voice_URL, Outline_URL, Custom Outline Y or N, Outline Post Title
@@ -13,6 +59,10 @@ const BulkPostDraftItem = ({ item: PostUploadItem, idx, form, arrayForm }) => {
   useEffect(() => {
     if (form?.getState?.[`custom_outline-${idx}`]) {
       setShowCustomOutline(true)
+    }
+    if (form?.getState?.[`writing_language-${idx}`] && selected.value !== form?.getState?.[`writing_language-${idx}`]) {
+      setSelected({ label: form?.getState?.[`writing_language-${idx}`], value: form?.getState?.[`writing_language-${idx}`] })
+
     }
   }, [form?.getState])
 
@@ -26,21 +76,26 @@ const BulkPostDraftItem = ({ item: PostUploadItem, idx, form, arrayForm }) => {
     <div className='col-12'>
       <div className='card p-3 bg-secondary'>
         <div className='row d-flex justify-content-between align-items-center g-3'>
-          <div className='col-12 col-md-6 col-lg-3'>
-            <TextInput fieldName={`target_keyword-${idx}`} label="Target Keyword" bottomSpacing={false} />
-          </div>
-          <div className='col-12 col-md-6 col-lg-3'>
+          <div className='col-12 col-md-4'>
             <TextInput fieldName={`outline_post_title-${idx}`} label="Outline Post Title" bottomSpacing={false} />
           </div>
-          <div className='col-12 col-md-6 col-lg-3'>
-            <TextInput fieldName={`domain_name-${idx}`} label="Domain" bottomSpacing={false} />
+          <div className='col-12 col-md-4'>
+            <TextInput fieldName={`target_keyword-${idx}`} label="Target Keyword" bottomSpacing={false} />
           </div>
-          <div className='col-12 col-md-6 col-lg-3'>
-            <TextInput fieldName={`email-${idx}`} label="Email" bottomSpacing={false} />
-          </div>
-          <div className='col-12'>
+          <div className='col-12 col-md-4'>
             <TextInput fieldName={`excluded_topics-${idx}`} label="Excluded Topics" bottomSpacing={false} validator={urlValidator} />
           </div>
+          <div className="col-12 col-md-4">
+            <label htmlFor="writing_language">Writing Language</label>
+            <SearchSelect value={selected} onChange={languageChangeHandler} options={languageOptions} fieldName="writing_language z-100" isClearable={false} isSearchable={true} />
+          </div>
+          <div className='col-12 col-md-4'>
+            <TextInput fieldName={`domain_name-${idx}`} label="Domain" bottomSpacing={false} />
+          </div>
+          <div className='col-12 col-md-4'>
+            <TextInput fieldName={`email-${idx}`} label="Email" bottomSpacing={false} />
+          </div>
+
           <div className='col-12'>
             <TextInput fieldName={`outline_url-${idx}`} label="Outline URL" bottomSpacing={false} validator={urlValidator} />
           </div>

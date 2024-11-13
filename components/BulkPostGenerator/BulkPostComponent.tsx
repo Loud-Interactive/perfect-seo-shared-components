@@ -13,6 +13,7 @@ import Form from '../Form/Form';
 import BulkPostDraftItem from './BulkPostDraftItem';
 import Loader from '../Loader/Loader';
 import { getBatchStatus } from '@/perfect-seo-shared-components/services/services';
+import { selectProfile, selectUser } from '@/perfect-seo-shared-components/lib/features/User';
 
 interface IncomingPlanItemResponse {
   guid: string;
@@ -38,7 +39,8 @@ const BulkPostComponent = ({ active, currentDomain }: BulkPostComponentProps) =>
   const [error, setError] = useState<string | null>(null);
   const [uploadError, setUploadError] = useState<string | null>(null);
 
-  const { user, profile } = useSelector((state: RootState) => state);
+  const profile = useSelector(selectProfile);
+  const user = useSelector(selectUser);
   const supabase = createClient();
   const [tsv, setTsv] = useState(null)
   const [showItems, setShowItems] = useState<boolean>(true);
@@ -55,7 +57,9 @@ const BulkPostComponent = ({ active, currentDomain }: BulkPostComponentProps) =>
   const pullStatus = () => {
     getBatchStatus(itemGuids)
       .then(res => {
-        setItems(res.data.map((item) => ({ ...item, guid: item.content_plan_outline_guid })))
+        let newItems = res.data.map((item) => ({ ...item, guid: item.content_plan_outline_guid }))
+        setItems(newItems)
+        updateBulkPosts(newItems)
       })
   }
 
@@ -75,12 +79,12 @@ const BulkPostComponent = ({ active, currentDomain }: BulkPostComponentProps) =>
     setLoading(true)
     supabase
       .from('profiles')
-      .update({ bulk_posts_guids: newItems.map((item: any) => item.guid || item?.content_plan_outline_guid) })
+      .update({ bulk_posts: newItems })
       .eq('email', user?.email)
       .select('*')
       .then(res => {
         if (res.data) {
-          setItemGuids(res.data[0].bulk_posts_guids)
+          setItems(newItems)
           setLoading(false)
         }
       })

@@ -318,7 +318,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
       {hideTitle ? null :
         <div className='container-fluid container-xl'>
           <div className='row px-3 g-3 align-items-center justify-content-between'>
-            {synopsis ?
+            {(synopsis && ['bulk-content', 'bulk-posts'].includes(selectedTab) === false) ?
               <>
                 <BrandHeader synopsis={synopsis} />
               </> :

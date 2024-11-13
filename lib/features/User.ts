@@ -1,22 +1,19 @@
 "use client";
 
 import { SettingsProps, GoogleUser, Profile } from "@/perfect-seo-shared-components/data/types";
-
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
-
 
 export type RootState = {
   user: GoogleUser,
   points: number,
   isLoading: boolean,
   isLoggedIn: boolean,
-  isAdmin: boolean
-  domainsInfo: any[];
-  profile: Profile;
+  isAdmin: boolean,
+  domainsInfo: any[],
+  profile: Profile,
   settings: SettingsProps
 };
-
 
 const initialState: RootState = {
   user: null,
@@ -85,9 +82,19 @@ export const UserSlice = createSlice({
       return { ...initialState, isLoading: false }
     }
   }
-
 });
-// Action creators are generated for each case reducer function
 
+// Action creators are generated for each case reducer function
 export const { setUser, setProfile, updatePoints, setLoggedIn, setLoading, setAdmin, setDomains, reset, setUserSettings } = UserSlice.actions;
+
+// Selectors
+export const selectUser = (state: RootState) => state?.user;
+export const selectProfile = (state: RootState) => state?.profile;
+export const selectPoints = (state: RootState) => state?.points;
+export const selectIsLoading = (state: RootState) => state?.isLoading;
+export const selectIsLoggedIn = (state: RootState) => state?.isLoggedIn;
+export const selectIsAdmin = (state: RootState) => state?.isAdmin;
+export const selectDomainsInfo = (state: RootState) => state?.domainsInfo;
+export const selectSettings = (state: RootState) => state?.settings;
+
 export default UserSlice.reducer;

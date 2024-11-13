@@ -129,7 +129,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
 
   useEffect(() => {
     if (queryParam) {
-      if (queryParam === 'bulk-generation') {
+      if (['bulk-content', 'bulk-posts'].includes(queryParam)) {
         router.replace(pathname)
       }
       else {

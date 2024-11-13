@@ -101,7 +101,7 @@ const OutlinesList = ({ domain_name, active }: OutlinesListProps) => {
         : (data?.length > 0 || paginator.itemCount > 0) ?
           <div className='row d-flex justify-content-center g-3'>
             {data.map((obj, i) => {
-              return <OutlineItem setModalOpen={setModalOpen} domain_name={domain_name} outline={obj} key={obj.content_plan_outline_guid} refresh={getOutlines} />
+              return <OutlineItem setModalOpen={setModalOpen} domain_name={domain_name} outline={obj} key={obj.content_plan_outline_guid || i} refresh={getOutlines} />
             })}
             <div className='col-auto d-flex justify-content-center'>
               {paginator.renderComponent()}

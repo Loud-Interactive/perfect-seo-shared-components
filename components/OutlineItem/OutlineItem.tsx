@@ -17,7 +17,6 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
 
 
   useEffect(() => {
-    console.log(outline)
     if (outline?.status !== status) {
       setStatus(outline?.status)
       if (completedStatus.includes(outline?.status)) {

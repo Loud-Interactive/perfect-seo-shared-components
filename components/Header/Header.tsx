@@ -35,11 +35,6 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
   const [currentPage, setCurrentPage] = useState('')
   const pathname = usePathname()
 
-  useEffect(() => {
-    if (isLoggedIn && isLoading) {
-      dispatch(setLoading(false))
-    }
-  }, [isLoggedIn, isLoading])
 
   const loadCreditData = (email: string) => {
 
@@ -75,7 +70,7 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
 
 
 
-  const google = useGoogleUser(current)
+  useGoogleUser(current)
 
 
   useEffect(() => {
@@ -98,9 +93,6 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
 
   }
 
-  useEffect(() => {
-    console.log("isloading", isLoading)
-  }, [isLoading])
 
   const signOutHandler = (e) => {
     e.preventDefault()

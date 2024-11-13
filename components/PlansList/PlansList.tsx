@@ -11,6 +11,7 @@ import TypeWriterText from '@/perfect-seo-shared-components/components/TypeWrite
 import { useSelector } from 'react-redux'
 import usePaginator from '@/perfect-seo-shared-components/hooks/usePaginator'
 import { selectEmail } from '@/perfect-seo-shared-components/lib/features/User'
+import LoadSpinner from '../LoadSpinner/LoadSpinner'
 
 export interface PlanListProps {
   domain_name: string;
@@ -169,16 +170,17 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
           {paginator?.itemCount > 0 && <p className='badge rounded-pill text-bg-primary ms-3 d-flex align-items-center mb-1'>{paginator?.itemCount}</p>}
         </div>
       </div>
-      {loading ? <Loader />
-        : data?.length > 0 ?
-          <div className='row d-flex justify-content-center'>
-            <Table rawData={data} isLoading={loading} columnArray={columnArray} />
-            <div className='col-auto d-flex justify-content-center'>
-              {paginator.renderComponent()}
-            </div>
+      {loading && <LoadSpinner />}
+      {data?.length > 0 ?
+
+        <div className='row d-flex justify-content-center'>
+          <Table rawData={data} isLoading={loading} columnArray={columnArray} />
+          <div className='col-auto d-flex justify-content-center'>
+            {paginator.renderComponent()}
           </div>
-          :
-          <h5><TypeWriterText withBlink string="The are no results for the given parameters" /></h5>
+        </div>
+        :
+        <h5><TypeWriterText withBlink string="The are no results for the given parameters" /></h5>
       }
       <Modal.Overlay open={deleteModal} onClose={() => { setDeleteModal(null) }}>
         <Modal.Title title="Delete Plan" />

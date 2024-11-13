@@ -57,6 +57,7 @@ export const UserSlice = createSlice({
     setLoggedIn: (state, action: PayloadAction<boolean>) => {
       return {
         ...state,
+        isLoading: false,
         isLoggedIn: action.payload,
       }
     },
@@ -91,7 +92,7 @@ export const { setUser, setProfile, updatePoints, setLoggedIn, setLoading, setAd
 export const selectUser = (state: RootState) => state?.user;
 export const selectProfile = (state: RootState) => state?.profile;
 export const selectPoints = (state: RootState) => state?.points;
-export const selectIsLoading = (state: RootState) => state?.isLoading;
+export const selectIsLoading = (state: RootState) => state?.isLoading || false;
 export const selectIsLoggedIn = (state: RootState) => state?.isLoggedIn;
 export const selectIsAdmin = (state: RootState) => state?.isAdmin;
 export const selectDomainsInfo = (state: RootState) => state?.domainsInfo;

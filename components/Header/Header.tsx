@@ -11,8 +11,7 @@ import { BrandStatus, Links, LinkType } from '@/perfect-seo-shared-components/da
 import { useEffect, useMemo, useState } from 'react'
 import { Brands } from '@/perfect-seo-shared-components/assets/Brands'
 import { renderIcon, renderLogo } from '@/perfect-seo-shared-components/utils/brandUtilities'
-import { usePathname, useRouter } from 'next/navigation'
-import { RootState } from '@/perfect-seo-shared-components/lib/store'
+import { usePathname } from 'next/navigation'
 import useGoogleUser from "@/perfect-seo-shared-components/hooks/useGoogleUser"
 import { addUserCredit, checkUserCredits, createUserCreditAccount } from "@/perfect-seo-shared-components/services/services"
 import { SEOPerfectLogo } from "@/perfect-seo-shared-components/assets/brandIcons"
@@ -35,6 +34,12 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
   const { phone } = useViewport()
   const [currentPage, setCurrentPage] = useState('')
   const pathname = usePathname()
+
+  useEffect(() => {
+    if (isLoggedIn && isLoading) {
+      dispatch(setLoading(false))
+    }
+  }, [isLoggedIn, isLoading])
 
   const loadCreditData = (email: string) => {
 
@@ -69,7 +74,8 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
   }, [user, getCredits])
 
 
-  useGoogleUser(current)
+
+  const google = useGoogleUser(current)
 
 
   useEffect(() => {
@@ -87,11 +93,14 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
 
   const loginWithGoogleHandler = (e) => {
     e?.preventDefault();
-    dispatch(setLoading(true))
 
     signIn('google', { callbackUrl: `${window.location.href}/` })
 
   }
+
+  useEffect(() => {
+    console.log("isloading", isLoading)
+  }, [isLoading])
 
   const signOutHandler = (e) => {
     e.preventDefault()

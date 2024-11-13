@@ -1,3 +1,4 @@
+'use client'
 import en from '@/assets/en.json';
 import classNames from 'classnames'
 import styles from './MyContent.module.scss'
@@ -13,13 +14,12 @@ import { createClient } from '@/perfect-seo-shared-components/utils/supabase/cli
 import { urlSanitization } from '@/perfect-seo-shared-components/utils/conversion-utilities';
 import BulkPostComponent from '../BulkPostGenerator/BulkPostComponent';
 import CheckGoogleDomains from '../CheckGoogleDomains/CheckGoogleDomains';
-import useGoogleUser from '@/perfect-seo-shared-components/hooks/useGoogleUser';
 import { getSynopsisInfo } from '@/perfect-seo-shared-components/services/services';
 import BulkContentComponent from '../BulkContentGenerator/BulkContentComponent';
 import OutlinesList from '../OutlinesList/OutlinesList';
 import BrandHeader from '../BrandHeader/BrandHeader';
 import LoadSpinner from '../LoadSpinner/LoadSpinner';
-import { selectDomains, selectDomainsInfo, selectEmail, selectIsAdmin, selectIsLoggedIn, selectSettings, selectUser } from '@/perfect-seo-shared-components/lib/features/User'
+import { selectDomains, selectDomainsInfo, selectEmail, selectIsAdmin, selectIsLoading, selectIsLoggedIn, selectSettings, selectUser } from '@/perfect-seo-shared-components/lib/features/User'
 import Loader from '../Loader/Loader';
 
 export interface MyContentProps {
@@ -39,7 +39,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
   const domainsInfo = useSelector(selectDomainsInfo)
   const isLoggedIn = useSelector(selectIsLoggedIn)
   const isAdmin = useSelector(selectIsAdmin)
-  const isLoading = useSelector(selectIsLoggedIn)
+  const isLoading = useSelector(selectIsLoading)
   const domain_access = useSelector(selectDomains)
   const email = useSelector(selectEmail)
 
@@ -50,7 +50,6 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
   const [domains, setDomains] = useState([])
   const [reverify, setReverify] = useState(false)
   const [dataTracked, setDataTracked] = useState(false)
-  const { fetchAllDomains } = useGoogleUser(en.product)
   const [synopsis, setSynopsis] = useState(null)
 
   useEffect(() => {
@@ -121,8 +120,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
 
   const clickHandler = (e, val) => {
     e.preventDefault()
-    let url = pathname + '?' + createQueryString('tab', val)
-    router.replace(url)
+    router.replace(`${pathname}?tab=${val}`)
   }
 
   useEffect(() => {
@@ -245,11 +243,10 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
   const isAuthorized = useMemo(() => {
     let bool = true;
     if (isLoading) {
-      return null
-    }
-    if (isAdmin) {
       return true
-    } else if (domain_access && domain_access.map(({ siteUrl }) => siteUrl).length > 0) {
+    } else if (isAdmin) {
+      return true
+    } else if (domain_access?.length > 0 && domain_access.map(({ siteUrl }) => siteUrl).length > 0) {
       if (currentDomain) {
         let domain = currentDomain;
         bool = (domain_access.map(({ siteUrl }) => siteUrl).includes(domain?.toLowerCase()))
@@ -264,16 +261,12 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
 
 
     }
-    else {
-      bool = false
-    }
     if (bool === false && email && (currentDomain || selected?.value) && (domainsList || domain_access)) {
       supabase
         .from('user_history')
         .insert({ email: email, domain: currentDomain || selected?.value, transaction_data: { domains: domainsList || domain_access }, product: en.product, type: "Unauthorized My Content" })
         .select('*')
         .then(res => {
-          fetchAllDomains()
         })
     }
     return bool

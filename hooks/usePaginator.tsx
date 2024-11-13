@@ -1,7 +1,9 @@
 import classNames from 'classnames';
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import useViewport from './useViewport';
 import { PaginationRequest } from '@/perfect-seo-shared-components/data/types';
+import { useRouter } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 
 export interface PaginatorMetricsProps {
   pages: number[]
@@ -35,11 +37,35 @@ interface PaginatorController {
 
 const usePaginator = (): PaginatorController => {
 
-  const [currentPage, setCurrentPage] = useState(1);
+  const router = useRouter();
+  const pathname = usePathname()
+  const searchParams = useSearchParams();
+  const pageParam: number = +searchParams.get('page');
+  const limitParam: number = +searchParams.get('limit');
+
+  const createQueryString = useCallback(
+    (name: string, value: string) => {
+      const params = new URLSearchParams(searchParams.toString())
+      params.set(name, value)
+
+      return params.toString()
+    },
+    [searchParams]
+  )
+
+  const pageSetHandler = (number) => {
+    router.replace(`${pathname}?${createQueryString('page', number.toString())}`)
+  }
+  const limitSetHandler = (number) => {
+    router.replace(`${pathname}?${createQueryString('limit', number.toString())}`)
+  }
+
+  const [currentPage, setCurrentPage] = useState(pageParam || 1);
   const [itemCount, setItemCount] = useState(0);
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(limitParam || 10);
   const [maxButtons, setMaxButtons] = useState<PaginatorMaxButtonTypes>({ phone: 5, tablet: 7, desktop: 7 });
   const { phone, tablet } = useViewport();
+
 
   const groupMax = useMemo(() => {
     if (phone) {
@@ -84,6 +110,15 @@ const usePaginator = (): PaginatorController => {
     );
   }, [currentPage, phone, itemCount, limit]);
 
+  const handleLimitSet = (number) => {
+    limitSetHandler(number)
+    setLimit(number)
+    if (currentPage * number > itemCount) {
+      setCurrentPage(Math.ceil(itemCount / number))
+      pageSetHandler(Math.ceil(itemCount / number))
+    }
+  }
+
   const Paginator = () => {
 
     const { pages, pageCount, groupStart, groupEnd } = pageDataMetrics;
@@ -91,6 +126,7 @@ const usePaginator = (): PaginatorController => {
     const onClick = (number) => {
       if (number >= 0 && number <= pageCount) {
         setCurrentPage(number);
+        pageSetHandler(number)
       }
     };
 
@@ -149,7 +185,7 @@ const usePaginator = (): PaginatorController => {
               <label className='mb-0 no-wrap'>Page Size</label>
               <select className='form-select ms-2' value={limit} onChange={(e) => {
                 e.preventDefault();
-                setLimit(+e?.target?.value)
+                handleLimitSet(e.target.value)
               }
               }>
                 <option value={10}>10</option>
@@ -167,9 +203,9 @@ const usePaginator = (): PaginatorController => {
   return {
     metrics: pageDataMetrics,
     currentPage,
-    setCurrentPage,
+    setCurrentPage: pageSetHandler,
     limit,
-    setLimit,
+    setLimit: limitSetHandler,
     itemCount,
     setItemCount,
     renderComponent: () => (<Paginator />),

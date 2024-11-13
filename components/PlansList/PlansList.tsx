@@ -45,6 +45,7 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
         })
 
         .catch(err => {
+          paginator.setItemCount(0)
           setLoading(false);
           setData(null)
         })
@@ -65,6 +66,7 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
         })
 
         .catch(err => {
+          paginator.setItemCount(0)
           setLoading(false);
           setData(null)
         })

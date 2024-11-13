@@ -71,12 +71,12 @@ const ContentStatusItem = ({ item, deleteContent, idx }) => {
             <div className="capitalize d-none d-lg-block col-4">{item?.domain_name}</div>
             <div className="col-12 col-md-8 col-lg-4 d-flex align-items-center justify-content-between">
               <div className="text-capitalize text-primary"><span className="d-md-none text-primary me-1"><strong>Status</strong></span><TypeWriterText withBlink string={status} /></div>
-              {status === 'Finished' && <button disabled={loading} className="btn btn-primary ms-3" onClick={e => {
+              <button disabled={loading} className="btn btn-primary ms-3" onClick={e => {
                 e.preventDefault();
                 deleteContent(idx)
               }}>
                 <i className="bi bi-x" /> Remove from Queue
-              </button>}
+              </button>
             </div></>}
       </div>
     </li >

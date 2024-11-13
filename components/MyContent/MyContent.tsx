@@ -120,7 +120,11 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
 
   const clickHandler = (e, val) => {
     e.preventDefault()
-    router.replace(`${pathname}?tab=${val}`)
+    let url = `${pathname}?tab=${val}`
+    if (domain) {
+      url += `&domain=${domain}`
+    }
+    router.replace(url)
   }
 
   useEffect(() => {

@@ -1,3 +1,4 @@
+import type * as PropTypes from "prop-types";
 // const EMAIL_REGEX = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
 const EMAIL_REGEX = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 const URL_REGEX = /^(?:http(s)?:\/\/)[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/;
@@ -11,36 +12,36 @@ export interface Validator {
   message: string;
 }
 
-export const emailValidator: Validator = {
+export const emailValidator: PropTypes.Validator = {
   test: email => EMAIL_REGEX.test(email),
   message: 'Please enter a valid email address.',
 };
 
-export const urlValidator: Validator = {
+export const urlValidator: PropTypes.Validator = {
   test: url => URL_REGEX.test(url),
   message: 'Please enter a valid URL.',
 };
-export const domainValidator: Validator = {
+export const domainValidator: PropTypes.Validator = {
   test: url => DOMAIN_REGEX.test(url),
   message: 'Please enter the domain only.',
 };
 
-export const youtubeUrlValidator: Validator = {
+export const youtubeUrlValidator: PropTypes.Validator = {
   test: url => YOUTUBE_URL_REGEX.test(url),
   message: 'Please enter a valid youtube URL.',
 };
 
-export const usernameValidator: Validator = {
+export const usernameValidator: PropTypes.Validator = {
   test: username => username.length >= 8,
   message: 'Username must be a minimum of 8 characters.',
 };
 
-export const passwordValidator: Validator = {
+export const passwordValidator: PropTypes.Validator = {
   test: password => PASSWORD_REGEX.test(password) && password.length >= 8,
   message: 'Password must meet all criteria.',
 };
 
-export const phoneValidator: Validator = {
+export const phoneValidator: PropTypes.Validator = {
   test: phone => US_PHONE_REGEX.test(phone) && phone.length === 14,
   message: 'Please write a valid phone, the format is (000) 000-0000',
 };

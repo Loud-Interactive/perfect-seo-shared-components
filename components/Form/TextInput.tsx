@@ -1,3 +1,4 @@
+import type * as PropTypes from "prop-types";
 import { Validator } from '@/perfect-seo-shared-components/utils/validators';
 import classNames from 'classnames';
 import FormField from './FormField';
@@ -10,7 +11,7 @@ interface TextInputProps extends React.HTMLProps<HTMLInputElement> {
   error?: string;
   icon?: React.ReactNode;
   label?: string | any;
-  validator?: Validator;
+  validator?: PropTypes.Validator;
   className?: string;
   hideErrorMessage?: boolean;
   autoComplete?: string

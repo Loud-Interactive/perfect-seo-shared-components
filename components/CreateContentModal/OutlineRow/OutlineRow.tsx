@@ -1,7 +1,7 @@
 import styles from './OutlineRow.module.scss';
 import TextInput from '@/perfect-seo-shared-components/components/Form/TextInput';
 import classNames from 'classnames';
-import { LegacyRef, useEffect, useState } from 'react';
+import { Ref, useEffect, useState } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 
 export const DragHandle = () => (
@@ -59,9 +59,9 @@ const OutlineRow = ({ rows,
     type: 'row',
   });
 
-  const dropRefType = dropRef as unknown as LegacyRef<HTMLDivElement>;
-  const dragRefType = dragRef as unknown as LegacyRef<HTMLDivElement>;
-  const previewRefType = previewRef as unknown as LegacyRef<HTMLDivElement>;
+  const dropRefType = dropRef as unknown as Ref<HTMLDivElement>;
+  const dragRefType = dragRef as unknown as Ref<HTMLDivElement>;
+  const previewRefType = previewRef as unknown as Ref<HTMLDivElement>;
 
   useEffect(() => {
     setShow(all)
@@ -182,9 +182,9 @@ const SubheadingRow = ({ headingIndex, index, setSelected, selected, reorderRow,
     }
   }, [isDragging, isOver]);
 
-  const dropRefType = dropRef as unknown as LegacyRef<HTMLDivElement>;
-  const dragRefType = dragRef as unknown as LegacyRef<HTMLDivElement>;
-  const previewRefType = previewRef as unknown as LegacyRef<HTMLDivElement>;
+  const dropRefType = dropRef as unknown as Ref<HTMLDivElement>;
+  const dragRefType = dragRef as unknown as Ref<HTMLDivElement>;
+  const previewRefType = previewRef as unknown as Ref<HTMLDivElement>;
 
   const subRowClasses = classNames(styles.subRow,
     {

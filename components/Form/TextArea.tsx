@@ -1,3 +1,4 @@
+import type * as PropTypes from "prop-types";
 import classNames from 'classnames';
 import FieldErrors from './FieldErrors';
 import FormField from './FormField';
@@ -10,7 +11,7 @@ interface TextAreaInputProps extends React.HTMLProps<HTMLTextAreaElement> {
   error?: string;
   icon?: React.ReactNode;
   label?: string;
-  validator?: Validator;
+  validator?: PropTypes.Validator;
   className?: string;
   hideErrorMessage?: boolean;
   bottomSpacing?: boolean;

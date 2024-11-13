@@ -177,7 +177,7 @@ export const Description = ({ children, className }: ModalChildProps) => {
 interface ModalHeadingProps {
   children: React.ReactNode,
   className?: string,
-  Icon?: React.ReactChild,
+  Icon?: React.ReactElement | number | string,
   backFunc?: () => void,
 }
 

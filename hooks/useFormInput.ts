@@ -1,3 +1,4 @@
+import type * as PropTypes from "prop-types";
 import { MutableRefObject, useContext, useEffect, useRef } from 'react';
 import { FormContext } from '@/perfect-seo-shared-components/components/Form/Form';
 import type { FormController } from './useForm';
@@ -7,7 +8,7 @@ interface FormInputConfig {
   fieldName: string;
   error?: string;
   required?: boolean;
-  validator?: Validator;
+  validator?: PropTypes.Validator;
 }
 
 interface FormInputData {

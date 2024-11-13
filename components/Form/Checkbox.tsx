@@ -1,3 +1,4 @@
+import type * as PropTypes from "prop-types";
 import { useEffect, useState } from 'react';
 import classNames from 'classnames';
 import FieldErrors from './FieldErrors';
@@ -12,7 +13,7 @@ interface CheckboxProps extends React.HTMLProps<HTMLInputElement> {
   label?: any;
   onValueChange?: (e) => void;
   shouldUseCheckedProp?: boolean;
-  validator?: Validator;
+  validator?: PropTypes.Validator;
 }
 
 const Checkbox = ({

@@ -1,3 +1,4 @@
+import type * as PropTypes from "prop-types";
 import { FormEvent, useEffect, useRef, useState } from 'react';
 import type { Validator } from '@/perfect-seo-shared-components/utils/validators';
 import { areArraysEqual } from '@/perfect-seo-shared-components/utils/global';
@@ -8,7 +9,7 @@ type FormElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 interface FieldConfig {
   ref: HTMLElement,
   required: boolean;
-  validator?: Validator;
+  validator?: PropTypes.Validator;
 }
 
 interface ValidationRules {

@@ -59,14 +59,8 @@ export const getSynopsisInfo = (domain, regenerate?, server?: boolean) => {
 };
 
 export const updateImpression = (domain: string, obj: any) => {
-  let reqObj: any = {
-    domain: domain,
-    key_value_pairs: obj,
-  };
-  if (obj?.guid) {
-    reqObj.guid = obj.guid
-  }
-  return axiosInstance.post("https://pp-api.replit.app/pairs", reqObj, { headers });
+
+  return axiosInstance.patch(`https://pp-api.replit.app/pairs/${domain}`, obj, { headers });
 };
 
 // check what this endpoint does

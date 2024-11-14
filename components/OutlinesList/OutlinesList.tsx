@@ -89,7 +89,7 @@ const OutlinesList = ({ domain_name, active }: OutlinesListProps) => {
 
   return (
     <div className={styles.wrap}>
-      <div className='row d-flex justify-content-between align-items-end my-3'>
+      <div className='row d-flex justify-content-between align-items-end mb-3'>
         <div className='col-12 col-md-auto d-flex align-items-end'>
           <h2 className='text-primary mb-0'>
             <TypeWriterText string="Generated Outlines" withBlink />

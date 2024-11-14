@@ -8,7 +8,7 @@ interface BrandHeaderProps {
   editable?: boolean;
 }
 const BrandHeader = ({ synopsis, editable = true }: BrandHeaderProps) => {
-  const isDark = useLogoCheck(synopsis?.logo_url, synopsis?.domain, null, synopsis)
+  const { error } = useLogoCheck(synopsis?.logo_url, synopsis?.domain, null, synopsis)
 
   const logoCardClasses = classNames('card p-3 h-100 d-flex align-items-center justify-content-center',
     {
@@ -24,7 +24,7 @@ const BrandHeader = ({ synopsis, editable = true }: BrandHeaderProps) => {
     <div className='mb-3 bg-primary'>
       <div className='container-xl content-fluid py-3'>
         <div className='row d-flex justify-content-between g-3'>
-          {synopsis?.logo_url && <div className='col-12 col-lg-3'>
+          {(synopsis?.logo_url && !error) && <div className='col-12 col-lg-3'>
             <div className={logoCardClasses}>
               <div className={styles.logoWrap}>
                 <img src={synopsis?.logo_url} />

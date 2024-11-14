@@ -143,12 +143,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
     }
   }, [queryParam])
 
-  useEffect(() => {
-    if (domainParam) {
-      setDomain(domainParam);
-      setSelected({ value: domainParam, label: domainParam })
-    }
-  }, [domainParam])
+
 
   const TabData = [
     { key: "content-plans", title: "Generated Content Plans" },
@@ -242,6 +237,10 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
       if (currentDomain) {
         setDomain(currentDomain)
         setSelected({ label: currentDomain, value: currentDomain })
+        return setLoading(false)
+      } else if (domainParam) {
+        setDomain(domainParam)
+        setSelected({ label: domainParam, value: domainParam })
         return setLoading(false)
       } else if (settings?.global?.defaultDomain) {
         setDomain(settings.global.defaultDomain)

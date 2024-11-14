@@ -7,11 +7,12 @@ const blankData = { primaryColor: null, secondaryColor: null, isDark: null, widt
 
 const useLogoCheck = (logoUrl: string, domain: string, form?: FormController, synopsis?: any) => {
   const [data, setData] = useState(blankData);
+  const [error, setError] = useState(false)
 
   const checkForErrors = () => {
     axios.get(logoUrl)
       .catch((error) => {
-        updateImpression(domain, { logo_url: null });
+        setError(true)
       });
   };
 
@@ -138,7 +139,7 @@ const useLogoCheck = (logoUrl: string, domain: string, form?: FormController, sy
     }
   }, [data, domain]);
 
-  return data.isDark;
+  return { isDark: data.isDark, error }
 };
 
 export default useLogoCheck;

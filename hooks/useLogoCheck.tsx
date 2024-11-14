@@ -12,7 +12,9 @@ const useLogoCheck = (logoUrl: string, domain: string, form?: FormController, sy
   const checkForErrors = () => {
     axios.get(logoUrl)
       .catch((error) => {
-        setError(true)
+        if (error.response) {
+          setError(true)
+        }
       });
   };
 

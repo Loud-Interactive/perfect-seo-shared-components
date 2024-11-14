@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react"
-import { deleteOutline, fetchOutlineStatus, regenerateOutline, saveContentPlanPost } from "@/perfect-seo-shared-components/services/services"
+import { deleteOutline, fetchOutlineStatus, getContentPlanPost, regenerateOutline, saveContentPlanPost } from "@/perfect-seo-shared-components/services/services"
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import TypeWriterText from "../TypeWriterText/TypeWriterText"
 import Link from "next/link"
@@ -130,7 +130,6 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
     regenerateOutline(localOutline?.guid)
       .then((result) => {
         let newData = JSON.parse(result.data.outline);
-        console.log(newData)
         setLocalOutline(newData)
         setLoading(false);
       })
@@ -149,6 +148,7 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
   //     "keyword",
   //     "outline"
   // ]
+
   const handleTitleChange = (e, title) => {
     e?.preventDefault()
     let reqObj = { ...outline, outline_details: JSON.parse(outline.outline), post_title: title, guid: outline.guid }
@@ -213,14 +213,6 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
                           View Content Plan
                         </Link>
                       </DropdownMenu.Item>}
-                      <DropdownMenu.Item>
-                        <button
-                          className="btn btn-transparent text-black"
-                          onClick={generatePostHandler}
-                        >
-                          Generate Post
-                        </button>
-                      </DropdownMenu.Item>
                       {/* <DropdownMenu.Item>
                         <button
                           className="btn btn-transparent text-black"
@@ -232,6 +224,14 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
                           Regenerate Outline
                         </button>
                       </DropdownMenu.Item> */}
+                      <DropdownMenu.Item>
+                        <button
+                          className="btn btn-transparent text-black"
+                          onClick={generatePostHandler}
+                        >
+                          Generate Post
+                        </button>
+                      </DropdownMenu.Item>
                     </DropdownMenu.Content>
                   </DropdownMenu.Portal>
                 </DropdownMenu.Root>

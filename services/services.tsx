@@ -154,6 +154,22 @@ export const regenerateOutline = (
     reqObj = { ...reqObj, ...other }
   }
   return axiosInstance.post(
+    `https://planperfectapi.replit.app/regenerate_outline`,
+    reqObj
+  );
+};
+
+export const regeneratePost = (
+  guid, other?
+) => {
+  let reqObj = {
+    content_plan_outline_guid: guid,
+  }
+
+  if (other) {
+    reqObj = { ...reqObj, ...other }
+  }
+  return axiosInstance.post(
     `https://content-v5.replit.app/generate_content_from_outline_guid`,
     reqObj
   );

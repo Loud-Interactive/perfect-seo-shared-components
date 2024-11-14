@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react"
 import TextInput from "../Form/TextInput"
 import { emailValidator } from "@/perfect-seo-shared-components/utils/validators"
-import { deleteContentOutline, getPostStatus, updateLiveUrl } from "@/perfect-seo-shared-components/services/services"
+import { deleteContentOutline, getPostStatus, regeneratePost, updateLiveUrl } from "@/perfect-seo-shared-components/services/services"
 import moment from "moment-timezone"
 import TypeWriterText from "../TypeWriterText/TypeWriterText"
 import Link from "next/link"
@@ -163,6 +163,16 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
         console.log(err)
       })
   }
+
+  const regeneratePostHandler = (e) => {
+    e.preventDefault();
+    console.log(localPost)
+    regeneratePost(localPost?.content_plan_outline_guid).then(res => {
+      console.log(res)
+    })
+
+  }
+
   const renderAhrefUrl = () => {
     let newUrl = encodeURI(localPost?.live_post_url.replace("https://", '').replace("http://", "").replace("www.", ""))
 
@@ -218,82 +228,83 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
               {(!showUrl && !post?.live_post_url && completedStatus.includes(status)) &&
                 <button className="btn btn-warning btn-standard" onClick={() => { setShowUrl(true) }} title="Add Live Url"><i className="bi bi-link" /></button>}
               <button className='btn btn-primary btn-standard d-flex justify-content-center align-items-center' onClick={deleteClickHandler} title={`View GUID: ${localPost?.guid}`}><i className="bi bi-trash pt-1" /></button>
-              {
-                (localPost?.live_post_url || localPost?.content_plan_guid) &&
-                <DropdownMenu.Root>
-                  <DropdownMenu.Trigger className="btn btn-warning btn-standard d-flex align-items-center justify-content-center">
-                    <i className="bi bi-three-dots-vertical" />
-                  </DropdownMenu.Trigger>
+              <DropdownMenu.Root>
+                <DropdownMenu.Trigger className="btn btn-warning btn-standard d-flex align-items-center justify-content-center">
+                  <i className="bi bi-three-dots-vertical" />
+                </DropdownMenu.Trigger>
 
-                  <DropdownMenu.Portal>
-                    <DropdownMenu.Content align="end" className="bg-primary z-100 card">
-                      {localPost?.content_plan_guid &&
+                <DropdownMenu.Portal>
+                  <DropdownMenu.Content align="end" className="bg-primary z-100 card">
+
+                    {localPost?.content_plan_guid &&
+                      <DropdownMenu.Item>
+                        <a
+                          href={`https://contentPerfect.ai/dashboard/${localPost?.content_plan_guid}`}
+                          target="_blank"
+                          className="btn btn-transparent"
+
+                        >
+                          View Content Plan
+                        </a>
+                      </DropdownMenu.Item>}
+                    {/* <DropdownMenu.Item>
+                      <button className="btn btn-transparent" onClick={regeneratePostHandler}>Regenerate Post</button>
+                    </DropdownMenu.Item> */}
+                    {localPost?.live_post_url && <>
+                      {localPost?.factcheck_guid ?
                         <DropdownMenu.Item>
                           <a
-                            href={`https://contentPerfect.ai/dashboard/${localPost?.content_plan_guid}`}
+                            href={`https://factcheckPerfect.ai/fact-checks/${localPost?.factcheck_guid}`}
                             target="_blank"
                             className="btn btn-transparent"
 
                           >
-                            View Content Plan
+                            Fact-Check Results
+                          </a>
+                        </DropdownMenu.Item>
+                        : <DropdownMenu.Item>
+                          <a
+                            href={`https://factcheckPerfect.ai/fact-checks?url=${encodeURI(localPost?.live_post_url)}&post_guid=${localPost?.content_plan_outline_guid}`}
+                            target="_blank"
+                            className="btn btn-transparent"
+
+                          >
+                            Fact-Check Post
                           </a>
                         </DropdownMenu.Item>}
-                      {localPost?.live_post_url && <>
-                        {localPost?.factcheck_guid ?
-                          <DropdownMenu.Item>
-                            <a
-                              href={`https://factcheckPerfect.ai/fact-checks/${localPost?.factcheck_guid}`}
-                              target="_blank"
-                              className="btn btn-transparent"
+                      <DropdownMenu.Item>
+                        <a
+                          href={`https://socialperfect.ai?url=${encodeURI(localPost?.live_post_url)}`}
+                          target="_blank"
+                          className="btn btn-transparent"
 
-                            >
-                              Fact-Check Results
-                            </a>
-                          </DropdownMenu.Item>
-                          : <DropdownMenu.Item>
-                            <a
-                              href={`https://factcheckPerfect.ai/fact-checks?url=${encodeURI(localPost?.live_post_url)}&post_guid=${localPost?.content_plan_outline_guid}`}
-                              target="_blank"
-                              className="btn btn-transparent"
+                        >
+                          Generate Social Posts
+                        </a>
+                      </DropdownMenu.Item>
+                      <DropdownMenu.Item>
+                        <a
+                          href={`https://app.ahrefs.com/v2-site-explorer/organic-keywords?columns=CPC%7C%7CKD%7C%7CLastUpdated%7C%7COrganicTraffic%7C%7CPaidTraffic%7C%7CPosition%7C%7CPositionHistory%7C%7CSERP%7C%7CSF%7C%7CURL%7C%7CVolume&compareDate=dontCompare&country=us&currentDate=today&keywordRules=&limit=100&mode=prefix&offset=0&positionChanges=&serpFeatures=&sort=Volume&sortDirection=desc&target=${encodeURI(localPost?.live_post_url.replace("https://", '').replace("http://", "").replace("www.", ""))}%2F&urlRules=&volume_type=average`}
+                          target="_blank"
+                          className="btn btn-transparent"
+                        >
+                          Ahrefs URL
+                        </a>
+                      </DropdownMenu.Item>
+                      <DropdownMenu.Item>
+                        <a
+                          href={`https://search.google.com/search-console/performance/search-analytics?resource_id=sc-domain%3A${urlSanitization(localPost?.live_post_url)}&hl=en&page=*${encodeURI(localPost?.live_post_url)}`}
+                          target="_blank"
+                          className="btn btn-transparent"
 
-                            >
-                              Fact-Check Post
-                            </a>
-                          </DropdownMenu.Item>}
-                        <DropdownMenu.Item>
-                          <a
-                            href={`https://socialperfect.ai?url=${encodeURI(localPost?.live_post_url)}`}
-                            target="_blank"
-                            className="btn btn-transparent"
-
-                          >
-                            Generate Social Posts
-                          </a>
-                        </DropdownMenu.Item>
-                        <DropdownMenu.Item>
-                          <a
-                            href={`https://app.ahrefs.com/v2-site-explorer/organic-keywords?columns=CPC%7C%7CKD%7C%7CLastUpdated%7C%7COrganicTraffic%7C%7CPaidTraffic%7C%7CPosition%7C%7CPositionHistory%7C%7CSERP%7C%7CSF%7C%7CURL%7C%7CVolume&compareDate=dontCompare&country=us&currentDate=today&keywordRules=&limit=100&mode=prefix&offset=0&positionChanges=&serpFeatures=&sort=Volume&sortDirection=desc&target=${encodeURI(localPost?.live_post_url.replace("https://", '').replace("http://", "").replace("www.", ""))}%2F&urlRules=&volume_type=average`}
-                            target="_blank"
-                            className="btn btn-transparent"
-                          >
-                            Ahrefs URL
-                          </a>
-                        </DropdownMenu.Item>
-                        <DropdownMenu.Item>
-                          <a
-                            href={`https://search.google.com/search-console/performance/search-analytics?resource_id=sc-domain%3A${urlSanitization(localPost?.live_post_url)}&hl=en&page=*${encodeURI(localPost?.live_post_url)}`}
-                            target="_blank"
-                            className="btn btn-transparent"
-
-                          >
-                            GSC Report
-                          </a>
-                        </DropdownMenu.Item>
-                      </>}
-                    </DropdownMenu.Content>
-                  </DropdownMenu.Portal>
-                </DropdownMenu.Root>}
-
+                        >
+                          GSC Report
+                        </a>
+                      </DropdownMenu.Item>
+                    </>}
+                  </DropdownMenu.Content>
+                </DropdownMenu.Portal>
+              </DropdownMenu.Root>
             </div>
             {localPost?.status !== "Complete" && <div className='col-12 text-end text-primary mt-2'>
               <TypeWriterText string={status} withBlink />

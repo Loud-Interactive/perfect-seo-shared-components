@@ -34,10 +34,10 @@ const PostsList = ({ domain_name, active }: PostsListProps) => {
           .catch(err => {
             setLoading(false);
             setData(null)
+            paginator.setItemCount(0)
           })
       }
       else {
-
         getPostsByEmail(email, { ...paginator.paginationObj, page: paginator.currentPage })
           .then(res => {
             paginator.setItemCount(res.data.total)

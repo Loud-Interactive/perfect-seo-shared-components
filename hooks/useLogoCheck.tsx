@@ -95,12 +95,12 @@ const useLogoCheck = (logoUrl: string, domain: string, form?: FormController, sy
     if (data && domain) {
       let newImpression: any = {};
 
-      let logo_width = form?.getState?.logo_width || synopsis?.logo_width;
-      let logo_height = form?.getState?.logo_height || synopsis?.logo_height;
-      let logo_aspect_ratio = form?.getState?.logo_aspect_ratio || synopsis?.logo_aspect_ratio;
-      let brand_color_primary = form?.getState?.brand_color_primary || synopsis?.brand_color_primary;
-      let brand_color_secondary = form?.getState?.brand_color_secondary || synopsis?.brand_color_secondary;
-      let logo_theme = form?.getState?.logo_theme || synopsis?.logo_theme;
+      let logo_width = form ? form?.getState?.logo_width : synopsis?.logo_width || null
+      let logo_height = form ? form?.getState?.logo_height : synopsis?.logo_height || null
+      let logo_aspect_ratio = form ? form?.getState?.logo_aspect_ratio : synopsis?.logo_aspect_ratio || null
+      let brand_color_primary = form ? form?.getState?.brand_color_primary : synopsis?.brand_color_primary || null
+      let brand_color_secondary = form ? form?.getState?.brand_color_secondary : synopsis?.brand_color_secondary || null
+      let logo_theme = form ? form?.getState?.logo_theme : synopsis?.logo_theme || null
       if (data.width !== logo_width) {
         newImpression.logo_width = data.width
       }
@@ -124,10 +124,11 @@ const useLogoCheck = (logoUrl: string, domain: string, form?: FormController, sy
         }
       }
       if (Object.keys(newImpression).length > 0) {
-        updateImpression(domain, newImpression)
         if (form) {
           form.setState({ ...form.getState, ...newImpression });
         }
+        updateImpression(domain, newImpression)
+
       }
     }
   }, [data, domain]);

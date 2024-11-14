@@ -51,6 +51,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
   const [reverify, setReverify] = useState(false)
   const [dataTracked, setDataTracked] = useState(false)
   const [synopsis, setSynopsis] = useState(null)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     let data = null;
@@ -235,14 +236,21 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
 
 
   useEffect(() => {
-    if (currentDomain) {
-      setDomain(currentDomain)
-      setSelected({ label: currentDomain, value: currentDomain })
-    } else if (settings?.global?.defaultDomain) {
-      setDomain(settings.global.defaultDomain)
-      setSelected({ label: settings.global.defaultDomain, value: settings.global.defaultDomain })
+    if (domainsList?.length > 0) {
+      if (currentDomain) {
+        setDomain(currentDomain)
+        setSelected({ label: currentDomain, value: currentDomain })
+        return setLoading(false)
+      } else if (settings?.global?.defaultDomain) {
+        setDomain(settings.global.defaultDomain)
+        setSelected({ label: settings.global.defaultDomain, value: settings.global.defaultDomain })
+        return setLoading(false)
+      }
+      else {
+        return setLoading(false)
+      }
     }
-  }, [currentDomain, settings])
+  }, [currentDomain, settings, domainsList])
 
   const isAuthorized = useMemo(() => {
     let bool = true;
@@ -282,18 +290,6 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
     }
   }, [isAdmin])
 
-  useEffect(() => {
-    // if (['bulk-content', 'bulk-posts'].includes(selectedTab)) {
-    //   if (currentDomain) {
-    //     setDomain(currentDomain)
-    //     setSelected({ label: currentDomain, value: currentDomain })
-    //   }
-    //   else {
-    //     setDomain(null);
-    //     setSelected(null)
-    //   }
-    // }
-  }, [])
 
 
 
@@ -301,8 +297,6 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
     return (
       <div className='strip-padding'>
         <Loader />
-
-        {isLoading.toString()}
       </div>
     )
   }
@@ -367,35 +361,35 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
             <div className={`tab-pane fade ${selectedTab === 'outlines' && 'show active'}`} id="outlines" role="tabpanel" aria-labelledby="outlines-tab">
               <div className='tab p-3'>
                 <Suspense fallback={<LoadSpinner />}>
-                  <OutlinesList active={selectedTab === 'outlines'} domain_name={currentDomain || domain} />
+                  <OutlinesList active={!loading && selectedTab === 'outlines'} domain_name={currentDomain || domain} />
                 </Suspense>
               </div>
             </div>
             <div className={`tab-pane fade ${selectedTab === 'posts' && 'show active'}`} id="posts" role="tabpanel" aria-labelledby="posts-tab">
               <div className='tab p-3'>
                 <Suspense fallback={<LoadSpinner />}>
-                  <PostsList active={selectedTab === 'posts'} domain_name={currentDomain || domain} />
+                  <PostsList active={!loading && selectedTab === 'posts'} domain_name={currentDomain || domain} />
                 </Suspense>
               </div>
             </div>
             <div className={`tab-pane fade ${selectedTab === 'content-plans' && 'show active'}`} id="content-plans" role="tabpanel" aria-labelledby="content-plans-tab">
               <div className='tab p-3'>
                 <Suspense fallback={<LoadSpinner />}>
-                  <PlansList active={selectedTab === 'content-plans'} domain_name={currentDomain || domain} />
+                  <PlansList active={!loading && selectedTab === 'content-plans'} domain_name={currentDomain || domain} />
                 </Suspense>
               </div>
             </div>
             <div className={`tab-pane fade ${selectedTab === 'bulk-content' && 'show active'}`} id="bulk-cnotent" role="tabpanel" aria-labelledby="bulk-content-tab">
               <div className='tab p-3'>
                 <Suspense fallback={<LoadSpinner />}>
-                  <BulkContentComponent currentDomain={currentDomain} active={selectedTab === 'bulk-content'} />
+                  <BulkContentComponent currentDomain={currentDomain} active={!loading && selectedTab === 'bulk-content'} />
                 </Suspense>
               </div>
             </div>
             <div className={`tab-pane fade ${selectedTab === 'bulk-posts' && 'show active'}`} id="bulk-posts" role="tabpanel" aria-labelledby="bulk-posts-tab">
               <div className='tab p-3'>
                 <Suspense fallback={<LoadSpinner />}>
-                  <BulkPostComponent currentDomain={currentDomain} active={selectedTab === 'bulk-posts'} />
+                  <BulkPostComponent currentDomain={currentDomain} active={!loading && selectedTab === 'bulk-posts'} />
                 </Suspense>
               </div>
             </div>

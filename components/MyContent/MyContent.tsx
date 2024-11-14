@@ -44,7 +44,6 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
   const email = useSelector(selectEmail)
 
   const [selectedTab, setSelectedTab] = useState('content-plans')
-
   const [domain, setDomain] = useState(currentDomain || null)
   const [selected, setSelected] = useState(null)
   const [domains, setDomains] = useState([])
@@ -63,6 +62,10 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
           .then(res => {
             setSynopsis(res?.data)
           })
+          .catch(err => {
+            setSynopsis(null)
+          }
+          )
       }
       else {
         setSynopsis(data)
@@ -130,8 +133,9 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
 
   useEffect(() => {
     if (queryParam) {
-      if (['bulk-content', 'bulk-posts'].includes(queryParam)) {
-        router.replace(pathname)
+      if (['bulk-content', 'bulk-posts'].includes(queryParam) && domainParam) {
+        router.replace(`${pathname}?tab=${queryParam}`)
+        setSelectedTab(queryParam)
       }
       else {
         setSelectedTab(queryParam)
@@ -143,7 +147,6 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
     if (domainParam) {
       setDomain(domainParam);
       setSelected({ value: domainParam, label: domainParam })
-      setSynopsis(null)
     }
   }, [domainParam])
 
@@ -158,7 +161,6 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
 
   const searchDomainChangeHandler = (e) => {
     if (e) {
-      setSynopsis(null)
       setDomain(e?.value);
       setSelected(e)
       setDataTracked(false)

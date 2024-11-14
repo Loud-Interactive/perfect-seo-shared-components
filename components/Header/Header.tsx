@@ -194,7 +194,7 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
                       <div className='row g-2 justify-content-end p-3'>
                         {dynamicLinks?.length > 0 && <>
                           {currentPage !== "/" && <div className='col-12'>
-                            <Link href="/">Return Home</Link>
+                            <Link href="/"><i className="bi bi-house-fill me-2 text-white" />Return Home</Link>
                           </div>}
                           {dynamicLinks.map((link, index) => {
                             let href = typeof link.href === 'function' ? link.href(user) : link.href
@@ -205,7 +205,7 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
                             )
                           })}
                         </>}
-                        {isAdmin && <>
+                        {/* {isAdmin && <>
                           {brand?.developmentUrl && <div className='col-12'>
                             <Link target='_blank' className='text-primary'
                               href={brand.developmentUrl}><i className="bi text-white bi-shield-lock-fill me-2" title="Admin Only" />View Development Env</Link>
@@ -213,7 +213,7 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
                           {brand?.stagingUrl && <div className='col-12'>
                             <Link href={brand?.stagingUrl} target='_blank' className='text-primary'><i className="bi text-white bi-shield-lock-fill me-2" title="Admin Only" />View Staging Env</Link>
                           </div>}
-                        </>}
+                        </>} */}
                         {(hasLogin && isLoggedIn) && <div className='col-12'>
                           <a className="text-primary" onClick={signOutHandler}><i className="bi text-white bi-unlock-fill me-2" />Sign Out</a>
                         </div>}
@@ -221,8 +221,8 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
                     </div>
                     <div className='card-body d-flex align-items-end'>
                       <div className='row g-3 justify-content-start'>
-                        <div className='col-12'>
-                          <span className='fs-2'>Our Products</span>
+                        <div className='col-4 text-end d-flex align-items-center justify-content-center'>
+                          <span className='fs-2 mb-3'>Our Products</span>
                         </div>
                         {Brands.filter((obj) => obj.status === BrandStatus.LIVE).map((brand, index) => {
 
@@ -234,9 +234,9 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
                             </div>
                           )
                         })}
-                        <div className="col-4">
-                          <div className="h-100 pt-2">
-                            <a href='https://seoperfect.ai/' className="h-100 w-100 d-flex align-items-center" target="_blank">  <SEOPerfectLogo /></a>
+                        <div className="col-12 d-flex justify-content-center align-items-center">
+                          <div className="h-100 w-75">
+                            <a href='https://seoperfect.ai/' className="w-100" target="_blank">  <SEOPerfectLogo /></a>
                           </div>
                         </div>
                       </div>

@@ -1,11 +1,12 @@
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { deleteOutline, fetchOutlineStatus, regenerateOutline, saveContentPlanPost } from "@/perfect-seo-shared-components/services/services"
-
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import TypeWriterText from "../TypeWriterText/TypeWriterText"
 import Link from "next/link"
 import * as Modal from '@/perfect-seo-shared-components/components/Modal/Modal'
 import CreateContentModal from "@/perfect-seo-shared-components/components/CreateContentModal/CreateContentModal"
 import moment from "moment-timezone"
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
   const [status, setStatus] = useState(outline?.status)
@@ -15,6 +16,7 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
   const [completed, setCompleted] = useState(false)
   const [loading, setLoading] = useState(false)
 
+  const router = useRouter();
 
   useEffect(() => {
     if (outline?.status !== status) {
@@ -26,6 +28,25 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
       }
     }
   }, [outline, completed])
+
+  const searchParams = useSearchParams();
+  const pathname = usePathname()
+
+  const createQueryString = useCallback(
+    (name: string, value: string) => {
+      const params = new URLSearchParams(searchParams.toString())
+      params.set(name, value)
+
+      return params.toString()
+    },
+    [searchParams]
+  )
+
+  const generatePostHandler = (e) => {
+    e.preventDefault();
+    router.replace(pathname + '?' + createQueryString('generate', 'true'))
+    return setEditModal(true);
+  };
 
   const fetchStatus = () => {
     fetchOutlineStatus(outline?.guid)
@@ -167,13 +188,7 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
           <div className='row d-flex justify-content-end'>
             <div className="input-group d-flex justify-content-end">
               <>
-                {localOutline?.content_plan_guid && <Link
-                  href={`https://contentPerfect.ai/dashboard/${localOutline?.content_plan_guid}`}
-                  title="View Content Plan"
-                  className="btn btn-warning btn-standard d-flex justify-content-center align-items-center"
-                >
-                  <i className="bi bi-eye-fill me-1" />     <span className="d-none d-lg-block"> View Content Plan</span>
-                </Link>}
+
                 <button
                   title='edit outline'
                   className="btn btn-warning btn-standard no-truncate"
@@ -183,16 +198,45 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
                 </button>
 
                 <button className='btn btn-primary btn-standard d-flex justify-content-center align-items-center' onClick={deleteClickHandler} title={`View GUID: ${localOutline?.guid}`}><i className="bi bi-trash pt-1" /></button>
+                <DropdownMenu.Root>
+                  <DropdownMenu.Trigger className="btn btn-warning btn-standard d-flex align-items-center justify-content-center">
+                    <i className="bi bi-three-dots-vertical" />
+                  </DropdownMenu.Trigger>
+                  <DropdownMenu.Portal>
+                    <DropdownMenu.Content align="end" className="bg-warning z-100 card">
+                      {localOutline?.content_plan_guid && <DropdownMenu.Item>
+                        <Link
+                          href={`https://contentPerfect.ai/dashboard/${localOutline?.content_plan_guid}`}
+                          title="View Content Plan"
+                          className="btn btn-transparent text-black"
+                        >
+                          View Content Plan
+                        </Link>
+                      </DropdownMenu.Item>}
+                      <DropdownMenu.Item>
+                        <button
+                          className="btn btn-transparent text-black"
+                          onClick={generatePostHandler}
+                        >
+                          Generate Post
+                        </button>
+                      </DropdownMenu.Item>
+                      {/* <DropdownMenu.Item>
+                        <button
+                          className="btn btn-transparent text-black"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            regenerateClickHandler();
+                          }}
+                        >
+                          Regenerate Outline
+                        </button>
+                      </DropdownMenu.Item> */}
+                    </DropdownMenu.Content>
+                  </DropdownMenu.Portal>
+                </DropdownMenu.Root>
 
-                {/* <button
-                  className="btn btn-primary"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    regenerateClickHandler();
-                  }}
-                >
-                  regenerate outline
-                </button> */}
+
               </>
             </div>
 
@@ -215,7 +259,7 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
           </div>
         </Modal.Description>
       </Modal.Overlay>
-    </div>
+    </div >
 
   )
 }

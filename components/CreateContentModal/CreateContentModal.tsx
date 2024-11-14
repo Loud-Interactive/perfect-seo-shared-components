@@ -15,6 +15,7 @@ import { fetchOutlineStatus, getContentPlanOutline, saveContentPlanPost } from "
 import { createPost, regenerateOutline } from "@/perfect-seo-shared-components/services/services";
 import Loader from "@/perfect-seo-shared-components/components/Loader/Loader";
 import { selectEmail, selectPoints } from "@/perfect-seo-shared-components/lib/features/User";
+import SearchSelect from "../SearchSelect/SearchSelect";
 
 interface CreateContentModalProps {
   data: any;
@@ -52,6 +53,7 @@ const CreateContentModal = ({
   const [saved, setSaved] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState("");
+  const [langSelected, setLangSelected] = useState({ label: 'English', value: 'English' });
 
   const router = useRouter();
   const points = useSelector(selectPoints)
@@ -337,8 +339,6 @@ const CreateContentModal = ({
       return;
     }
 
-    // data.Keyword = local;
-    // contentPlan.target_keyword === contentplan 
     setSubmitError(null)
     let reqBody: GenerateContentPost = {
       outline: { sections: [...convertToTableData(form.getState)] },
@@ -352,10 +352,9 @@ const CreateContentModal = ({
       client_name: contentPlan.brand_name || contentPlan.client_name,
       client_domain: contentPlan.domain_name || contentPlan.client_domain,
       receiving_email: receivingEmail,
+      writing_language: langSelected?.value || 'English'
     };
-    if (advancedData?.writing_language) {
-      reqBody.writing_language = advancedData.writing_language
-    }
+
     setSubmitted(true);
     createPost(reqBody)
       .then((res) => {
@@ -367,6 +366,49 @@ const CreateContentModal = ({
         setSubmitError("There was an error submitting your post. Please try again.")
       });
   };
+
+
+  const languageOptions = [
+    "English",
+    "Arabic",
+    "Bengali",
+    "Bulgarian",
+    "Chinese (Simplified)",
+    "Chinese (Traditional)",
+    "Czech",
+    "Danish",
+    "Dutch",
+    "English",
+    "Finnish",
+    "French",
+    "German",
+    "Greek",
+    "Hebrew",
+    "Hindi",
+    "Hungarian",
+    "Indonesian",
+    "Italian",
+    "Japanese",
+    "Korean",
+    "Malay",
+    "Norwegian",
+    "Polish",
+    "Portuguese",
+    "Romanian",
+    "Russian",
+    "Slovak",
+    "Spanish",
+    "Swedish",
+    "Thai",
+    "Turkish",
+    "Ukrainian",
+    "Urdu",
+    "Vietnamese"
+  ].map((language) => ({ label: language, value: language }))
+
+  const languageChangeHandler = (e) => {
+    setLangSelected(e);
+  }
 
   const regenerateClickHandler = () => {
     setLoading(true);
@@ -605,7 +647,11 @@ const CreateContentModal = ({
                 setReceivingEmail(e.target.value);
               }}
             />
-            {submitError && <p className="text-danger mt-3">{submitError}</p>}
+            <div className="mt-3">
+              <label htmlFor="writing_language">Writing Language</label>
+              <SearchSelect value={langSelected} onChange={languageChangeHandler} options={languageOptions} fieldName="writing_language z-100" isClearable={false} isSearchable={true} />
+              {submitError && <p className="text-danger mt-3">{submitError}</p>}
+            </div>
           </div>
         </Form>
         <Modal.Footer>

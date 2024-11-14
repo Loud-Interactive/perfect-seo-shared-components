@@ -30,6 +30,7 @@ export const Select = ({
   disabled,
   bottomSpacing = true,
   readOnly,
+  onChange,
   placeholder,
   ...props
 }: SelectProps) => {
@@ -69,6 +70,9 @@ export const Select = ({
     form.handleInputChange(e);
 
     setSelectedValue(target.value);
+    if (onChange) {
+      onChange(e);
+    }
   }
 
   // Determine classes/aria props

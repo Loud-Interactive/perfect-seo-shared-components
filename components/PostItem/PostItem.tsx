@@ -9,6 +9,8 @@ import Link from "next/link"
 import * as Modal from '@/perfect-seo-shared-components/components/Modal/Modal'
 import { urlSanitization } from "@/perfect-seo-shared-components/utils/conversion-utilities"
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
+import { useSelector } from "react-redux"
+import { selectEmail } from "@/perfect-seo-shared-components/lib/features/User"
 
 interface PostItemProps {
   post: any,
@@ -17,6 +19,7 @@ interface PostItemProps {
 }
 
 const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
+  const email = useSelector(selectEmail)
   const [liveUrl, setLiveUrl] = useState(post?.live_post_url)
   const [status, setStatus] = useState(post?.status)
   const [localPost, setLocalPost] = useState(post)
@@ -193,7 +196,7 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
                   <strong className="text-primary ">Created on</strong> {moment(`${localPost?.created_at}Z`).local().format("dddd, MMMM Do, YYYY h:mma")}
                 </small>
               </p>
-              <p className="m-0">  <strong className="text-primary me-1">Title</strong>  {localPost?.title}{(localPost.client_domain !== domain_name) && <span className='badge bg-primary ms-2'>{localPost?.client_name}</span>}
+              <p className="m-0">  <strong className="text-primary me-1">Title</strong>  {localPost?.title}{(localPost.client_domain !== domain_name) ? <span className='badge bg-primary ms-2'>{localPost?.client_name}</span> : email !== localPost.email ? <span className="text-primary ms-2">({localPost.email})</span> : null}
               </p>
             </div>
             {(showUrl || localPost?.live_post_url) && <div className="col-12">

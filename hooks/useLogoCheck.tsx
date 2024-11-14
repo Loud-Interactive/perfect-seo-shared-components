@@ -69,7 +69,7 @@ const useLogoCheck = (logoUrl: string, domain: string, form?: FormController, sy
       newData.secondaryColor = '';
     }
     newData.isDark = (brightness < 116);
-
+    console.log(newData)
     return newData;
   };
 

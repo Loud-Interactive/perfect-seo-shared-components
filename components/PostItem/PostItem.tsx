@@ -226,7 +226,7 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
 
                 <button className='btn btn-primary btn-standard d-flex justify-content-center align-items-center' onClick={deleteClickHandler} title={`View GUID: ${localPost?.guid}`}><i className="bi bi-trash pt-1" /></button>
                 {
-                  localPost?.live_post_url &&
+                  (localPost?.live_post_url || localPost?.content_plan_guid) &&
                   <DropdownMenu.Root>
                     <DropdownMenu.Trigger className="btn btn-warning btn-standard d-flex align-items-center justify-content-center">
                       <i className="bi bi-three-dots-vertical" />
@@ -234,7 +234,18 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
 
                     <DropdownMenu.Portal>
                       <DropdownMenu.Content align="end" className="bg-primary z-100 card">
-                        <DropdownMenu.Item>
+                        {localPost?.content_plan_guid &&
+                          <DropdownMenu.Item>
+                            <a
+                              href={`https://contentPerfect.ai/dashboard/${localPost?.content_plan_guid}`}
+                              target="_blank"
+                              className="btn btn-transparent"
+
+                            >
+                              Ahrefs URL
+                            </a>
+                          </DropdownMenu.Item>}
+                        {localPost?.live_post_url && <>   <DropdownMenu.Item>
                           <a
                             href={`https://app.ahrefs.com/v2-site-explorer/organic-keywords?columns=CPC%7C%7CKD%7C%7CLastUpdated%7C%7COrganicTraffic%7C%7CPaidTraffic%7C%7CPosition%7C%7CPositionHistory%7C%7CSERP%7C%7CSF%7C%7CURL%7C%7CVolume&compareDate=dontCompare&country=us&currentDate=today&keywordRules=&limit=100&mode=prefix&offset=0&positionChanges=&serpFeatures=&sort=Volume&sortDirection=desc&target=${encodeURI(localPost?.live_post_url.replace("https://", '').replace("http://", "").replace("www.", ""))}%2F&urlRules=&volume_type=average`}
                             target="_blank"
@@ -244,47 +255,48 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
                             Ahrefs URL
                           </a>
                         </DropdownMenu.Item>
-                        <DropdownMenu.Item>
-                          <a
-                            href={`https://search.google.com/search-console/performance/search-analytics?resource_id=sc-domain%3A${urlSanitization(localPost?.live_post_url)}&hl=en&page=*${encodeURI(localPost?.live_post_url)}`}
-                            target="_blank"
-                            className="btn btn-transparent"
-
-                          >
-                            GSC Report
-                          </a>
-                        </DropdownMenu.Item>
-                        {localPost?.factcheck_guid ?
                           <DropdownMenu.Item>
                             <a
-                              href={`https://factcheckPerfect.ai/fact-checks/${localPost?.factcheck_guid}`}
+                              href={`https://search.google.com/search-console/performance/search-analytics?resource_id=sc-domain%3A${urlSanitization(localPost?.live_post_url)}&hl=en&page=*${encodeURI(localPost?.live_post_url)}`}
                               target="_blank"
                               className="btn btn-transparent"
 
                             >
-                              Fact-Check Results
+                              GSC Report
                             </a>
                           </DropdownMenu.Item>
-                          : <DropdownMenu.Item>
+                          {localPost?.factcheck_guid ?
+                            <DropdownMenu.Item>
+                              <a
+                                href={`https://factcheckPerfect.ai/fact-checks/${localPost?.factcheck_guid}`}
+                                target="_blank"
+                                className="btn btn-transparent"
+
+                              >
+                                Fact-Check Results
+                              </a>
+                            </DropdownMenu.Item>
+                            : <DropdownMenu.Item>
+                              <a
+                                href={`https://factcheckPerfect.ai/fact-checks?url=${encodeURI(localPost?.live_post_url)}&post_guid=${localPost?.content_plan_outline_guid}`}
+                                target="_blank"
+                                className="btn btn-transparent"
+
+                              >
+                                Fact-Check Post
+                              </a>
+                            </DropdownMenu.Item>}
+                          <DropdownMenu.Item>
                             <a
-                              href={`https://factcheckPerfect.ai/fact-checks?url=${encodeURI(localPost?.live_post_url)}&post_guid=${localPost?.content_plan_outline_guid}`}
+                              href={`https://socialperfect.ai?url=${encodeURI(localPost?.live_post_url)}`}
                               target="_blank"
                               className="btn btn-transparent"
 
                             >
-                              Fact-Check Post
+                              Generate Social Posts
                             </a>
-                          </DropdownMenu.Item>}
-                        <DropdownMenu.Item>
-                          <a
-                            href={`https://socialperfect.ai?url=${encodeURI(localPost?.live_post_url)}`}
-                            target="_blank"
-                            className="btn btn-transparent"
-
-                          >
-                            Generate Social Posts
-                          </a>
-                        </DropdownMenu.Item>
+                          </DropdownMenu.Item>
+                        </>}
                       </DropdownMenu.Content>
                     </DropdownMenu.Portal>
                   </DropdownMenu.Root>}

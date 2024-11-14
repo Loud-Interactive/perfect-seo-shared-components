@@ -2,21 +2,19 @@ import classNames from "classnames"
 import TypeWriterText from "../TypeWriterText/TypeWriterText"
 import styles from './BrandHeader.module.scss'
 import useLogoCheck from "@/perfect-seo-shared-components/hooks/useLogoCheck"
-import { useEffect } from "react"
-import { updateImpression } from "@/perfect-seo-shared-components/services/services"
 
 interface BrandHeaderProps {
   synopsis: any
   editable?: boolean;
 }
 const BrandHeader = ({ synopsis, editable = true }: BrandHeaderProps) => {
-  const isDark = useLogoCheck(synopsis?.logo_url, synopsis?.domain)
+  const isDark = useLogoCheck(synopsis?.logo_url, synopsis?.domain, null, synopsis)
 
   const logoCardClasses = classNames('card p-3 h-100 d-flex align-items-center justify-content-center',
     {
       'bg-secondary': !synopsis?.logo_theme,
-      'bg-light': synopsis?.logo_theme === 'dark' || isDark === true,
-      'bg-dark': synopsis?.logo_theme === 'light' || isDark === false
+      'bg-light': synopsis?.logo_theme === 'dark',
+      'bg-dark': synopsis?.logo_theme === 'light'
     }
   )
 

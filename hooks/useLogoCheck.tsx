@@ -7,16 +7,8 @@ const blankData = { primaryColor: null, secondaryColor: null, isDark: null, widt
 
 const useLogoCheck = (logoUrl: string, domain: string, form?: FormController, synopsis?: any) => {
   const [data, setData] = useState(blankData);
-  const [error, setError] = useState(false)
 
-  const checkForErrors = () => {
-    axios.get(logoUrl)
-      .catch((error) => {
-        if (error.response) {
-          setError(true)
-        }
-      });
-  };
+
 
   const rgbToHex = (r, g, b) => {
     return "#" + ((1 << 24) | (r << 16) | (g << 8) | b).toString(16).slice(1);
@@ -94,7 +86,6 @@ const useLogoCheck = (logoUrl: string, domain: string, form?: FormController, sy
 
     if (logoUrl) {
       checkLogo();
-      checkForErrors();
     } else {
       setData(blankData);
     }
@@ -141,7 +132,7 @@ const useLogoCheck = (logoUrl: string, domain: string, form?: FormController, sy
     }
   }, [data, domain]);
 
-  return { isDark: data.isDark, error }
+  return { isDark: data.isDark }
 };
 
 export default useLogoCheck;

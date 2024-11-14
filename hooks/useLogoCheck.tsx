@@ -63,10 +63,10 @@ const useLogoCheck = (logoUrl: string, domain: string, form?: FormController, sy
     newData.primaryColor = rgbToHex(Number(primary[0]), Number(primary[1]), Number(primary[2]));
     newData.secondaryColor = secondaryColor ? rgbToHex(Number(secondaryColor[0]), Number(secondaryColor[1]), Number(secondaryColor[2])) : null;
     if (newData.primaryColor === '#ffffff' && newData.secondaryColor === '#fefefe') {
-      newData.secondaryColor = null;
+      newData.secondaryColor = '';
     }
     if (newData.primaryColor === newData.secondaryColor) {
-      newData.secondaryColor = null;
+      newData.secondaryColor = '';
     }
     newData.isDark = (brightness < 116);
 

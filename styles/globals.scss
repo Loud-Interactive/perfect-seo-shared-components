@@ -5063,3 +5063,13 @@ button.input-group-append {
 .b-none {
   border: none !important;
 }
+
+.nav-link.bg-primary {
+  background-color: rgba($primary, .5) !important;
+
+  color: white !important;
+
+  &.active {
+    background-color: $primary !important;
+  }
+}

@@ -5,7 +5,7 @@ import axios from 'axios';
 
 const blankData = { primaryColor: null, secondaryColor: null, isDark: null, width: null, height: null, aspectRatio: null };
 
-const useLogoCheck = (logoUrl: string, domain: string, form?: FormController) => {
+const useLogoCheck = (logoUrl: string, domain: string, form?: FormController, synopsis?: any) => {
   const [data, setData] = useState(blankData);
 
   const checkForErrors = () => {
@@ -25,8 +25,9 @@ const useLogoCheck = (logoUrl: string, domain: string, form?: FormController) =>
 
     if (!ctx) return blankData;
     const newData = { ...blankData };
-    newData.width = img.width;
-    newData.height = img.height;
+    newData.width = Math.ceil(img.width).toString();
+    newData.height = Math.ceil(img.height).toString();
+    newData.aspectRatio = Math.ceil(img.width).toString() + ":" + Math.ceil(img.height).toString();
     canvas.width = img.width;
     canvas.height = img.height;
     ctx.drawImage(img, 0, 0, img.width, img.height);
@@ -61,6 +62,12 @@ const useLogoCheck = (logoUrl: string, domain: string, form?: FormController) =>
 
     newData.primaryColor = rgbToHex(Number(primary[0]), Number(primary[1]), Number(primary[2]));
     newData.secondaryColor = secondaryColor ? rgbToHex(Number(secondaryColor[0]), Number(secondaryColor[1]), Number(secondaryColor[2])) : null;
+    if (newData.primaryColor === '#ffffff' && newData.secondaryColor === '#fefefe') {
+      newData.secondaryColor = null;
+    }
+    if (newData.primaryColor === newData.secondaryColor) {
+      newData.secondaryColor = null;
+    }
     newData.isDark = (brightness < 116);
 
     return newData;
@@ -94,16 +101,32 @@ const useLogoCheck = (logoUrl: string, domain: string, form?: FormController) =>
   useEffect(() => {
     if (data && domain) {
       let newImpression: any = {};
-      if (data.primaryColor && !form?.getState?.brand_color_primary) {
+
+      let logo_width = form?.getState?.logo_width || synopsis?.logo_width;
+      let logo_height = form?.getState?.logo_height || synopsis?.logo_height;
+      let logo_aspect_ratio = form?.getState?.logo_aspect_ratio || synopsis?.logo_aspect_ratio;
+      let brand_color_primary = form?.getState?.brand_color_primary || synopsis?.brand_color_primary;
+      let brand_color_secondary = form?.getState?.brand_color_secondary || synopsis?.brand_color_secondary;
+      let logo_theme = form?.getState?.logo_theme || synopsis?.logo_theme;
+      if (data.width !== logo_width) {
+        newImpression.logo_width = data.width
+      }
+      if (data.height !== logo_height) {
+        newImpression.logo_height = data.height;
+      }
+      if (data.aspectRatio !== logo_aspect_ratio) {
+        newImpression.logo_aspect_ratio = data.aspectRatio;
+      }
+      if (data.primaryColor && !brand_color_primary) {
         newImpression.brand_color_primary = data.primaryColor;
       }
-      if (data.secondaryColor && form?.getState?.brand_color_primary) {
+      if (data.secondaryColor && !brand_color_secondary) {
         newImpression.brand_color_secondary = data.secondaryColor;
       }
       if (data.isDark !== null) {
-        if (data.isDark && !form?.getState?.logo_theme) {
+        if (data.isDark && !logo_theme) {
           newImpression.logo_theme = 'light';
-        } else if (data.isDark === false && !form?.getState?.logo_theme) {
+        } else if (data.isDark === false && !logo_theme) {
           newImpression.logo_theme = 'dark';
         }
       }

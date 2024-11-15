@@ -45,7 +45,10 @@ export const trimSynopsis = (synopsis: any) => {
 export const findUniqueKeys = (newObj, oldObj) => {
   let keys = Object.keys(newObj)
   let finalObj = keys.reduce((prev, curr) => {
-    if (newObj[curr] !== oldObj[curr]) {
+    if (!oldObj[curr] && newObj[curr]) {
+      return ({ ...prev, [curr]: newObj[curr] })
+    }
+    else if (newObj[curr] !== oldObj[curr]) {
       return ({ ...prev, [curr]: newObj[curr] })
     } else if (newObj[curr] === false) {
       return ({ ...prev, [curr]: false })

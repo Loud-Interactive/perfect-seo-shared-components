@@ -110,8 +110,7 @@ h1 {
 
 .bg-primary {
 
-  h1,
-  :hover {
+  h1:hover {
     color: white;
   }
 }
@@ -263,7 +262,9 @@ hr {
 
 
 
-
+form {
+  width: inherit;
+}
 
 /***** CUTE ROBOT *****/
 .cute-robot-v1 {

@@ -1,5 +1,6 @@
 
 import { ContentIncomingProps, ContentRequestFormProps } from "@/perfect-seo-shared-components/data/types"
+import { defaultPrompts } from "../data/defaults"
 
 
 export const urlSanitization = (url: string): string => {
@@ -28,7 +29,7 @@ export const trimSynopsis = (synopsis: any) => {
 
   let emptyKeys = Object.keys(emptyObject)
 
-  let newData = Object.keys(synopsis).reduce((prev, key) => {
+  let newData: any = Object.keys(synopsis).reduce((prev, key) => {
     if (emptyKeys.includes(key) && synopsis[key] === emptyObject[key]) {
       return prev
     } if (synopsis[key] === false) {
@@ -45,7 +46,9 @@ export const trimSynopsis = (synopsis: any) => {
 export const findUniqueKeys = (newObj, oldObj) => {
   let keys = Object.keys(newObj)
   let finalObj = keys.reduce((prev, curr) => {
-    if (!oldObj[curr] && newObj[curr]) {
+
+    if (newObj[curr] && keys.includes(curr) === false) {
+      console.log(newObj[curr])
       return ({ ...prev, [curr]: newObj[curr] })
     }
     else if (newObj[curr] !== oldObj[curr]) {

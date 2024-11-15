@@ -14,7 +14,7 @@ const useLogoCheck = (logoUrl: string, domain: string, form?: FormController, sy
     return "#" + ((1 << 24) | (r << 16) | (g << 8) | b).toString(16).slice(1);
   };
 
-  const processImage = (img) => {
+  const processImage = async (img) => {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
 
@@ -25,9 +25,9 @@ const useLogoCheck = (logoUrl: string, domain: string, form?: FormController, sy
     newData.aspectRatio = Math.ceil(img.width).toString() + ":" + Math.ceil(img.height).toString();
     canvas.width = img.width;
     canvas.height = img.height;
-    ctx.drawImage(img, 0, 0, img.width, img.height);
+    await ctx.drawImage(img, 0, 0, img.width, img.height);
 
-    const imageData = ctx.getImageData(0, 0, img.width, img.height);
+    const imageData = await ctx.getImageData(0, 0, img.width, img.height);
     const data = imageData.data;
 
     const colorCount = {};
@@ -74,9 +74,10 @@ const useLogoCheck = (logoUrl: string, domain: string, form?: FormController, sy
       const img = new Image();
       img.crossOrigin = 'Anonymous';
       img.src = logoUrl;
-      img.onload = () => {
-        const newData = processImage(img);
+      img.onload = async () => {
+        const newData = await processImage(img);
         setData(newData);
+        console.log(newData)
       };
       img.onerror = () => {
         setData(blankData);

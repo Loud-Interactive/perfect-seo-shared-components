@@ -296,8 +296,15 @@ const ContentPlanForm = ({ buttonLabel, initialData, submitResponse, isModal }: 
         )}
         {/* <!-- Advanced section link --> */}
         <div className="mb-3 text-center">
-          <a onClick={clickAdvancedHandler} className={styles.advancedLink} id="advancedLink">
-            {showAdvanced ? "Hide Advanced" : "Show Advanced"}
+          <a onClick={clickAdvancedHandler} id="advancedLink">
+            {showAdvanced ?
+              <span>
+                <i className='bi bi-caret-up-fill' /> Hide Advanced
+              </span>
+              :
+              <span>
+                <i className='bi bi-caret-down-fill' /> Show Advanced
+              </span>}
           </a>
         </div>
         <div className="text-center justify-content-center d-flex flex-column align-items-center">

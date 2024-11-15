@@ -40,17 +40,19 @@
 }
 
 .synopsis {
+  @include Desktop {
+    &:hover {
+      .synopsisUpdate {
+        opacity: 100;
+      }
+    }
+  }
+
   &Header {
     display: flex;
     justify-content: space-between;
 
-    @include Desktop {
-      &:hover {
-        .synopsisUpdate {
-          opacity: 100;
-        }
-      }
-    }
+
   }
 
   &Update {

@@ -137,7 +137,6 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
     <header className={styles.header}>
       <div className='container-fluid container-xl'>
         <div className='row g-3 d-flex justify-content-between align-items-center'>
-          {isLoading === true && <LoadSpinner />}
           <div className="col d-flex align-items-center justify-content-start">
             <Link href="/">
               <div className={styles.logo}>

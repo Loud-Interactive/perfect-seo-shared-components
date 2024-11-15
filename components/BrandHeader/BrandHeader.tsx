@@ -37,11 +37,13 @@ const BrandHeader = ({ synopsis, editable = true }: BrandHeaderProps) => {
           <div className='col'>
             <h1 className="text-start mb-1"><TypeWriterText string={`Content for ${synopsis?.brand_name || synopsis?.domain}`} withBlink /></h1>
             {synopsis?.synopsis && <div className='card p-3'>
-              <div className={styles.synopsisHeader}>
-                <strong>Synopsis</strong>
-                {editable && <a href={`https://preferencesperfect.ai/domain/${synopsis?.domain}`} className={styles.synopsisUpdate} target='_blank'>Update Synopsis</a>}
-              </div>
-              <p className='mb-0'>{synopsis?.synopsis}</p></div>}
+              <div className={styles.synopsis}>
+                <div className={styles.synopsisHeader}>
+                  <strong>Synopsis</strong>
+                  {editable && <a href={`https://preferencesperfect.ai/domain/${synopsis?.domain}`} className={styles.synopsisUpdate} target='_blank'>Update Synopsis</a>}
+                </div>
+                <p className='mb-0'>{synopsis?.synopsis}</p>
+              </div></div>}
           </div>
         </div >
       </div >

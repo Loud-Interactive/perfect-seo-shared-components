@@ -25,7 +25,6 @@ const useLogoCheck = (logoUrl: string, domain: string, form?: FormController, sy
     newData.aspectRatio = Math.ceil(img.width).toString() + ":" + Math.ceil(img.height).toString();
     canvas.width = img.width;
     canvas.height = img.height;
-    console.log(newData)
     ctx.drawImage(img, 0, 0, img.width, img.height);
 
     const imageData = ctx.getImageData(0, 0, img.width, img.height);
@@ -34,7 +33,6 @@ const useLogoCheck = (logoUrl: string, domain: string, form?: FormController, sy
     const colorCount = {};
     for (let i = 0; i < data.length; i += 4) {
       if (data[i + 3] === 0) continue; // Skip transparent pixels
-      console.log(data)
       const rgb = `${data[i]},${data[i + 1]},${data[i + 2]}`;
       colorCount[rgb] = (colorCount[rgb] || 0) + 1;
     }
@@ -79,12 +77,10 @@ const useLogoCheck = (logoUrl: string, domain: string, form?: FormController, sy
 
   useEffect(() => {
     const checkLogo = () => {
-      console.log(logoUrl)
       const img = new Image();
       img.crossOrigin = 'Anonymous';
       img.src = logoUrl;
       img.onload = () => {
-        console.log("loaded")
         const newData = processImage(img);
         setData(newData);
       };

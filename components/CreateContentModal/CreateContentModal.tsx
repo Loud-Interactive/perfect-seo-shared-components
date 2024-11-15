@@ -120,7 +120,7 @@ const CreateContentModal = ({
   }
 
   const TitleSaveButton = () => {
-    if (!isAuthorized) return null
+    if (!isAuthorized) return ''
     return (
       <div className="d-flex h-100 align-items-center justify-content-center">
         <button className="btn btn-transparent d-flex align-items-center justify-content-center" onClick={titleChangeHandler} title="Save Live Url" disabled={saving}>

@@ -11,7 +11,7 @@ import { useSelector } from 'react-redux'
 import usePaginator from '@/perfect-seo-shared-components/hooks/usePaginator'
 import { selectEmail } from '@/perfect-seo-shared-components/lib/features/User'
 import LoadSpinner from '../LoadSpinner/LoadSpinner'
-import ContentPlanForm from '@/components/FormPage/ContentPlanForm/ContentPlanForm'
+import ContentPlanForm from '@/perfect-seo-shared-components/components/ContentPlanForm/ContentPlanForm'
 
 export interface PlanListProps {
   domain_name: string;

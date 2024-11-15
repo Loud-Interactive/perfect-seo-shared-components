@@ -1,0 +1,11 @@
+@use 'common' as *;
+
+.subLabel {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.advancedLink {
+  color: $primary;
+  text-decoration: underline;
+}

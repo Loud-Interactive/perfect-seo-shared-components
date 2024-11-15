@@ -12,7 +12,7 @@ import { convertFormDataToOutgoing, urlSanitization } from "@/perfect-seo-shared
 import useForm from "@/perfect-seo-shared-components/hooks/useForm";
 import { createClient } from "@/perfect-seo-shared-components/utils/supabase/client";
 import { selectEmail, selectIsLoggedIn } from "@/perfect-seo-shared-components/lib/features/User";
-import { ContentRequestFormProps } from "@/types";
+import { ContentRequestFormProps } from "@/perfect-seo-shared-components/data/types";
 import styles from "./ContentPlanForm.module.scss";
 
 // Testing Data 

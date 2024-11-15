@@ -5064,3 +5064,9 @@ button.input-group-append {
     background-color: $primary !important;
   }
 }
+
+.subLabel {
+  @include TransitionQuick;
+  color: $primary !important;
+  font-size: 12px !important;
+}

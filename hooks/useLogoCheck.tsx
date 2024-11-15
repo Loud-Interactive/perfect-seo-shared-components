@@ -14,7 +14,7 @@ const useLogoCheck = (logoUrl: string, domain: string, form?: FormController, sy
     return "#" + ((1 << 24) | (r << 16) | (g << 8) | b).toString(16).slice(1);
   };
 
-  const processImage = async (img) => {
+  const processImage = (img) => {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
 
@@ -25,9 +25,9 @@ const useLogoCheck = (logoUrl: string, domain: string, form?: FormController, sy
     newData.aspectRatio = Math.ceil(img.width).toString() + ":" + Math.ceil(img.height).toString();
     canvas.width = img.width;
     canvas.height = img.height;
-    await ctx.drawImage(img, 0, 0, img.width, img.height);
+    ctx.drawImage(img, 0, 0, img.width, img.height);
 
-    const imageData = await ctx.getImageData(0, 0, img.width, img.height);
+    const imageData = ctx.getImageData(0, 0, img.width, img.height);
     const data = imageData.data;
 
     const colorCount = {};
@@ -51,17 +51,23 @@ const useLogoCheck = (logoUrl: string, domain: string, form?: FormController, sy
     b = Math.floor(b / pixelCount);
 
     const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+
     const sortedColors = Object.entries(colorCount).sort((a, b) => Number(b[1]) - Number(a[1]));
     let secondaryColor = sortedColors[1] ? sortedColors[1][0].split(",") : null;
     let primary = sortedColors[0][0].split(',');
+    if (primary) {
+      newData.primaryColor = rgbToHex(Number(primary[0]), Number(primary[1]), Number(primary[2]));
 
-    newData.primaryColor = rgbToHex(Number(primary[0]), Number(primary[1]), Number(primary[2]));
-    newData.secondaryColor = secondaryColor ? rgbToHex(Number(secondaryColor[0]), Number(secondaryColor[1]), Number(secondaryColor[2])) : null;
-    if (newData.primaryColor === '#ffffff' && newData.secondaryColor === '#fefefe') {
-      newData.secondaryColor = '';
-    }
-    if (newData.primaryColor === newData.secondaryColor) {
-      newData.secondaryColor = '';
+      if (secondaryColor) {
+        newData.secondaryColor = secondaryColor ? rgbToHex(Number(secondaryColor[0]), Number(secondaryColor[1]), Number(secondaryColor[2])) : null;
+
+        if (newData.primaryColor === '#ffffff' && newData.secondaryColor === '#fefefe') {
+          newData.secondaryColor = '';
+        }
+        if (newData.primaryColor === newData.secondaryColor) {
+          newData.secondaryColor = '';
+        }
+      }
     }
     newData.isDark = (brightness < 116);
     return newData;
@@ -70,16 +76,16 @@ const useLogoCheck = (logoUrl: string, domain: string, form?: FormController, sy
 
 
   useEffect(() => {
-    const checkLogo = async () => {
+    const checkLogo = () => {
       const img = new Image();
       img.crossOrigin = 'Anonymous';
       img.src = logoUrl;
-      img.onload = async () => {
-        const newData = await processImage(img);
+      img.onload = () => {
+        const newData = processImage(img);
         setData(newData);
-        console.log(newData)
       };
-      img.onerror = () => {
+      img.onerror = (e) => {
+        console.log(e)
         setData(blankData);
       };
       // }
@@ -90,7 +96,7 @@ const useLogoCheck = (logoUrl: string, domain: string, form?: FormController, sy
     } else {
       setData(blankData);
     }
-  }, [logoUrl]);
+  }, [logoUrl, domain]);
 
   useEffect(() => {
     if (data && domain) {

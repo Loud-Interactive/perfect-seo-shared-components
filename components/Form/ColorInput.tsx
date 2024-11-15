@@ -61,6 +61,9 @@ const ColorInput = ({
   };
 
   function onChange(e) {
+    if (e.target.value === '') {
+      e.target.value = undefined;
+    }
     form.handleInputChange(e);
     if (props?.onChange) {
       props.onChange?.(e)
@@ -75,7 +78,7 @@ const ColorInput = ({
           {...props}
           {...ariaProps}
           autoFocus={autoFocus}
-          value={props.value || form.getState[fieldName] || ''}
+          value={props.value || form.getState[fieldName] || undefined}
           onChange={onChange}
           onPaste={onPaste}
           onKeyDown={props.onKeyDown}
@@ -86,7 +89,7 @@ const ColorInput = ({
           autoComplete={autoComplete}
         />
         <div className='text-white ms-3'>{form?.getState[fieldName] ? form?.getState[fieldName] : 'None'}</div>
-        {props.button && <div className='input-button' id="input-buttons">{props.button}</div>}
+        {props?.button && <div className='input-button' id="input-buttons">{props?.button}</div>}
         {icon && (
           <div className="colorInput-icon" id={`ColorInputIcon-${fieldName}`}>
             {icon}

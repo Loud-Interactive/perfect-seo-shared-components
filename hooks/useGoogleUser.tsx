@@ -1,7 +1,7 @@
 'use client'
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from 'react'
-import { selectDomainsInfo, selectIsLoggedIn, selectProfile, selectUser, setAdmin, setDomains, setLoading, setLoggedIn, setProfile, setUser, setUserSettings } from '@/perfect-seo-shared-components/lib/features/User'
+import { reset, selectDomainsInfo, selectIsLoggedIn, selectProfile, selectUser, setAdmin, setDomains, setLoading, setLoggedIn, setProfile, setUser, setUserSettings } from '@/perfect-seo-shared-components/lib/features/User'
 import { createClient } from '@/perfect-seo-shared-components/utils/supabase/client'
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
@@ -70,6 +70,13 @@ const useGoogleUser = (appKey) => {
     }
   }, [profile, isLoggedIn])
 
+  useEffect(() => {
+    if (session === null) {
+      dispatch(setLoggedIn(false))
+      dispatch(setLoading(false))
+    }
+  }, [session])
+
   //set status based on loading of session
   useEffect(() => {
     let sessionData: any = session;
@@ -82,8 +89,7 @@ const useGoogleUser = (appKey) => {
         dispatch(setLoggedIn(true));
         break;
       case 'unauthenticated':
-        dispatch(setLoading(false));
-        dispatch(setLoggedIn(false));
+        dispatch(reset())
         break;
     }
     if (session) {
@@ -92,6 +98,9 @@ const useGoogleUser = (appKey) => {
         dispatch(setUser(session.user))
         localStorage.setItem('email', session.user.email)
       }
+    }
+    else if (session === null) {
+      dispatch(reset())
     }
     if (sessionData?.access_token) {
       setToken(sessionData.access_token)

@@ -16,6 +16,7 @@ import { createClient } from '@/perfect-seo-shared-components/utils/supabase/cli
 import { useSelector } from 'react-redux';
 import en from '@/assets/en.json';
 import { selectEmail } from '@/perfect-seo-shared-components/lib/features/User';
+import { Suspense } from 'react';
 
 
 interface DnDLayoutProps extends React.HTMLProps<HTMLDivElement> {
@@ -47,7 +48,9 @@ const DnDLayout = ({ children, hideFooter, current, links, hasLogin = true, getC
       <SessionProvider refetchOnWindowFocus refetchInterval={20 * 60} >
         <BrowserView>
           <DndProvider backend={HTML5Backend} >
-            <Header current={current} links={links} hasLogin={hasLogin} getCredits={getCredits} />
+            <Suspense>
+              <Header current={current} links={links} hasLogin={hasLogin} getCredits={getCredits} />
+            </Suspense>
             <main className={style.wrap}>
               {children}
             </main>
@@ -56,7 +59,10 @@ const DnDLayout = ({ children, hideFooter, current, links, hasLogin = true, getC
         </BrowserView>
         <MobileView>
           <DndProvider backend={TouchBackend} options={{ ignoreContextMenu: true, enableMouseEvents: true }}>
-            <Header current={current} links={links} hasLogin={hasLogin} getCredits={getCredits} />
+            <Suspense>
+              <Header current={current} links={links} hasLogin={hasLogin} getCredits={getCredits} />
+            </Suspense>
+
             <main className={style.wrap}>
               {children}
             </main>

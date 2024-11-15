@@ -294,14 +294,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
 
 
 
-  if (isLoading) {
-    return (
-      <div className='strip-padding'>
-        <Loader />
-      </div>
-    )
-  }
-  else if (isAuthorized === false) {
+  if (isAuthorized === false && isLoading === false) {
     return (
       <div className="container-fluid container-xl strip-padding">
         <div className='row d-flex align-items-center justify-content-center'>
@@ -316,6 +309,15 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
       </div>
     )
   }
+
+  if (isLoading === false && isLoggedIn === false) {
+    return (
+      <div className="container-fluid container-xl strip-padding d-flex justify-content-center align-items-center">
+        <h1><TypeWriterText string="Please login to continue" withBlink /></h1>
+      </div>
+    )
+  }
+
   return (
     <>
       {hideTitle ? null :

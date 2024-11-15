@@ -11,6 +11,7 @@ import { useSelector } from 'react-redux'
 import usePaginator from '@/perfect-seo-shared-components/hooks/usePaginator'
 import { selectEmail } from '@/perfect-seo-shared-components/lib/features/User'
 import LoadSpinner from '../LoadSpinner/LoadSpinner'
+import ContentPlanForm from '@/components/FormPage/ContentPlanForm/ContentPlanForm'
 
 export interface PlanListProps {
   domain_name: string;
@@ -21,6 +22,9 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
   const [data, setData] = useState<any[]>()
   const { tablet, phone } = useViewport()
   const [deleteModal, setDeleteModal] = useState(null)
+  const [newModal, setNewModal] = useState(false)
+  const [duplicateInfo, setDuplicateInfo] = useState(null)
+
   const email = useSelector(selectEmail)
   const router = useRouter();
 
@@ -57,6 +61,7 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
             return newObj;
           }
           )
+          console.log(res.data.items.filter((obj) => obj.entity_voice))
           paginator.setItemCount(res.data.total)
           setData(newData)
           setLoading(false)
@@ -72,7 +77,7 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
 
   useEffect(() => {
     let interval;
-    if (active) {
+    if (active && !newModal) {
       setLoading(true)
       fetchPlans();
       interval = setInterval(fetchPlans, 300000)
@@ -81,7 +86,7 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
     return () => {
       clearInterval(interval);
     }
-  }, [domain_name, active, paginator.currentPage, paginator.limit])
+  }, [domain_name, active, paginator.currentPage, paginator.limit, newModal])
 
   const completeStatuses = ["Finished", "Your Content Plan Has Been Created"]
 
@@ -101,18 +106,46 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
       e.preventDefault();
       setDeleteModal(obj.guid)
     }
+
+    const duplicateClickHandler = (obj) => {
+
+      let newData = {
+        email: obj.email,
+        brandName: obj.brand_name,
+        domainName: obj.domain_name,
+        targetKeyword: obj.target_keyword,
+        entityVoice: obj?.entity_voice,
+        priorityCode: obj?.priority_code,
+        writing_language: obj?.writing_language,
+        url1: obj?.inspiration_url_1,
+        url2: obj?.inspiration_url_2,
+        url3: obj?.inspiration_url_3,
+        priority1: obj?.inspirational_url_1_priority,
+        priority2: obj?.inspirational_url_2_priority,
+        priority3: obj?.inspirational_url_3_priority
+      }
+
+      setDuplicateInfo(newData)
+      setNewModal(true)
+    }
+
     return (
       <div className='d-flex justify-content-end align-items-center'>
         {/* {isAdmin && <div className='me-2'>{obj?.guid}</div>} */}
-        {(completeStatuses.includes(status)) ?
-
-          <button className="btn btn-primary" onClick={clickHandler} title={`View GUID: ${obj.guid}`}>View Plan</button>
-          :
+        {(completeStatuses.includes(status) === false) &&
           <span className='text-primary'>
             <TypeWriterText string={status} withBlink />
           </span>
         }
-        <button className='btn btn-warning d-flex align-items-center justify-content-center ms-2' onClick={deleteClickHandler} title={`View GUID: ${obj.guid}`}><i className="bi bi-trash pt-1" /></button>
+        <div className='input-group d-flex justify-content-end'>
+          {(completeStatuses.includes(status)) &&
+            <button className="btn btn-primary" onClick={clickHandler} title={`View GUID: ${obj.guid}`}>View Plan</button>
+          }
+          <button className='btn btn-primary d-flex align-items-center justify-content-center' onClick={(e) => { e.preventDefault(); duplicateClickHandler(obj) }} title={`Duplicate: ${obj.guid}`}>
+            <i className="bi bi-clipboard-plus-fill" />
+          </button>
+          <button className='btn btn-warning d-flex align-items-center justify-content-center' onClick={deleteClickHandler} title={`View GUID: ${obj.guid}`}><i className="bi bi-trash pt-1" /></button>
+        </div>
       </div>
     )
   }
@@ -159,6 +192,12 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
       }
       )
   }
+
+  const newCloseHandler = () => {
+    setDuplicateInfo(null)
+    return setNewModal(false)
+  }
+
   return (
     <div className={styles.wrap}>
       <div className='row d-flex justify-content-between align-items-end my-3'>
@@ -181,6 +220,12 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
         :
         <h5><TypeWriterText withBlink string="The are no results for the given parameters" /></h5>
       }
+      <Modal.Overlay open={newModal} onClose={newCloseHandler} closeIcon>
+        <Modal.Title title="New Content Plan" />
+        <Modal.Description className={styles.newModal}>
+          <ContentPlanForm initialData={duplicateInfo} buttonLabel="Create Plan" submitResponse={newCloseHandler} />
+        </Modal.Description>
+      </Modal.Overlay>
       <Modal.Overlay open={deleteModal} onClose={() => { setDeleteModal(null) }}>
         <Modal.Title title="Delete Plan" />
         <Modal.Description>

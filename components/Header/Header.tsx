@@ -5,7 +5,7 @@ import styles from './Header.module.scss'
 import classNames from 'classnames'
 import useViewport from '@/perfect-seo-shared-components/hooks/useViewport'
 import { useDispatch, useSelector } from 'react-redux'
-import { selectIsAdmin, selectIsLoggedIn, selectPoints, selectUser, setLoading, updatePoints } from '@/perfect-seo-shared-components/lib/features/User'
+import { selectIsAdmin, selectIsLoading, selectIsLoggedIn, selectPoints, selectUser, setLoading, updatePoints } from '@/perfect-seo-shared-components/lib/features/User'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { BrandStatus, Links, LinkType } from '@/perfect-seo-shared-components/data/types'
 import { useEffect, useMemo, useState } from 'react'
@@ -15,6 +15,7 @@ import { usePathname } from 'next/navigation'
 import useGoogleUser from "@/perfect-seo-shared-components/hooks/useGoogleUser"
 import { addUserCredit, checkUserCredits, createUserCreditAccount } from "@/perfect-seo-shared-components/services/services"
 import { SEOPerfectLogo } from "@/perfect-seo-shared-components/assets/brandIcons"
+import LoadSpinner from "../LoadSpinner/LoadSpinner"
 
 export interface HeaderProps {
   links?: Links[],
@@ -27,7 +28,7 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
   const points = useSelector(selectPoints);
   const isLoggedIn = useSelector(selectIsLoggedIn)
   const isAdmin = useSelector(selectIsAdmin)
-  const isLoading = useSelector(selectIsLoggedIn)
+  const isLoading = useSelector(selectIsLoading)
   const user = useSelector(selectUser)
   const [open, setOpen] = useState(true)
   const dispatch = useDispatch()
@@ -68,8 +69,6 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
     }
   }, [user, getCredits])
 
-
-
   useGoogleUser(current)
 
 
@@ -98,6 +97,7 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
     e.preventDefault()
     signOut()
       .then(res => {
+        dispatch(setLoading(false))
         setOpen(false)
       })
 
@@ -137,7 +137,7 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
     <header className={styles.header}>
       <div className='container-fluid container-xl'>
         <div className='row g-3 d-flex justify-content-between align-items-center'>
-
+          {isLoading === true && <LoadSpinner />}
           <div className="col d-flex align-items-center justify-content-start">
             <Link href="/">
               <div className={styles.logo}>
@@ -145,9 +145,8 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
               </div>
             </Link>
           </div>
-          <div className={signedInClass}>
-            {(hasLogin && !phone && !isLoading) && <div className='col-auto flex-column pe-3 d-flex align-items-end'>
-
+          {isLoading === false && <div className={signedInClass}>
+            {hasLogin && <div className='col-auto flex-column pe-3 d-flex align-items-end'>
               {isLoggedIn ? <>
                 <div>
                   <strong className='me-2 text-primary'>Logged in as</strong>
@@ -249,7 +248,7 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
                 </DropdownMenu.Content>
               </DropdownMenu.Portal>
             </DropdownMenu.Root>
-          </div>
+          </div>}
         </div>
       </div>
     </header >

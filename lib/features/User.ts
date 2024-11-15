@@ -19,7 +19,7 @@ const initialState: RootState = {
   user: null,
   points: 0,
   isLoading: true,
-  isLoggedIn: false,
+  isLoggedIn: null,
   isAdmin: false,
   profile: null,
   settings: null,
@@ -57,7 +57,6 @@ export const UserSlice = createSlice({
     setLoggedIn: (state, action: PayloadAction<boolean>) => {
       return {
         ...state,
-        isLoading: false,
         isLoggedIn: action.payload,
       }
     },
@@ -80,7 +79,7 @@ export const UserSlice = createSlice({
       };
     },
     reset: () => {
-      return { ...initialState, isLoading: false }
+      return { ...initialState, isLoading: false, isLoggedIn: false };
     }
   }
 });

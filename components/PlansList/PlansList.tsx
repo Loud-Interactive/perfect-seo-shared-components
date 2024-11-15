@@ -195,6 +195,7 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
 
   const newCloseHandler = () => {
     setDuplicateInfo(null)
+    setTimeout(() => fetchPlans(), 60000)
     return setNewModal(false)
   }
 
@@ -206,6 +207,10 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
             <TypeWriterText string="Content Plans" withBlink />
           </h2>
           {paginator?.itemCount > 0 && <p className='badge rounded-pill text-bg-primary ms-3 d-flex align-items-center mb-1'>{paginator?.itemCount}</p>}
+        </div>
+        <div className='col-12 col-md-auto d-flex justify-content-center align-items-center input-group'>
+          <button onClick={() => setNewModal(true)} className='btn btn-primary'><i className="bi bi-plus" />New Content Plan</button>
+          <button onClick={() => fetchPlans()} disabled={loading} className='btn btn-warning'><i className="bi bi-arrow-clockwise" /></button>
         </div>
       </div>
       {loading && <LoadSpinner />}
@@ -223,7 +228,7 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
       <Modal.Overlay open={newModal} onClose={newCloseHandler} closeIcon>
         <Modal.Title title="New Content Plan" />
         <Modal.Description className={styles.newModal}>
-          <ContentPlanForm initialData={duplicateInfo} buttonLabel="Create Plan" submitResponse={newCloseHandler} />
+          <ContentPlanForm initialData={duplicateInfo} buttonLabel="Create Plan" submitResponse={newCloseHandler} isModal />
         </Modal.Description>
       </Modal.Overlay>
       <Modal.Overlay open={deleteModal} onClose={() => { setDeleteModal(null) }}>

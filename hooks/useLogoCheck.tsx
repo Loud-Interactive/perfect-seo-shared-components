@@ -119,9 +119,9 @@ const useLogoCheck = (logoUrl: string, domain: string, form?: FormController, sy
       }
       if (data.isDark !== null) {
         if (data.isDark && !logo_theme) {
-          newImpression.logo_theme = 'light';
-        } else if (data.isDark === false && !logo_theme) {
           newImpression.logo_theme = 'dark';
+        } else if (data.isDark === false && !logo_theme) {
+          newImpression.logo_theme = 'light';
         }
       }
       if (Object.keys(newImpression).length > 0) {

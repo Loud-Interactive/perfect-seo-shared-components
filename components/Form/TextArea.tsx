@@ -9,7 +9,7 @@ interface TextAreaInputProps extends React.HTMLProps<HTMLTextAreaElement> {
   borderless?: boolean;
   error?: string;
   icon?: React.ReactNode;
-  label?: string;
+  label?: any;
   validator?: Validator;
   className?: string;
   hideErrorMessage?: boolean;
@@ -62,7 +62,7 @@ const TextArea = ({
         <textarea
           {...props}
           {...ariaProps}
-          value={props.value ?? form.getState[fieldName] ?? ''}
+          value={props.value ?? form.getState[fieldName]}
           onChange={onChange}
           className={inputClassNames}
           name={fieldName}

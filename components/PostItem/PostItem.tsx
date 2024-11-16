@@ -250,9 +250,9 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
                           View Content Plan
                         </a>
                       </DropdownMenu.Item>}
-                    {/* <DropdownMenu.Item>
+                    <DropdownMenu.Item>
                       <button className="btn btn-transparent" onClick={regeneratePostHandler}>Regenerate Post</button>
-                    </DropdownMenu.Item> */}
+                    </DropdownMenu.Item>
                     {localPost?.live_post_url && <>
                       {localPost?.factcheck_guid ?
                         <DropdownMenu.Item>

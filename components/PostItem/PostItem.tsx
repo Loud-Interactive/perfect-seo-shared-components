@@ -43,7 +43,7 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
     if (valid) {
       setSaving(true)
       if (localPost?.live_post_url !== liveUrl) {
-        updateLiveUrl(localPost?.content_plan_outline_guid, liveUrl)
+        updateLiveUrl(localPost?.content_plan_outline_guid, liveUrl || '')
           .then(() => {
             let newData = { ...localPost }
             newData.live_post_url = liveUrl;

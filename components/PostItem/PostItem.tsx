@@ -184,7 +184,6 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
   }
 
   const handleEditOutline = (e) => {
-    e.preventDefault()
     setEditOutline(true)
   }
 

@@ -14,6 +14,7 @@ import { createClient } from '@/perfect-seo-shared-components/utils/supabase/cli
 import { useSelector } from 'react-redux';
 import { selectEmail } from '@/perfect-seo-shared-components/lib/features/User';
 import { Suspense } from 'react';
+import "bootstrap-icons/font/bootstrap-icons.css";
 
 // Define the props for the DnDLayout component
 interface DnDLayoutProps extends React.HTMLProps<HTMLDivElement> {

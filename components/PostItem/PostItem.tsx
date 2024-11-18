@@ -29,6 +29,7 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const [completed, setCompleted] = useState(false)
+  const [regenerateError, setRegerateError] = useState(null)
 
   const liveUrlUpdate = () => {
     setSaved(false)
@@ -168,11 +169,16 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
   }
 
   const regeneratePostHandler = (e) => {
+    setRegerateError(null)
     e.preventDefault();
     console.log(localPost)
     regeneratePost(localPost?.content_plan_outline_guid).then(res => {
-      console.log(res)
+      refresh();
     })
+      .catch(err => {
+        console.log(err.response)
+        setRegerateError(err.response.data.detail.split(":")[0])
+      })
 
   }
 
@@ -311,6 +317,9 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
             </div>
             {localPost?.status !== "Complete" && <div className='col-12 text-end text-primary mt-2'>
               <TypeWriterText string={status} withBlink />
+            </div>}
+            {regenerateError && <div className='col-12 text-end text-primary mt-2'>
+              <TypeWriterText string={regenerateError} withBlink />
             </div>}
           </div>
         </div>

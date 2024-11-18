@@ -122,13 +122,13 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
         return;
       }
     }
-    else {
+    else if (!editOutline) {
       interval = setInterval(() => {
         fetchStatus()
       }, 10000)
     }
     return () => clearTimeout(interval)
-  }, [status, completed])
+  }, [status, completed, editOutline])
 
   const docClickHandler = (e) => {
     e.preventDefault();

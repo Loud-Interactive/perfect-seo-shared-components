@@ -11,6 +11,7 @@ import { urlSanitization } from "@/perfect-seo-shared-components/utils/conversio
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { useSelector } from "react-redux"
 import { selectEmail } from "@/perfect-seo-shared-components/lib/features/User"
+import CreateContentModal from "../CreateContentModal/CreateContentModal"
 
 interface PostItemProps {
   post: any,
@@ -30,6 +31,7 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
   const [saved, setSaved] = useState(false)
   const [completed, setCompleted] = useState(false)
   const [regenerateError, setRegerateError] = useState(null)
+  const [editOutline, setEditOutline] = useState(false)
 
   const liveUrlUpdate = () => {
     setSaved(false)
@@ -171,7 +173,6 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
   const regeneratePostHandler = (e) => {
     setRegerateError(null)
     e.preventDefault();
-    console.log(localPost)
     regeneratePost(localPost?.content_plan_outline_guid).then(res => {
       refresh();
     })
@@ -182,13 +183,9 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
 
   }
 
-  const renderAhrefUrl = () => {
-    let newUrl = encodeURI(localPost?.live_post_url.replace("https://", '').replace("http://", "").replace("www.", ""))
-
-    if (newUrl.lastIndexOf("/") === newUrl.length - 1) {
-      newUrl = newUrl.slice(0, -1)
-    }
-    return newUrl
+  const handleEditOutline = (e) => {
+    e.preventDefault()
+    setEditOutline(true)
   }
 
   return (
@@ -245,6 +242,12 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
                 <DropdownMenu.Portal>
                   <DropdownMenu.Content align="end" className="bg-primary z-100 card">
 
+                    {localPost?.content_plan_outline_guid &&
+                      <DropdownMenu.Item>
+                        <button className="btn btn-transparent w-100" onClick={handleEditOutline}>
+                          Edit Outline
+                        </button>
+                      </DropdownMenu.Item>}
                     {localPost?.content_plan_guid &&
                       <DropdownMenu.Item>
                         <a
@@ -333,6 +336,9 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
             <button onClick={(e) => { e.preventDefault(); deleteHandler() }} className="btn btn-primary">Yes</button>
           </div>
         </Modal.Description>
+      </Modal.Overlay>
+      <Modal.Overlay open={editOutline} onClose={() => { setEditOutline(null) }}>
+        <CreateContentModal standalone data={localPost} titleChange={() => { }} onClose={() => { setEditOutline(false) }} isAuthorized={true} />
       </Modal.Overlay>
     </div>
 

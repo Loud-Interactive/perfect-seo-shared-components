@@ -19,12 +19,13 @@ import SearchSelect from "../SearchSelect/SearchSelect";
 
 interface CreateContentModalProps {
   data: any;
-  advancedData: any;
+  advancedData?: any;
   onClose: () => void;
-  contentPlan: any;
+  contentPlan?: any;
   titleChange: (e: any, title: string, index: number) => any;
-  index: number;
+  index?: number;
   isAuthorized: boolean;
+  standalone?: boolean;
 }
 
 const CreateContentModal = ({
@@ -35,6 +36,7 @@ const CreateContentModal = ({
   isAuthorized,
   index,
   advancedData,
+  standalone
 }: CreateContentModalProps) => {
   const [loading, setLoading] = useState(true);
   const [tableData, setTableData] = useState<OutlineRowProps[]>(null);
@@ -69,9 +71,9 @@ const CreateContentModal = ({
   }
 
   useEffect(() => {
-    if (data) {
-      titleForm.setState({ title: data["Post Title"] || data.post_title });
-      setPostTitle(data["Post Title"] || data.post_title);
+    if (data?.post_title || data?.["Post Title"] || data?.title) {
+      titleForm.setState({ title: data["Post Title"] || data?.post_title || data?.title });
+      setPostTitle(data["Post Title"] || data?.post_title || data?.title);
     }
   }, [data]);
 
@@ -120,7 +122,7 @@ const CreateContentModal = ({
   }
 
   const TitleSaveButton = () => {
-    if (!isAuthorized) return ''
+    if (!isAuthorized || standalone) return ''
     return (
       <div className="d-flex h-100 align-items-center justify-content-center">
         <button className="btn btn-transparent d-flex align-items-center justify-content-center" onClick={titleChangeHandler} title="Save Live Url" disabled={saving}>
@@ -239,57 +241,67 @@ const CreateContentModal = ({
     if (data.guid) {
       setOutlineGUID(data.guid)
     }
-
-    let reqObj: GetPostOutlineRequest = {
-      client_name: contentPlan?.brand_name,
-      content_plan_guid: contentPlan?.guid,
-      post_title: data['Post Title'] || data?.post_title || postTitle,
-      priority_code: contentPlan?.priorityCode || '',
-      client_domain: contentPlan?.domain_name || contentPlan?.client_domain,
-      inspiration_url_1: contentPlan?.inspiration_url_1,
-      priority1: contentPlan?.inspiration_url_1_priority || undefined,
-      inspiration_url_2: contentPlan?.inspiration_url_2,
-      priority2: contentPlan?.inspiration_url_2_priority || undefined,
-      inspiration_url_3: contentPlan?.inspiration_url_3,
-      priority3: contentPlan?.inspiration_url_3_priority || undefined,
-    };
-
-    getContentPlanOutline(reqObj)
-      .then((res) => {
-        setLoading(false);
-        let newData;
-        if (typeof res.data.outline === "string") {
-          newData = JSON.parse(res.data.outline);
-        } else {
-          newData = res.data.outline;
-        }
-        setOutlineGUID(res.data.guid);
-        if (typeof newData === "string") {
-          newData = JSON.parse(newData);
-        }
-        if (newData?.sections) {
-          if (newData.sections.length > 0) {
-            processSections(newData.sections, initial);
+    if (standalone) {
+      fetchOutlineStatus(data.content_plan_outline_guid)
+        .then(res => {
+          console.log(data)
+          if (res?.data?.outline?.sections?.length > 0) {
+            processSections(res.data.outline.sections, initial);
+            setLoading(false)
           }
-        }
-      })
-      .catch((err) => {
-        if (data.guid) {
-          fetchOutlineStatus(data.guid)
-            .then(res => {
-              if (res?.data?.outline?.sections?.length > 0) {
-                processSections(res.data.outline.sections, initial);
-              }
-            })
-        }
-      });
+        })
+    } else {
+      let reqObj: GetPostOutlineRequest = {
+        client_name: contentPlan?.brand_name,
+        content_plan_guid: contentPlan?.guid,
+        post_title: data['Post Title'] || data?.post_title || postTitle,
+        priority_code: contentPlan?.priorityCode || '',
+        client_domain: contentPlan?.domain_name || contentPlan?.client_domain,
+        inspiration_url_1: contentPlan?.inspiration_url_1,
+        priority1: contentPlan?.inspiration_url_1_priority || undefined,
+        inspiration_url_2: contentPlan?.inspiration_url_2,
+        priority2: contentPlan?.inspiration_url_2_priority || undefined,
+        inspiration_url_3: contentPlan?.inspiration_url_3,
+        priority3: contentPlan?.inspiration_url_3_priority || undefined,
+      };
+
+      getContentPlanOutline(reqObj)
+        .then((res) => {
+          setLoading(false);
+          let newData;
+          if (typeof res.data.outline === "string") {
+            newData = JSON.parse(res.data.outline);
+          } else {
+            newData = res.data.outline;
+          }
+          setOutlineGUID(res.data.guid);
+          if (typeof newData === "string") {
+            newData = JSON.parse(newData);
+          }
+          if (newData?.sections) {
+            if (newData.sections.length > 0) {
+              processSections(newData.sections, initial);
+            }
+          }
+        })
+        .catch((err) => {
+          if (data.guid) {
+            fetchOutlineStatus(data.guid)
+              .then(res => {
+                if (res?.data?.outline?.sections?.length > 0) {
+                  processSections(res.data.outline.sections, initial);
+                }
+              })
+          }
+        });
+    }
   };
 
   useEffect(() => {
-    if (contentPlan) {
+    if (contentPlan || standalone) {
       pullOutline(true);
     }
-  }, [contentPlan]);
+  }, [contentPlan, standalone]);
 
   useEffect(() => {
     if (email) {

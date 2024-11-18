@@ -128,7 +128,6 @@ const BulkPostComponent = ({ active, currentDomain }: BulkPostComponentProps) =>
       .then(response => {
         let tsv = d3.tsvParse(response.data)
         delete tsv.columns;
-        console.log(tsv)
         tsv = tsv.reduce((prev, post) => {
 
           let newPost = { ...post, custom_outline: post['custom_outline'].toLowerCase() === 'y' ? true : false }

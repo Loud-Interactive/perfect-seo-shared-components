@@ -524,6 +524,7 @@ export interface SettingsProps {
   post_callout_left: string,
   post_callout_right: string,
   post_style_tag_main: string
+  human_blog_instructions: string
 }
 
 export interface BrandTabProps {

@@ -10,6 +10,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import DraggableRow from './DraggableRow';
+import LoadSpinner from '../LoadSpinner/LoadSpinner';
 
 
 export interface TableColumnArrayProps {
@@ -167,7 +168,8 @@ const Table = ({ isLoading,
   return (
 
     <div className={tableWrapClassName}>
-      {!isLoading && (data !== null && columns !== null) && data?.length > 0 && columns?.length > 0 ?
+      {isLoading && <LoadSpinner />}
+      {(data !== null && columns !== null) && data?.length > 0 && columns?.length > 0 ?
         <table className={tableClassName}>
           {!hideHeader && <thead>
             {tableInstance.getHeaderGroups().map((headerGroup) => {

@@ -53,6 +53,7 @@ const usePaginator = (): PaginatorController => {
     [searchParams]
   )
 
+
   const pageSetHandler = (number) => {
     router.replace(`${pathname}?${createQueryString('page', number.toString())}`)
   }
@@ -140,6 +141,12 @@ const usePaginator = (): PaginatorController => {
     const pageOneClasses = classNames('page-item',
       { 'active': currentPage === 1 }
     )
+
+    useEffect(() => {
+      if (currentPage <= 0) {
+        setCurrentPage(1)
+      }
+    }, [currentPage])
 
     if (pageCount > 1) {
       return (

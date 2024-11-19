@@ -12,6 +12,8 @@ import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { useSelector } from "react-redux"
 import { selectEmail } from "@/perfect-seo-shared-components/lib/features/User"
 import CreateContentModal from "../CreateContentModal/CreateContentModal"
+import { createClient } from "@/perfect-seo-shared-components/utils/supabase/client"
+import en from '@/assets/en.json'
 
 interface PostItemProps {
   post: any,
@@ -145,6 +147,8 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
     setDeleteModal(true)
   }
 
+  const supabase = createClient()
+
   const URLSaveButton = () => {
     return (
       <div className="d-flex h-100 align-items-center justify-content-center">
@@ -162,6 +166,15 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
   const deleteHandler = () => {
     deleteContentOutline(localPost?.content_plan_outline_guid)
       .then(res => {
+        let historyItem: any = { guid: localPost?.content_plan_outline_guid, email }
+        if (localPost?.title || localPost?.post_title || localPost?.content_plan_outline_title) {
+          historyItem.title = localPost?.title || localPost?.post_title || localPost?.content_plan_outline_title
+        }
+        supabase
+          .from('user_history')
+          .insert({ email: email, domain: post?.client_domain, transaction_data: historyItem, product: en.product, type: "Delete Post" })
+          .select('*')
+          .then(res => { })
         refresh();
         setDeleteModal(false)
       })
@@ -173,8 +186,17 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
   const regeneratePostHandler = (e) => {
     setRegerateError(null)
     e.preventDefault();
-    regeneratePost(localPost?.content_plan_outline_guid).then(res => {
+    regeneratePost(localPost?.content_plan_outline_guid, { email }).then(res => {
       refresh();
+      let historyItem: any = { guid: localPost?.content_plan_outline_guid, email }
+      if (localPost?.title || localPost?.post_title || localPost?.content_plan_outline_title) {
+        historyItem.title = localPost?.title || localPost?.post_title || localPost?.content_plan_outline_title
+      }
+      supabase
+        .from('user_history')
+        .insert({ email: email, domain: post?.client_domain, transaction_data: historyItem, product: en.product, type: "Regenerate Post" })
+        .select('*')
+        .then(res => { })
     })
       .catch(err => {
         console.log(err.response)

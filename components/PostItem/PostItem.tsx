@@ -5,12 +5,15 @@ import { emailValidator } from "@/perfect-seo-shared-components/utils/validators
 import { deleteContentOutline, getPostStatus, regeneratePost, updateLiveUrl } from "@/perfect-seo-shared-components/services/services"
 import moment from "moment-timezone"
 import TypeWriterText from "../TypeWriterText/TypeWriterText"
-import Link from "next/link"
 import * as Modal from '@/perfect-seo-shared-components/components/Modal/Modal'
 import { urlSanitization } from "@/perfect-seo-shared-components/utils/conversion-utilities"
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { useSelector } from "react-redux"
 import { selectEmail } from "@/perfect-seo-shared-components/lib/features/User"
+import CreateContentModal from "../CreateContentModal/CreateContentModal"
+import { createClient } from "@/perfect-seo-shared-components/utils/supabase/client"
+import en from '@/assets/en.json'
+import RegeneratePostModal, { GenerateTypes } from "../RegeneratePostModal/RegeneratePostModal"
 
 interface PostItemProps {
   post: any,
@@ -30,6 +33,8 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
   const [saved, setSaved] = useState(false)
   const [completed, setCompleted] = useState(false)
   const [regenerateError, setRegerateError] = useState(null)
+  const [editOutline, setEditOutline] = useState(false)
+  const [showRegeneratePost, setShowRegeneratePost] = useState(false)
 
   const liveUrlUpdate = () => {
     setSaved(false)
@@ -101,7 +106,6 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
         }
       })
       .catch((err) => {
-        console.log(err, post["Post Title"]);
         setStatus(err.message);
       });
   }
@@ -120,13 +124,13 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
         return;
       }
     }
-    else {
+    else if (!editOutline) {
       interval = setInterval(() => {
         fetchStatus()
       }, 10000)
     }
     return () => clearTimeout(interval)
-  }, [status, completed])
+  }, [status, completed, editOutline])
 
   const docClickHandler = (e) => {
     e.preventDefault();
@@ -142,6 +146,8 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
     e.preventDefault()
     setDeleteModal(true)
   }
+
+  const supabase = createClient()
 
   const URLSaveButton = () => {
     return (
@@ -160,6 +166,15 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
   const deleteHandler = () => {
     deleteContentOutline(localPost?.content_plan_outline_guid)
       .then(res => {
+        let historyItem: any = { guid: localPost?.content_plan_outline_guid, email }
+        if (localPost?.title || localPost?.post_title || localPost?.content_plan_outline_title) {
+          historyItem.title = localPost?.title || localPost?.post_title || localPost?.content_plan_outline_title
+        }
+        supabase
+          .from('user_history')
+          .insert({ email: email, domain: post?.client_domain, transaction_data: historyItem, product: en.product, type: "Delete Post" })
+          .select('*')
+          .then(res => { })
         refresh();
         setDeleteModal(false)
       })
@@ -168,27 +183,30 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
       })
   }
 
-  const regeneratePostHandler = (e) => {
+  const regeneratePostHandler = (receiving_email, writing_language) => {
     setRegerateError(null)
-    e.preventDefault();
-    console.log(localPost)
-    regeneratePost(localPost?.content_plan_outline_guid).then(res => {
-      refresh();
+    return regeneratePost(localPost?.content_plan_outline_guid, { receiving_email: receiving_email, email, writing_language }).then(res => {
+      let historyItem: any = { guid: localPost?.content_plan_outline_guid, email }
+      if (localPost?.title || localPost?.post_title || localPost?.content_plan_outline_title) {
+        historyItem.title = localPost?.title || localPost?.post_title || localPost?.content_plan_outline_title
+      }
+      supabase
+        .from('user_history')
+        .insert({ email: email, domain: post?.client_domain, transaction_data: historyItem, product: en.product, type: "Regenerate Post" })
+        .select('*')
+        .then(res => { })
+      return res
     })
       .catch(err => {
-        console.log(err.response)
         setRegerateError(err.response.data.detail.split(":")[0])
+        return err
       })
+
 
   }
 
-  const renderAhrefUrl = () => {
-    let newUrl = encodeURI(localPost?.live_post_url.replace("https://", '').replace("http://", "").replace("www.", ""))
-
-    if (newUrl.lastIndexOf("/") === newUrl.length - 1) {
-      newUrl = newUrl.slice(0, -1)
-    }
-    return newUrl
+  const handleEditOutline = (e) => {
+    setEditOutline(true)
   }
 
   return (
@@ -200,9 +218,10 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
               <p className="mb-1">
                 <small>
                   <strong className="text-primary ">Created on</strong> {moment(`${localPost?.created_at}Z`).local().format("dddd, MMMM Do, YYYY h:mma")}
+                  {!localPost?.content_plan_guid && <span className="badge bg-warning ms-2">Bulk</span>}
                 </small>
               </p>
-              <p className="m-0">  <strong className="text-primary me-1">Title</strong>  {localPost?.title}{(localPost.client_domain !== domain_name) ? <span className='badge bg-primary ms-2'>{localPost?.client_name}</span> : email !== localPost.email ? <p>generated by <span className="text-primary">{localPost.email}</span></p> : null}
+              <p className="m-0">  <strong className="text-primary me-1">Title</strong>  {localPost?.title}{(localPost?.writing_language !== 'English' && localPost?.writing_language) && <small>({localPost?.writing_language})</small>}{(localPost.client_domain !== domain_name) ? <span className='badge bg-primary ms-2'>{localPost?.client_name}</span> : email !== localPost.email ? <span><br />generated by <span className="text-primary">{localPost.email}</span></span> : null}
               </p>
             </div>
             {(showUrl || localPost?.live_post_url) && <div className="col-12">
@@ -245,6 +264,12 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
                 <DropdownMenu.Portal>
                   <DropdownMenu.Content align="end" className="bg-primary z-100 card">
 
+                    {(localPost?.content_plan_outline_guid && localPost?.content_plan_guid) &&
+                      <DropdownMenu.Item>
+                        <button className="btn btn-transparent w-100" onClick={handleEditOutline}>
+                          Edit Outline
+                        </button>
+                      </DropdownMenu.Item>}
                     {localPost?.content_plan_guid &&
                       <DropdownMenu.Item>
                         <a
@@ -257,7 +282,7 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
                         </a>
                       </DropdownMenu.Item>}
                     <DropdownMenu.Item>
-                      <button className="btn btn-transparent" onClick={regeneratePostHandler}>Regenerate Post</button>
+                      <button className="btn btn-transparent" onClick={() => { setShowRegeneratePost(true) }}>Regenerate Post</button>
                     </DropdownMenu.Item>
                     {localPost?.live_post_url && <>
                       {localPost?.factcheck_guid ?
@@ -334,6 +359,15 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
           </div>
         </Modal.Description>
       </Modal.Overlay>
+      <Modal.Overlay open={editOutline} onClose={() => { setEditOutline(null) }}>
+        <CreateContentModal standalone data={localPost} titleChange={() => { }} onClose={() => { setEditOutline(false) }} isAuthorized={true} />
+      </Modal.Overlay>
+      <Modal.Overlay
+        open={showRegeneratePost}
+        onClose={() => { setShowRegeneratePost(null); refresh() }}
+      >
+        <RegeneratePostModal onClose={() => { setShowRegeneratePost(null); }} type={GenerateTypes.REGENERATE} submitHandler={regeneratePostHandler} onSuccess={() => { setShowRegeneratePost(false); refresh() }} />
+      </Modal.Overlay >
     </div>
 
   )

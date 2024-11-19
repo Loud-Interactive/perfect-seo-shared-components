@@ -7,8 +7,6 @@
     position: relative;
   }
 
-
-
   &-input {
     position: relative;
     font-weight: 400;
@@ -18,7 +16,7 @@
     width: 100%;
     field-sizing: content;
     max-height: 350px;
-
+    min-height: 3em;
 
     &_button {
       padding-right: 55px;

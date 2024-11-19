@@ -24,7 +24,7 @@ const BrandHeader = ({ synopsis, editable = true }: BrandHeaderProps) => {
     <div className='mb-3 bg-primary'>
       <div className='container-xl content-fluid py-3'>
         <div className='row d-flex justify-content-between g-3'>
-          {synopsis?.logo_url && <div className='col-12 col-lg-3'>
+          {synopsis?.logo_url && <div className='col-12 col-lg-4'>
             <div className={logoCardClasses}>
               <div className={styles.logoWrap}>
                 <img src={synopsis?.logo_url} />

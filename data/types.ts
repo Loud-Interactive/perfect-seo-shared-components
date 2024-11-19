@@ -328,6 +328,7 @@ export interface PreferencesProps extends
   MarketAndAudienceProps,
   CMSProps,
   LandingPageFields,
+  AIPRomptProps,
   OtherFieldsProps { }
 
 export interface TieredPreferencesProps {
@@ -340,7 +341,22 @@ export interface TieredPreferencesProps {
   "market-and-audience": MarketAndAudienceProps,
   "cms": CMSProps,
   "landing-pages": LandingPageFields,
+  "ai-prompts": AIPRomptProps
   "other": OtherFieldsProps
+}
+
+export interface AIPRomptProps {
+  search_prompt: string,
+  content_generation_prompt: string,
+  style_analysis_prompt: string,
+  content_rewrite_prompt_entity_voice: string,
+  content_rewrite_prompt_avoid_words: string,
+  content_translation_prompt: string,
+  client_style_edit_prompt: string,
+  json_ld_schema_generation_prompt: string,
+  markdown_to_html_template_prompt: string,
+  search_terms_prompt: string,
+  url_selection_prompt: string
 }
 
 export interface LandingPageFields {
@@ -524,6 +540,7 @@ export interface SettingsProps {
   post_callout_left: string,
   post_callout_right: string,
   post_style_tag_main: string
+  human_blog_instructions: string
 }
 
 export interface BrandTabProps {

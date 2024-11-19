@@ -10,9 +10,6 @@ import Header from '../Header/Header';
 import style from './DnDLayout.module.scss';
 import Script from 'next/script';
 import { SessionProvider } from "next-auth/react";
-import { createClient } from '@/perfect-seo-shared-components/utils/supabase/client';
-import { useSelector } from 'react-redux';
-import { selectEmail } from '@/perfect-seo-shared-components/lib/features/User';
 import { Suspense } from 'react';
 import "bootstrap-icons/font/bootstrap-icons.css";
 
@@ -27,9 +24,6 @@ interface DnDLayoutProps extends React.HTMLProps<HTMLDivElement> {
 
 // Main DnDLayout component
 const DnDLayout = ({ children, hideFooter, current, links, hasLogin = true, getCredits = false }: DnDLayoutProps) => {
-  const email = useSelector(selectEmail); // Get the user's email from the Redux store
-  const supabase = createClient(); // Create a Supabase client instance
-
   return (
     <>
       <SessionProvider refetchOnWindowFocus refetchInterval={20 * 60}>

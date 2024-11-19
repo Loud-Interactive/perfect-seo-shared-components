@@ -117,8 +117,11 @@ const OutlineRow = ({ rows,
                 disabled={!isAuthorized}
                 className={`${styles.deleteButton} btn btn-warning ms-1`}><i className="bi bi-trash" /></button>
               <button className={accordionClassname} onClick={accordionHandler} title={show ? 'Collapse' : 'Expand'}>
-                <span className={`${styles.dropDownArrow} ${show && 'flip-vertical'}`}>
-                  <i className="bi bi-caret-down-fill" />
+                <span className={styles.dropDownArrow}>
+                  {show ?
+                    <i className="bi bi-caret-up-fill" />
+                    : <i className="bi bi-caret-down-fill" />
+                  }
                 </span>
               </button>
             </div>

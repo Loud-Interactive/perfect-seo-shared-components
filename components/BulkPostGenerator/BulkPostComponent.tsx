@@ -13,7 +13,7 @@ import Form from '../Form/Form';
 import BulkPostDraftItem from './BulkPostDraftItem';
 import Loader from '../Loader/Loader';
 import { getBatchStatus } from '@/perfect-seo-shared-components/services/services';
-import { selectProfile, selectUser } from '@/perfect-seo-shared-components/lib/features/User';
+import { selectEmail, selectProfile, selectUser } from '@/perfect-seo-shared-components/lib/features/User';
 import { IncomingPlanItemResponse } from '@/perfect-seo-shared-components/data/types';
 
 
@@ -35,7 +35,7 @@ const BulkPostComponent = ({ active, currentDomain }: BulkPostComponentProps) =>
 
   const [pendingGUIDS, setPendingGUIDS] = useState<string[]>([])
   const profile = useSelector(selectProfile);
-  const user = useSelector(selectUser);
+  const email = useSelector(selectEmail)
   const supabase = createClient();
   const [tsv, setTsv] = useState(null)
   const [showItems, setShowItems] = useState<boolean>(true);
@@ -53,7 +53,7 @@ const BulkPostComponent = ({ active, currentDomain }: BulkPostComponentProps) =>
     getBatchStatus(pendingGUIDS)
       .then(res => {
         let newItems = items.reduce((prev, item) => {
-          let newItem = res.data.find((resItem) => resItem.guid === item.guid)
+          let newItem = res.data.find((resItem) => resItem.content_plan_outline_guid === item.guid)
           return [...prev, newItem]
         }, [])
         setItems(newItems)
@@ -93,14 +93,10 @@ const BulkPostComponent = ({ active, currentDomain }: BulkPostComponentProps) =>
     setLoading(true)
     supabase
       .from('profiles')
-      .update({ bulk_posts: newItems })
-      .eq('email', user?.email)
+      .update({ bulk_posts_guids: newItems.map(({ guid }) => guid) })
+      .eq('email', email)
       .select('*')
       .then(res => {
-        if (res.data) {
-          setItems(newItems)
-          setLoading(false)
-        }
       })
   }
 
@@ -130,12 +126,12 @@ const BulkPostComponent = ({ active, currentDomain }: BulkPostComponentProps) =>
         delete tsv.columns;
         tsv = tsv.reduce((prev, post) => {
 
-          let newPost = { ...post, custom_outline: post['custom_outline'] === 'y' ? true : false }
+          let newPost = { ...post, custom_outline: post['custom_outline'].toLowerCase() === 'y' ? true : false }
           if (post['domain_name'] === '' && currentDomain) {
             newPost['domain_name'] = currentDomain
           }
-          if (post['email'] === '' && user?.email) {
-            newPost['email'] = user?.email
+          if (post['email'] === '' && email) {
+            newPost['email'] = email
           }
           return [...prev, newPost]
         }, [])
@@ -175,10 +171,10 @@ const BulkPostComponent = ({ active, currentDomain }: BulkPostComponentProps) =>
           setItemGuids(response.data.guids)
           supabase
             .from('profiles')
-            .upsert({
+            .update({
               bulk_posts_guids: response.data.guids
             })
-            .eq('email', user?.email || profile?.email)
+            .eq('email', email)
             .select('*')
             .then(res => {
 

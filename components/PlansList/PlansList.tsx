@@ -61,7 +61,6 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
             return newObj;
           }
           )
-          console.log(res.data.items.filter((obj) => obj.entity_voice))
           paginator.setItemCount(res.data.total)
           setData(newData)
           setLoading(false)

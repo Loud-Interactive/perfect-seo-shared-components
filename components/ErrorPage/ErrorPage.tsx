@@ -21,7 +21,7 @@ function ErrorPage({ statusCode, err }) {
     }
     supabase
       .from('user_history')
-      .insert({ email, transaction_data: { ...err }, product: en?.product, type: "Error Page" })
+      .insert({ email, transaction_data: { ...err }, product: en?.product, type: "ERROR", action: "Error Page" })
       .select('*')
   }, [err])
 

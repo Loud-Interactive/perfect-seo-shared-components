@@ -172,7 +172,7 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
         }
         supabase
           .from('user_history')
-          .insert({ email: email, domain: post?.client_domain, transaction_data: historyItem, product: en.product, type: "Delete Post" })
+          .insert({ email: email, domain: post?.client_domain, transaction_data: historyItem, product: en.product, type: "DELETE", action: "Delete Post" })
           .select('*')
           .then(res => { })
         refresh();
@@ -192,7 +192,7 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
       }
       supabase
         .from('user_history')
-        .insert({ email: email, domain: post?.client_domain, transaction_data: historyItem, product: en.product, type: "Regenerate Post" })
+        .insert({ email: email, domain: post?.client_domain, transaction_data: historyItem, product: en.product, type: "REGENERATE", action: "Regenerate Post" })
         .select('*')
         .then(res => { })
       return res

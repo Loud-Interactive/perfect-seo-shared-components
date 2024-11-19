@@ -84,7 +84,7 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
       error => {
         supabase
           .from('user_history')
-          .insert({ email: user?.email, transaction_data: error, product: en.product, type: "Error" })
+          .insert({ email: user?.email, transaction_data: error, product: en.product, type: "Error", action: "Error" })
           .select('*');
         return Promise.reject(error);
       }

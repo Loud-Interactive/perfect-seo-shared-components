@@ -21,7 +21,7 @@ axiosInstance.interceptors.response.use(function (response) {
   }
   supabase
     .from('user_history')
-    .insert({ email, transaction_data: { ...error.response }, product: en?.product, type: "Error" })
+    .insert({ email, transaction_data: { ...error.response }, product: en?.product, type: "ERROR", action: "Axios Error" })
     .select('*')
   return Promise.reject(error);
 });

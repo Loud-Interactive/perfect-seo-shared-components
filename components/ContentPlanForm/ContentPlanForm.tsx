@@ -127,7 +127,7 @@ const ContentPlanForm = ({ buttonLabel, initialData, submitResponse, isModal }: 
       checkDomain(form.getState.domainName);
       supabase
         .from('user_history')
-        .insert({ email: email, domain: form?.getState?.domainName, transaction_data: form.getState, product: 'contentPerfect', type: "Create Plan" })
+        .insert({ email: email, domain: form?.getState?.domainName, transaction_data: form.getState, product: 'contentPerfect', type: "CREATE", action: "Create Plan" })
         .select('*')
         .then(res => {
 

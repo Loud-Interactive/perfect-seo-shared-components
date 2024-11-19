@@ -104,7 +104,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
     if (email && domain && !dataTracked) {
       supabase
         .from('user_history')
-        .insert({ email: email, domain: domain, transaction_data: { page: 'my-content', tab: selectedTab || queryParam || 'posts' }, product: en?.product, type: "View Content" })
+        .insert({ email: email, domain: domain, transaction_data: { page: 'my-content', tab: selectedTab || queryParam || 'posts' }, product: en?.product, action: "View Content", type: "VIEW" })
         .select('*')
         .then(res => {
           setDataTracked(true)
@@ -277,7 +277,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
     if (bool === false && email && (currentDomain || selected?.value) && (domainsList || domain_access)) {
       supabase
         .from('user_history')
-        .insert({ email: email, domain: currentDomain || selected?.value, transaction_data: { domains: domainsList || domain_access }, product: en.product, type: "Unauthorized My Content" })
+        .insert({ email: email, domain: currentDomain || selected?.value, transaction_data: { domains: domainsList || domain_access }, product: en.product, action: "Unauthorized My Content", type: "UNAUTHORIZED" })
         .select('*')
         .then(res => {
         })

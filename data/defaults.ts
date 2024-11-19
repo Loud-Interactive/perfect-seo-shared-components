@@ -39,5 +39,9 @@ export const defaultPrompts = [
   {
     "name": "url_selection_prompt",
     "value": "Search Results:\n{search_results_text}\n\nYou are a journalist assistant. From the given search results, select the URLs that seem most relevant, informative, and come from reliable sources for writing an article on the topic. {topic_str} Respond with a Python list of URLs, like this: ['url1', 'url2', 'url3']. Do not include any other text in your response."
+  },
+  {
+    "name": "search_terms_prompt",
+    "value": `You are a world-class journalist. Generate a list of 5 search terms to search for to research and write an article about the given topic. You should only provide the search terms in a Python-parseable list, without any comments. Make sure to escape any strings that contain single quotes or special characters.\n\nPlease provide a list of 5 search terms related to '{topic}' that are on brand and topically relevant for {client_domain}, I have included their style, brand voice, guidelines and over all information about the brand here {client_synopsis} for researching and writing an article. Respond only with the search terms in a Python-parseable list, separated by commas and enclosed in square brackets. Escape any single quotes or special characters within the search terms.`
   }
 ]

@@ -48,7 +48,6 @@ export const findUniqueKeys = (newObj, oldObj) => {
   let finalObj = keys.reduce((prev, curr) => {
 
     if (newObj[curr] && keys.includes(curr) === false) {
-      console.log(newObj[curr])
       return ({ ...prev, [curr]: newObj[curr] })
     }
     else if (newObj[curr] !== oldObj[curr]) {

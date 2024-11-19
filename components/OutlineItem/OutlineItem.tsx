@@ -73,7 +73,6 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
         }
       })
       .catch((err) => {
-        console.log(err, outline["Post Title"] || outline.post_title);
         setStatus(err?.response?.data?.detail ? `Error: ${err?.response?.data?.detail}` : "Error: not found");
       });
   }
@@ -138,7 +137,6 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
     reqObj.client_name = outline.brand_name
     return saveContentPlanPost(reqObj)
       .then(res => {
-        console.log(res);
         return res
       })
   }

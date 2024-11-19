@@ -150,7 +150,6 @@ export const regenerateOutline = (
   }
 
   if (other) {
-    console.log("other", other)
     reqObj = { ...reqObj, ...other }
   }
   return axiosInstance.post(

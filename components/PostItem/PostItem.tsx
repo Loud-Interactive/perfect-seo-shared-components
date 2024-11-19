@@ -106,7 +106,6 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
         }
       })
       .catch((err) => {
-        console.log(err, post["Post Title"]);
         setStatus(err.message);
       });
   }

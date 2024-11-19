@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react"
-import { deleteOutline, fetchOutlineStatus, getContentPlanPost, regenerateOutline, saveContentPlanPost } from "@/perfect-seo-shared-components/services/services"
+import { createPost, deleteOutline, fetchOutlineStatus, getContentPlanPost, regenerateOutline, saveContentPlanPost } from "@/perfect-seo-shared-components/services/services"
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import TypeWriterText from "../TypeWriterText/TypeWriterText"
 import Link from "next/link"
@@ -7,6 +7,10 @@ import * as Modal from '@/perfect-seo-shared-components/components/Modal/Modal'
 import CreateContentModal from "@/perfect-seo-shared-components/components/CreateContentModal/CreateContentModal"
 import moment from "moment-timezone"
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import RegeneratePostModal, { GenerateTypes } from "../RegeneratePostModal/RegeneratePostModal";
+import { GenerateContentPost } from "@/perfect-seo-shared-components/data/requestTypes";
+import { useSelector } from "react-redux";
+import { selectEmail } from "@/perfect-seo-shared-components/lib/features/User";
 
 const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
   const [status, setStatus] = useState(outline?.status)
@@ -14,9 +18,9 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
   const [deleteModal, setDeleteModal] = useState(false)
   const [editModal, setEditModal] = useState(false)
   const [completed, setCompleted] = useState(false)
-  const [loading, setLoading] = useState(false)
+  const [showGenerate, setShowGenerate] = useState(false)
 
-  const router = useRouter();
+  const email = useSelector(selectEmail)
 
   useEffect(() => {
     if (outline?.status !== status) {
@@ -29,24 +33,24 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
     }
   }, [outline, completed])
 
-  const searchParams = useSearchParams();
-  const pathname = usePathname()
+  const generatePostHandler = (receiving_email, writing_language?) => {
+    let newOutline = typeof outline?.outline === 'string' ? JSON.parse(outline?.outline) : outline?.outline
+    let reqBody: GenerateContentPost = {
+      outline: newOutline,
+      email: email,
+      seo_keyword: outline.Keyword || outline.keyword,
+      content_plan_keyword: outline?.content_plan_keyword,
+      keyword: outline?.keyword,
+      content_plan_guid: outline.content_plan_guid,
+      content_plan_outline_guid: outline.guid,
+      client_name: outline.brand_name,
+      client_domain: outline.client_domain,
+      receiving_email: receiving_email,
+      writing_language: writing_language || 'English'
+    };
+    return createPost(reqBody)
+  }
 
-  const createQueryString = useCallback(
-    (name: string, value: string) => {
-      const params = new URLSearchParams(searchParams.toString())
-      params.set(name, value)
-
-      return params.toString()
-    },
-    [searchParams]
-  )
-
-  const generatePostHandler = (e) => {
-    e.preventDefault();
-    router.replace(pathname + '?' + createQueryString('generate', 'true'))
-    return setEditModal(true);
-  };
 
   const fetchStatus = () => {
     fetchOutlineStatus(outline?.guid)
@@ -123,31 +127,6 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
         console.log(err)
       })
   }
-
-
-  const regenerateClickHandler = () => {
-    setLoading(true);
-    regenerateOutline(localOutline?.guid)
-      .then((result) => {
-        let newData = JSON.parse(result.data.outline);
-        setLocalOutline(newData)
-        setLoading(false);
-      })
-      .catch(() => {
-        setLoading(false);
-      });
-  };
-
-  //   [
-  //     "guid",
-  //     "content_plan_guid",
-  //     "post_title",
-  //     "client_domain",
-  //     "status",
-  //     "brand_name",
-  //     "keyword",
-  //     "outline"
-  // ]
 
   const handleTitleChange = (e, title) => {
     e?.preventDefault()
@@ -227,7 +206,7 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
                       <DropdownMenu.Item>
                         <button
                           className="btn btn-transparent text-black"
-                          onClick={generatePostHandler}
+                          onClick={() => { setShowGenerate(true) }}
                         >
                           Generate Post
                         </button>
@@ -249,6 +228,12 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
       <Modal.Overlay open={editModal} onClose={() => { setEditModal(null) }}>
         <CreateContentModal isAuthorized advancedData={{}} data={localOutline} onClose={() => { setEditModal(null); refresh(); }} index={1} titleChange={handleTitleChange} contentPlan={{ ...localOutline, guid: localOutline.content_plan_guid, 'Post Title': localOutline.post_title }} />
       </Modal.Overlay>
+      <Modal.Overlay
+        open={showGenerate}
+        onClose={() => { setShowGenerate(false); refresh() }}
+      >
+        <RegeneratePostModal onClose={() => { setShowGenerate(false); }} type={GenerateTypes.GENERATE} submitHandler={generatePostHandler} onSuccess={() => { setShowGenerate(false); refresh() }} />
+      </Modal.Overlay >
       <Modal.Overlay open={deleteModal} onClose={() => { setDeleteModal(null) }}>
         <Modal.Title title="Delete Outline" />
         <Modal.Description>

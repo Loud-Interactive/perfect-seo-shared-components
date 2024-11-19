@@ -15,7 +15,7 @@ import { fetchOutlineStatus, getContentPlanOutline, saveContentPlanPost } from "
 import { createPost, regenerateOutline } from "@/perfect-seo-shared-components/services/services";
 import Loader from "@/perfect-seo-shared-components/components/Loader/Loader";
 import { selectEmail, selectPoints } from "@/perfect-seo-shared-components/lib/features/User";
-import SearchSelect from "../SearchSelect/SearchSelect";
+import RegeneratePostModal, { GenerateTypes } from "../RegeneratePostModal/RegeneratePostModal";
 
 interface CreateContentModalProps {
   data: any;
@@ -42,20 +42,15 @@ const CreateContentModal = ({
   const [tableData, setTableData] = useState<OutlineRowProps[]>(null);
   const [selected, setSelected] = useState<number>(null);
   const [all, setAll] = useState<boolean>(true);
-  const [receivingEmail, setReceivingEmail] = useState(undefined);
   const [outlineGUID, setOutlineGUID] = useState<string>(null);
-  const [showConfirm, setShowConfirm] = useState(false);
   const form = useForm();
   const [postTitle, setPostTitle] = useState();
-  const emailForm = useForm();
   const titleForm = useForm();
   const { phone, portrait } = useViewport();
   const [creatingPost, setCreatingPost] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const [submitError, setSubmitError] = useState("");
-  const [langSelected, setLangSelected] = useState({ label: 'English', value: 'English' });
 
   const router = useRouter();
   const points = useSelector(selectPoints)
@@ -89,18 +84,7 @@ const CreateContentModal = ({
     }
   }, [queryParam]);
 
-  useEffect(() => {
-    let timeout;
-    if (submitted) {
-      timeout = setTimeout(() => {
-        setSubmitted(false)
-        setSubmitError("There was an error submitting your post. Please try again.")
-      }, 30000)
-    }
-    return () => {
-      clearTimeout(timeout)
-    }
-  }, [submitted])
+
 
   useEffect(() => {
     setSaved(false)
@@ -244,7 +228,6 @@ const CreateContentModal = ({
     if (standalone) {
       fetchOutlineStatus(data.content_plan_outline_guid)
         .then(res => {
-          console.log(data)
           if (res?.data?.outline?.sections?.length > 0) {
             processSections(res.data.outline.sections, initial);
             setLoading(false)
@@ -303,11 +286,6 @@ const CreateContentModal = ({
     }
   }, [contentPlan, standalone]);
 
-  useEffect(() => {
-    if (email) {
-      setReceivingEmail(email);
-    }
-  }, [email]);
 
   const saveHandler = (click?: boolean) => {
     if (!loading) {
@@ -346,12 +324,9 @@ const CreateContentModal = ({
 
 
 
-  const submitWithEmail = () => {
-    if (!email || !receivingEmail) {
-      return;
-    }
+  const submitWithEmail = (receivingEmail, language?) => {
 
-    setSubmitError(null)
+
     let reqBody: GenerateContentPost = {
       outline: { sections: [...convertToTableData(form.getState)] },
       email: email,
@@ -364,63 +339,12 @@ const CreateContentModal = ({
       client_name: contentPlan.brand_name || contentPlan.client_name,
       client_domain: contentPlan.domain_name || contentPlan.client_domain,
       receiving_email: receivingEmail,
-      writing_language: langSelected?.value || 'English'
+      writing_language: language || 'English'
     };
 
     setSubmitted(true);
-    createPost(reqBody)
-      .then((res) => {
-        setShowConfirm(true);
-        setSubmitted(false);
-      })
-      .catch((err) => {
-        setSubmitted(false);
-        setSubmitError("There was an error submitting your post. Please try again.")
-      });
+    return createPost(reqBody)
   };
-
-
-  const languageOptions = [
-    "English",
-    "Arabic",
-    "Bengali",
-    "Bulgarian",
-    "Chinese (Simplified)",
-    "Chinese (Traditional)",
-    "Czech",
-    "Danish",
-    "Dutch",
-    "English",
-    "Finnish",
-    "French",
-    "German",
-    "Greek",
-    "Hebrew",
-    "Hindi",
-    "Hungarian",
-    "Indonesian",
-    "Italian",
-    "Japanese",
-    "Korean",
-    "Malay",
-    "Norwegian",
-    "Polish",
-    "Portuguese",
-    "Romanian",
-    "Russian",
-    "Slovak",
-    "Spanish",
-    "Swedish",
-    "Thai",
-    "Turkish",
-    "Ukrainian",
-    "Urdu",
-    "Vietnamese"
-  ].map((language) => ({ label: language, value: language }))
-
-  const languageChangeHandler = (e) => {
-    setLangSelected(e);
-  }
 
   const regenerateClickHandler = () => {
     setLoading(true);
@@ -626,100 +550,8 @@ const CreateContentModal = ({
         closeIcon
       >
         <Modal.Title title="Generate Your Post" />
-        <Form controller={emailForm} className="p-5">
-          <h3 className="mb-3">Generate Your Post</h3>
-          {/* <StripePricingTable /> */}
-          <div className="my-4">
-            You currently have <strong className="text-primary mx-0">{points?.toLocaleString() || 0}</strong> credits available.
-            {points <= 3000 ? (
-              <>
-                You need at least <strong className="text-primary mx-1">3,000</strong> credits to
-                generate this post.
-              </>
-            ) : (
-              <>
-                This post generation will use <strong className="text-primary mx-1">3,000</strong> credits.
-              </>
-            )}
-            {points <= 3000 ? (
-              <p className="mt-3">Would you like to purchase more credits?</p>
-            ) : (
-              <p className="mt-3">
-                Would you like to use <strong className="text-primary mx-1">3,000</strong> credits to
-                generate this post?
-              </p>
-            )}
-            <p>What email address would you like your post sent to?</p>
-            <input
-              type="text"
-              className="form-control"
-              value={receivingEmail}
-              onChange={(e) => {
-                e.preventDefault();
-                setReceivingEmail(e.target.value);
-              }}
-            />
-            <div className="mt-3">
-              <label htmlFor="writing_language">Writing Language</label>
-              <SearchSelect value={langSelected} onChange={languageChangeHandler} options={languageOptions} fieldName="writing_language z-100" isClearable={false} isSearchable={true} />
-              {submitError && <p className="text-danger mt-3">{submitError}</p>}
-            </div>
-          </div>
-        </Form>
-        <Modal.Footer>
-          <Modal.ButtonBar className={styles.emailFooter}>
-            <button
-              className="btn btn-warning btn-standard"
-              onClick={(e) => {
-                e.preventDefault();
-                setCreatingPost(false);
-              }}
-            >
-              go back
-            </button>
-            <button
-              className="btn btn-primary btn-standard"
-              onClick={(e) => {
-                e.preventDefault();
-                if (submitted) {
-                  return;
-                }
-                else if (points > 3000) {
-                  submitWithEmail();
-                } else {
-                  buyCreditsHandler();
-                }
-              }}
-            >
-              {submitted ?
-                <div className="spinner-border" role="status">
-                  <span className="visually-hidden">Loading...</span>
-                </div>
-                :
-                points > 3000 ? <span className="px-3">yes</span> : "buy credits"
-              }
-            </button>
-          </Modal.ButtonBar>
-        </Modal.Footer>
-      </Modal.Overlay>
-      <Modal.Overlay closeIcon open={showConfirm} onClose={() => setShowConfirm(false)}>
-        <Modal.Title title="Post Generation" />
-        <div className="p-5 d-flex flex-column align-items-center">
-          <h3 className="mb-5">Your post is being generated</h3>
-          <div>
-            <button
-              className="btn btn-warning"
-              onClick={(e) => {
-                e.preventDefault();
-                setShowConfirm(false);
-                onClose();
-              }}
-            >
-              close
-            </button>
-          </div>
-        </div>
-      </Modal.Overlay>
+        <RegeneratePostModal submitHandler={submitWithEmail} onClose={() => setCreatingPost(false)} onSuccess={onClose} type={GenerateTypes.GENERATE} />
+      </Modal.Overlay >
     </>
   );
 };

@@ -115,8 +115,7 @@ const RegeneratePostModal = ({ onClose, type, submitHandler, onSuccess }: Regene
   return (
     <>  <Modal.Title title="Generate Your Post" />
       <div className="p-5">
-        <h3 className="mb-3">Generate Your Post</h3>
-        {/* <StripePricingTable /> */}
+        <h3 className="mb-3">{regenerate ? 'Reg' : 'G'}enerate Your Post</h3>
         {regenerate ? <div className="my-4">
           Would you like to regenerate this post?
         </div>

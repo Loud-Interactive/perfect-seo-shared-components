@@ -19,6 +19,7 @@ import LoadSpinner from "../LoadSpinner/LoadSpinner";
 import axiosInstance from "@/perfect-seo-shared-components/utils/axiosInstance";
 import { createClient } from "@/perfect-seo-shared-components/utils/supabase/client";
 import en from '@/assets/en.json';
+import ToastProvider from "../Toast/ToastProvider";
 
 export interface HeaderProps {
   links?: Links[];
@@ -153,6 +154,7 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
 
   return (
     <header className={styles.header}>
+      {/* <ToastProvider></ToastProvider> */}
       <div className='container-fluid container-xl'>
         <div className='row g-3 d-flex justify-content-between align-items-center'>
           <div className="col d-flex align-items-center justify-content-start">
@@ -288,6 +290,7 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
           )}
         </div>
       </div>
+
     </header>
   );
 };

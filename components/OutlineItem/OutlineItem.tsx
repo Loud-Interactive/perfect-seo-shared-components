@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useRef, useState } from "react"
-import { createPost, deleteOutline, fetchOutlineStatus, getContentPlanPost, regenerateOutline, saveContentPlanPost } from "@/perfect-seo-shared-components/services/services"
+import { useEffect, useState } from "react"
+import { createPost, deleteOutline, fetchOutlineStatus, regenerateOutline, saveContentPlanPost } from "@/perfect-seo-shared-components/services/services"
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import TypeWriterText from "../TypeWriterText/TypeWriterText"
 import Link from "next/link"
@@ -8,8 +8,8 @@ import CreateContentModal from "@/perfect-seo-shared-components/components/Creat
 import moment from "moment-timezone"
 import RegeneratePostModal, { GenerateTypes } from "../RegeneratePostModal/RegeneratePostModal";
 import { GenerateContentPost } from "@/perfect-seo-shared-components/data/requestTypes";
-import { useSelector } from "react-redux";
-import { selectEmail, selectIsAdmin } from "@/perfect-seo-shared-components/lib/features/User";
+import { useDispatch, useSelector } from "react-redux";
+import { addToast, selectEmail, selectIsAdmin } from "@/perfect-seo-shared-components/lib/features/User";
 import { QueueItemProps } from "@/perfect-seo-shared-components/data/types";
 import { createClient } from "@/perfect-seo-shared-components/utils/supabase/client";
 
@@ -24,7 +24,7 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
   const supabase = createClient()
   const email = useSelector(selectEmail)
   const isAdmin = useSelector(selectIsAdmin)
-
+  const dispatch = useDispatch()
   useEffect(() => {
     if (outline?.status !== status) {
       setStatus(outline?.status)
@@ -131,7 +131,7 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
   }
   const regenerateOutlineClickHandler = () => {
     setLoading(true)
-
+    return dispatch(addToast({ title: "Regenerating Outline", type: "info", content: "Regenerating outline, please wait" }))
     regenerateOutline(localOutline?.guid, { email: email, client_domain: localOutline?.client_domain, client_name: localOutline?.brand_name, post_title: localOutline?.post_title, content_plan_guid: localOutline?.content_plan_guid })
       .then(res => {
         setStatus("Regenerating")

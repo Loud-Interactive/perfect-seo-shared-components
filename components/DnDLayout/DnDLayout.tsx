@@ -12,7 +12,7 @@ import Script from 'next/script';
 import { SessionProvider } from "next-auth/react";
 import { Suspense } from 'react';
 import "bootstrap-icons/font/bootstrap-icons.css";
-import * as Toast from "@radix-ui/react-toast";
+import ToastProvider from '../Toast/ToastProvider';
 
 
 
@@ -31,30 +31,27 @@ const DnDLayout = ({ children, hideFooter, current, links, hasLogin = true, getC
   return (
     <>
       <SessionProvider refetchOnWindowFocus refetchInterval={20 * 60}>
+
         <BrowserView>
           <DndProvider backend={HTML5Backend}>
-            <Toast.Provider>
-              <Suspense>
-                <Header current={current} links={links} hasLogin={hasLogin} getCredits={getCredits} />
-              </Suspense>
-              <main className={style.wrap}>
-                {children}
-              </main>
-              {!hideFooter && <Footer current={current} />}
-            </Toast.Provider>
+            <Suspense>
+              <Header current={current} links={links} hasLogin={hasLogin} getCredits={getCredits} />
+            </Suspense>
+            <main className={style.wrap}>
+              {children}
+            </main>
+            {!hideFooter && <Footer current={current} />}
           </DndProvider>
         </BrowserView>
         <MobileView>
           <DndProvider backend={TouchBackend} options={{ ignoreContextMenu: true, enableMouseEvents: true }}>
-            <Toast.Provider>
-              <Suspense>
-                <Header current={current} links={links} hasLogin={hasLogin} getCredits={getCredits} />
-              </Suspense>
-              <main className={style.wrap}>
-                {children}
-              </main>
-              {!hideFooter && <Footer current={current} />}
-            </Toast.Provider>
+            <Suspense>
+              <Header current={current} links={links} hasLogin={hasLogin} getCredits={getCredits} />
+            </Suspense>
+            <main className={style.wrap}>
+              {children}
+            </main>
+            {!hideFooter && <Footer current={current} />}
           </DndProvider>
         </MobileView>
       </SessionProvider >

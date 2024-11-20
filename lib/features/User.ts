@@ -1,6 +1,6 @@
 "use client";
 
-import { SettingsProps, GoogleUser, Profile, Synopsis, PreferencesProps, QueueItemProps, Toast } from "@/perfect-seo-shared-components/data/types";
+import { SettingsProps, GoogleUser, Profile, PreferencesProps, QueueItemProps, ToastProps } from "@/perfect-seo-shared-components/data/types";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
@@ -16,7 +16,7 @@ export type RootState = {
   settings: SettingsProps
   queue: QueueItemProps[],
   loading: LoadingStates[],
-  toasts: Toast[]
+  toasts: ToastProps[]
 };
 
 export type LoadingStates = {
@@ -38,7 +38,9 @@ const initialState: RootState = {
   loading: [
     { loading: false, key: 'user' },
   ],
-  toasts: []
+  toasts: [
+    { title: 'test', 'content': 'test', 'id': '1' }
+  ]
 
 };
 
@@ -189,11 +191,32 @@ export const UserSlice = createSlice({
         loading
       }
     },
+    addToast: (state, action: PayloadAction<ToastProps>) => {
+      let newToast = action.payload;
+      newToast.id = state?.toasts?.length.toString()
+      return {
+        ...state,
+        toasts: [...state.toasts, action.payload]
+      }
+    },
+    removeToast: (state, action: PayloadAction<string>) => {
+      let toasts = state.toasts.filter((toast) => toast.id !== action.payload);
+      return {
+        ...state,
+        toasts
+      }
+    },
+    clearToasts: (state) => {
+      return {
+        ...state,
+        toasts: []
+      }
+    }
   }
 });
 
 // Action creators are generated for each case reducer function
-export const { setUser, setProfile, updatePoints, setLoggedIn, setLoading, setAdmin, setDomainInfo, setDomainAccess, reset, setUserSettings, updateDomainInfo, setQueue, updateQueueItem, clearQueue, setLoader, addQueueItem, removeQueueItem } = UserSlice.actions;
+export const { setUser, setProfile, updatePoints, setLoggedIn, setLoading, setAdmin, setDomainInfo, setDomainAccess, reset, setUserSettings, updateDomainInfo, setQueue, updateQueueItem, clearQueue, setLoader, addQueueItem, removeQueueItem, removeToast, addToast, clearToasts } = UserSlice.actions;
 
 // Selectors
 export const selectUser = (state: RootState) => state?.user;
@@ -209,5 +232,6 @@ export const selectDomains = (state: RootState) => state?.profile?.domain_access
 export const selectQueue = (state: RootState) => state?.queue;
 export const selectLoader = (state: RootState) => state?.loading;
 export const selectDomainInfo = (key: string) => (state: RootState) => state?.domainInfo?.find((domain) => domain.domain_name === key || domain.domain === key);
+export const selectToasts = (state: RootState) => state?.toasts;
 
 export default UserSlice.reducer;

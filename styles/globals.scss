@@ -39,6 +39,7 @@ select {
 
 body {
   background-color: $secondary;
+  position: relative;
 
   .modal-overlay {
     display: none !important;
@@ -5073,4 +5074,46 @@ button.input-group-append {
 .select-input {
   border: var(--bs-border-width) solid var(--bs-border-color) !important;
   border-radius: var(--bs-border-radius);
+}
+
+// .toast {
+//   width: 100%;
+//   display: flex;
+//   min-height: 10px;
+//   z-index: 2000;
+//   min-width: 250px;
+
+//   &s {
+//     z-index: 2000;
+//   }
+// }
+
+.toast-viewport {
+  @include clear-list-properties;
+  margin-right: 8px;
+  z-index: 5001;
+  overflow: visible;
+  bottom: 0;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  padding: 8px;
+  width: 100%;
+}
+
+
+
+[aria-label="Notifications (F8)"] {
+  position: fixed;
+  top: 100dvh;
+  right: 0;
+  z-index: 5000;
+  max-width: 250px;
+  width: 100%;
+  height: 0;
+}
+
+header {
+  max-height: 100px;
+  overflow-y: visible;
 }

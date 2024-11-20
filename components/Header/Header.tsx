@@ -218,9 +218,6 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits, hasQueue }: 
   )
   return (
     <header className={styles.header}>
-      {hasQueue &&
-        <div className="d-none">
-          <Queue /></div>}
       <div className='container-fluid container-xl'>
         <div className='row g-3 d-flex justify-content-between align-items-center'>
           <div className="col d-flex align-items-center justify-content-start">

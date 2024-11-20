@@ -146,7 +146,7 @@ export const UserSlice = createSlice({
     },
     updateQueueItem: (state, action: PayloadAction<QueueItemProps>) => {
       let queue = state.queue.map((item) => {
-        if (item.guid === action.payload.guid) {
+        if (item.id === action.payload.id) {
           return { ...item, ...action.payload };
         }
         else {
@@ -165,7 +165,7 @@ export const UserSlice = createSlice({
       }
     },
     removeQueueItem: (state, action: PayloadAction<QueueItemProps>) => {
-      let queue = state.queue.filter((item) => item.guid !== action.payload.guid);
+      let queue = state.queue.filter((item) => item.id !== action.payload.id);
       return {
         ...state,
         queue

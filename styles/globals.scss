@@ -5136,10 +5136,9 @@ header {
 }
 
 .queue-sidebar {
-  max-width: 300px;
-  padding-right: 15px;
-  width: inherit;
-  max-height: calc(100dvh - 100px);
+  max-width: 290px;
+  width: max-content;
+  max-height: calc(100dvh - 100px - env(safe-area-inset-bottom));
   position: fixed;
   right: 0;
   top: 100px;
@@ -5147,7 +5146,15 @@ header {
   overflow-x: hidden;
   font-size: 14px;
   display: flex;
+  padding-right: env(safe-area-inset-right);
 
+  >.row {
+    margin: 0 !important;
+  }
+
+  &.scrollbar-visible {
+    padding-right: calc(env(safe-area-inset-right) + 15px); // Adjust 15px based on scrollbar width
+  }
 
   h3 {
     font-size: 16px !important;
@@ -5160,6 +5167,8 @@ header {
 
 .max-screen {
   max-width: calc(100vw - calc(100% - 100vw));
+  width: 100%;
+  flex: 1 0 0;
   box-sizing: border-box;
   margin-left: 0 !important;
   margin-right: 0 !important;
@@ -5185,5 +5194,11 @@ header {
     height: calc(100dvh - 100px);
     border-radius: 0 !important;
     padding: 0 !important;
+  }
+}
+
+.queue-footer {
+  @include Desktop {
+    max-width: calc(100vw - 300px - calc(100% - 100vw));
   }
 }

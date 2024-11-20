@@ -12,11 +12,10 @@ import Script from 'next/script';
 import { SessionProvider } from "next-auth/react";
 import { Suspense, useEffect, useMemo } from 'react';
 import "bootstrap-icons/font/bootstrap-icons.css";
-import ToastProvider from '../Toast/ToastProvider';
 import useViewport from '@/perfect-seo-shared-components/hooks/useViewport';
 import classNames from 'classnames';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectShowQueue, setShowQueue } from '@/perfect-seo-shared-components/lib/features/User';
+import { selectIsAdmin, selectShowQueue, setShowQueue } from '@/perfect-seo-shared-components/lib/features/User';
 import Queue from '@/components/Queue/Queue';
 import { usePathname } from 'next/navigation';
 
@@ -37,6 +36,7 @@ interface DnDLayoutProps extends React.HTMLProps<HTMLDivElement> {
 const DnDLayout = ({ children, hideFooter, current, links, hasLogin = true, getCredits = false, hasQueue }: DnDLayoutProps) => {
   const { desktop } = useViewport();
   const dispatch = useDispatch();
+  const isAdmin = useSelector(selectIsAdmin)
   const globalShowQueue = useSelector(selectShowQueue)
 
   const showQueue = useMemo(() => {
@@ -45,8 +45,8 @@ const DnDLayout = ({ children, hideFooter, current, links, hasLogin = true, getC
     , [desktop, globalShowQueue])
 
   const mainClassNames = classNames(style.wrap, {
-    'd-flex row g-0 max-screen': desktop && hasQueue,
-    'queue-open': desktop && hasQueue && showQueue
+    'd-flex row g-0 max-screen p-0 m-0': desktop && hasQueue && isAdmin,
+    'queue-open': desktop && hasQueue && showQueue && isAdmin
   }
   )
 
@@ -67,7 +67,7 @@ const DnDLayout = ({ children, hideFooter, current, links, hasLogin = true, getC
             </Suspense>
             <main className={mainClassNames}>
               <div className='col'>{children}</div>
-              {(hasQueue && desktop && pathname !== '/queue') &&
+              {(hasQueue && desktop && pathname !== '/queue' && isAdmin) &&
                 <Queue sidebar />}
             </main>
             {!hideFooter && <Footer current={current} />}

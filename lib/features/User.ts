@@ -17,6 +17,7 @@ export type RootState = {
   queue: QueueItemProps[],
   loading: LoadingStates[],
   toasts: ToastProps[]
+  show_queue: boolean;
 };
 
 export type LoadingStates = {
@@ -38,7 +39,8 @@ const initialState: RootState = {
   loading: [
     { loading: false, key: 'user' },
   ],
-  toasts: []
+  toasts: [],
+  show_queue: false
 
 };
 
@@ -212,12 +214,18 @@ export const UserSlice = createSlice({
         ...state,
         toasts: []
       }
+    },
+    setShowQueue: (state, action: PayloadAction<boolean>) => {
+      return {
+        ...state,
+        show_queue: action.payload
+      }
     }
   }
 });
 
 // Action creators are generated for each case reducer function
-export const { setUser, setProfile, updatePoints, setLoggedIn, setLoading, setAdmin, setDomainInfo, setDomainAccess, reset, setUserSettings, updateDomainInfo, setQueue, updateQueueItem, clearQueue, setLoader, addQueueItem, removeQueueItem, removeToast, addToast, clearToasts } = UserSlice.actions;
+export const { setUser, setProfile, updatePoints, setLoggedIn, setLoading, setAdmin, setDomainInfo, setDomainAccess, reset, setUserSettings, updateDomainInfo, setQueue, updateQueueItem, clearQueue, setLoader, addQueueItem, removeQueueItem, removeToast, addToast, clearToasts, setShowQueue } = UserSlice.actions;
 
 // Selectors
 export const selectUser = (state: RootState) => state?.user;
@@ -234,5 +242,6 @@ export const selectQueue = (state: RootState) => state?.queue;
 export const selectLoader = (state: RootState) => state?.loading;
 export const selectDomainInfo = (key: string) => (state: RootState) => state?.domainInfo?.find((domain) => domain.domain_name === key || domain.domain === key);
 export const selectToasts = (state: RootState) => state?.toasts;
+export const selectShowQueue = (state: RootState) => state?.show_queue;
 
 export default UserSlice.reducer;

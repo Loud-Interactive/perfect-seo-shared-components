@@ -10,7 +10,7 @@ import Header from '../Header/Header';
 import style from './DnDLayout.module.scss';
 import Script from 'next/script';
 import { SessionProvider } from "next-auth/react";
-import { Suspense, useEffect } from 'react';
+import { Suspense, useEffect, useMemo } from 'react';
 import "bootstrap-icons/font/bootstrap-icons.css";
 import ToastProvider from '../Toast/ToastProvider';
 import useViewport from '@/perfect-seo-shared-components/hooks/useViewport';
@@ -37,7 +37,12 @@ interface DnDLayoutProps extends React.HTMLProps<HTMLDivElement> {
 const DnDLayout = ({ children, hideFooter, current, links, hasLogin = true, getCredits = false, hasQueue }: DnDLayoutProps) => {
   const { desktop } = useViewport();
   const dispatch = useDispatch();
-  const showQueue = (desktop && useSelector(selectShowQueue))
+  const globalShowQueue = useSelector(selectShowQueue)
+
+  const showQueue = useMemo(() => {
+    return !(desktop && globalShowQueue)
+  }
+    , [desktop, globalShowQueue])
 
   const mainClassNames = classNames(style.wrap, {
     'd-flex row g-0 max-screen': desktop && hasQueue,

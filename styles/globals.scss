@@ -5116,6 +5116,12 @@ button.input-group-append {
   height: 0;
 }
 
+main {
+  @include TabletUp {
+    padding-top: 100px;
+  }
+}
+
 header {
   overflow-y: visible;
 

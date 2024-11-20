@@ -40,7 +40,7 @@ const DnDLayout = ({ children, hideFooter, current, links, hasLogin = true, getC
   const globalShowQueue = useSelector(selectShowQueue)
 
   const showQueue = useMemo(() => {
-    return !(desktop && globalShowQueue)
+    return (desktop && globalShowQueue)
   }
     , [desktop, globalShowQueue])
 

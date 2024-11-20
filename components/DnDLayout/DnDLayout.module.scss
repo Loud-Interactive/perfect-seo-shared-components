@@ -1,3 +1,9 @@
+@use 'common' as *;
+
 .wrap {
   margin: 0;
+
+  @include TabletUp {
+    margin-top: 100px;
+  }
 }

@@ -6,10 +6,15 @@ import { useDispatch } from "react-redux";
 const ToastItem = ({ title, content, ...props }) => {
   const dispatch = useDispatch();
   const clickHandler = (e) => {
-    dispatch(removeToast(props.id))
+
+  }
+  const changeHandler = (open) => {
+    if (!open) {
+      dispatch(removeToast(props.id))
+    }
   }
   return (
-    <ToastPrimitive.Root {...props}>
+    <ToastPrimitive.Root {...props} onOpenChange={changeHandler}>
       <div className="bg-dark card toast-card w-100">
         <div className="p-1 px-2 row d-flex align-items-center">
           <div className="col-auto">

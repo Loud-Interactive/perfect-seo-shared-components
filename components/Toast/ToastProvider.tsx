@@ -12,7 +12,7 @@ const ToastProvider = () => {
     console.log(toasts)
   }, [toasts])
   return (
-    <Toast.Provider duration={1000000}>
+    <Toast.Provider>
       <Toast.Viewport className="toast-viewport">
         {toasts?.length > 0 && toasts.map((toast, index) => (
           <ToastItem key={index} {...toast} />

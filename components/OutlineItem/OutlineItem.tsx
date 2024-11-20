@@ -131,12 +131,11 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
   }
   const regenerateOutlineClickHandler = () => {
     setLoading(true)
-    return dispatch(addToast({ title: "Regenerating Outline", type: "info", content: "Regenerating outline, please wait" }))
     regenerateOutline(localOutline?.guid, { email: email, client_domain: localOutline?.client_domain, client_name: localOutline?.brand_name, post_title: localOutline?.post_title, content_plan_guid: localOutline?.content_plan_guid })
       .then(res => {
+        dispatch(addToast({ title: "Regenerating Outline", type: "info", content: `Regenerating outline for ${localOutline?.post_title || localOutline?.client_domain}` }))
         setStatus("Regenerating")
         setLoading(false)
-        console.log(res.data)
       })
   }
   const addToQueue = () => {

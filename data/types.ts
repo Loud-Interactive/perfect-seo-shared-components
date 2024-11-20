@@ -693,5 +693,5 @@ export interface ToastProps {
   title: string
   content: string
   type?: 'success' | 'error' | 'info' | 'warning'
-  timeout?: number
+  duration?: number
 }

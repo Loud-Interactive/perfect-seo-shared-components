@@ -39,7 +39,7 @@ const initialState: RootState = {
     { loading: false, key: 'user' },
   ],
   toasts: [
-    { title: 'test', 'content': 'test', 'id': '1' }
+    { title: 'test', 'content': 'test', 'id': '1', duration: 10000 }
   ]
 
 };
@@ -194,6 +194,9 @@ export const UserSlice = createSlice({
     addToast: (state, action: PayloadAction<ToastProps>) => {
       let newToast = action.payload;
       newToast.id = state?.toasts?.length.toString()
+      if (!newToast?.duration) {
+        newToast.duration = 3000
+      }
       return {
         ...state,
         toasts: [...state.toasts, action.payload]

@@ -1,4 +1,3 @@
-// your-toast.jsx
 import { removeToast } from "@/perfect-seo-shared-components/lib/features/User";
 import * as ToastPrimitive from "@radix-ui/react-toast";
 import { useDispatch } from "react-redux";
@@ -15,7 +14,7 @@ const ToastItem = ({ title, content, ...props }) => {
   }
   return (
     <ToastPrimitive.Root {...props} onOpenChange={changeHandler}>
-      <div className="bg-dark card toast-card w-100">
+      <div className="bg-dark card toast-card w-100 mt-2">
         <div className="p-1 px-2 row d-flex align-items-center">
           <div className="col-auto">
           </div>

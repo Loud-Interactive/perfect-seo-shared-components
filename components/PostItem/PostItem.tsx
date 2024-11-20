@@ -9,11 +9,12 @@ import * as Modal from '@/perfect-seo-shared-components/components/Modal/Modal'
 import { urlSanitization } from "@/perfect-seo-shared-components/utils/conversion-utilities"
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { useSelector } from "react-redux"
-import { selectEmail } from "@/perfect-seo-shared-components/lib/features/User"
+import { selectEmail, selectIsAdmin } from "@/perfect-seo-shared-components/lib/features/User"
 import CreateContentModal from "../CreateContentModal/CreateContentModal"
 import { createClient } from "@/perfect-seo-shared-components/utils/supabase/client"
 import en from '@/assets/en.json'
 import RegeneratePostModal, { GenerateTypes } from "../RegeneratePostModal/RegeneratePostModal"
+import { QueueItemProps } from "@/perfect-seo-shared-components/data/types"
 
 interface PostItemProps {
   post: any,
@@ -35,6 +36,7 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
   const [regenerateError, setRegerateError] = useState(null)
   const [editOutline, setEditOutline] = useState(false)
   const [showRegeneratePost, setShowRegeneratePost] = useState(false)
+  const isAdmin = useSelector(selectIsAdmin)
 
   const liveUrlUpdate = () => {
     setSaved(false)
@@ -183,6 +185,23 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
       })
   }
 
+  const addToQueue = () => {
+    let newObject: QueueItemProps = {
+      type: 'post',
+      domain: post?.client_domain,
+      guid: post?.content_plan_outline_guid,
+      email,
+      isComplete: status === 'Finished' ? true : false,
+    }
+    supabase
+      .from('user_queues')
+      .insert(newObject)
+      .select("*")
+      .then(res => {
+        console.log(res.data)
+      })
+  }
+
   const regeneratePostHandler = (receiving_email, writing_language) => {
     setRegerateError(null)
     return regeneratePost(localPost?.content_plan_outline_guid, { receiving_email: receiving_email, email, writing_language }).then(res => {
@@ -263,7 +282,9 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
 
                 <DropdownMenu.Portal>
                   <DropdownMenu.Content align="end" className="bg-primary z-100 card">
-
+                    {isAdmin && <DropdownMenu.Item>
+                      <button className="btn btn-transparent w-100" onClick={addToQueue}>Add to Queue</button>
+                    </DropdownMenu.Item>}
                     {(localPost?.content_plan_outline_guid && localPost?.content_plan_guid) &&
                       <DropdownMenu.Item>
                         <button className="btn btn-transparent w-100" onClick={handleEditOutline}>

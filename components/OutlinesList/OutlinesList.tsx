@@ -10,7 +10,7 @@ import { useSelector } from 'react-redux'
 import { RootState } from '@/perfect-seo-shared-components/lib/store'
 import OutlineItem from '../OutlineItem/OutlineItem'
 import usePaginator from '@/perfect-seo-shared-components/hooks/usePaginator'
-import { selectEmail } from '@/perfect-seo-shared-components/lib/features/User'
+import { selectEmail, selectIsAdmin } from '@/perfect-seo-shared-components/lib/features/User'
 
 export interface OutlinesListProps {
   domain_name: string;

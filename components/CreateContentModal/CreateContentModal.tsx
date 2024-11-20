@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import styles from "./CreateContentModal.module.scss";
 import OutlineRow from "./OutlineRow/OutlineRow";
-import { OutlineRowProps } from '@/perfect-seo-shared-components/data/types'
+import { OutlineRowProps, QueueItemProps } from '@/perfect-seo-shared-components/data/types'
 import useForm from "@/perfect-seo-shared-components/hooks/useForm";
 import Form from "@/perfect-seo-shared-components/components/Form/Form";
 import * as Modal from "@/perfect-seo-shared-components/components/Modal/Modal";
@@ -16,16 +16,19 @@ import { createPost, regenerateOutline } from "@/perfect-seo-shared-components/s
 import Loader from "@/perfect-seo-shared-components/components/Loader/Loader";
 import { selectEmail, selectPoints } from "@/perfect-seo-shared-components/lib/features/User";
 import RegeneratePostModal, { GenerateTypes } from "../RegeneratePostModal/RegeneratePostModal";
+import { createClient } from "@/perfect-seo-shared-components/utils/supabase/client";
 
 interface CreateContentModalProps {
   data: any;
   advancedData?: any;
   onClose: () => void;
   contentPlan?: any;
-  titleChange: (e: any, title: string, index: number) => any;
+  titleChange?: (e: any, title: string, index: number) => any;
   index?: number;
   isAuthorized: boolean;
   standalone?: boolean;
+  track?: boolean;
+  generatePost?: boolean
 }
 
 const CreateContentModal = ({
@@ -36,7 +39,9 @@ const CreateContentModal = ({
   isAuthorized,
   index,
   advancedData,
-  standalone
+  standalone,
+  generatePost,
+  track
 }: CreateContentModalProps) => {
   const [loading, setLoading] = useState(true);
   const [tableData, setTableData] = useState<OutlineRowProps[]>(null);
@@ -47,11 +52,11 @@ const CreateContentModal = ({
   const [postTitle, setPostTitle] = useState();
   const titleForm = useForm();
   const { phone, portrait } = useViewport();
-  const [creatingPost, setCreatingPost] = useState(false);
+  const [creatingPost, setCreatingPost] = useState(generatePost || false);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-
+  const supabase = createClient()
   const router = useRouter();
   const points = useSelector(selectPoints)
   const email = useSelector(selectEmail)
@@ -92,17 +97,20 @@ const CreateContentModal = ({
 
   const titleChangeHandler = (e) => {
     e.preventDefault();
-    setSaving(true);
-    titleChange(null, titleForm.getState.title, index)
-      .then(res => {
-        setSaved(true);
-        setSaving(false);
-      })
-      .catch(err => {
-        setSaving(false)
 
-      }
-      )
+    if (titleChange) {
+      setSaving(true);
+      titleChange(null, titleForm.getState.title, index)
+        .then(res => {
+          setSaved(true);
+          setSaving(false);
+        })
+        .catch(err => {
+          setSaving(false)
+
+        }
+        )
+    }
   }
 
   const TitleSaveButton = () => {
@@ -289,18 +297,19 @@ const CreateContentModal = ({
 
   const saveHandler = (click?: boolean) => {
     if (!loading) {
+      console.log(contentPlan)
       let reqBody: SaveContentPost = {
         post_title: postTitle,
         outline_details: { sections: [...convertToTableData(form.getState)] },
-        content_plan_guid: contentPlan.guid,
-        client_name: contentPlan.brand_name,
-        client_domain: contentPlan?.domain_name || contentPlan?.client_domain,
+        content_plan_guid: contentPlan?.guid || data?.content_plan_guid,
+        client_name: contentPlan?.brand_name || contentPlan?.client_name || data?.client_name || data?.brand_name || data?.client_name,
+        client_domain: contentPlan?.domain_name || contentPlan?.client_domain || data?.client_domain || data?.domain,
       };
       if (outlineGUID !== contentPlan?.guid) {
         reqBody.guid = outlineGUID;
       }
       if (reqBody?.outline_details?.sections?.length === 0) {
-        return;
+        return console.log('No data to save', reqBody.outline_details)
       }
       saveContentPlanPost(reqBody)
         .then((res) => {
@@ -344,6 +353,27 @@ const CreateContentModal = ({
 
     setSubmitted(true);
     return createPost(reqBody)
+      .then((res) => {
+        if (res.data?.uuid) {
+          if (track) { }
+
+          let newObject: QueueItemProps = {
+            type: 'post',
+            domain: contentPlan.domain_name || contentPlan.client_domain,
+            guid: outlineGUID,
+            email,
+            isComplete: false,
+          }
+          supabase
+            .from('user_queues')
+            .insert(newObject)
+            .select("*")
+            .then(res => {
+              console.log(res.data)
+            })
+        }
+        return res
+      })
   };
 
   const regenerateClickHandler = () => {

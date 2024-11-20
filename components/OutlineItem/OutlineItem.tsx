@@ -10,7 +10,9 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import RegeneratePostModal, { GenerateTypes } from "../RegeneratePostModal/RegeneratePostModal";
 import { GenerateContentPost } from "@/perfect-seo-shared-components/data/requestTypes";
 import { useSelector } from "react-redux";
-import { selectEmail } from "@/perfect-seo-shared-components/lib/features/User";
+import { selectEmail, selectIsAdmin } from "@/perfect-seo-shared-components/lib/features/User";
+import { QueueItemProps } from "@/perfect-seo-shared-components/data/types";
+import { createClient } from "@/perfect-seo-shared-components/utils/supabase/client";
 
 const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
   const [status, setStatus] = useState(outline?.status)
@@ -19,8 +21,9 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
   const [editModal, setEditModal] = useState(false)
   const [completed, setCompleted] = useState(false)
   const [showGenerate, setShowGenerate] = useState(false)
-
+  const supabase = createClient()
   const email = useSelector(selectEmail)
+  const isAdmin = useSelector(selectIsAdmin)
 
   useEffect(() => {
     if (outline?.status !== status) {
@@ -126,6 +129,22 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
         console.log(err)
       })
   }
+  const addToQueue = () => {
+    let newObject: QueueItemProps = {
+      type: 'outline',
+      domain: localOutline?.client_domain,
+      guid: localOutline?.guid,
+      email,
+      isComplete: status === 'Finished' ? true : false,
+    }
+    supabase
+      .from('user_queues')
+      .insert(newObject)
+      .select("*")
+      .then(res => {
+        console.log(res.data)
+      })
+  }
 
   const handleTitleChange = (e, title) => {
     e?.preventDefault()
@@ -181,6 +200,9 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
                   </DropdownMenu.Trigger>
                   <DropdownMenu.Portal>
                     <DropdownMenu.Content align="end" className="bg-warning z-100 card">
+                      {isAdmin && <DropdownMenu.Item>
+                        <button className="btn btn-transparent text-black" onClick={addToQueue}>Add to Queue</button>
+                      </DropdownMenu.Item>}
                       {localOutline?.content_plan_guid && <DropdownMenu.Item>
                         <Link
                           href={`https://contentPerfect.ai/dashboard/${localOutline?.content_plan_guid}`}

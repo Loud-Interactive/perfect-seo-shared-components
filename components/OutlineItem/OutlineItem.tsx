@@ -132,12 +132,12 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
   const regenerateOutlineClickHandler = () => {
     setLoading(true)
 
-    // regenerateOutline(localOutline?.guid, { email: email, client_domain: localOutline?.client_domain, client_name: localOutline?.brand_name, post_title: localOutline?.post_title, content_plan_guid: localOutline?.content_plan_guid })
-    //   .then(res => {
-    //     setStatus("Regenerating")
-    //     setLoading(false)
-    //     console.log(res.data)
-    //   })
+    regenerateOutline(localOutline?.guid, { email: email, client_domain: localOutline?.client_domain, client_name: localOutline?.brand_name, post_title: localOutline?.post_title, content_plan_guid: localOutline?.content_plan_guid })
+      .then(res => {
+        setStatus("Regenerating")
+        setLoading(false)
+        console.log(res.data)
+      })
   }
   const addToQueue = () => {
     let newObject: QueueItemProps = {

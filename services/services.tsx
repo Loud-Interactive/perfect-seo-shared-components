@@ -145,12 +145,16 @@ export const regenerateOutline = (
   content_plan_outline_guid,
   other?
 ) => {
-  let reqObj = {
-    content_plan_outline_guid: content_plan_outline_guid,
+  let reqObj: any = {
+    guid: content_plan_outline_guid,
   }
 
   if (other) {
     reqObj = { ...reqObj, ...other }
+  }
+  if (reqObj?.domain) {
+    reqObj.client_domain = reqObj?.domain
+    delete reqObj?.domain
   }
   return axiosInstance.post(
     `https://planperfectapi.replit.app/regenerate_outline`,

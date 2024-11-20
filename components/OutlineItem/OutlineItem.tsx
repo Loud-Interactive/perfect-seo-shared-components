@@ -21,6 +21,7 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
   const [editModal, setEditModal] = useState(false)
   const [completed, setCompleted] = useState(false)
   const [showGenerate, setShowGenerate] = useState(false)
+  const [loading, setLoading] = useState(false)
   const supabase = createClient()
   const email = useSelector(selectEmail)
   const isAdmin = useSelector(selectIsAdmin)
@@ -129,6 +130,15 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
         console.log(err)
       })
   }
+  const regenerateOutlineClickHandler = () => {
+    setLoading(true)
+    regenerateOutline(localOutline?.guid, { email: email, client_domain: localOutline?.client_domain, client_name: localOutline?.brand_name, post_title: localOutline?.post_title, content_plan_guid: localOutline?.content_plan_guid })
+      .then(res => {
+        setStatus("Regenerating")
+        setLoading(false)
+        console.log(res.data)
+      })
+  }
   const addToQueue = () => {
     let newObject: QueueItemProps = {
       type: 'outline',
@@ -212,17 +222,17 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
                           View Content Plan
                         </Link>
                       </DropdownMenu.Item>}
-                      {/* <DropdownMenu.Item>
+                      <DropdownMenu.Item>
                         <button
                           className="btn btn-transparent text-black"
                           onClick={(e) => {
                             e.preventDefault();
-                            regenerateClickHandler();
+                            regenerateOutlineClickHandler();
                           }}
                         >
                           Regenerate Outline
                         </button>
-                      </DropdownMenu.Item> */}
+                      </DropdownMenu.Item>
                       <DropdownMenu.Item>
                         <button
                           className="btn btn-transparent text-black"

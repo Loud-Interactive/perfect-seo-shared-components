@@ -279,11 +279,11 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
                 <DropdownMenu.Trigger className="btn btn-warning btn-standard d-flex align-items-center justify-content-center">
                   <i className="bi bi-three-dots-vertical" />
                 </DropdownMenu.Trigger>
-
+                4
                 <DropdownMenu.Portal>
                   <DropdownMenu.Content align="end" className="bg-primary z-100 card">
                     {/* {isAdmin && <DropdownMenu.Item>
-                      <button className="btn btn-transparent w-100" onClick={addToQueue}>Add to Queue</button>
+                      <button className="btn btn-transparent w-100" onClick={addToQueue}><i className="material-icons me-2">queue</i>Add to Queue</button>
                     </DropdownMenu.Item>} */}
                     {(localPost?.content_plan_outline_guid && localPost?.content_plan_guid) &&
                       <DropdownMenu.Item>

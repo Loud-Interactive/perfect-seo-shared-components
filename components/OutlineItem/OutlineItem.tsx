@@ -201,7 +201,7 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
                   <DropdownMenu.Portal>
                     <DropdownMenu.Content align="end" className="bg-warning z-100 card">
                       {/* {isAdmin && <DropdownMenu.Item>
-                        <button className="btn btn-transparent text-black" onClick={addToQueue}>Add to Queue</button>
+                        <button className="btn btn-transparent text-black" onClick={addToQueue}><i className="material-icons me-2">queue</i>Add to Queue</button>
                       </DropdownMenu.Item>} */}
                       {localOutline?.content_plan_guid && <DropdownMenu.Item>
                         <Link

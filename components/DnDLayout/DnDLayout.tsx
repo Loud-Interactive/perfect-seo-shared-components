@@ -24,10 +24,11 @@ interface DnDLayoutProps extends React.HTMLProps<HTMLDivElement> {
   links?: Links[];
   hasLogin?: boolean;
   getCredits?: boolean;
+  hasQueue?: boolean;
 }
 
 // Main DnDLayout component
-const DnDLayout = ({ children, hideFooter, current, links, hasLogin = true, getCredits = false }: DnDLayoutProps) => {
+const DnDLayout = ({ children, hideFooter, current, links, hasLogin = true, getCredits = false, hasQueue }: DnDLayoutProps) => {
   return (
     <>
       <SessionProvider refetchOnWindowFocus refetchInterval={20 * 60}>
@@ -35,7 +36,7 @@ const DnDLayout = ({ children, hideFooter, current, links, hasLogin = true, getC
         <BrowserView>
           <DndProvider backend={HTML5Backend}>
             <Suspense>
-              <Header current={current} links={links} hasLogin={hasLogin} getCredits={getCredits} />
+              <Header current={current} links={links} hasLogin={hasLogin} getCredits={getCredits} hasQueue />
             </Suspense>
             <main className={style.wrap}>
               {children}
@@ -46,7 +47,7 @@ const DnDLayout = ({ children, hideFooter, current, links, hasLogin = true, getC
         <MobileView>
           <DndProvider backend={TouchBackend} options={{ ignoreContextMenu: true, enableMouseEvents: true }}>
             <Suspense>
-              <Header current={current} links={links} hasLogin={hasLogin} getCredits={getCredits} />
+              <Header current={current} links={links} hasLogin={hasLogin} getCredits={getCredits} hasQueue />
             </Suspense>
             <main className={style.wrap}>
               {children}

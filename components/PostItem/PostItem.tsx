@@ -8,8 +8,8 @@ import TypeWriterText from "../TypeWriterText/TypeWriterText"
 import * as Modal from '@/perfect-seo-shared-components/components/Modal/Modal'
 import { urlSanitization } from "@/perfect-seo-shared-components/utils/conversion-utilities"
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import { useSelector } from "react-redux"
-import { selectEmail, selectIsAdmin } from "@/perfect-seo-shared-components/lib/features/User"
+import { useDispatch, useSelector } from "react-redux"
+import { addToast, selectEmail, selectIsAdmin } from "@/perfect-seo-shared-components/lib/features/User"
 import CreateContentModal from "../CreateContentModal/CreateContentModal"
 import { createClient } from "@/perfect-seo-shared-components/utils/supabase/client"
 import en from '@/assets/en.json'
@@ -37,7 +37,7 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
   const [editOutline, setEditOutline] = useState(false)
   const [showRegeneratePost, setShowRegeneratePost] = useState(false)
   const isAdmin = useSelector(selectIsAdmin)
-
+  const dispatch = useDispatch()
   const liveUrlUpdate = () => {
     setSaved(false)
     setUrlError(null)
@@ -198,7 +198,7 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
       .insert(newObject)
       .select("*")
       .then(res => {
-        console.log(res.data)
+        dispatch(addToast({ title: "Post Added to Queue", type: "info", content: `${localPost?.title || localPost?.post_title || localPost?.content_plan_outline_title} added to Queue` }))
       })
   }
 
@@ -279,12 +279,11 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
                 <DropdownMenu.Trigger className="btn btn-warning btn-standard d-flex align-items-center justify-content-center">
                   <i className="bi bi-three-dots-vertical" />
                 </DropdownMenu.Trigger>
-                4
                 <DropdownMenu.Portal>
                   <DropdownMenu.Content align="end" className="bg-primary z-100 card">
-                    {/* {isAdmin && <DropdownMenu.Item>
+                    {isAdmin && <DropdownMenu.Item>
                       <button className="btn btn-transparent w-100" onClick={addToQueue}><i className="material-icons me-2">queue</i>Add to Queue</button>
-                    </DropdownMenu.Item>} */}
+                    </DropdownMenu.Item>}
                     {(localPost?.content_plan_outline_guid && localPost?.content_plan_guid) &&
                       <DropdownMenu.Item>
                         <button className="btn btn-transparent w-100" onClick={handleEditOutline}>

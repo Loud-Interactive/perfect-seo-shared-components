@@ -7,9 +7,9 @@ import * as Modal from '@/perfect-seo-shared-components/components/Modal/Modal'
 import moment from 'moment-timezone'
 import useViewport from '@/perfect-seo-shared-components/hooks/useViewport'
 import TypeWriterText from '@/perfect-seo-shared-components/components/TypeWriterText/TypeWriterText'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import usePaginator from '@/perfect-seo-shared-components/hooks/usePaginator'
-import { selectEmail, selectIsAdmin } from '@/perfect-seo-shared-components/lib/features/User'
+import { addToast, selectEmail, selectIsAdmin } from '@/perfect-seo-shared-components/lib/features/User'
 import LoadSpinner from '../LoadSpinner/LoadSpinner'
 import ContentPlanForm from '@/perfect-seo-shared-components/components/ContentPlanForm/ContentPlanForm'
 import { createClient } from '@/perfect-seo-shared-components/utils/supabase/client'
@@ -30,6 +30,7 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
   const email = useSelector(selectEmail)
   const isAdmin = useSelector(selectIsAdmin)
   const router = useRouter();
+  const dispatch = useDispatch()
 
   const paginator = usePaginator()
 
@@ -78,7 +79,6 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
   }
 
   const addToQueue = (obj) => {
-    console.log(obj)
     let newObject: QueueItemProps = {
       type: 'contentPlan',
       domain: obj?.domain_name,
@@ -91,7 +91,7 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
       .insert(newObject)
       .select("*")
       .then(res => {
-        console.log(res.data)
+        dispatch(addToast({ title: "Content Plan Added Content to Queue", type: "info", content: `${obj?.target_keyword} Content Plan for ${obj?.domain_name} added to Queue` }))
       })
   }
 
@@ -164,9 +164,9 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
           <button className='btn btn-primary d-flex align-items-center justify-content-center' onClick={(e) => { e.preventDefault(); duplicateClickHandler(obj) }} title={`Duplicate: ${obj.guid}`}>
             <i className="bi bi-clipboard-plus-fill" />
           </button>
-          {/* {isAdmin && <button className='btn btn-primary d-flex align-items-center justify-content-center' onClick={(e) => { e.preventDefault(); addToQueue(obj) }} title={`Add to Queue: ${obj.guid}`}>
+          {isAdmin && <button className='btn btn-primary d-flex align-items-center justify-content-center' onClick={(e) => { e.preventDefault(); addToQueue(obj) }} title={`Add to Queue: ${obj.guid}`}>
             <i className="material-icons">queue</i>
-          </button>} */}
+          </button>}
           <button className='btn btn-warning d-flex align-items-center justify-content-center' onClick={deleteClickHandler} title={`View GUID: ${obj.guid}`}><i className="bi bi-trash pt-1" /></button>
         </div>
       </div>

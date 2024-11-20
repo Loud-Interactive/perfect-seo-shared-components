@@ -1,7 +1,7 @@
 'use client'
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from 'react'
-import { reset, selectDomainsInfo, selectIsLoggedIn, selectProfile, selectUser, setAdmin, setDomains, setLoading, setLoggedIn, setProfile, setUser, setUserSettings } from '@/perfect-seo-shared-components/lib/features/User'
+import { reset, selectDomainsInfo, selectIsLoggedIn, selectProfile, selectUser, setAdmin, setDomainInfo, setLoading, setLoggedIn, setProfile, setUser, setUserSettings } from '@/perfect-seo-shared-components/lib/features/User'
 import { createClient } from '@/perfect-seo-shared-components/utils/supabase/client'
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
@@ -252,11 +252,11 @@ const useGoogleUser = (appKey) => {
             return result?.value?.data
           }
           )
-          dispatch(setDomains(domains))
+          dispatch(setDomainInfo(domains))
         }
         )
     }
-  }, [profile?.domain_access])
+  }, [profile?.domain_access, domainsInfo])
 
   // checks user domains 
   const checkUserDomains = async () => {

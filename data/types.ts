@@ -329,7 +329,12 @@ export interface PreferencesProps extends
   CMSProps,
   LandingPageFields,
   AIPRomptProps,
-  OtherFieldsProps { }
+  OtherFieldsProps {
+  brand_name?: string,
+  domain_name?: string
+  domain?: string
+  guid?: string
+}
 
 export interface TieredPreferencesProps {
   'company-info': BusinessInfoProps,

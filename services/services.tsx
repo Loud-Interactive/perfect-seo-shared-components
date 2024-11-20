@@ -237,6 +237,10 @@ export const getBatchStatus = (guids: string[]) => {
     guids,
   );
 };
+
+export const getSpecificPairs = (domain: string, guids: string[]) => {
+  return axiosInstance.post(`https://pp-api.replit.app/pairs/${domain}/specific`, guids);
+}
 export const getPostsByDomain = (domain: string, pagination?: PaginationRequest) => {
   let url = `https://content-status.replit.app/content/domain/${domain}`;
   if (pagination) {

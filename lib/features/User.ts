@@ -1,6 +1,6 @@
 "use client";
 
-import { SettingsProps, GoogleUser, Profile } from "@/perfect-seo-shared-components/data/types";
+import { SettingsProps, GoogleUser, Profile, Synopsis, PreferencesProps, QueueItemProps } from "@/perfect-seo-shared-components/data/types";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
@@ -10,10 +10,18 @@ export type RootState = {
   isLoading: boolean,
   isLoggedIn: boolean,
   isAdmin: boolean,
-  domainsInfo: any[],
+  domainAccessInfo: any[],
+  domainInfo: Partial<PreferencesProps>[]
   profile: Profile,
   settings: SettingsProps
+  queue: QueueItemProps[],
+  loading: LoadingStates[]
 };
+
+export type LoadingStates = {
+  loading: boolean;
+  key: string
+}
 
 const initialState: RootState = {
   user: null,
@@ -23,7 +31,13 @@ const initialState: RootState = {
   isAdmin: false,
   profile: null,
   settings: null,
-  domainsInfo: null
+  domainAccessInfo: [],
+  domainInfo: [],
+  queue: [],
+  loading: [
+    { loading: false, key: 'user' },
+  ]
+
 };
 
 export const UserSlice = createSlice({
@@ -72,20 +86,112 @@ export const UserSlice = createSlice({
         isAdmin: action.payload,
       };
     },
-    setDomains: (state, action: PayloadAction<any[]>) => {
+    setDomainAccess: (state, action: PayloadAction<any[]>) => {
       return {
         ...state,
-        domainsInfo: action.payload,
+        domainAccessInfo: action.payload,
       };
     },
     reset: () => {
       return { ...initialState, isLoading: false, isLoggedIn: false };
-    }
+    },
+    setDomainInfo: (state, action: PayloadAction<Partial<PreferencesProps>[]>) => {
+      return {
+        ...state,
+        domainInfo: action.payload
+      }
+    },
+    updateDomainInfo: (state, action: PayloadAction<Partial<PreferencesProps>>) => {
+      let preferences = action.payload;
+      if (state?.domainInfo?.length === 0) {
+        return {
+          ...state,
+          domainInfo: [preferences]
+        }
+      }
+      else {
+        let domainExists = state.domainInfo.find((domain) => domain.domain_name === preferences.domain_name || domain.domain_name === preferences?.domain || action?.payload?.domain || action?.payload?.guid === domain.guid);
+        if (!domainExists) {
+          console.log("it doesnt exist")
+          return {
+            ...state,
+            domainInfo: [...state.domainInfo, preferences]
+          }
+        }
+        else {
+          let domainInfo = state.domainInfo.filter((domain) => {
+            if (domain.domain_name === preferences.domain_name || domain.domain_name === preferences?.domain || action?.payload?.domain || action?.payload?.guid === domain.guid) {
+              return { ...domain, ...preferences }
+            }
+            else {
+              return domain;
+            }
+          });
+          return {
+            ...state,
+            domainInfo
+          }
+        }
+      }
+    },
+    setQueue: (state, action: PayloadAction<QueueItemProps[]>) => {
+      return {
+        ...state,
+        queue: action.payload,
+      }
+    },
+    updateQueueItem: (state, action: PayloadAction<QueueItemProps>) => {
+      let queue = state.queue.map((item) => {
+        if (item.guid === action.payload.guid) {
+          return { ...item, ...action.payload };
+        }
+        else {
+          return item;
+        }
+      });
+      return {
+        ...state,
+        queue
+      }
+    },
+    addQueueItem: (state, action: PayloadAction<QueueItemProps>) => {
+      return {
+        ...state,
+        queue: [...state.queue, action.payload]
+      }
+    },
+    removeQueueItem: (state, action: PayloadAction<QueueItemProps>) => {
+      let queue = state.queue.filter((item) => item.guid !== action.payload.guid);
+      return {
+        ...state,
+        queue
+      }
+    },
+    clearQueue: (state) => {
+      return {
+        ...state,
+        queue: []
+      }
+    },
+    setLoader: (state, action: PayloadAction<LoadingStates>) => {
+      let loading = state.loading.map((item) => {
+        if (item.key === action.payload.key) {
+          return { ...item, loading: action.payload.loading }
+        }
+        else {
+          return item;
+        }
+      });
+      return {
+        ...state,
+        loading
+      }
+    },
   }
 });
 
 // Action creators are generated for each case reducer function
-export const { setUser, setProfile, updatePoints, setLoggedIn, setLoading, setAdmin, setDomains, reset, setUserSettings } = UserSlice.actions;
+export const { setUser, setProfile, updatePoints, setLoggedIn, setLoading, setAdmin, setDomainInfo, setDomainAccess, reset, setUserSettings, updateDomainInfo, setQueue, updateQueueItem, clearQueue, setLoader, addQueueItem, removeQueueItem } = UserSlice.actions;
 
 // Selectors
 export const selectUser = (state: RootState) => state?.user;
@@ -94,9 +200,12 @@ export const selectPoints = (state: RootState) => state?.points;
 export const selectIsLoading = (state: RootState) => state?.isLoading || false;
 export const selectIsLoggedIn = (state: RootState) => state?.isLoggedIn;
 export const selectIsAdmin = (state: RootState) => state?.isAdmin;
-export const selectDomainsInfo = (state: RootState) => state?.domainsInfo;
+export const selectDomainsInfo = (state: RootState) => state?.domainInfo;
 export const selectSettings = (state: RootState) => state?.settings;
 export const selectEmail = (state: RootState) => state?.profile?.email;
 export const selectDomains = (state: RootState) => state?.profile?.domain_access;
+export const selectQueue = (state: RootState) => state?.queue;
+export const selectLoader = (state: RootState) => state?.loading;
+export const selectDomainInfo = (key: string) => (state: RootState) => state?.domainInfo?.find((domain) => domain.domain_name === key || domain.domain === key);
 
 export default UserSlice.reducer;

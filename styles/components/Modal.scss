@@ -216,3 +216,12 @@
     width: 100vw;
   }
 }
+
+.modal-small {
+  width: 100%;
+  max-width: 400px;
+
+  @include Phone {
+    max-width: calc(100vw - 16px);
+  }
+}

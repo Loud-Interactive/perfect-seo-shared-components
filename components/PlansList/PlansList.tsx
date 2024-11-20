@@ -164,9 +164,9 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
           <button className='btn btn-primary d-flex align-items-center justify-content-center' onClick={(e) => { e.preventDefault(); duplicateClickHandler(obj) }} title={`Duplicate: ${obj.guid}`}>
             <i className="bi bi-clipboard-plus-fill" />
           </button>
-          {isAdmin && <button className='btn btn-primary d-flex align-items-center justify-content-center' onClick={(e) => { e.preventDefault(); addToQueue(obj) }} title={`Add to Queue: ${obj.guid}`}>
+          {/* {isAdmin && <button className='btn btn-primary d-flex align-items-center justify-content-center' onClick={(e) => { e.preventDefault(); addToQueue(obj) }} title={`Add to Queue: ${obj.guid}`}>
             <i className="bi bi-layout-three-columns" />
-          </button>}
+          </button>} */}
           <button className='btn btn-warning d-flex align-items-center justify-content-center' onClick={deleteClickHandler} title={`View GUID: ${obj.guid}`}><i className="bi bi-trash pt-1" /></button>
         </div>
       </div>

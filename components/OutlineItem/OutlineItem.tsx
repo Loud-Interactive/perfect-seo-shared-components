@@ -200,9 +200,9 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
                   </DropdownMenu.Trigger>
                   <DropdownMenu.Portal>
                     <DropdownMenu.Content align="end" className="bg-warning z-100 card">
-                      {isAdmin && <DropdownMenu.Item>
+                      {/* {isAdmin && <DropdownMenu.Item>
                         <button className="btn btn-transparent text-black" onClick={addToQueue}>Add to Queue</button>
-                      </DropdownMenu.Item>}
+                      </DropdownMenu.Item>} */}
                       {localOutline?.content_plan_guid && <DropdownMenu.Item>
                         <Link
                           href={`https://contentPerfect.ai/dashboard/${localOutline?.content_plan_guid}`}

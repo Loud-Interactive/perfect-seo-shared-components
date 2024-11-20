@@ -282,9 +282,9 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
 
                 <DropdownMenu.Portal>
                   <DropdownMenu.Content align="end" className="bg-primary z-100 card">
-                    {isAdmin && <DropdownMenu.Item>
+                    {/* {isAdmin && <DropdownMenu.Item>
                       <button className="btn btn-transparent w-100" onClick={addToQueue}>Add to Queue</button>
-                    </DropdownMenu.Item>}
+                    </DropdownMenu.Item>} */}
                     {(localPost?.content_plan_outline_guid && localPost?.content_plan_guid) &&
                       <DropdownMenu.Item>
                         <button className="btn btn-transparent w-100" onClick={handleEditOutline}>

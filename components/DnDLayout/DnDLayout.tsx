@@ -12,6 +12,10 @@ import Script from 'next/script';
 import { SessionProvider } from "next-auth/react";
 import { Suspense } from 'react';
 import "bootstrap-icons/font/bootstrap-icons.css";
+import * as Toast from "@radix-ui/react-toast";
+
+
+
 
 // Define the props for the DnDLayout component
 interface DnDLayoutProps extends React.HTMLProps<HTMLDivElement> {
@@ -29,27 +33,31 @@ const DnDLayout = ({ children, hideFooter, current, links, hasLogin = true, getC
       <SessionProvider refetchOnWindowFocus refetchInterval={20 * 60}>
         <BrowserView>
           <DndProvider backend={HTML5Backend}>
-            <Suspense>
-              <Header current={current} links={links} hasLogin={hasLogin} getCredits={getCredits} />
-            </Suspense>
-            <main className={style.wrap}>
-              {children}
-            </main>
-            {!hideFooter && <Footer current={current} />}
+            <Toast.Provider>
+              <Suspense>
+                <Header current={current} links={links} hasLogin={hasLogin} getCredits={getCredits} />
+              </Suspense>
+              <main className={style.wrap}>
+                {children}
+              </main>
+              {!hideFooter && <Footer current={current} />}
+            </Toast.Provider>
           </DndProvider>
         </BrowserView>
         <MobileView>
           <DndProvider backend={TouchBackend} options={{ ignoreContextMenu: true, enableMouseEvents: true }}>
-            <Suspense>
-              <Header current={current} links={links} hasLogin={hasLogin} getCredits={getCredits} />
-            </Suspense>
-            <main className={style.wrap}>
-              {children}
-            </main>
-            {!hideFooter && <Footer current={current} />}
+            <Toast.Provider>
+              <Suspense>
+                <Header current={current} links={links} hasLogin={hasLogin} getCredits={getCredits} />
+              </Suspense>
+              <main className={style.wrap}>
+                {children}
+              </main>
+              {!hideFooter && <Footer current={current} />}
+            </Toast.Provider>
           </DndProvider>
         </MobileView>
-      </SessionProvider>
+      </SessionProvider >
       <Script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossOrigin="anonymous" />
     </>
   );

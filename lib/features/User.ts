@@ -1,6 +1,6 @@
 "use client";
 
-import { SettingsProps, GoogleUser, Profile, Synopsis, PreferencesProps, QueueItemProps } from "@/perfect-seo-shared-components/data/types";
+import { SettingsProps, GoogleUser, Profile, Synopsis, PreferencesProps, QueueItemProps, Toast } from "@/perfect-seo-shared-components/data/types";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
@@ -15,7 +15,8 @@ export type RootState = {
   profile: Profile,
   settings: SettingsProps
   queue: QueueItemProps[],
-  loading: LoadingStates[]
+  loading: LoadingStates[],
+  toasts: Toast[]
 };
 
 export type LoadingStates = {
@@ -36,7 +37,8 @@ const initialState: RootState = {
   queue: [],
   loading: [
     { loading: false, key: 'user' },
-  ]
+  ],
+  toasts: []
 
 };
 

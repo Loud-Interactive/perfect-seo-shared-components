@@ -7,6 +7,7 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import Script from 'next/script';
 import { SessionProvider } from "next-auth/react"
 import { Suspense } from 'react';
+import * as Toast from "@radix-ui/react-toast";
 interface LayoutProps extends React.HTMLProps<HTMLDivElement> {
   hideFooter?: boolean,
   current: string;
@@ -21,16 +22,18 @@ const Layout = ({ children, hideFooter, current, links, hasLogin = true, getCred
   return (
     <>
       <Script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossOrigin="anonymous" />
-      <SessionProvider refetchInterval={20 * 60} refetchOnWindowFocus={true}>
-        <Suspense>
-          <Header current={current} links={links} hasLogin={hasLogin} getCredits={getCredits} />
-        </Suspense>
+      <Toast.Provider>
+        <SessionProvider refetchInterval={20 * 60} refetchOnWindowFocus={true}>
+          <Suspense>
+            <Header current={current} links={links} hasLogin={hasLogin} getCredits={getCredits} />
+          </Suspense>
 
-        <main className={style.wrap}>
-          {children}
-        </main>
-        {!hideFooter && <Footer current={current} />}
-      </SessionProvider>
+          <main className={style.wrap}>
+            {children}
+          </main>
+          {!hideFooter && <Footer current={current} />}
+        </SessionProvider>
+      </Toast.Provider>
     </>
   )
 }

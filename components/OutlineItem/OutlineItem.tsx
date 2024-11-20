@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { createPost, deleteOutline, fetchOutlineStatus, getContentPlanPost, regenerateOutline, saveContentPlanPost } from "@/perfect-seo-shared-components/services/services"
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import TypeWriterText from "../TypeWriterText/TypeWriterText"
@@ -6,7 +6,6 @@ import Link from "next/link"
 import * as Modal from '@/perfect-seo-shared-components/components/Modal/Modal'
 import CreateContentModal from "@/perfect-seo-shared-components/components/CreateContentModal/CreateContentModal"
 import moment from "moment-timezone"
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import RegeneratePostModal, { GenerateTypes } from "../RegeneratePostModal/RegeneratePostModal";
 import { GenerateContentPost } from "@/perfect-seo-shared-components/data/requestTypes";
 import { useSelector } from "react-redux";
@@ -132,12 +131,13 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
   }
   const regenerateOutlineClickHandler = () => {
     setLoading(true)
-    regenerateOutline(localOutline?.guid, { email: email, client_domain: localOutline?.client_domain, client_name: localOutline?.brand_name, post_title: localOutline?.post_title, content_plan_guid: localOutline?.content_plan_guid })
-      .then(res => {
-        setStatus("Regenerating")
-        setLoading(false)
-        console.log(res.data)
-      })
+
+    // regenerateOutline(localOutline?.guid, { email: email, client_domain: localOutline?.client_domain, client_name: localOutline?.brand_name, post_title: localOutline?.post_title, content_plan_guid: localOutline?.content_plan_guid })
+    //   .then(res => {
+    //     setStatus("Regenerating")
+    //     setLoading(false)
+    //     console.log(res.data)
+    //   })
   }
   const addToQueue = () => {
     let newObject: QueueItemProps = {

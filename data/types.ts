@@ -687,3 +687,11 @@ export interface QueueItemProps {
   data?: any
   id?: string
 }
+
+export interface Toast {
+  id: string
+  title: string
+  description: string
+  type: 'success' | 'error' | 'info' | 'warning'
+  timeout: number
+}

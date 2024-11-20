@@ -9,9 +9,11 @@ import useViewport from '@/perfect-seo-shared-components/hooks/useViewport'
 import TypeWriterText from '@/perfect-seo-shared-components/components/TypeWriterText/TypeWriterText'
 import { useSelector } from 'react-redux'
 import usePaginator from '@/perfect-seo-shared-components/hooks/usePaginator'
-import { selectEmail } from '@/perfect-seo-shared-components/lib/features/User'
+import { selectEmail, selectIsAdmin } from '@/perfect-seo-shared-components/lib/features/User'
 import LoadSpinner from '../LoadSpinner/LoadSpinner'
 import ContentPlanForm from '@/perfect-seo-shared-components/components/ContentPlanForm/ContentPlanForm'
+import { createClient } from '@/perfect-seo-shared-components/utils/supabase/client'
+import { QueueItemProps } from '@/perfect-seo-shared-components/data/types'
 
 export interface PlanListProps {
   domain_name: string;
@@ -24,8 +26,9 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
   const [deleteModal, setDeleteModal] = useState(null)
   const [newModal, setNewModal] = useState(false)
   const [duplicateInfo, setDuplicateInfo] = useState(null)
-
+  const supabase = createClient()
   const email = useSelector(selectEmail)
+  const isAdmin = useSelector(selectIsAdmin)
   const router = useRouter();
 
   const paginator = usePaginator()
@@ -72,6 +75,24 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
           setData(null)
         })
     }
+  }
+
+  const addToQueue = (obj) => {
+    console.log(obj)
+    let newObject: QueueItemProps = {
+      type: 'contentPlan',
+      domain: obj?.domain_name,
+      guid: obj?.guid,
+      email,
+      isComplete: obj?.status === 'Finished' ? true : false,
+    }
+    supabase
+      .from('user_queues')
+      .insert(newObject)
+      .select("*")
+      .then(res => {
+        console.log(res.data)
+      })
   }
 
   useEffect(() => {
@@ -143,6 +164,9 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
           <button className='btn btn-primary d-flex align-items-center justify-content-center' onClick={(e) => { e.preventDefault(); duplicateClickHandler(obj) }} title={`Duplicate: ${obj.guid}`}>
             <i className="bi bi-clipboard-plus-fill" />
           </button>
+          {isAdmin && <button className='btn btn-primary d-flex align-items-center justify-content-center' onClick={(e) => { e.preventDefault(); addToQueue(obj) }} title={`Add to Queue: ${obj.guid}`}>
+            <i className="bi bi-layout-three-columns" />
+          </button>}
           <button className='btn btn-warning d-flex align-items-center justify-content-center' onClick={deleteClickHandler} title={`View GUID: ${obj.guid}`}><i className="bi bi-trash pt-1" /></button>
         </div>
       </div>

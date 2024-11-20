@@ -664,3 +664,21 @@ export interface PlayerProps {
   collided: false;
 
 }
+
+export interface AssocGUIDS {
+  guid: string,
+  type: 'outline' | 'contentPlan' | 'post'
+  isComplete?: boolean
+}
+
+export interface QueueItemProps {
+  created_at?: string,
+  type: 'outline' | 'contentPlan' | 'post',
+  domain: string,
+  guid: string,
+  associatedGuids?: AssocGUIDS[],
+  isComplete?: boolean;
+  email: string;
+  data?: any
+  id?: string
+}

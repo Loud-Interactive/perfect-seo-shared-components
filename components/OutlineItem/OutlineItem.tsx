@@ -225,7 +225,6 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
                         <button
                           className="btn btn-transparent text-black"
                           onClick={(e) => {
-                            e.preventDefault();
                             regenerateOutlineClickHandler();
                           }}
                         >

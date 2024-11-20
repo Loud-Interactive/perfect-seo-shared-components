@@ -8,9 +8,6 @@ import { useEffect } from "react";
 const ToastProvider = () => {
   const toasts = useSelector(selectToasts)
 
-  useEffect(() => {
-    console.log(toasts)
-  }, [toasts])
   return (
     <Toast.Provider>
       <Toast.Viewport className="toast-viewport">

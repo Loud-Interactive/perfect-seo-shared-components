@@ -5116,11 +5116,6 @@ button.input-group-append {
   height: 0;
 }
 
-main {
-  @include TabletUp {
-    padding-top: 100px;
-  }
-}
 
 header {
   overflow-y: visible;
@@ -5141,7 +5136,7 @@ header {
 }
 
 .queue-sidebar {
-  max-width: 290px;
+  max-width: 275px;
   width: max-content;
   max-height: calc(100dvh - 100px - env(safe-area-inset-bottom));
   position: fixed;
@@ -5196,7 +5191,7 @@ header {
   .btn {
     width: 15px !important;
     min-width: 15px !important;
-    height: calc(100dvh - 100px);
+    height: calc(100dvh - 10px);
     border-radius: 0 !important;
     padding: 0 !important;
   }

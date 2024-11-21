@@ -45,7 +45,7 @@ const DnDLayout = ({ children, hideFooter, current, links, hasLogin = true, getC
     , [desktop, globalShowQueue])
 
   const mainClassNames = classNames(style.wrap, {
-    'd-flex row g-0 max-screen p-0 m-0': desktop && hasQueue && isAdmin,
+    'd-flex row g-0 max-screen': desktop && hasQueue && isAdmin,
     'queue-open': desktop && hasQueue && showQueue && isAdmin
   }
   )

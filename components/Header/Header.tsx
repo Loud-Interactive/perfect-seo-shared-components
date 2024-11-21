@@ -39,7 +39,7 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits, hasQueue }: 
   const email = useSelector(selectEmail)
   const [open, setOpen] = useState(true);
   const dispatch = useDispatch();
-  const { phone } = useViewport();
+  const { phone, desktop } = useViewport();
   const [currentPage, setCurrentPage] = useState('');
   const pathname = usePathname();
   const queue = useSelector(selectQueue)
@@ -211,13 +211,16 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits, hasQueue }: 
     return newMetrics
   }, [queue])
 
-  const metricClasses = classNames('d-flex align-items-center justify-content-end mt-2 p-0 d-none d-md-flex',
+  const metricClasses = classNames('d-flex align-items-center mt-2 p-0 d-md-none',
     {
-      'cursor-pointer': isAdmin && queue?.length > 0 && currentPage !== '/queue'
+      'cursor-pointer': isAdmin && queue?.length > 0 && currentPage !== '/queue',
+      'justify-content-end': desktop,
+      'justify-content-center': !desktop
     }
   )
   return (
     <header className={styles.header}>
+      {(!desktop && hasQueue) && <div className="d-none"><Queue /></div>}
       <div className='container-fluid container-xl'>
         <div className='row g-3 d-flex justify-content-between align-items-center'>
           <div className="col d-flex align-items-center justify-content-start">
@@ -231,7 +234,7 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits, hasQueue }: 
             <div className={signedInClass}>
               {hasLogin && (
                 <div className='col-auto flex-column pe-3 d-flex align-items-end'>
-                  {isLoggedIn ? (
+                  {isLoggedIn ? desktop ? (
                     <>
                       <div>
                         <strong className='me-2 text-primary'>Logged in as</strong>
@@ -251,7 +254,7 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits, hasQueue }: 
                           </div>
                         ) : null}
                     </>
-                  ) : (
+                  ) : null : (
                     <button className="btn btn-google" onClick={loginWithGoogleHandler}>
                       <img src="/images/google-icon.png" /> Login
                     </button>
@@ -271,7 +274,7 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits, hasQueue }: 
                   <DropdownMenu.Content align="end" sideOffset={25} className='bg-dark card z-100'>
                     <div className={styles.menu}>
                       <div>
-                        {hasLogin && phone && !isLoading && (
+                        {(hasLogin && !desktop && !isLoading) && (
                           <div className='card-header bg-secondary text-white'>
                             <div className='row justify-content-between d-flex'>
                               {isLoggedIn ? (
@@ -281,11 +284,13 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits, hasQueue }: 
                                     {user?.email}
                                   </div>
                                   {(isAdmin && queue?.length > 0) ?
-                                    <div className='col-12 d-flex justify-content-start'>
-                                      <div className="input-group">
-                                        <span className="input-group-text" id="basic-addon1">Queue</span>
-                                        <span className="input-group-text">{queue?.length}</span>
-                                      </div>
+                                    <div className={metricClasses} onClick={metricClickHandler}>
+                                      <span className="py-0 px-2" id="basic-addon1"><strong>Plans</strong></span>
+                                      <span className="badge bg-primary py-1 px-2">{metrics?.contentPlans?.percentage}%</span>
+                                      <span className="py-0 px-2" id="basic-addon1"><strong>Outlines</strong></span>
+                                      <span className="badge bg-primary py-1 px-2">{metrics?.outlines?.percentage}%</span>
+                                      <span className="py-0 px-2" id="basic-addon1"><strong>Posts</strong></span>
+                                      <span className="py-1 px-2 badge bg-primary">{metrics?.posts?.percentage}%</span>
                                     </div> :
                                     points ? (
                                       <div className='col-12 d-flex justify-content-start'>

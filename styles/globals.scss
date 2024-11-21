@@ -5148,8 +5148,10 @@ header {
   display: flex;
   padding-right: env(safe-area-inset-right);
 
+
   >.row {
     margin: 0 !important;
+    flex-wrap: nowrap !important;
   }
 
   &.scrollbar-visible {
@@ -5185,8 +5187,10 @@ header {
 .queue-sidebar-button {
   width: 15px;
   position: sticky;
-  top: 0px;
+  bottom: 0px;
   left: 0;
+
+
 
   .btn {
     width: 15px !important;

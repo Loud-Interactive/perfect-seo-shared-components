@@ -381,7 +381,6 @@ const CreateContentModal = ({
 
   const regenerateClickHandler = () => {
     setLoading(true);
-    console.log(data, form.getState, console.log(contentPlan))
     regenerateOutline(
       outlineGUID,
       { email: email, client_domain: contentPlan?.domain_name || contentPlan?.client_domain, client_name: contentPlan?.brand_name || contentPlan?.client_name, post_title: postTitle, content_plan_guid: contentPlan?.guid }

@@ -334,7 +334,7 @@ const CreateContentModal = ({
     saveHandler(true);
   };
 
-
+  useEffect(() => { console.log(contentPlan, data) }, [data, contentPlan])
 
   const submitWithEmail = (receivingEmail, language?) => {
 
@@ -383,7 +383,7 @@ const CreateContentModal = ({
     setLoading(true);
     regenerateOutline(
       outlineGUID,
-      { email: email, client_domain: contentPlan?.domain_name || contentPlan?.client_domain, client_name: contentPlan?.brand_name || contentPlan?.client_name, post_title: postTitle, content_plan_guid: contentPlan?.guid }
+      { email: email, client_domain: contentPlan?.domain_name || contentPlan?.client_domain, client_name: contentPlan?.brand_name || contentPlan?.client_name, post_title: postTitle, content_plan_guid: contentPlan?.guid || data.content_plan_guid }
     )
       .then((result) => {
         let newData = JSON.parse(result.data.outline);

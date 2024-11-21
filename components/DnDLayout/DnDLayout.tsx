@@ -38,15 +38,18 @@ const DnDLayout = ({ children, hideFooter, current, links, hasLogin = true, getC
   const dispatch = useDispatch();
   const isAdmin = useSelector(selectIsAdmin)
   const globalShowQueue = useSelector(selectShowQueue)
+  const pathname = usePathname();
+
+  const isQueuePage = pathname === '/queue'
 
   const showQueue = useMemo(() => {
-    return (desktop && globalShowQueue)
+    return (desktop && globalShowQueue && isQueuePage)
   }
     , [desktop, globalShowQueue])
 
   const mainClassNames = classNames(style.wrap, {
-    'd-flex row g-0 max-screen': desktop && hasQueue && isAdmin,
-    'queue-open': desktop && hasQueue && showQueue && isAdmin
+    'd-flex row g-0 max-screen': desktop && hasQueue && isAdmin && !isQueuePage,
+    'queue-open': desktop && hasQueue && showQueue && isAdmin && !isQueuePage
   }
   )
 
@@ -56,7 +59,6 @@ const DnDLayout = ({ children, hideFooter, current, links, hasLogin = true, getC
     }
   }, [desktop])
 
-  const pathname = usePathname();
   return (
     <>
       <SessionProvider refetchOnWindowFocus refetchInterval={20 * 60}>
@@ -67,7 +69,7 @@ const DnDLayout = ({ children, hideFooter, current, links, hasLogin = true, getC
             </Suspense>
             <main className={mainClassNames}>
               <div className='col'>{children}</div>
-              {(hasQueue && desktop && pathname !== '/queue' && isAdmin) &&
+              {(hasQueue && desktop && !isQueuePage && isAdmin) &&
                 <Queue sidebar />}
             </main>
             {!hideFooter && <Footer current={current} />}

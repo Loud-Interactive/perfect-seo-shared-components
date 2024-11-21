@@ -142,6 +142,7 @@ const CreateContentModal = ({
       return { ...prev, ...newHeadingData, ...newSubheadingData };
     }, {});
     setTableData(data);
+    setLoading(false)
     if (initial) {
       form.setState(newFormData);
     }
@@ -259,6 +260,7 @@ const CreateContentModal = ({
       getContentPlanOutline(reqObj)
         .then((res) => {
           setLoading(false);
+          console.log(res.data)
           let newData;
           if (typeof res.data.outline === "string") {
             newData = JSON.parse(res.data.outline);
@@ -279,6 +281,7 @@ const CreateContentModal = ({
           if (data.guid) {
             fetchOutlineStatus(data.guid)
               .then(res => {
+                console.log("outline status", res.data)
                 if (res?.data?.outline?.sections?.length > 0) {
                   processSections(res.data.outline.sections, initial);
                 }
@@ -378,9 +381,10 @@ const CreateContentModal = ({
 
   const regenerateClickHandler = () => {
     setLoading(true);
+    console.log(data, form.getState, console.log(contentPlan))
     regenerateOutline(
       outlineGUID,
-      advancedData
+      { email: email, client_domain: contentPlan.domain_name || contentPlan.client_domain, client_name: contentPlan.brand_name || contentPlan.client_name, post_title: postTitle, content_plan_guid: contentPlan?.guid }
     )
       .then((result) => {
         let newData = JSON.parse(result.data.outline);

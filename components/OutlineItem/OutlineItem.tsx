@@ -247,9 +247,9 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
               </>
             </div>
 
-            {status !== "completed" && <div className='col-12 text-end text-primary mt-2'>
+            <div className='col-12 text-end text-primary mt-2'>
               <TypeWriterText string={status} withBlink />
-            </div>}
+            </div>
           </div>
         </div>
       </div>

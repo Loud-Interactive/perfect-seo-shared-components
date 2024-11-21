@@ -43,7 +43,7 @@ const DnDLayout = ({ children, hideFooter, current, links, hasLogin = true, getC
   const isQueuePage = pathname === '/queue'
 
   const showQueue = useMemo(() => {
-    return (desktop && globalShowQueue && isQueuePage)
+    return (desktop && globalShowQueue && !isQueuePage)
   }
     , [desktop, globalShowQueue])
 

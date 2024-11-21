@@ -2,6 +2,7 @@
 
 .wrap {
   margin: 0;
+  overflow-x: hidden;
 
   @include TabletUp {
     margin-top: 100px !important;

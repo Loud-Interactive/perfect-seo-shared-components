@@ -211,7 +211,7 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits, hasQueue }: 
     return newMetrics
   }, [queue])
 
-  const metricClasses = classNames('d-flex align-items-center mt-2 p-0 d-md-none',
+  const metricClasses = classNames('d-flex align-items-center mt-2 p-0',
     {
       'cursor-pointer': isAdmin && queue?.length > 0 && currentPage !== '/queue',
       'justify-content-end': desktop,

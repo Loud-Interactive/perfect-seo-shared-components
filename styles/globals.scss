@@ -5211,9 +5211,11 @@ header {
   z-index: 5000;
 
   &-button {
-    background-color: $primary;
-    aspect-ratio: 1;
+    background-color: $primary !important;
+    min-width: unset !important;
     border-radius: 50%;
-    font-size: 12px;
+    font-size: 14px;
+    aspect-ratio: 1;
+    padding: .5ch !important;
   }
 }

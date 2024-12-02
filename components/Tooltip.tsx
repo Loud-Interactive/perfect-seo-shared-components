@@ -3,8 +3,8 @@ const Tooltip = ({ children }) => {
   return (
     <TooltipPrim.Provider>
       <TooltipPrim.Root>
-        <TooltipPrim.Trigger className="btn btn-transparent p-0">
-          <i className="bi bi-question tool-tip-button" />
+        <TooltipPrim.Trigger className="tool-tip-button btn btn-transparent  ">
+          <i className="bi bi-question" />
         </TooltipPrim.Trigger>
         <TooltipPrim.Portal>
           <TooltipPrim.Content>

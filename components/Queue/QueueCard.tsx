@@ -303,7 +303,7 @@ const QueueCard = ({ queue, i, removeItem, bulkStatus }: QueueCardProps) => {
               </span>
               </small>
               </p>
-              <div className="row d-flex justify-content-between align-items-end">
+              <div className="row d-flex justify-content-end align-items-end">
                 {status && <div className="col"><strong className="me-2">Status</strong><small className="text-primary"><TypeWriterText string={status} withBlink /></small></div>}
                 <div className="input-group">
                   <button className="btn btn-primary py-1 mb-0" onClick={(e) => { e.preventDefault(); removeItem(queue) }}>Remove</button>

@@ -18,7 +18,7 @@ import { SEOPerfectLogo } from "@/perfect-seo-shared-components/assets/brandIcon
 import axiosInstance from "@/perfect-seo-shared-components/utils/axiosInstance";
 import { createClient } from "@/perfect-seo-shared-components/utils/supabase/client";
 import en from '@/assets/en.json';
-import Queue from "@/components/Queue/Queue";
+import Queue from "@/perfect-seo-shared-components/components/Queue/Queue";
 import { useRouter } from "next/navigation";
 
 export interface HeaderProps {

@@ -16,7 +16,7 @@ import useViewport from '@/perfect-seo-shared-components/hooks/useViewport';
 import classNames from 'classnames';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectIsAdmin, selectShowQueue, setShowQueue } from '@/perfect-seo-shared-components/lib/features/User';
-import Queue from '@/components/Queue/Queue';
+import Queue from '@/perfect-seo-shared-components/components/Queue/Queue';
 import { usePathname } from 'next/navigation';
 
 

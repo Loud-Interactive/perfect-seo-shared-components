@@ -5206,3 +5206,14 @@ header {
     max-width: calc(100vw - 300px - calc(100% - 100vw));
   }
 }
+
+.tool-tip {
+  z-index: 5000;
+
+  &-button {
+    background-color: $primary;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    font-size: 12px;
+  }
+}

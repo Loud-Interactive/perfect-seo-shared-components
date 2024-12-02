@@ -20,7 +20,8 @@ import OutlinesList from '../OutlinesList/OutlinesList';
 import BrandHeader from '../BrandHeader/BrandHeader';
 import LoadSpinner from '../LoadSpinner/LoadSpinner';
 import { selectDomains, selectDomainsInfo, selectEmail, selectIsAdmin, selectIsLoading, selectIsLoggedIn, selectSettings, selectUser } from '@/perfect-seo-shared-components/lib/features/User'
-import Loader from '../Loader/Loader';
+import Tooltip from '../Tooltip';
+
 
 export interface MyContentProps {
   currentDomain?: string;
@@ -331,18 +332,26 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
                 <h1 className="text-start mb-5"><TypeWriterText string={selectedTab.includes("bulk") ? 'Upload for all domains' : selected ? `Content for ${domain}` : 'Your Content'} withBlink /></h1>
               </div>
             }
-            {(domainsList?.length > 0 && ['bulk-content', 'bulk-posts'].includes(selectedTab) === false && !currentDomain) && <div className='col-12 col-md-4 mb-5'>
+            {(domainsList?.length > 0 && ['bulk-content', 'bulk-posts'].includes(selectedTab) === false && !currentDomain) && <div className='col-12 col-md-4 mb-5 d-flex align-items-center'>
               <SearchSelect
                 onChange={searchDomainChangeHandler}
                 options={domainsList}
                 isLoading={!domainsList}
                 value={selected || null}
                 placeholder="Select a Domain"
+                bottomSpacing={false}
               />
+              <div className="ms-2">
+                <Tooltip>
+                  Clear search field to see all content by email
+                </Tooltip>
+
+
+              </div>
               {(!isDefaultDomain && selected) && <a className='text-primary' onClick={addDefaultHandler}>Make Default</a>}
             </div>}
-          </div>
-        </div>
+          </div >
+        </div >
       }
       <div className='container-xl content-fluid'>
         {isLoading && <LoadSpinner />}

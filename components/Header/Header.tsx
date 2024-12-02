@@ -45,7 +45,7 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits, hasQueue }: 
   const queue = useSelector(selectQueue)
   const router = useRouter();
   const metricClickHandler = () => {
-    router.push('/waitlist')
+    router.push('/watchlist')
   }
   // Function to load credit data for the user
   const loadCreditData = () => {

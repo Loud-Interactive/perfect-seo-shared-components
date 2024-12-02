@@ -162,7 +162,7 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
             <button className="btn btn-primary" onClick={clickHandler} title={`View GUID: ${obj.guid}`}>View Plan</button>
           }
           <button className='btn btn-primary d-flex align-items-center justify-content-center' onClick={(e) => { e.preventDefault(); duplicateClickHandler(obj) }} title={`Duplicate: ${obj.guid}`}>
-            <i className="bi bi-clipboard-plus-fill" />
+            <i className="bi bi-copy" />
           </button>
           {isAdmin && <button className='btn btn-primary d-flex align-items-center justify-content-center' onClick={(e) => { e.preventDefault(); addToQueue(obj) }} title={`Add to Watchlist: ${obj.guid}`}>
             <i className="material-icons">queue</i>

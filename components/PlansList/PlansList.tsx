@@ -116,7 +116,7 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
     const clickHandler = (e) => {
       e.preventDefault();
       if (completeStatuses.includes(status)) {
-        router.push(`/dashboard/${obj.guid}`)
+        router.push(`/contentplan/${obj.guid}`)
       }
       else {
         router.push(`/waiting-room/${obj.guid}`)

@@ -293,7 +293,7 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
                     {localPost?.content_plan_guid &&
                       <DropdownMenu.Item>
                         <a
-                          href={`https://contentPerfect.ai/dashboard/${localPost?.content_plan_guid}`}
+                          href={`https://contentPerfect.ai/contentplan/${localPost?.content_plan_guid}`}
                           target="_blank"
                           className="btn btn-transparent"
 

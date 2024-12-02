@@ -214,7 +214,7 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
                       </DropdownMenu.Item>}
                       {localOutline?.content_plan_guid && <DropdownMenu.Item>
                         <Link
-                          href={`https://contentPerfect.ai/dashboard/${localOutline?.content_plan_guid}`}
+                          href={`https://contentPerfect.ai/contentplan/${localOutline?.content_plan_guid}`}
                           title="View Content Plan"
                           className="btn btn-transparent text-black"
                         >

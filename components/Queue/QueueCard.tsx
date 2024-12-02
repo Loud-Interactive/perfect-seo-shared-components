@@ -191,10 +191,10 @@ const QueueCard = ({ queue, i, removeItem, bulkStatus }: QueueCardProps) => {
   const viewPlan = () => {
     switch (queue.type) {
       case 'contentPlan':
-        return window.open(`/dashboard/${queue.guid}`, '_blank')
+        return window.open(`/contentplan/${queue.guid}`, '_blank')
       default:
         if (data?.content_plan_guid) {
-          return window.open(`/dashboard/${data?.content_plan_guid}`, '_blank')
+          return window.open(`/contentplan/${data?.content_plan_guid}`, '_blank')
         }
     }
   }

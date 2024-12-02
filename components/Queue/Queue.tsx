@@ -319,7 +319,9 @@ const Queue = ({ sidebar = false }) => {
           {(sidebar && !showQueue) ? null : <div className="col">
             <div className="row g-1 d-flex align-items-flex justify-content-center">
               {sidebar && <div className="col-12">
-                <h4>Watchlist</h4>
+                <div className="card px-3 py-1 bg-primary">
+                  <h4 className="mb-0">Watchlist</h4>
+                </div>
               </div>}
               <div className={columnClasses}>
                 {renderHeader('contentPlans')}

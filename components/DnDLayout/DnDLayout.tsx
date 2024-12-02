@@ -7,7 +7,7 @@ import { DndProvider } from 'react-dnd';
 import { Links } from '@/perfect-seo-shared-components/data/types';
 import Footer from '../Footer/Footer';
 import Header from '../Header/Header';
-import style from './DnDLayout.module.scss';
+import style from '../Layout/Layout.module.scss'
 import Script from 'next/script';
 import { SessionProvider } from "next-auth/react";
 import { Suspense, useEffect, useMemo } from 'react';

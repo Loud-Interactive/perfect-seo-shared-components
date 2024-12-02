@@ -57,11 +57,11 @@ const ContentStatusItem = ({ item, deleteContent, idx }) => {
         {error ?
           <>          <div className="text-capitalize text-warning col-10 col-md-8"><TypeWriterText withBlink string={error} /></div>
             <div className="col d-flex justify-content-end">
-              <button disabled={loading} className="btn btn-primary ms-3" title="Remove from Queue" onClick={e => {
+              <button disabled={loading} className="btn btn-primary ms-3" title="Remove from Watchlist" onClick={e => {
                 e.preventDefault();
                 deleteContent(idx)
               }}>
-                <i className="bi bi-x" /> <span className="d-none d-md-block">Remove from Queue</span>
+                <i className="bi bi-x" /> <span className="d-none d-md-block">Remove from Watchlist</span>
               </button>
             </div>
           </>
@@ -71,11 +71,11 @@ const ContentStatusItem = ({ item, deleteContent, idx }) => {
             <div className="capitalize d-none d-lg-block col-4">{item?.domain_name}</div>
             <div className="col-12 col-md-8 col-lg-4 d-flex align-items-center justify-content-between">
               <div className="text-capitalize text-primary"><span className="d-md-none text-white me-1"><strong>Status</strong></span><TypeWriterText withBlink string={status} /></div>
-              <button disabled={loading} title="Remove from Queue" className="btn btn-primary ms-3" onClick={e => {
+              <button disabled={loading} title="Remove from Watchlist" className="btn btn-primary ms-3" onClick={e => {
                 e.preventDefault();
                 deleteContent(idx)
               }}>
-                <i className="bi bi-x" />  <span className="d-none d-md-block">Remove from Queue</span>
+                <i className="bi bi-x" />  <span className="d-none d-md-block">Remove from Watchlist</span>
               </button>
             </div></>}
       </div>

@@ -40,7 +40,7 @@ const DnDLayout = ({ children, hideFooter, current, links, hasLogin = true, getC
   const globalShowQueue = useSelector(selectShowQueue)
   const pathname = usePathname();
 
-  const isQueuePage = pathname === '/queue'
+  const isQueuePage = pathname === '/watchlist'
 
   const showQueue = useMemo(() => {
     return (desktop && globalShowQueue && !isQueuePage)

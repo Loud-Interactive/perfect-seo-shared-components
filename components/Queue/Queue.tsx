@@ -246,7 +246,7 @@ const Queue = ({ sidebar = false }) => {
         case 'posts':
           return 'Posts'
         default:
-          return 'Queue'
+          return 'Watchlist'
       }
     }
 
@@ -313,7 +313,7 @@ const Queue = ({ sidebar = false }) => {
             </div>
             :
             <div className="col-12">
-              <h1 className="text-center"><TypeWriterText string="Queue" withBlink /></h1>
+              <h1 className="text-center"><TypeWriterText string="My Watchlist" withBlink /></h1>
             </div>
           }
           {(sidebar && !showQueue) ? null : <div className="col">

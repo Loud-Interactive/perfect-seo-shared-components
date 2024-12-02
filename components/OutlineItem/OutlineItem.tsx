@@ -151,7 +151,7 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
       .insert(newObject)
       .select("*")
       .then(res => {
-        dispatch(addToast({ title: "Outline Added to Queue", type: "info", content: `Outline ${localOutline?.post_title} to the queue` }))
+        dispatch(addToast({ title: "Outline Added to Watchlist", type: "info", content: `Outline ${localOutline?.post_title} to the watchlist` }))
       })
   }
 
@@ -210,7 +210,7 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
                   <DropdownMenu.Portal>
                     <DropdownMenu.Content align="end" className="bg-warning z-100 card">
                       {isAdmin && <DropdownMenu.Item>
-                        <button className="btn btn-transparent text-black" onClick={addToQueue}><i className="material-icons me-2">queue</i>Add to Queue</button>
+                        <button className="btn btn-transparent text-black" onClick={addToQueue}><i className="material-icons me-2">queue</i>Add to Watchlist</button>
                       </DropdownMenu.Item>}
                       {localOutline?.content_plan_guid && <DropdownMenu.Item>
                         <Link

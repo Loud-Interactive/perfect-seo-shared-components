@@ -198,7 +198,7 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
       .insert(newObject)
       .select("*")
       .then(res => {
-        dispatch(addToast({ title: "Post Added to Queue", type: "info", content: `${localPost?.title || localPost?.post_title || localPost?.content_plan_outline_title} added to Queue` }))
+        dispatch(addToast({ title: "Post Added to Watchlist", type: "info", content: `${localPost?.title || localPost?.post_title || localPost?.content_plan_outline_title} added to Watchlist` }))
       })
   }
 
@@ -282,7 +282,7 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
                 <DropdownMenu.Portal>
                   <DropdownMenu.Content align="end" className="bg-primary z-100 card">
                     {isAdmin && <DropdownMenu.Item>
-                      <button className="btn btn-transparent w-100" onClick={addToQueue}><i className="material-icons me-2">queue</i>Add to Queue</button>
+                      <button className="btn btn-transparent w-100" onClick={addToQueue}><i className="material-icons me-2">queue</i>Add to Watchlist</button>
                     </DropdownMenu.Item>}
                     {(localPost?.content_plan_outline_guid && localPost?.content_plan_guid) &&
                       <DropdownMenu.Item>

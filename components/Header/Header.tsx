@@ -5,7 +5,7 @@ import styles from './Header.module.scss';
 import classNames from 'classnames';
 import useViewport from '@/perfect-seo-shared-components/hooks/useViewport';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectEmail, selectIsAdmin, selectIsLoading, selectIsLoggedIn, selectPoints, selectQueue, selectUser, setLoader, setLoading, setQueue, updatePoints } from '@/perfect-seo-shared-components/lib/features/User';
+import { selectEmail, selectIsAdmin, selectIsLoading, selectIsLoggedIn, selectPoints, selectQueue, selectUser, setLoading, updatePoints } from '@/perfect-seo-shared-components/lib/features/User';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { BrandStatus, Links, LinkType } from '@/perfect-seo-shared-components/data/types';
 import { useEffect, useMemo, useState } from 'react';
@@ -45,7 +45,7 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits, hasQueue }: 
   const queue = useSelector(selectQueue)
   const router = useRouter();
   const metricClickHandler = () => {
-    router.push('/queue')
+    router.push('/waitlist')
   }
   // Function to load credit data for the user
   const loadCreditData = () => {
@@ -213,7 +213,7 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits, hasQueue }: 
 
   const metricClasses = classNames('d-flex align-items-center mt-2 p-0',
     {
-      'cursor-pointer': isAdmin && queue?.length > 0 && currentPage !== '/queue',
+      'cursor-pointer': isAdmin && queue?.length > 0 && currentPage !== '/watchlist',
       'justify-content-end': desktop,
       'justify-content-center': !desktop
     }
@@ -328,7 +328,7 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits, hasQueue }: 
                                         <i className="bi text-white bi-person-check-fill me-2" title="Logged In Only" />
                                       ) : null}
                                       {link.label}
-                                      {link?.href === '/queue' &&
+                                      {link?.href === '/watchlist' &&
                                         <div className="input-group">
                                         </div>}
                                     </Link>

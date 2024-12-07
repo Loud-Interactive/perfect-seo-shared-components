@@ -325,11 +325,11 @@ export const createMetaData = (reqObj: Request.MetaRequest) => {
 
 // factcheckPerfect apis 
 export const getFactCheckStatus = (guid: string) => {
-  return axiosInstance.get(`https://factcheckapi.replit.app/status/${guid}`);
+  return axiosInstance.get(`https://factcheck-perfectai.replit.app/status/${guid}`);
 }
 
 export const postFactCheck = (reqObj: Request.FactCheckRequest) => {
-  return axiosInstance.post(`https://factcheckapi.replit.app/fact_check_html`, reqObj, { headers: { "Content-Type": "multipart/form-data; boundary=----WebKitFormBoundary4BlampJWNu9F0sga" } });
+  return axiosInstance.post(`https://factcheck-perfectai.replit.app/fact_check_html`, reqObj, { headers: { "Content-Type": "multipart/form-data; boundary=----WebKitFormBoundary4BlampJWNu9F0sga" } });
 }
 
 export const generateVoicePrompts = (domain) => {
@@ -398,3 +398,4 @@ export const patchContentPlan = (guid: string, data: any) => {
 export const patchPost = (guid: string, field: string, value: string) => {
   return axiosInstance.patch(`https://content-status.replit.app/content/update/${guid}/field`, { "field": field, "value": value }, { headers: { 'Content-Type': 'application/json' } });
 }
+

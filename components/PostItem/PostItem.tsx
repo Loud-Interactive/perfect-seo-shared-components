@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useState } from "react"
 import TextInput from "../Form/TextInput"
-import { emailValidator } from "@/perfect-seo-shared-components/utils/validators"
+import { emailValidator, urlValidator } from "@/perfect-seo-shared-components/utils/validators"
 import { deleteContentOutline, getPostStatus, regeneratePost, updateLiveUrl } from "@/perfect-seo-shared-components/services/services"
 import moment from "moment-timezone"
 import TypeWriterText from "../TypeWriterText/TypeWriterText"
@@ -15,6 +15,8 @@ import { createClient } from "@/perfect-seo-shared-components/utils/supabase/cli
 import en from '@/assets/en.json'
 import RegeneratePostModal, { GenerateTypes } from "../RegeneratePostModal/RegeneratePostModal"
 import { QueueItemProps } from "@/perfect-seo-shared-components/data/types"
+import Form from "../Form/Form"
+import useForm from "@/perfect-seo-shared-components/hooks/useForm"
 
 interface PostItemProps {
   post: any,
@@ -27,56 +29,37 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
   const [liveUrl, setLiveUrl] = useState(post?.live_post_url)
   const [status, setStatus] = useState(post?.status)
   const [localPost, setLocalPost] = useState(post)
-  const [urlError, setUrlError] = useState(null)
   const [deleteModal, setDeleteModal] = useState(false)
-  const [showUrl, setShowUrl] = useState(false)
-  const [saving, setSaving] = useState(false)
-  const [saved, setSaved] = useState(false)
   const [completed, setCompleted] = useState(false)
   const [regenerateError, setRegerateError] = useState(null)
   const [editOutline, setEditOutline] = useState(false)
   const [showRegeneratePost, setShowRegeneratePost] = useState(false)
+  const [showFactCheck, setShowFactCheck] = useState(null)
+  const [showLivePost, setShowLivePost] = useState(false)
   const isAdmin = useSelector(selectIsAdmin)
   const dispatch = useDispatch()
-  const liveUrlUpdate = () => {
-    setSaved(false)
-    setUrlError(null)
-    let valid;
-    if (liveUrl) {
-      valid = new RegExp(emailValidator.toString()).test(liveUrl)
-    }
-    else {
-      valid = true;
-    }
-    if (valid) {
-      setSaving(true)
-      if (localPost?.live_post_url !== liveUrl) {
-        updateLiveUrl(localPost?.content_plan_outline_guid, liveUrl || '')
-          .then(() => {
-            let newData = { ...localPost }
-            newData.live_post_url = liveUrl;
-            setLocalPost(newData)
-            setSaving(false)
-            setSaved(true)
-          })
-          .catch(err => {
-            console.log("error", err)
-            setSaving(false)
-          }
-          )
+  const form = useForm()
 
+  const saveLiveUrl = () => {
+    let url = liveUrl
+    if (url) {
+      if (form.validate({ requiredFields: ['live_url'], validatorFields: ['live_url'] })) {
+        updateLiveUrl(localPost.content_plan_outline_guid, url || '')
+          .then(res => {
+            console.log(res.data)
+            setLocalPost({ ...localPost, live_post_url: url })
+          })
       }
+
     }
-    else {
-      setUrlError("Please enter a valid url")
-    }
+
+  }
+
+  const liveUrlChangeHandler = (e) => {
+    setLiveUrl(e.target.value)
   }
 
   useEffect(() => {
-    if (post?.live_post_url !== liveUrl) {
-      setLiveUrl(post?.live_post_url)
-      setShowUrl(true)
-    }
     if (post?.status !== status) {
       setStatus(post?.status)
       if (completedStatus.includes(post?.status)) {
@@ -151,19 +134,6 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
 
   const supabase = createClient()
 
-  const URLSaveButton = () => {
-    return (
-      <div className="d-flex h-100 align-items-center justify-content-center">
-        {liveUrl && <button className="btn btn-transparent d-flex align-items-center justify-content-center" onClick={(e => { setLiveUrl(null) })} title="Clear Live Url"><i className="bi bi-x-circle" /></button>}
-        <button className="btn btn-transparent d-flex align-items-center justify-content-center" onClick={liveUrlUpdate} title="Save Live Url" disabled={saving}>
-
-          {saving ?
-            <div className="spinner-border spinner-border-sm" role="status">
-              <span className="visually-hidden">Loading...</span>
-            </div> : saved ? <i className="bi bi-check-circle-fill" /> : <i className="bi bi-floppy-fill" />}</button>
-      </div>
-    )
-  }
 
   const deleteHandler = () => {
     deleteContentOutline(localPost?.content_plan_outline_guid)
@@ -242,14 +212,8 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
               </p>
               <p className="m-0">  <strong className="text-primary me-1">Title</strong>  {localPost?.title}{(localPost?.writing_language !== 'English' && localPost?.writing_language) && <small>({localPost?.writing_language})</small>}{(localPost.client_domain !== domain_name) ? <span className='badge bg-primary ms-2'>{localPost?.client_name}</span> : email !== localPost.email ? <span><br />generated by <span className="text-primary">{localPost.email}</span></span> : null}
               </p>
+              {localPost?.live_post_url && <p className="m-0">  <strong className="text-primary me-1">Live URL</strong>  <a href={localPost?.live_post_url} target="_blank" title="View Live Post"><i className="bi bi-link" /> {localPost?.live_post_url}</a><a className="text-small ms-2 text-primary" onClick={e => { e.preventDefault(); setShowLivePost(true) }} title="Edit URL">Edit URL</a></p>}
             </div>
-            {(showUrl || localPost?.live_post_url) && <div className="col-12">
-
-              <TextInput
-                bottomSpacing={false} fieldName="live-url" value={liveUrl} onChange={(e) => { setSaved(false); setLiveUrl(e.target.value) }} label="Live Post Url" button={<URLSaveButton />} />
-              {urlError && <div className="text-danger">{urlError}</div>}
-            </div>
-            }
           </div>
         </div>
         <div className="col-12 col-lg-6">
@@ -272,8 +236,6 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
                     <i className="bi bi-filetype-doc " />
                   </a>
                 </>}
-              {(!showUrl && !post?.live_post_url && completedStatus.includes(status)) &&
-                <button className="btn btn-warning btn-standard" onClick={() => { setShowUrl(true) }} title="Add Live Url"><i className="bi bi-link" /></button>}
               <button className='btn btn-primary btn-standard d-flex justify-content-center align-items-center' onClick={deleteClickHandler} title={`View GUID: ${localPost?.guid}`}><i className="bi bi-trash pt-1" /></button>
               <DropdownMenu.Root>
                 <DropdownMenu.Trigger className="btn btn-warning btn-standard d-flex align-items-center justify-content-center">
@@ -302,8 +264,19 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
                         </a>
                       </DropdownMenu.Item>}
                     <DropdownMenu.Item>
-                      <button className="btn btn-transparent" onClick={() => { setShowRegeneratePost(true) }}>Regenerate Post</button>
+                      <button className="btn btn-transparent w-100" onClick={() => { setShowRegeneratePost(true) }}>Regenerate Post</button>
                     </DropdownMenu.Item>
+                    <DropdownMenu.Item>
+                      <button className="btn btn-transparent w-100" onClick={() => { setShowLivePost(true) }}>{localPost?.live_post_url ? 'Edit' : 'Add'} Live Post URL</button>
+                    </DropdownMenu.Item>
+                    {/* <DropdownMenu.Item>
+                      <button
+                        onClick={() => { setShowFactCheck(true) }}
+                        className="btn btn-transparent w-100"
+                      >
+                        {localPost?.factcheck_guid ? 'Fact-Check Results' : 'Fact-Check'}
+                      </button>
+                    </DropdownMenu.Item> */}
                     {localPost?.live_post_url && <>
                       {localPost?.factcheck_guid ?
                         <DropdownMenu.Item>
@@ -388,6 +361,20 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
       >
         <RegeneratePostModal onClose={() => { setShowRegeneratePost(null); }} type={GenerateTypes.REGENERATE} submitHandler={regeneratePostHandler} onSuccess={() => { setShowRegeneratePost(false); refresh() }} />
       </Modal.Overlay >
+      <Modal.Overlay closeIcon open={showLivePost} onClose={() => setShowLivePost(false)} className="modal-small">
+        <Modal.Title title="Add Live URL" />
+        <div className="card bg-secondary p-3 w-100">
+          <Form controller={form}>
+            <TextInput fieldName="live_url" label="Live URL" value={liveUrl} onChange={liveUrlChangeHandler} validator={urlValidator} required
+              button={<button className="btn btn-primary" onClick={saveLiveUrl} type="submit" ><i className="bi bi-floppy-fill" /></button>} />
+          </Form>
+        </div>
+      </Modal.Overlay>
+      <Modal.Overlay closeIcon open={showFactCheck} onClose={() => setShowFactCheck(false)}>
+        <div className="row d-flex align-items-center justify-content-between">
+
+        </div>
+      </Modal.Overlay>
     </div>
 
   )

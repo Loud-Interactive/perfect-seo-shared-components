@@ -174,9 +174,9 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
         <div className="col-12 col-lg-6">
           <div className="row g-3">
             <div className="col-12">
-              <strong className="text-primary me-1">Title</strong>  {localOutline?.post_title} {(outline.client_domain !== domain_name) && <span className='badge bg-primary ms-2'>{outline?.brand_name}</span>}
+              <strong className="text-primary me-1">Title</strong>  {localOutline?.post_title} {(outline.client_domain !== domain_name) && <span className='badge bg-primary ms-2'>{outline?.brand_name}</span>}{localOutline?.post_generated && <span className='badge bg-success ms-2'>Generated</span>}
               <div>
-                {localOutline?.content_plan_keyword && <strong className="text-primary me-2">Content Plan Keyword</strong>}
+                {localOutline?.content_plan_keyword && <strong className="text-primary me-2">Topic</strong>}
                 {localOutline.content_plan_keyword}
                 <br />
                 {localOutline?.keyword && <strong className="text-primary me-2">Keyword</strong>}

@@ -718,3 +718,93 @@ export interface PostProps {
   index_guid: string
   index_status: string
 }
+
+export interface Synopsis {
+  anchor_text: string,
+  brand_name: string,
+  elevator_pitch: string,
+  example_link: string,
+  freq_phrases: string,
+  lang_style: string
+  lexicon: string,
+  ling_style: string,
+  rationale: string,
+  synopsis: string,
+  url: string,
+  voice_prompt: string
+  voice_prompt_logic: string
+  voice_traits: string
+}
+
+export interface Sitemap {
+  "name": string,
+  "url": string,
+  "total_urls": number
+}
+
+export interface ClaimAssessment {
+  claim: string;
+  result: string;
+  resultInt?: number;
+  explanation: string;
+  suggestion: string;
+}
+
+export interface FactCheckOverview {
+  header: string;
+  num_claims_checked: number;
+  num_fully_supported: number;
+  num_partially_supported: number;
+  num_not_supported: number;
+}
+
+export interface ClaimAssessmentSection {
+  header: string;
+  claim_assessments: ClaimAssessment[];
+}
+
+export interface FactCheckSummary {
+  header: string;
+  summary: string;
+}
+
+export interface SuggestedRevisions {
+  header: string;
+  revised_text: string;
+}
+
+export interface FactCheckResult {
+  fact_check_overview: FactCheckOverview;
+  claim_assessment_section: ClaimAssessmentSection;
+  fact_check_summary: FactCheckSummary;
+  suggested_revisions: SuggestedRevisions;
+}
+
+export interface TextToFactCheck {
+  article_text: string;
+  sources_text: string;
+}
+
+export interface FactCheck {
+  id: string;
+  type: 'url' | 'file';
+  source: string;
+  date: string;
+  result: 'true' | 'false' | 'partially true' | 'pending';
+  emails?: string[];
+  access?: { type: string, email: string }[];
+}
+
+export interface Claim {
+  claim: string;
+  result: ClaimResultStatus;
+  explanation: string;
+  suggestion: string;
+  resultInt?: number;
+}
+
+export enum ClaimResultStatus {
+  NOT_SUPPORTED = 'not supported by the sources',
+  PARTIALLY_SUPPORTED = 'partially supported by the sources',
+  FULLY_SUPPORTED = 'fully supported by the sources',
+}

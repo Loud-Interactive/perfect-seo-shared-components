@@ -1,13 +1,13 @@
 'use client';
 
-import { Claim, FactCheck, FactCheckResult as FCResult } from '@/types';
+import { Claim, FactCheck, FactCheckResult as FCResult } from '@/perfect-seo-shared-components/data/types';
 import { FC, useEffect, useState } from 'react';
 import axios from 'axios';
 import TypeWriterText from '@/perfect-seo-shared-components/components/TypeWriterText/TypeWriterText';
 import { createClient } from '@/perfect-seo-shared-components/utils/supabase/client';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/perfect-seo-shared-components/lib/store';
-import ProgressBar from '@/components/ProgressBar/ProgressBar';
+import ProgressBar from '@/perfect-seo-shared-components/components/ProgressBar/ProgressBar';
 import ClaimResult from './ClaimResult/ClaimResult';
 import axiosInstance from '@/perfect-seo-shared-components/utils/axiosInstance';
 import { setLoading } from '@/perfect-seo-shared-components/lib/features/User';

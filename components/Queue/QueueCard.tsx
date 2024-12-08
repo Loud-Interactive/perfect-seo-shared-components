@@ -31,7 +31,6 @@ const QueueCard = ({ queue, i, removeItem, bulkStatus }: QueueCardProps) => {
   const [editOutline, setEditOutline] = useState<boolean>(false)
   const [generatePost, setGeneratePost] = useState<GenerateTypes>(null)
   const completedStatuses = ['completed', 'failed', 'cancelled', 'complete', 'finished']
-  const [urlSaveLoader, setUrlSaveLoader] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(false)
   const [showAddLive, setShowAddLive] = useState<boolean>(false)
   const [liveUrl, setLiveUrl] = useState<string>('')
@@ -446,7 +445,7 @@ const QueueCard = ({ queue, i, removeItem, bulkStatus }: QueueCardProps) => {
         <div className="card bg-secondary p-3 w-100">
           <Form controller={form}>
             <TextInput fieldName="live_url" label="Live URL" value={liveUrl} onChange={liveUrlChangeHandler} validator={urlValidator} required
-              button={<button className="btn btn-primary" onClick={saveLiveUrl} type="submit" disabled={urlSaveLoader}><i className="bi bi-floppy-fill" /></button>} />
+              button={<button className="btn btn-primary" onClick={saveLiveUrl} type="submit" ><i className="bi bi-floppy-fill" /></button>} />
           </Form>
         </div>
       </Modal.Overlay>

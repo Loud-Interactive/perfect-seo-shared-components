@@ -5219,3 +5219,17 @@ header {
     padding: .5ch !important;
   }
 }
+
+.text-underline {
+  text-decoration: underline !important;
+}
+
+.text-small {
+  font-size: 14px !important;
+}
+
+a.text-primary {
+  &:hover {
+    color: rgba($primary, .7) !important;
+  }
+}

@@ -1,6 +1,6 @@
 'use client';
 
-import { Claim, ClaimResultStatus, FactCheck, FactCheckResult as FCResult } from '@/types';
+import { Claim, FactCheck, FactCheckResult as FCResult } from '@/types';
 import { FC, useEffect, useState } from 'react';
 import axios from 'axios';
 import TypeWriterText from '@/perfect-seo-shared-components/components/TypeWriterText/TypeWriterText';

@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useState } from "react"
 import TextInput from "../Form/TextInput"
-import { emailValidator, urlValidator } from "@/perfect-seo-shared-components/utils/validators"
+import { urlValidator } from "@/perfect-seo-shared-components/utils/validators"
 import { deleteContentOutline, getPostStatus, regeneratePost, updateLiveUrl } from "@/perfect-seo-shared-components/services/services"
 import moment from "moment-timezone"
 import TypeWriterText from "../TypeWriterText/TypeWriterText"
@@ -17,6 +17,8 @@ import RegeneratePostModal, { GenerateTypes } from "../RegeneratePostModal/Regen
 import { QueueItemProps } from "@/perfect-seo-shared-components/data/types"
 import Form from "../Form/Form"
 import useForm from "@/perfect-seo-shared-components/hooks/useForm"
+import FactCheckModal from "../FactCheckModal/FactCheckModal"
+import FactCheckResultPage from "../FactCheckResultPage/FactCheckResultPage"
 
 interface PostItemProps {
   post: any,
@@ -133,7 +135,7 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
   }
 
   const supabase = createClient()
-
+  console.log(Object.keys(post))
 
   const deleteHandler = () => {
     deleteContentOutline(localPost?.content_plan_outline_guid)
@@ -269,16 +271,16 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
                     <DropdownMenu.Item>
                       <button className="btn btn-transparent w-100" onClick={() => { setShowLivePost(true) }}>{localPost?.live_post_url ? 'Edit' : 'Add'} Live Post URL</button>
                     </DropdownMenu.Item>
-                    {/* <DropdownMenu.Item>
+                    <DropdownMenu.Item>
                       <button
                         onClick={() => { setShowFactCheck(true) }}
                         className="btn btn-transparent w-100"
                       >
                         {localPost?.factcheck_guid ? 'Fact-Check Results' : 'Fact-Check'}
                       </button>
-                    </DropdownMenu.Item> */}
+                    </DropdownMenu.Item>
                     {localPost?.live_post_url && <>
-                      {localPost?.factcheck_guid ?
+                      {/* {localPost?.factcheck_guid ?
                         <DropdownMenu.Item>
                           <a
                             href={`https://factcheckPerfect.ai/fact-checks/${localPost?.factcheck_guid}`}
@@ -298,7 +300,7 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
                           >
                             Fact-Check Post
                           </a>
-                        </DropdownMenu.Item>}
+                        </DropdownMenu.Item>} */}
                       <DropdownMenu.Item>
                         <a
                           href={`https://socialperfect.ai?url=${encodeURI(localPost?.live_post_url)}`}
@@ -371,9 +373,10 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
         </div>
       </Modal.Overlay>
       <Modal.Overlay closeIcon open={showFactCheck} onClose={() => setShowFactCheck(false)}>
-        <div className="row d-flex align-items-center justify-content-between">
-
-        </div>
+        {localPost?.fact_check_guid ?
+          <FactCheckResultPage uuid={localPost?.fact_check_guid} />
+          : <FactCheckModal post={localPost} refresh={fetchStatus} />
+        }
       </Modal.Overlay>
     </div>
 

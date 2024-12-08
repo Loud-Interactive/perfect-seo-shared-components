@@ -695,3 +695,26 @@ export interface ToastProps {
   type?: 'success' | 'error' | 'info' | 'warning'
   duration?: number
 }
+
+export interface PostProps {
+  task_id: string
+  status: string
+  title: string
+  seo_keyword: string
+  content_plan_guid: string
+  content_plan_outline_guid: string
+  content_plan_outline_title: string
+  client_name: string
+  client_domain: string
+  content: string
+  message: string
+  html_link: string
+  google_doc_link: string
+  live_post_url: string
+  email: string
+  created_at: string
+  factcheck_guid: string
+  factcheck_status: string
+  index_guid: string
+  index_status: string
+}

@@ -7,7 +7,7 @@ import TypeWriterText from '@/perfect-seo-shared-components/components/TypeWrite
 import { createClient } from '@/perfect-seo-shared-components/utils/supabase/client';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/perfect-seo-shared-components/lib/store';
-import ProgressBar from '@/components/ProgressBar/ProgressBar';
+import ProgressBar from '@/perfect-seo-shared-components/components/ProgressBar/ProgressBar';
 import ClaimResult from './ClaimResult/ClaimResult';
 import axiosInstance from '@/perfect-seo-shared-components/utils/axiosInstance';
 import { setLoading } from '@/perfect-seo-shared-components/lib/features/User';

@@ -376,7 +376,7 @@ export const getContentPlanOutlinesByDomain = (domain: string, paginator: Pagina
   return axiosInstance.get(`https://planperfectapi.replit.app/get_content_plan_outlines_by_domain/${domain}${parseQueries(paginator)}`);
 }
 export const getContentPlanOutlinesByEmail = (email: string, paginator: PaginationRequest) => {
-  return axiosInstance.get(`https://planperfectapi.replit.app/get_content_plan_outlines_by_email/${email}${parseQueries(paginator)}`);
+  return axiosInstance.get(`https://planperfectapi.replit.app/get_content_plan_outlines_with_posts_by_email/${email}${parseQueries(paginator)}`);
 }
 
 export const getContentPlansByEmail = (email: string, paginator: PaginationRequest) => {

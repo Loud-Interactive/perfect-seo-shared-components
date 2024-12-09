@@ -2,6 +2,7 @@
 import { StatusType } from "@/perfect-seo-shared-components/data/types";
 import { fetchOutlineStatus, getFactCheckStatus, getPostStatus } from "@/perfect-seo-shared-components/services/services";
 import { useEffect, useState } from "react";
+import TypeWriterText from "../TypeWriterText/TypeWriterText";
 
 interface StatusBarProps {
   content_plan_outline_guid?: string;
@@ -9,12 +10,11 @@ interface StatusBarProps {
   content_plan_post_guid?: string
   content_plan_factcheck_guid?: string
   content_plan_social_guid?: string
-  onEditOutline?: () => void
   onGeneratePost?: () => void
   type: StatusType
 }
 
-const StatusBar = ({ content_plan_outline_guid, content_plan_guid, content_plan_post_guid, content_plan_factcheck_guid, content_plan_social_guid, onEditOutline, onGeneratePost, type
+const StatusBar = ({ content_plan_outline_guid, content_plan_guid, content_plan_post_guid, content_plan_factcheck_guid, content_plan_social_guid, onGeneratePost, type
 }: StatusBarProps) => {
   const [outlineStatus, setOutlineStatus] = useState<string>('');
   const [postStatus, setPostStatus] = useState<string>('');
@@ -27,6 +27,7 @@ const StatusBar = ({ content_plan_outline_guid, content_plan_guid, content_plan_
   const [outlineError, setOutlineError] = useState<string>('');
   const [postError, setPostError] = useState<string>('');
   const [factcheckError, setFactcheckError] = useState<string>('');
+
 
   const [outlineComplete, setOutlineComplete] = useState<boolean>(false);
   const [postComplete, setPostComplete] = useState<boolean>(false);
@@ -61,8 +62,9 @@ const StatusBar = ({ content_plan_outline_guid, content_plan_guid, content_plan_
       setFactcheckLoading(true);
       getFactCheckStatus(content_plan_factcheck_guid)
         .then(res => {
+          let status = res.data.status.replaceAll("_", " ").split(":")[0];
           setFactcheckLoading(false);
-          setFactcheckStatus(res.data.status);
+          setFactcheckStatus(status)
         }
         )
         .catch(err => {
@@ -95,10 +97,7 @@ const StatusBar = ({ content_plan_outline_guid, content_plan_guid, content_plan_
     }
   }, [outlineComplete, postComplete, factcheckComplete, content_plan_factcheck_guid, content_plan_guid, content_plan_outline_guid, content_plan_post_guid, content_plan_social_guid]);
 
-  const onEditOutlineHandler = (e) => {
-    e.preventDefault();
-    onEditOutline();
-  }
+
 
   const generatePostClickHandler = (e) => {
     e.preventDefault();
@@ -106,12 +105,6 @@ const StatusBar = ({ content_plan_outline_guid, content_plan_guid, content_plan_
   }
   return (
     <div className="row d-flex align-items-center justify-content-end g-0 hover-base">
-      {(content_plan_outline_guid && onEditOutline) &&
-        <div className="col-auto hover-only">
-          <a className="text-warning me-2" onClick={onEditOutlineHandler}>
-            <i className="bi bi-pencil-fill" /> Edit outline
-          </a>
-        </div>}
       {
         outlineStatus && <div className="col-auto d-flex align-items-center">
           {outlineComplete ?
@@ -145,13 +138,13 @@ const StatusBar = ({ content_plan_outline_guid, content_plan_guid, content_plan_
             <div className="col-auto d-flex align-items-center">
               <i className="bi bi-chevron-right mx-2" />
               <div>
-                <a className="text-warning my-0" onClick={generatePostClickHandler}>Generate Post</a>
+                <a title="Generate Post" className="text-warning my-0" onClick={generatePostClickHandler}>Generate Post</a>
               </div>
             </div>
             : null
       }
       {
-        factcheckStatus && <div className="col-auto d-flex align-items-center">
+        factcheckStatus && <div className="col-auto d-flex align-items-center hover-base">
           <i className="bi bi-chevron-right mx-2" />
           {factcheckComplete ?
             <>
@@ -160,9 +153,12 @@ const StatusBar = ({ content_plan_outline_guid, content_plan_guid, content_plan_
             </>
             :
             <>
-              <strong className="text-primary">Fact Check Status</strong> {factcheckStatus}
+              <strong className="text-primary me-2">Fact Check Status</strong> <TypeWriterText withBlink string={factcheckStatus} />
             </>
           }
+          <div className="hover-only">
+            <a title="View Fact Check Details" className="text-warning ms-2" target="_blank" href={`https://factcheckperfect.ai/fact-checks/${content_plan_factcheck_guid}`}>View Fact Check Details</a>
+          </div>
         </div>
       }
     </div >

@@ -63,7 +63,6 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
   }
 
   useEffect(() => {
-    console.log(post)
     if (post?.status !== status) {
       setStatus(post?.status)
       if (completedStatus.includes(post?.status)) {
@@ -197,12 +196,15 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
 
   }
 
-  const handleEditOutline = (e) => {
+  const handleEditOutline = (e?) => {
+    if (e) {
+      e.preventDefault()
+    }
     setEditOutline(true)
   }
   const closeHandler = () => {
     setShowFactCheck(false)
-    fetchStatus()
+    return fetchStatus()
   }
 
   return (

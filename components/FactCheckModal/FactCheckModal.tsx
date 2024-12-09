@@ -8,7 +8,7 @@ import { signIn } from 'next-auth/react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { FactCheckPerfectLogo } from '@/perfect-seo-shared-components/assets/brandIcons';
 import { PostProps } from '@/perfect-seo-shared-components/data/types';
-import { factCheckByPostGuid, postFactCheck, updateLiveUrl } from '@/perfect-seo-shared-components/services/services';
+import { factCheckByPostGuid, patchPost, postFactCheck, updateLiveUrl } from '@/perfect-seo-shared-components/services/services';
 import axios from 'axios';
 
 // onNewFactCheck: (factCheck: { type: 'url' | 'file', content: string }, post_id?: string) => void;
@@ -41,8 +41,12 @@ const FactCheckModal = ({ post, refresh, setLocalPost, onClose }: FactCheckModal
     }
     factCheckByPostGuid(reqBody)
       .then(res => {
-        setIsLoading(true)
-        onClose()
+        patchPost(post.content_plan_outline_guid, "factcheck_guid", res.data.guid)
+          .then(res => {
+            setIsLoading(true)
+            onClose()
+          })
+
       })
       .catch(err => {
         console.log(err);
@@ -58,9 +62,11 @@ const FactCheckModal = ({ post, refresh, setLocalPost, onClose }: FactCheckModal
     }
     factCheckByPostGuid(reqBody)
       .then(res => {
-        setIsLoading(true)
-        console.log(res)
-        onClose()
+        patchPost(post.content_plan_outline_guid, "factcheck_guid", res.data.guid)
+          .then(res => {
+            setIsLoading(true)
+            onClose()
+          })
       })
       .catch(err => {
         console.log(err);

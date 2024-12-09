@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import * as Tabs from "@radix-ui/react-tabs";
 import { useSelector } from 'react-redux';
 import { RootState } from '@/perfect-seo-shared-components/lib/store';
@@ -8,57 +8,80 @@ import { signIn } from 'next-auth/react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { FactCheckPerfectLogo } from '@/perfect-seo-shared-components/assets/brandIcons';
 import { PostProps } from '@/perfect-seo-shared-components/data/types';
+import { factCheckByPostGuid, postFactCheck, updateLiveUrl } from '@/perfect-seo-shared-components/services/services';
+import axios from 'axios';
 
 // onNewFactCheck: (factCheck: { type: 'url' | 'file', content: string }, post_id?: string) => void;
 
 interface FactCheckModalProps {
   post: PostProps,
   refresh: () => void
+  setLocalPost: (post: PostProps) => void
+  onClose: () => void
 }
-const FactCheckModal = ({ post, refresh }: FactCheckModalProps) => {
+const FactCheckModal = ({ post, refresh, setLocalPost, onClose }: FactCheckModalProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [url, setUrl] = useState('');
   const [file, setFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const { isLoggedIn, profile } = useSelector((state: RootState) => state);
+  const { isLoggedIn } = useSelector((state: RootState) => state);
   const pathname = usePathname()
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const urlParam = searchParams.get('url');
-  const guidParam = searchParams.get('post_guid');
 
-  useEffect(() => {
-    if (urlParam && profile) {
-      let guid = guidParam.toString()
-      router.replace(pathname)
-      setUrl(urlParam)
-      return handleUrlCheck(urlParam.toString(), guid)
+
+  const updateLivePostUrl = () => {
+    updateLiveUrl(post.content_plan_outline_guid, url)
+      .then(res => { setLocalPost({ ...post, live_post_url: url }) })
+  }
+
+  const handleUrlCheck = () => {
+    setIsLoading(true);
+    let reqBody = {
+      content_plan_outline_guid: post?.content_plan_outline_guid,
+      use_live_url: true
     }
-  }, [urlParam, profile])
-
-  const handleUrlCheck = (selectUrl?, guid?) => {
-    if (!selectUrl && !url) return setError("Please enter a URL to fact-check");
-    let newUrl = selectUrl ? selectUrl : url;
-
-    // onNewFactCheck({ type: 'url', content: newUrl }, guid);
-    setUrl('');
+    factCheckByPostGuid(reqBody)
+      .then(res => {
+        setIsLoading(true)
+        onClose()
+      })
+      .catch(err => {
+        console.log(err);
+        setIsLoading(false)
+        setError(err?.response?.data?.message || err?.message || 'An error occurred')
+      })
   };
 
   const handleFileCheck = () => {
-    if (!file) return setError("Please select a file to upload");
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const content = e.target?.result as string;
-      // onNewFactCheck({ type: 'file', content });
-      setFile(null);
-    };
-    reader.readAsText(file);
+    let reqBody = {
+      content_plan_outline_guid: post?.content_plan_outline_guid,
+      use_live_url: false
+    }
+    factCheckByPostGuid(reqBody)
+      .then(res => {
+        setIsLoading(true)
+        console.log(res)
+        onClose()
+      })
+      .catch(err => {
+        console.log(err);
+        setIsLoading(false)
+        setError(err?.response?.data?.message || err?.message || 'An error occurred')
+      })
   };
 
+  useEffect(() => {
+    if (post?.live_post_url) {
+      setUrl(post?.live_post_url)
+    }
+  }, [post?.live_post_url])
   const loginHandler = (e) => {
     e.preventDefault();
     signIn('google');
   }
+
+  const isSameURL = useMemo(() => {
+    return (post?.live_post_url === url)
+  }, [post?.live_post_url, url])
 
   return (
     <div className="card p-3">
@@ -83,40 +106,32 @@ const FactCheckModal = ({ post, refresh }: FactCheckModalProps) => {
               <Tabs.Trigger className='col-auto ps-4 btn btn-warning btn-tab' value="file" disabled={!post?.html_link}>Generated HTML</Tabs.Trigger>
             </Tabs.List>
             <Tabs.Content value="url">
-              <div className="d-flex justify-content-center">
-                <div className="input-group">
-                  <input
-                    placeholder="Enter URL to fact-check"
-                    value={url}
-                    name='url'
-                    onChange={(e) => setUrl(e.target.value)}
-                    type="url"
-                    className='form-control bg-dark'
-                  />
-                  <button className="btn btn-primary input-group-append" onClick={() => handleUrlCheck()} disabled={isLoading || !url}>
+              <div className="input-group w-100 mt-3">
+                <input
+                  placeholder="Enter URL to fact-check"
+                  value={url}
+                  name='url'
+                  onChange={(e) => setUrl(e.target.value)}
+                  type="url"
+                  className='form-control bg-dark'
+                />{isSameURL ?
+                  <button className="btn btn-primary input-group-append" onClick={() => handleUrlCheck()} disabled={isLoading}>
                     {isLoading ? <div className='spinner-border spinner-border-sm' /> : 'Check'}
                   </button>
-                </div>
+                  :
+                  <button className="btn btn-primary input-group-append" onClick={() => updateLivePostUrl()}>
+                    Update Live Post Url
+                  </button>
+
+                }
+
               </div>
             </Tabs.Content>
             <Tabs.Content value="file">
-              <div className="d-flex justify-content-center mt-3">
-                <div className='input-group'>
-                  <input
-                    type="file"
-                    className='bg-dark form-control'
-                    accept=".txt,.html,.pdf"
-                    onChange={(e) => {
-                      if (e.target.files && e.target.files[0]) {
-                        setFile(e.target.files[0]);
-                      }
-                    }}
-                  />
-
-                  <button className='btn btn-primary input-group-append' onClick={handleFileCheck} disabled={isLoading || !file}>
-                    {isLoading ? 'Checking...' : 'Check'}
-                  </button>
-                </div>
+              <div className="d-flex justify-content-center">
+                <button className='btn btn-primary input-group-append' onClick={handleFileCheck} disabled={isLoading}>
+                  {isLoading ? 'Checking...' : 'Check Generated HTML File'}
+                </button>
               </div>
             </Tabs.Content>
             {error && <p className='text-danger mt-2text-center'><strong>{error}</strong></p>}

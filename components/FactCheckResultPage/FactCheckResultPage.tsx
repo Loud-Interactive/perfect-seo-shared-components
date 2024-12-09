@@ -12,12 +12,15 @@ import ClaimResult from './ClaimResult/ClaimResult';
 import axiosInstance from '@/perfect-seo-shared-components/utils/axiosInstance';
 import { setLoading } from '@/perfect-seo-shared-components/lib/features/User';
 import { signIn } from 'next-auth/react';
+import { get } from 'http';
+import { getFactCheckStatus } from '@/perfect-seo-shared-components/services/services';
 
 interface FactCheckResultPageProps {
   uuid: string;
+  isModal?: boolean
 }
 
-const FactCheckResultPage: FC<FactCheckResultPageProps> = ({ uuid }: FactCheckResultPageProps) => {
+const FactCheckResultPage: FC<FactCheckResultPageProps> = ({ uuid, isModal }: FactCheckResultPageProps) => {
   const [details, setDetails] = useState<FCResult>(null)
   const [adding, setAdding] = useState(false)
   const [progress, setProgress] = useState<number>(0);
@@ -138,7 +141,7 @@ const FactCheckResultPage: FC<FactCheckResultPageProps> = ({ uuid }: FactCheckRe
 
   // Pull for status updates
   const pullStatus = () => {
-    axiosInstance.get(`/api/status/${uuid}`)
+    getFactCheckStatus(uuid)
       .then(res => {
         if (res.data.status === 'completed') {
           let newDetails: any = res.data.factCheck || null;

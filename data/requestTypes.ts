@@ -119,8 +119,10 @@ export interface MetaRequest {
 
 
 export interface FactCheckRequest {
-  model: string
+  model?: string
   file?: any
+  content?: string,
+  type: string,
   url?: string
 }
 

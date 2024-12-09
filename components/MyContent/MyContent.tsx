@@ -332,24 +332,30 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
                 <h1 className="text-start mb-5"><TypeWriterText string={selectedTab.includes("bulk") ? 'Upload for all domains' : selected ? `Content for ${domain}` : 'Your Content'} withBlink /></h1>
               </div>
             }
-            {(domainsList?.length > 0 && ['bulk-content', 'bulk-posts'].includes(selectedTab) === false && !currentDomain) && <div className='col-12 col-md-4 mb-5 d-flex align-items-center'>
-              <SearchSelect
-                onChange={searchDomainChangeHandler}
-                options={domainsList}
-                isLoading={!domainsList}
-                value={selected || null}
-                placeholder="Select a Domain"
-                bottomSpacing={false}
-              />
-              <div className="ms-2">
-                <Tooltip>
-                  Clear search field to see all content by email
-                </Tooltip>
+            {(domainsList?.length > 0 && ['bulk-content', 'bulk-posts'].includes(selectedTab) === false && !currentDomain) && <div className='col-12 col-md-8 col-lg-4 mb-5 d-flex align-items-center'>
+              <div className='row d-flex align-items-center g-2'>
+                <div className='col'>
+                  <SearchSelect
+                    onChange={searchDomainChangeHandler}
+                    options={domainsList}
+                    isLoading={!domainsList}
+                    value={selected || null}
+                    placeholder="Select a Domain"
+                    bottomSpacing={false}
+                  />
+                </div>
+                <div className="col-auto">
+                  <Tooltip>
+                    Clear search field to see all content by email
+                  </Tooltip>
+                </div>
 
-
+                {(!isDefaultDomain && selected) && <div className='col-auto'>
+                  <a className='text-primary' onClick={addDefaultHandler}>Make Default</a>
+                </div>}
               </div>
-              {(!isDefaultDomain && selected) && <a className='text-primary' onClick={addDefaultHandler}>Make Default</a>}
-            </div>}
+            </div>
+            }
           </div >
         </div >
       }

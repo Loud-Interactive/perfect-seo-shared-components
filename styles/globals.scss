@@ -5234,3 +5234,37 @@ a.text-primary {
     color: rgba($primary, .7) !important;
   }
 }
+
+.modal-body {
+  min-width: 850px;
+  max-width: 100vw;
+}
+
+.icon {
+  border-radius: 50%;
+  aspect-ratio: 1/1;
+  min-width: 1.5em;
+  box-sizing: border-box;
+}
+
+.btn-icon {
+  border-radius: 50% !important;
+  aspect-ratio: 1/1;
+  min-width: 2em;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.hover-base {
+  @include TabletUp {
+    .hover-only {
+      display: none;
+    }
+
+    &:hover {
+      .hover-only {
+        display: revert;
+      }
+    }
+  }
+}

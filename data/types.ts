@@ -808,3 +808,10 @@ export enum ClaimResultStatus {
   PARTIALLY_SUPPORTED = 'partially supported by the sources',
   FULLY_SUPPORTED = 'fully supported by the sources',
 }
+
+export enum StatusType {
+  PLAN,
+  OUTLINE,
+  POST,
+  FACTCHECK
+}

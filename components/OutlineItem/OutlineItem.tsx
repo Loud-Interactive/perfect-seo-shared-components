@@ -10,8 +10,9 @@ import RegeneratePostModal, { GenerateTypes } from "../RegeneratePostModal/Regen
 import { GenerateContentPost } from "@/perfect-seo-shared-components/data/requestTypes";
 import { useDispatch, useSelector } from "react-redux";
 import { addToast, selectEmail, selectIsAdmin } from "@/perfect-seo-shared-components/lib/features/User";
-import { QueueItemProps } from "@/perfect-seo-shared-components/data/types";
+import { QueueItemProps, StatusType } from "@/perfect-seo-shared-components/data/types";
 import { createClient } from "@/perfect-seo-shared-components/utils/supabase/client";
+import StatusBar from "../StatusBar/StatusBar";
 
 const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
   const [status, setStatus] = useState(outline?.status)
@@ -170,8 +171,8 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
   }
   return (
     <div className="card bg-secondary p-3" title={outline?.post_title}>
-      <div className="row d-flex g-3 d-flex align-items-start">
-        <div className="col-12 col-lg-6">
+      <div className="row d-flex g-3 d-flex align-items-end">
+        <div className="col">
           <div className="row g-3">
             <div className="col-12">
               <strong className="text-primary me-1">Title</strong>  {localOutline?.post_title} {(outline.client_domain !== domain_name) && <span className='badge bg-primary ms-2'>{outline?.brand_name}</span>}{localOutline?.post_generated && <span className='badge bg-success ms-2'>Generated</span>}
@@ -187,9 +188,16 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
                 {moment(localOutline.created_at).format("dddd, MMM Do, YYYY h:mma")}
               </div>
             </div>
+            <div className="col-12 py-3">
+              <StatusBar type={StatusType.OUTLINE} content_plan_outline_guid={localOutline?.guid} content_plan_post_guid={localOutline?.guid} onEditOutline={() => {
+                setEditModal(true)
+              }} onGeneratePost={() => {
+                setShowGenerate(true)
+              }} />
+            </div>
           </div>
         </div>
-        <div className="col-12 col-lg-6">
+        <div className="col-12 col-lg-auto">
           <div className='row d-flex justify-content-end'>
             <div className="input-group d-flex justify-content-end">
               <>
@@ -210,7 +218,7 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
                   <DropdownMenu.Portal>
                     <DropdownMenu.Content align="end" className="bg-warning z-100 card">
                       {isAdmin && <DropdownMenu.Item>
-                        <button className="btn btn-transparent text-black" onClick={addToQueue}><i className="material-icons me-2">queue</i>Add to Watchlist</button>
+                        <button className="btn btn-transparent text-black w-100" onClick={addToQueue}><i className="material-icons me-2">queue</i>Add to Watchlist</button>
                       </DropdownMenu.Item>}
                       {localOutline?.content_plan_guid && <DropdownMenu.Item>
                         <Link
@@ -223,7 +231,7 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
                       </DropdownMenu.Item>}
                       <DropdownMenu.Item>
                         <button
-                          className="btn btn-transparent text-black"
+                          className="btn btn-transparent text-black w-100"
                           onClick={(e) => {
                             regenerateOutlineClickHandler();
                           }}
@@ -233,7 +241,7 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
                       </DropdownMenu.Item>
                       <DropdownMenu.Item>
                         <button
-                          className="btn btn-transparent text-black"
+                          className="btn btn-transparent text-black w-100"
                           onClick={() => { setShowGenerate(true) }}
                         >
                           Generate Post
@@ -245,10 +253,6 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
 
 
               </>
-            </div>
-
-            <div className='col-12 text-end text-primary mt-2'>
-              <TypeWriterText string={status} withBlink />
             </div>
           </div>
         </div>

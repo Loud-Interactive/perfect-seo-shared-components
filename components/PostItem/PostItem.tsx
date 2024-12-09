@@ -14,11 +14,12 @@ import CreateContentModal from "../CreateContentModal/CreateContentModal"
 import { createClient } from "@/perfect-seo-shared-components/utils/supabase/client"
 import en from '@/assets/en.json'
 import RegeneratePostModal, { GenerateTypes } from "../RegeneratePostModal/RegeneratePostModal"
-import { QueueItemProps } from "@/perfect-seo-shared-components/data/types"
+import { QueueItemProps, StatusType } from "@/perfect-seo-shared-components/data/types"
 import Form from "../Form/Form"
 import useForm from "@/perfect-seo-shared-components/hooks/useForm"
 import FactCheckModal from "../FactCheckModal/FactCheckModal"
 import FactCheckResultPage from "../FactCheckResultPage/FactCheckResultPage"
+import StatusBar from "../StatusBar/StatusBar"
 
 interface PostItemProps {
   post: any,
@@ -48,8 +49,8 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
       if (form.validate({ requiredFields: ['live_url'], validatorFields: ['live_url'] })) {
         updateLiveUrl(localPost.content_plan_outline_guid, url || '')
           .then(res => {
-            console.log(res.data)
             setLocalPost({ ...localPost, live_post_url: url })
+            setShowLivePost(false)
           })
       }
 
@@ -62,6 +63,7 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
   }
 
   useEffect(() => {
+    console.log(post)
     if (post?.status !== status) {
       setStatus(post?.status)
       if (completedStatus.includes(post?.status)) {
@@ -135,7 +137,6 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
   }
 
   const supabase = createClient()
-  console.log(Object.keys(post))
 
   const deleteHandler = () => {
     deleteContentOutline(localPost?.content_plan_outline_guid)
@@ -199,11 +200,15 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
   const handleEditOutline = (e) => {
     setEditOutline(true)
   }
+  const closeHandler = () => {
+    setShowFactCheck(false)
+    fetchStatus()
+  }
 
   return (
     <div className="card bg-secondary p-3" title={post?.title}>
-      <div className="row d-flex g-3 d-flex align-items-start">
-        <div className="col-12 col-lg-6">
+      <div className="row d-flex g-3 d-flex align-items-end">
+        <div className="col">
           <div className="row g-3">
             <div className="col-12">
               <p className="mb-1">
@@ -217,8 +222,11 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
               {localPost?.live_post_url && <p className="m-0">  <strong className="text-primary me-1">Live URL</strong>  <a href={localPost?.live_post_url} target="_blank" title="View Live Post"><i className="bi bi-link" /> {localPost?.live_post_url}</a><a className="text-small ms-2 text-primary" onClick={e => { e.preventDefault(); setShowLivePost(true) }} title="Edit URL">Edit URL</a></p>}
             </div>
           </div>
+          <div className="col-12 py-3">
+            <StatusBar type={StatusType.POST} content_plan_outline_guid={localPost.content_plan_outline_guid} content_plan_guid={localPost?.content_plan_guid} content_plan_post_guid={localPost?.content_plan_outline_guid} content_plan_factcheck_guid={localPost?.factcheck_guid} />
+          </div>
         </div>
-        <div className="col-12 col-lg-6">
+        <div className="col-12 col-lg-auto">
           <div className='row d-flex justify-content-end'>
             <div className="input-group d-flex justify-content-end">
               {(post?.google_doc_link && post?.html_link) &&
@@ -373,10 +381,13 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
         </div>
       </Modal.Overlay>
       <Modal.Overlay closeIcon open={showFactCheck} onClose={() => setShowFactCheck(false)}>
-        {localPost?.fact_check_guid ?
-          <FactCheckResultPage uuid={localPost?.fact_check_guid} />
-          : <FactCheckModal post={localPost} refresh={fetchStatus} />
-        }
+        <div className="modal-body">
+          {/* {localPost?.factcheck_guid ? */}
+          {/* // <FactCheckResultPage isModal uuid={localPost?.factcheck_guid} />
+            // : */}
+          <FactCheckModal onClose={closeHandler} post={localPost} setLocalPost={setLocalPost} refresh={fetchStatus} />
+          {/* } */}
+        </div>
       </Modal.Overlay>
     </div>
 

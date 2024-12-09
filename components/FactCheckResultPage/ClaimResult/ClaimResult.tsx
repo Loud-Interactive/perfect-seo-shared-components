@@ -1,4 +1,4 @@
-import { Claim } from "@/types"
+import { Claim } from "@/perfect-seo-shared-components/data/types"
 
 interface ClaimResultProps {
   claim: Claim

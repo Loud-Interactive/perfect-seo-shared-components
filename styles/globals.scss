@@ -5254,17 +5254,3 @@ a.text-primary {
   padding: 0 !important;
   box-sizing: border-box !important;
 }
-
-.hover-base {
-  @include TabletUp {
-    .hover-only {
-      display: none;
-    }
-
-    &:hover {
-      .hover-only {
-        display: revert;
-      }
-    }
-  }
-}

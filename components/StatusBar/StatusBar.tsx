@@ -104,7 +104,7 @@ const StatusBar = ({ content_plan_outline_guid, content_plan_guid, content_plan_
     onGeneratePost();
   }
   return (
-    <div className="row d-flex align-items-center justify-content-end g-0 hover-base">
+    <div className="row d-flex align-items-center justify-content-end g-0 ">
       {
         outlineStatus && <div className="col-auto d-flex align-items-center">
           {outlineComplete ?
@@ -144,7 +144,7 @@ const StatusBar = ({ content_plan_outline_guid, content_plan_guid, content_plan_
             : null
       }
       {
-        factcheckStatus && <div className="col-auto d-flex align-items-center hover-base">
+        factcheckStatus && <div className="col-auto d-flex align-items-center ">
           <i className="bi bi-chevron-right mx-2" />
           {factcheckComplete ?
             <>
@@ -156,9 +156,6 @@ const StatusBar = ({ content_plan_outline_guid, content_plan_guid, content_plan_
               <strong className="text-primary me-2">Fact Check Status</strong> <TypeWriterText withBlink string={factcheckStatus} />
             </>
           }
-          <div className="hover-only">
-            <a title="View Fact Check Details" className="text-warning ms-2" target="_blank" href={`https://factcheckperfect.ai/fact-checks/${content_plan_factcheck_guid}`}>View Fact Check Details</a>
-          </div>
         </div>
       }
     </div >

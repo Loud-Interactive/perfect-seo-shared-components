@@ -368,9 +368,7 @@ export const generateSocialPost = async (reqObj: Request.GenerateSocialPostProps
 export const regenerateSocialPost = async (guid, platform) => {
   return axiosInstance.post(`https://socialperfectapi.replit.app/regenerate_post/${guid}/${platform}`
   );
-
 }
-
 
 export const getContentPlanOutlinesByDomain = (domain: string, paginator: PaginationRequest) => {
   return axiosInstance.get(`https://planperfectapi.replit.app/get_content_plan_outlines_by_domain/${domain}${parseQueries(paginator)}`);
@@ -401,4 +399,20 @@ export const patchPost = (guid: string, field: string, value: string) => {
 
 export const factCheckByPostGuid = (reqObj: any) => {
   return axiosInstance.post(`https://factcheck-perfectai.replit.app/fact_check_content_by_guid`, reqObj)
+}
+
+// GSC and AHREF Reporting 
+export const getGSCSearchAnalytics = (reqObj: Request.GSCRequest) => {
+  return axiosInstance.get(`https://search-analytics-api-dev456.replit.app/gsc_search_analytics_data${parseQueries(reqObj)}`);
+}
+
+export const getAhrefsDomainRating = (reqObj: Request.DomainReportsRequest) => {
+  return axiosInstance.get(`https://search-analytics-api-dev456.replit.app/ahrefs_domain_rating${parseQueries(reqObj)}`);
+}
+
+export const getAhrefsUrlRating = (reqObj: Request.PageRequest) => {
+  return axiosInstance.get(`https://search-analytics-api-dev456.replit.app/ahrefs_url_rating${parseQueries(reqObj)}`);
+}
+export const getAhrefsKeywords = (reqObj: Request.PageRequest) => {
+  return axiosInstance.get(`https://search-analytics-api-dev456.replit.app/ahrefs_keywords${parseQueries(reqObj)}`);
 }

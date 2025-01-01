@@ -21,6 +21,7 @@ import BrandHeader from '../BrandHeader/BrandHeader';
 import LoadSpinner from '../LoadSpinner/LoadSpinner';
 import { selectDomains, selectDomainsInfo, selectEmail, selectIsAdmin, selectIsLoading, selectIsLoggedIn, selectSettings, selectUser } from '@/perfect-seo-shared-components/lib/features/User'
 import Tooltip from '../Tooltip';
+import Reports from '../Reports/Reports';
 
 
 export interface MyContentProps {
@@ -150,7 +151,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
     { key: "content-plans", title: "Generated Content Plans" },
     { key: "outlines", title: "Generated Outlines" },
     { key: "posts", title: "Generated Posts" },
-    // { key: "reports", title: "Stats & Reports" },
+    { key: "reports", title: "Stats & Reports" },
     { key: "bulk-content", title: "Bulk Content Plans" },
     { key: "bulk-posts", title: "Bulk Posts" },
   ]
@@ -397,7 +398,14 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
                 </Suspense>
               </div>
             </div>
-            <div className={`tab-pane fade ${selectedTab === 'bulk-content' && 'show active'}`} id="bulk-cnotent" role="tabpanel" aria-labelledby="bulk-content-tab">
+            <div className={`tab-pane fade ${selectedTab === 'reports' && 'show active'}`} id="reports" role="tabpanel" aria-labelledby="reports-tab">
+              <div className='tab p-3'>
+                {/* <Suspense fallback={<LoadSpinner />}> */}
+                <Reports active={!loading && selectedTab === 'reports'} domain_name={currentDomain || domain} />
+                {/* </Suspense> */}
+              </div>
+            </div>
+            <div className={`tab-pane fade ${selectedTab === 'bulk-content' && 'show active'}`} id="bulk-content" role="tabpanel" aria-labelledby="bulk-content-tab">
               <div className='tab p-3'>
                 <Suspense fallback={<LoadSpinner />}>
                   <BulkContentComponent currentDomain={currentDomain} active={!loading && selectedTab === 'bulk-content'} />

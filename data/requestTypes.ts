@@ -151,3 +151,27 @@ export interface GenerateSocialPostProps {
   platform: string,
   post_content: string
 }
+
+export interface PaginationRequest {
+  limit?: number,
+  page?: number
+}
+
+export interface DateRangeRequest {
+  start_date: string,
+  end_date: string,
+}
+export interface DateAndPageRequest extends DateRangeRequest, PaginationRequest { }
+
+export interface GSCRequest extends DateAndPageRequest {
+  domain: string,
+  page_url?: string,
+  keyword?: boolean,
+}
+
+export interface PageRequest extends DateAndPageRequest {
+  page_url: string
+}
+export interface DomainReportsRequest extends DateAndPageRequest {
+  domain: string,
+}

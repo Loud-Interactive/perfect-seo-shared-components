@@ -24,6 +24,7 @@ export interface PlanListProps {
 const Reports = ({ domain_name, active }: PlanListProps) => {
   const [loading, setLoading] = useState(false)
   const [data, setData] = useState<any>(null)
+  const [GSCData, setGSCData] = useState<any>(null)
   const { tablet, phone } = useViewport()
   const [deleteModal, setDeleteModal] = useState(null)
   const [newModal, setNewModal] = useState(false)
@@ -33,9 +34,9 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
   const isAdmin = useSelector(selectIsAdmin)
   const router = useRouter();
   const dispatch = useDispatch()
-  const [startDate, setStartDate] = useState('2021-01-01');
+  const [startDate, setStartDate] = useState(moment().subtract(30, "days").format("YYYY-MM-DD"));
   const [endDate, setEndDate] = useState(moment().format("YYYY-MM-DD"))
-
+  const [showDetails, setShowDetails] = useState(false)
   const paginator = usePaginator()
 
   const domainRatings = useMemo(() => {
@@ -63,8 +64,8 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
     }
     getGSCSearchAnalytics(reqObj)
       .then(res => {
-        console.log("GSC DATA", res.data.data)
         setLoading(false);
+        setGSCData(res.data)
       })
     getAhrefsDomainRating(reqObj)
       .then(res => {
@@ -107,13 +108,16 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
   const completeStatuses = ["Finished", "Your Content Plan Has Been Created"]
 
 
-  const columnArray: TableColumnArrayProps[] = useMemo(() => {
+  const columnArray: TableColumnArrayProps[] = [
+    { id: 'date', Header: 'Date', accessor: (obj) => moment(obj.date + 'Z', "YYYY-MM-DD").format("dddd, MMMM Do, YYYY"), disableSortBy: false },
+    { id: 'domain_rating', Header: 'Rating', accessor: 'domain_rating', headerClassName: 'text-end', cellClassName: 'text-end' },
+  ];
 
-    return [
-      { id: 'date', Header: 'Date', accessor: (obj) => moment(obj.date + 'Z', "YYYY-MM-DD").format("dddd, MMMM Do, YYYY"), disableSortBy: false },
-      { id: 'domain_rating', Header: 'Rating', accessor: 'domain_rating', headerClassName: 'text-end', cellClassName: 'text-end' },
-    ];
-  }, [phone, tablet, domain_name])
+  const gscColumnArray: TableColumnArrayProps[] = [
+    { id: 'date', Header: 'Date', accessor: (obj) => moment(obj.date + 'Z', "YYYY-MM-DD").format("dddd, MMMM Do, YYYY"), disableSortBy: false },
+    { id: 'domain_rating', Header: 'Rating', accessor: 'domain_rating', headerClassName: 'text-end', cellClassName: 'text-end' },
+  ];
+
 
   const deleteHandler = (guid) => {
     deleteContentPlan(guid)
@@ -133,6 +137,11 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
     return setNewModal(false)
   }
 
+  const detailClickHandler = (e) => {
+    e.preventDefault();
+    setShowDetails(!showDetails)
+  }
+
   return (
     <div className={styles.wrap}>
       <div className='row g-3 d-flex justify-content-between align-items-end mb-3'>
@@ -146,21 +155,46 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
         </div>
       </div>
       {loading && <LoadSpinner />}
-      <div className='row d-flex justify-content-center'>
-        <div className='col-12'>
-          <h3>AHREFs Domain Rating | <span className='ms-2'>{domainRatings?.average?.toFixed(2)}</span></h3>
-        </div>
-        {data?.data?.length > 0 ?
-          <>
+      <div className='row d-flex justify-content-center g-3'>
+        <div className='col-12 card p-3'>
+          <div className='row d-flex align-items-end'>
+            <h3 className='col'>
+              <span className='text-primary'>AHREFs Domain Rating</span>
+              <span className='ms-2'>{domainRatings?.average?.toFixed(2)}</span>
+            </h3>
+            <div className='col-auto mb-2'>
+              <a
+                className="text-primary" onClick={detailClickHandler}
+              >
+                {showDetails ?
+                  <i className="bi bi-caret-up-fill" />
+                  : <i className="bi bi-caret-down-fill" />
+                }
+                {showDetails ? 'Hide' : 'Show'} Daily Breakdown <i>(Last 30 days)</i></a></div>
+          </div>
+          {showDetails && <div className='col-12 pb-0'>
+            {data?.data?.length > 0 ?
+              <div className='mt-2'>
 
-            <Table rawData={data.data} isLoading={loading} columnArray={columnArray} />
-            <div className='col-auto d-flex justify-content-center'>
-              {paginator.renderComponent()}
-            </div>
-          </>
-          : domainRatings?.average > 0 ?
-            <h5><TypeWriterText withBlink string="The are no results for the given parameters" /></h5>
-            : null}
+                <Table rawData={data.data} isLoading={loading} columnArray={columnArray} />
+                <div className='col-auto d-flex justify-content-center'>
+                  {paginator.renderComponent()}
+                </div>
+              </div>
+              : domainRatings?.average > 0 ?
+                <h5><TypeWriterText withBlink string="The are no results for the given parameters" /></h5>
+                : null}
+          </div>}
+        </div>
+        <div className='col-12 card p-3'>
+          <div className='row d-flex'>
+            <h3 className='text-primary'>Google Search Console </h3>
+          </div>
+          {GSCData?.data?.length >= 0 && <div className='col-12'>
+            {GSCData?.data?.length > 0 ? <Table rawData={GSCData.data} isLoading={loading} columnArray={gscColumnArray} />
+              : <h5><TypeWriterText withBlink string="The are no results for the given parameters" /></h5>}
+          </div>}
+        </div>
       </div>
       <Modal.Overlay open={newModal} onClose={newCloseHandler} closeIcon>
         <Modal.Title title="New Content Plan" />

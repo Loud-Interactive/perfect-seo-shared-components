@@ -23,7 +23,7 @@ export interface PlanListProps {
 }
 const Reports = ({ domain_name, active }: PlanListProps) => {
   const [loading, setLoading] = useState(false)
-  const [data, setData] = useState<any>()
+  const [data, setData] = useState<any>(null)
   const { tablet, phone } = useViewport()
   const [deleteModal, setDeleteModal] = useState(null)
   const [newModal, setNewModal] = useState(false)
@@ -44,6 +44,7 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
     }
 
     if (data) {
+      console.log(data)
       ratings.total = data.data.reduce((prev, acc) => prev + acc.domain_rating, 0)
       ratings.count = data.meta.total_records
       ratings.average = ratings.total / ratings.count
@@ -62,12 +63,12 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
     }
     getGSCSearchAnalytics(reqObj)
       .then(res => {
+        console.log("GSC DATA", res.data.data)
         setLoading(false);
       })
     getAhrefsDomainRating(reqObj)
       .then(res => {
         setData(res.data)
-        console.log(res.data.data)
       })
 
   }
@@ -147,7 +148,7 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
       {loading && <LoadSpinner />}
       <div className='row d-flex justify-content-center'>
         <div className='col-12'>
-          <h3>AHREFs Domain Rating | <span className='ms-2'>{domainRatings?.average}</span></h3>
+          <h3>AHREFs Domain Rating | <span className='ms-2'>{domainRatings?.average?.toFixed(2)}</span></h3>
         </div>
         {data?.data?.length > 0 ?
           <>

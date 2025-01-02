@@ -155,45 +155,49 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
         </div>
       </div>
       {loading && <LoadSpinner />}
-      <div className='row d-flex justify-content-center g-3'>
-        <div className='col-12 card p-3'>
-          <div className='row d-flex align-items-end'>
-            <h3 className='col'>
-              <span className='text-primary'>AHREFs Domain Rating</span>
-              <span className='ms-2'>{domainRatings?.average?.toFixed(2)}</span>
-            </h3>
-            <div className='col-auto mb-2'>
-              <a
-                className="text-primary" onClick={detailClickHandler}
-              >
-                {showDetails ?
-                  <i className="bi bi-caret-up-fill" />
-                  : <i className="bi bi-caret-down-fill" />
-                }
-                {showDetails ? 'Hide' : 'Show'} Daily Breakdown <i>(Last 30 days)</i></a></div>
-          </div>
-          {showDetails && <div className='col-12 pb-0'>
-            {data?.data?.length > 0 ?
-              <div className='mt-2'>
+      <div className='row d-flex justify-content-between align-items-start g-3'>
+        <div className='col-12 col-lg-6'>
+          <div className='card p-3'>
+            <div className='row d-flex align-items-end'>
+              <h3 className='col-12'>
+                <span className='text-primary'>AHREFs Domain Rating</span>
+                <span className='ms-2'>{domainRatings?.average?.toFixed(2)}</span>
+              </h3>
+              <div className='col-12 mb-2'>
+                <a
+                  className="text-white" onClick={detailClickHandler}
+                >
+                  {showDetails ?
+                    <i className="bi bi-caret-up-fill me-2" />
+                    : <i className="bi bi-caret-down-fill me-2" />
+                  }
+                  {showDetails ? 'Hide' : 'Show'} Daily Breakdown <i>(Last 30 days)</i></a></div>
+            </div>
+            {showDetails && <div className='col-12 pb-0'>
+              {data?.data?.length > 0 ?
+                <div className='mt-2'>
 
-                <Table rawData={data.data} isLoading={loading} columnArray={columnArray} />
-                <div className='col-auto d-flex justify-content-center'>
-                  {paginator.renderComponent()}
+                  <Table rawData={data.data} isLoading={loading} columnArray={columnArray} />
+                  <div className='col-auto d-flex justify-content-center'>
+                    {paginator.renderComponent()}
+                  </div>
                 </div>
-              </div>
-              : domainRatings?.average > 0 ?
-                <h5><TypeWriterText withBlink string="The are no results for the given parameters" /></h5>
-                : null}
-          </div>}
-        </div>
-        <div className='col-12 card p-3'>
-          <div className='row d-flex'>
-            <h3 className='text-primary'>Google Search Console </h3>
+                : domainRatings?.average > 0 ?
+                  <h5><TypeWriterText withBlink string="The are no results for the given parameters" /></h5>
+                  : null}
+            </div>}
           </div>
-          {GSCData?.data?.length >= 0 && <div className='col-12'>
-            {GSCData?.data?.length > 0 ? <Table rawData={GSCData.data} isLoading={loading} columnArray={gscColumnArray} />
-              : <h5><TypeWriterText withBlink string="The are no results for the given parameters" /></h5>}
-          </div>}
+        </div>
+        <div className='col-12 col-lg-6'>
+          <div className='card p-3'>
+            <div className='row d-flex'>
+              <h3 className='text-primary'>Google Search Console </h3>
+            </div>
+            {GSCData?.data?.length >= 0 && <div className='col-12'>
+              {GSCData?.data?.length > 0 ? <Table rawData={GSCData.data} isLoading={loading} columnArray={gscColumnArray} />
+                : <h5><TypeWriterText withBlink string="The are no results for the given parameters" /></h5>}
+            </div>}
+          </div>
         </div>
       </div>
       <Modal.Overlay open={newModal} onClose={newCloseHandler} closeIcon>

@@ -61,7 +61,7 @@ const usePaginator = (): PaginatorController => {
     router.replace(`${pathname}?${createQueryString('limit', number.toString())}`)
   }
 
-  const [currentPage, setCurrentPage] = useState(pageParam || 0);
+  const [currentPage, setCurrentPage] = useState(pageParam || 1);
   const [itemCount, setItemCount] = useState(0);
   const [limit, setLimit] = useState(limitParam || 10);
   const [maxButtons, setMaxButtons] = useState<PaginatorMaxButtonTypes>({ phone: 5, tablet: 7, desktop: 7 });

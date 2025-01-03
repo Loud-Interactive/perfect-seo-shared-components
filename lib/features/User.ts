@@ -1,6 +1,6 @@
 "use client";
 
-import { SettingsProps, GoogleUser, Profile, PreferencesProps, QueueItemProps, ToastProps } from "@/perfect-seo-shared-components/data/types";
+import { SettingsProps, GoogleUser, Profile, PreferencesProps, QueueItemProps, ToastProps, Schema } from "@/perfect-seo-shared-components/data/types";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
@@ -18,6 +18,7 @@ export type RootState = {
   loading: LoadingStates[],
   toasts: ToastProps[]
   show_queue: boolean;
+  schema: Schema[]
 };
 
 export type LoadingStates = {
@@ -40,8 +41,8 @@ const initialState: RootState = {
     { loading: false, key: 'user' },
   ],
   toasts: [],
-  show_queue: false
-
+  show_queue: false,
+  schema: []
 };
 
 export const UserSlice = createSlice({
@@ -220,12 +221,18 @@ export const UserSlice = createSlice({
         ...state,
         show_queue: action.payload
       }
+    },
+    setSchema: (state, action: PayloadAction<Schema[]>) => {
+      return {
+        ...state,
+        schema: action.payload
+      }
     }
   }
 });
 
 // Action creators are generated for each case reducer function
-export const { setUser, setProfile, updatePoints, setLoggedIn, setLoading, setAdmin, setDomainInfo, setDomainAccess, reset, setUserSettings, updateDomainInfo, setQueue, updateQueueItem, clearQueue, setLoader, addQueueItem, removeQueueItem, removeToast, addToast, clearToasts, setShowQueue } = UserSlice.actions;
+export const { setUser, setProfile, updatePoints, setLoggedIn, setLoading, setAdmin, setDomainInfo, setDomainAccess, reset, setUserSettings, updateDomainInfo, setQueue, updateQueueItem, clearQueue, setLoader, addQueueItem, removeQueueItem, removeToast, addToast, clearToasts, setShowQueue, setSchema } = UserSlice.actions;
 
 // Selectors
 export const selectUser = (state: RootState) => state?.user;
@@ -243,5 +250,6 @@ export const selectLoader = (state: RootState) => state?.loading;
 export const selectDomainInfo = (key: string) => (state: RootState) => state?.domainInfo?.find((domain) => domain.domain_name === key || domain.domain === key);
 export const selectToasts = (state: RootState) => state?.toasts;
 export const selectShowQueue = (state: RootState) => state?.show_queue;
+export const selectSchema = (state: RootState) => state?.schema;
 
 export default UserSlice.reducer;

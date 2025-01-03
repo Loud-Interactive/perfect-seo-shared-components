@@ -815,3 +815,27 @@ export enum StatusType {
   POST,
   FACTCHECK
 }
+
+export interface SchemaProgress {
+  errors: string[];
+  error_count: number;
+  total_count: number;
+  completed_count: number;
+}
+
+export interface Schema {
+  id: string;
+  user_id: string;
+  domain: string;
+  status: string;
+  started_at: string;
+  finished_at: string;
+  created_at: string;
+  updated_at: string;
+  error_details: string | null;
+  progress: SchemaProgress;
+  urls: string[];
+  processing_instance_id: string | null;
+  processing_started_at: string | null;
+  processing_heartbeat_at: string | null;
+}

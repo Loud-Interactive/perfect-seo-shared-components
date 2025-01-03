@@ -89,8 +89,9 @@ export const Brands: Array<Brand> = [
     url: 'https://productPerfect.ai',
     logo: '/svg/productPerfect.svg',
     icon: '/svg/productPerfect-icon.svg',
-    summary: "Perfect your e-commerce product pages with more detailed product descriptions, features, specifications, and product information using AI.",
-    status: BrandStatus.COMING_SOON,
+    // summary: "Perfect your e-commerce product pages with more detailed product descriptions, features, specifications, and product information using AI.",
+    summary: "        Transform any product page into comprehensive, structured data with our advanced AI-powered scraping technology.",
+    status: BrandStatus.LIVE,
     primary: "#235789",
   },
   {

@@ -241,9 +241,18 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
         setSelected({ label: currentDomain, value: currentDomain })
         return setLoading(false)
       } else if (domainParam) {
-        setDomain(domainParam)
-        setSelected({ label: domainParam, value: domainParam })
-        return setLoading(false)
+        if (domainParam.includes("/")) {
+          let newDomainParam = domainParam.replaceAll("/", "");
+          setDomain(newDomainParam)
+          setSelected({ label: newDomainParam, value: newDomainParam })
+          router.replace(pathname + '?' + createQueryString("domain", newDomainParam))
+          return setLoading(false)
+        }
+        else {
+          setDomain(domainParam)
+          setSelected({ label: domainParam, value: domainParam })
+          return setLoading(false)
+        }
       } else if (settings?.global?.defaultDomain) {
         setDomain(settings.global.defaultDomain)
         setSelected({ label: settings.global.defaultDomain, value: settings.global.defaultDomain })

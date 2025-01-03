@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import styles from './Reports.module.scss'
 import Table, { TableColumnArrayProps } from '@/perfect-seo-shared-components/components/Table/Table'
-import { deleteContentPlan, getAhrefsDomainRating, getContentPlansByDomain, getContentPlansByEmail, getGSCSearchAnalytics } from '@/perfect-seo-shared-components/services/services'
+import { deleteContentPlan, getAhrefsDomainRating, getGSCSearchAnalytics } from '@/perfect-seo-shared-components/services/services'
 import { useRouter } from 'next/navigation'
 import * as Modal from '@/perfect-seo-shared-components/components/Modal/Modal'
 import moment from 'moment-timezone'
@@ -15,7 +15,8 @@ import ContentPlanForm from '@/perfect-seo-shared-components/components/ContentP
 import { createClient } from '@/perfect-seo-shared-components/utils/supabase/client'
 import { QueueItemProps } from '@/perfect-seo-shared-components/data/types'
 import * as Request from "@/perfect-seo-shared-components/data/requestTypes";
-
+import useGoogleUser from '@/perfect-seo-shared-components/hooks/useGoogleUser'
+import en from '@/assets/en.json'
 export interface PlanListProps {
   domain_name: string;
   url?: string;
@@ -62,6 +63,7 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
       start_date: startDate,
       end_date: endDate
     }
+
     getGSCSearchAnalytics(reqObj)
       .then(res => {
         setLoading(false);

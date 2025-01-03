@@ -6,7 +6,7 @@ export const Brands: Array<Brand> = [
     url: 'https://classifyPerfect.ai',
     logo: '/svg/classifyPerfect.svg',
     icon: '/svg/classifyPerfect-icon.svg',
-    status: BrandStatus.PLANNED,
+    status: BrandStatus.COMING_SOON,
     primary: "#ffd900",
   },
   {
@@ -85,13 +85,31 @@ export const Brands: Array<Brand> = [
     developmentUrl: "https://preferences-perfect-git-development-loud-interactives-projects.vercel.app/"
   },
   {
+    title: 'schemaPerfect.ai',
+    url: 'https://schemaPerfect.ai',
+    logo: '/svg/schemaPerfect.svg',
+    icon: '/svg/schemaPerfect-icon.svg',
+    // summary: "Perfect your e-commerce product pages with more detailed product descriptions, features, specifications, and product information using AI.",
+    status: BrandStatus.PLANNED,
+    primary: "#235789",
+  },
+  {
+    title: 'editPerfect.ai',
+    url: 'https://editPerfect.ai',
+    logo: '/svg/editPerfect.svg',
+    icon: '/svg/editPerfect-icon.svg',
+    // summary: "Perfect your e-commerce product pages with more detailed product descriptions, features, specifications, and product information using AI.",
+    status: BrandStatus.PLANNED,
+    primary: "#235789",
+  },
+  {
     title: 'productPerfect.ai',
     url: 'https://productPerfect.ai',
     logo: '/svg/productPerfect.svg',
     icon: '/svg/productPerfect-icon.svg',
     // summary: "Perfect your e-commerce product pages with more detailed product descriptions, features, specifications, and product information using AI.",
     summary: "        Transform any product page into comprehensive, structured data with our advanced AI-powered scraping technology.",
-    status: BrandStatus.LIVE,
+    status: BrandStatus.COMING_SOON,
     primary: "#235789",
   },
   {

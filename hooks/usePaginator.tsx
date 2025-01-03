@@ -99,7 +99,7 @@ const usePaginator = (): PaginatorController => {
       groupStart = currentPage - 1;
     }
 
-    let startIndex = currentPage * limit;
+    let startIndex = currentPage === 1 ? 0 : currentPage * limit;
     let endIndex = startIndex + limit;
 
     if (currentPage === pageCount) {
@@ -110,6 +110,10 @@ const usePaginator = (): PaginatorController => {
       { pageCount, pages, startIndex, endIndex, groupStart, groupEnd, currentPage }
     );
   }, [currentPage, phone, itemCount, limit]);
+
+  useEffect(() => {
+    console.log(pageDataMetrics)
+  }, [pageDataMetrics])
 
   const handleLimitSet = (number) => {
     limitSetHandler(number)

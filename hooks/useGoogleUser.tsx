@@ -103,6 +103,7 @@ const useGoogleUser = (appKey) => {
       dispatch(reset())
     }
     if (sessionData?.access_token) {
+      console.log(sessionData)
       setToken(sessionData.access_token)
     }
     else {

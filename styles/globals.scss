@@ -5254,3 +5254,25 @@ a.text-primary {
   padding: 0 !important;
   box-sizing: border-box !important;
 }
+
+.brand-logo-temp {
+  color: $primary;
+  @include font-digital;
+  font-size: 36px;
+}
+
+.brand-logo-icon-temp {
+  background-color: $primary;
+  color: white;
+  @include font-digital;
+  font-size: 350%;
+  padding: 9px;
+  border-radius: 13px;
+  aspect-ratio: 1;
+  width: 100%;
+  min-width: 112px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+}

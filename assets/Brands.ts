@@ -90,7 +90,7 @@ export const Brands: Array<Brand> = [
     logo: '/svg/schemaPerfect.svg',
     icon: '/svg/schemaPerfect-icon.svg',
     // summary: "Perfect your e-commerce product pages with more detailed product descriptions, features, specifications, and product information using AI.",
-    status: BrandStatus.PLANNED,
+    status: BrandStatus.COMING_SOON,
     primary: "#235789",
   },
   {
@@ -99,7 +99,7 @@ export const Brands: Array<Brand> = [
     logo: '/svg/editPerfect.svg',
     icon: '/svg/editPerfect-icon.svg',
     // summary: "Perfect your e-commerce product pages with more detailed product descriptions, features, specifications, and product information using AI.",
-    status: BrandStatus.PLANNED,
+    status: BrandStatus.COMING_SOON,
     primary: "#235789",
   },
   {

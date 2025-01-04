@@ -111,6 +111,10 @@ const ListInput = ({
     { 'col-lg-6': !long }
   )
 
+  const inputClasses = classNames('input-group',
+    { 'w-100': long },
+  )
+
 
   return (
 
@@ -136,7 +140,7 @@ const ListInput = ({
             )
           })}
         </ul>}
-        {!props.disabled && <div className='input-group'>
+        {!props.disabled && <div className={inputClasses}>
           <input
             className="form-control"
             type="text"

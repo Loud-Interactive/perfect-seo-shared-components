@@ -11,13 +11,12 @@
   }
 
   &Wrap {
-    :global {
-      .modal-description {
-        @include TabletDown {
-          padding: 0;
-        }
+    :global(.modal-description) {
+      @include TabletDown {
+        padding: 0;
       }
     }
+
   }
 }
 

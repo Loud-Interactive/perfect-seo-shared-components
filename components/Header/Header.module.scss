@@ -70,12 +70,12 @@
     max-width: unset;
     width: 100vw;
 
-    :global {
+    :global(.card) {
+      border-radius: 0 !important;
+    }
 
-      .card-header,
-      .card {
-        border-radius: 0 !important;
-      }
+    :global(.card-header) {
+      border-radius: 0 !important;
     }
   }
 

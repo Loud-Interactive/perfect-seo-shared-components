@@ -438,4 +438,4 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
   )
 }
 
-export default MyContent
+export default MyContent 

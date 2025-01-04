@@ -5276,3 +5276,11 @@ a.text-primary {
   justify-content: center;
 
 }
+
+.sm-max-425 {
+  width: 100%;
+
+  @include Phone {
+    max-width: 425px;
+  }
+}

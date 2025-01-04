@@ -1,6 +1,6 @@
 /* eslint-disable no-restricted-globals, import/no-extraneous-dependencies */
 import classNames from 'classnames';
-import { ReactChild, useEffect, useMemo, useState } from 'react';
+import { ReactElement, useEffect, useMemo, useState } from 'react';
 
 import {
   SortingState,

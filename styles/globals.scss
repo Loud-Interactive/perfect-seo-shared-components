@@ -5279,6 +5279,7 @@ a.text-primary {
 
 .sm-max-425 {
   width: 100%;
+  max-width: calc(100vw - 32px);
 
   @include Phone {
     max-width: 425px;

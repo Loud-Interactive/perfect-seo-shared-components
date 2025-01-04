@@ -30,10 +30,10 @@ const BrandHeader = ({ synopsis, editable = true }: BrandHeaderProps) => {
                 <img src={synopsis?.logo_url} />
                 {editable && <div className={styles.logoUpdate}>
                   <a href={`https://preferencesperfect.ai/domain/${synopsis?.domain}?tab=brand-identity`} className='text-primary' target='_blank'>Update Logo</a>
-                </div >}
-              </div >
-            </div >
-          </div >}
+                </div>}
+              </div>
+            </div>
+          </div>}
           <div className='col'>
             <h1 className="text-start mb-1"><TypeWriterText string={`Content for ${synopsis?.brand_name || synopsis?.domain}`} withBlink /></h1>
             {synopsis?.synopsis && <div className='card p-3'>
@@ -45,9 +45,9 @@ const BrandHeader = ({ synopsis, editable = true }: BrandHeaderProps) => {
                 <p className='mb-0'>{synopsis?.synopsis}</p>
               </div></div>}
           </div>
-        </div >
-      </div >
-    </div >
+        </div>
+      </div>
+    </div>
   )
 }
 export default BrandHeader

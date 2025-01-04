@@ -158,7 +158,7 @@ const StatusBar = ({ content_plan_outline_guid, content_plan_guid, content_plan_
           }
         </div>
       }
-    </div >
+    </div>
   )
 }
 export default StatusBar

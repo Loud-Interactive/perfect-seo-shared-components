@@ -364,7 +364,7 @@ const Queue = ({ sidebar = false }) => {
             </div>
           </div>}
         </div>}
-    </div >
+    </div>
   )
 }
 

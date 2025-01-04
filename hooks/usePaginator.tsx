@@ -190,7 +190,7 @@ const usePaginator = (): PaginatorController => {
 
               <button className={rightArrowButtonClasses} onClick={() => onClick((currentPage + 1))} disabled={currentPage === pageCount}><i className='bi bi-caret-right-fill' /></button>
             </nav >
-          </div >
+          </div>
           <div className='col-12 col-md-auto'>
             <div className='d-flex align-items-center justify-content-start'>
               <label className='mb-0 no-wrap'>Page Size</label>
@@ -206,7 +206,7 @@ const usePaginator = (): PaginatorController => {
               </select>
             </div>
           </div>
-        </div >
+        </div>
       );
     } else return null;
   };

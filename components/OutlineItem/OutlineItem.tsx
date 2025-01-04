@@ -274,7 +274,7 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
           </div>
         </Modal.Description>
       </Modal.Overlay>
-    </div >
+    </div>
 
   )
 }

@@ -328,7 +328,7 @@ const QueueCard = ({ queue, i, removeItem, bulkStatus }: QueueCardProps) => {
                 </div>
               </div>
             </div>
-          </div >
+          </div>
         )
       case 'post':
         return (
@@ -427,7 +427,7 @@ const QueueCard = ({ queue, i, removeItem, bulkStatus }: QueueCardProps) => {
                 </div>
               </div>
             </div>
-          </div >
+          </div>
         )
     }
   }

@@ -119,7 +119,7 @@ export const Overlay = (
     <Dialog.Root open={modalOpen} onOpenChange={openChange} modal>
       <Dialog.Portal>
         <Dialog.Overlay className={overlayClasses} onClick={onClick}>
-          <Dialog.Content aria-describedby={id || undefined} className={contentClasses} onInteractOutside={clickout} onPointerDownOutside={clickout} onEscapeKeyDown={escapeClick} id={id}>
+          <Dialog.Content aria-describedby={id || undefined} className={contentClasses} onInteractOutside={clickout} onPointerDownOutside={clickout} onEscapeKeyDown={escapeClick} id={id} title={id}>
             {closeIcon &&
               <button
                 aria-label="close modal"

@@ -366,8 +366,8 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
               </div>
             </div>
             }
-          </div >
-        </div >
+          </div>
+        </div>
       }
       <div className='container-xl content-fluid'>
         {isLoading && <LoadSpinner />}

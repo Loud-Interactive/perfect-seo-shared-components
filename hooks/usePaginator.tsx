@@ -111,10 +111,6 @@ const usePaginator = (): PaginatorController => {
     );
   }, [currentPage, phone, itemCount, limit]);
 
-  useEffect(() => {
-    console.log(pageDataMetrics)
-  }, [pageDataMetrics])
-
   const handleLimitSet = (number) => {
     limitSetHandler(number)
     setLimit(number)

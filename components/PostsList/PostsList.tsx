@@ -24,6 +24,7 @@ const PostsList = ({ domain_name, active }: PostsListProps) => {
   const getPosts = () => {
     if (active) {
       if (domain_name) {
+        console.log(domain_name)
         getPostsByDomain(domain_name, { ...paginator.paginationObj, page: paginator.currentPage })
           .then(res => {
             paginator.setItemCount(res.data.total)

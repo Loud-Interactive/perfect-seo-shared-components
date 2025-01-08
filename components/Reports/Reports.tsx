@@ -133,9 +133,6 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
     }
   }, [domain_name, active, paginator.currentPage, paginator.limit, newModal])
 
-  const completeStatuses = ["Finished", "Your Content Plan Has Been Created"]
-
-
   const columnArray: TableColumnArrayProps[] = [
     { id: 'date', Header: 'Date', accessor: (obj) => moment(obj.date + 'Z', "YYYY-MM-DD").format("dddd, MMMM Do, YYYY"), disableSortBy: false },
     { id: 'domain_rating', Header: 'Rating', accessor: 'domain_rating', headerClassName: 'text-end', cellClassName: 'text-end' },
@@ -144,7 +141,7 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
   const gscColumnArray: TableColumnArrayProps[] = [
     { id: 'total_clicks', Header: 'Total Clicks', accessor: (obj) => obj.total_clicks.toLocaleString() },
     { id: 'total_impressions', Header: 'Total Impressions', accessor: (obj) => obj.total_impressions.toLocaleString() },
-    { id: 'avg_ctr', Header: 'Average Center', accessor: (obj) => obj.avg_ctr.toFixed(5) },
+    { id: 'avg_ctr', Header: 'Average CTR', accessor: (obj) => obj.avg_ctr.toFixed(5) },
     { id: 'avg_position', Header: 'Average Position', accessor: (obj) => obj.avg_position.toFixed(5) },
   ];
 

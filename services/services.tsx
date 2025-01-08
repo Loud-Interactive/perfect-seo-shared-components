@@ -245,17 +245,20 @@ export const getBatchStatus = (guids: string[]) => {
 export const getSpecificPairs = (domain: string, guids: string[]) => {
   return axiosInstance.post(`https://pp-api.replit.app/pairs/${domain}/specific`, guids);
 }
-export const getPostsByDomain = (domain: string, pagination?: PaginationRequest) => {
+export const getPostsByDomain = (domain: string, reqObj?: any) => {
   let url = `https://content-status.replit.app/content/domain/${domain}`;
-  if (pagination) {
-    if (pagination.page > 1) {
-      url += parseQueries({ skip: (pagination.page * 10) - 1, limit: pagination?.page_size })
+  if (reqObj) {
+    if (reqObj.page > 1) {
+      url += parseQueries({ skip: (reqObj.page * 10) - 1, limit: reqObj?.page_size })
     }
     else {
-      url += parseQueries({ skip: pagination.page - 1, limit: pagination?.page_size })
+      url += parseQueries({ skip: reqObj.page - 1, limit: reqObj?.page_size })
     }
-
+    if (reqObj?.has_live_post_url !== null) {
+      url += '&has_live_post_url=' + reqObj?.has_live_post_url
+    }
   }
+
   return axiosInstance.get(
     url,
   );

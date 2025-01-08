@@ -1,11 +1,10 @@
 import { useEffect, useMemo, useState } from 'react'
 import styles from './Reports.module.scss'
 import Table, { TableColumnArrayProps } from '@/perfect-seo-shared-components/components/Table/Table'
-import { deleteContentPlan, getAhrefsDomainRating, getGSCSearchAnalytics } from '@/perfect-seo-shared-components/services/services'
+import { deleteContentPlan, getAhrefsDomainRating, getGSCSearchAnalytics, getPostsByDomain } from '@/perfect-seo-shared-components/services/services'
 import { useRouter } from 'next/navigation'
 import * as Modal from '@/perfect-seo-shared-components/components/Modal/Modal'
 import moment from 'moment-timezone'
-import useViewport from '@/perfect-seo-shared-components/hooks/useViewport'
 import TypeWriterText from '@/perfect-seo-shared-components/components/TypeWriterText/TypeWriterText'
 import { useDispatch, useSelector } from 'react-redux'
 import usePaginator from '@/perfect-seo-shared-components/hooks/usePaginator'
@@ -15,8 +14,6 @@ import ContentPlanForm from '@/perfect-seo-shared-components/components/ContentP
 import { createClient } from '@/perfect-seo-shared-components/utils/supabase/client'
 import { QueueItemProps } from '@/perfect-seo-shared-components/data/types'
 import * as Request from "@/perfect-seo-shared-components/data/requestTypes";
-import useGoogleUser from '@/perfect-seo-shared-components/hooks/useGoogleUser'
-import en from '@/assets/en.json'
 export interface PlanListProps {
   domain_name: string;
   url?: string;
@@ -26,18 +23,16 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
   const [loading, setLoading] = useState(false)
   const [data, setData] = useState<any>(null)
   const [GSCData, setGSCData] = useState<any>(null)
-  const { tablet, phone } = useViewport()
   const [deleteModal, setDeleteModal] = useState(null)
   const [newModal, setNewModal] = useState(false)
   const [duplicateInfo, setDuplicateInfo] = useState(null)
   const supabase = createClient()
   const email = useSelector(selectEmail)
-  const isAdmin = useSelector(selectIsAdmin)
-  const router = useRouter();
   const dispatch = useDispatch()
   const [startDate, setStartDate] = useState(moment().subtract(30, "days").format("YYYY-MM-DD"));
   const [endDate, setEndDate] = useState(moment().format("YYYY-MM-DD"))
-  const [showDetails, setShowDetails] = useState(false)
+  const [showDetails, setShowDetails] = useState(true)
+  const [posts, setPosts] = useState<any>(null)
   const paginator = usePaginator()
 
   const domainRatings = useMemo(() => {
@@ -76,6 +71,24 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
 
   }
 
+  const fetchPosts = () => {
+    if (active) {
+      getPostsByDomain(domain_name, { ...paginator.paginationObj, page: paginator.currentPage, has_live_post_url: true })
+        .then(res => {
+          console.log(res.data)
+          paginator.setItemCount(res.data.total)
+          setPosts(res.data.records)
+          setLoading(false)
+        })
+        .catch(err => {
+          setLoading(false);
+          setPosts(null)
+          paginator.setItemCount(0)
+        })
+    }
+  }
+
+
 
   const addToQueue = (obj) => {
     let newObject: QueueItemProps = {
@@ -105,6 +118,19 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
     return () => {
       clearInterval(interval);
     }
+  }, [domain_name, active, newModal])
+
+  useEffect(() => {
+    let interval;
+    if (active && !newModal) {
+      setLoading(true)
+      fetchPosts();
+      interval = setInterval(fetchPosts, 300000)
+    }
+
+    return () => {
+      clearInterval(interval);
+    }
   }, [domain_name, active, paginator.currentPage, paginator.limit, newModal])
 
   const completeStatuses = ["Finished", "Your Content Plan Has Been Created"]
@@ -116,8 +142,10 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
   ];
 
   const gscColumnArray: TableColumnArrayProps[] = [
-    { id: 'date', Header: 'Date', accessor: (obj) => moment(obj.date + 'Z', "YYYY-MM-DD").format("dddd, MMMM Do, YYYY"), disableSortBy: false },
-    { id: 'domain_rating', Header: 'Rating', accessor: 'domain_rating', headerClassName: 'text-end', cellClassName: 'text-end' },
+    { id: 'total_clicks', Header: 'Total Clicks', accessor: (obj) => obj.total_clicks.toLocaleString() },
+    { id: 'total_impressions', Header: 'Total Impressions', accessor: (obj) => obj.total_impressions.toLocaleString() },
+    { id: 'avg_ctr', Header: 'Average Center', accessor: (obj) => obj.avg_ctr.toFixed(5) },
+    { id: 'avg_position', Header: 'Average Position', accessor: (obj) => obj.avg_position.toFixed(5) },
   ];
 
 
@@ -158,7 +186,7 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
       </div>
       {loading && <LoadSpinner />}
       <div className='row d-flex justify-content-between align-items-start g-3'>
-        <div className='col-12 col-lg-6'>
+        <div className='col-12 col-xl-4'>
           <div className='card p-3'>
             <div className='row d-flex align-items-end'>
               <h3 className='col-12'>
@@ -190,7 +218,7 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
             </div>}
           </div>
         </div>
-        <div className='col-12 col-lg-6'>
+        <div className='col-12 col-xl-8'>
           <div className='card p-3'>
             <div className='row d-flex'>
               <h3 className='text-primary'>Google Search Console </h3>

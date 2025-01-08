@@ -143,7 +143,6 @@ const useGoogleUser = (appKey) => {
 
   // updates products based on session and userdata
   useEffect(() => {
-    console.log(session)
     if (session && userData && isLoggedIn) {
       updateProducts()
     }

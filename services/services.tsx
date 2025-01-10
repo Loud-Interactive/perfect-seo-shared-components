@@ -254,7 +254,7 @@ export const getPostsByDomain = (domain: string, reqObj?: any) => {
     else {
       url += parseQueries({ skip: reqObj.page - 1, limit: reqObj?.page_size })
     }
-    if (reqObj?.has_live_post_url !== null) {
+    if (!!reqObj?.has_live_post_url) {
       url += '&has_live_post_url=' + reqObj?.has_live_post_url
     }
   }

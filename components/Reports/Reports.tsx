@@ -41,7 +41,6 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
     }
 
     if (data) {
-      console.log(data)
       ratings.total = data.data.reduce((prev, acc) => prev + acc.domain_rating, 0)
       ratings.count = data.meta.total_records
       ratings.average = ratings.total / ratings.count
@@ -75,7 +74,7 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
     if (active) {
       getPostsByDomain(domain_name, { ...paginator.paginationObj, page: paginator.currentPage, has_live_post_url: true })
         .then(res => {
-          console.log(res.data)
+          console.log("posts", res.data)
           paginator.setItemCount(res.data.total)
           setPosts(res.data.records)
           setLoading(false)

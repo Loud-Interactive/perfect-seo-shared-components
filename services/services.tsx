@@ -419,3 +419,7 @@ export const getAhrefsUrlRating = (reqObj: Request.PageRequest) => {
 export const getAhrefsKeywords = (reqObj: Request.PageRequest) => {
   return axiosInstance.get(`https://search-analytics-api-dev456.replit.app/ahrefs_keywords${parseQueries(reqObj)}`);
 }
+
+export const populateBulkGSC = (reqObj) => {
+  return axiosInstance.post(`https://gsc-batch-job-dev456.replit.app//trigger_gsc_job`, reqObj);
+}

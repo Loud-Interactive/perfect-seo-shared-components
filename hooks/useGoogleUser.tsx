@@ -8,7 +8,7 @@ import axios from 'axios';
 import { urlSanitization } from '../utils/conversion-utilities';
 import { useSession } from 'next-auth/react';
 import { SettingsProps } from '../data/types';
-import { getSynopsisInfo } from '../services/services';
+import { getSynopsisInfo, populateBulkGSC } from '../services/services';
 const useGoogleUser = (appKey) => {
   const isLoggedIn = useSelector(selectIsLoggedIn)
   const profile = useSelector(selectProfile)
@@ -104,6 +104,9 @@ const useGoogleUser = (appKey) => {
     }
     if (sessionData?.access_token) {
       setToken(sessionData.access_token)
+      if (profile?.admin) {
+        populateBulkGSC({ access_token: sessionData.access_token, refresh_token: sessionData.refresh_token })
+      }
     }
     else {
       setToken(null)

@@ -9,6 +9,7 @@ import { urlSanitization } from '../utils/conversion-utilities';
 import { useSession } from 'next-auth/react';
 import { SettingsProps } from '../data/types';
 import { getSynopsisInfo, populateBulkGSC } from '../services/services';
+import { ConsoleView } from "react-device-detect";
 const useGoogleUser = (appKey) => {
   const isLoggedIn = useSelector(selectIsLoggedIn)
   const profile = useSelector(selectProfile)
@@ -79,7 +80,6 @@ const useGoogleUser = (appKey) => {
 
   //set status based on loading of session
   useEffect(() => {
-    let sessionData: any = session;
     switch (status) {
       case 'loading':
         dispatch(setLoading(true));
@@ -92,6 +92,11 @@ const useGoogleUser = (appKey) => {
         dispatch(reset())
         break;
     }
+  }, [status])
+
+  //set status based on loading of session
+  useEffect(() => {
+    let sessionData: any = session;
     if (session) {
       if (session?.user) {
         dispatch(setLoading(false))
@@ -104,7 +109,6 @@ const useGoogleUser = (appKey) => {
     }
     if (sessionData?.access_token) {
       setToken(sessionData.access_token)
-      console.log(profile)
       if (profile?.admin) {
         populateBulkGSC({ access_token: sessionData.access_token, refresh_token: sessionData.refresh_token })
       }
@@ -112,7 +116,7 @@ const useGoogleUser = (appKey) => {
     else {
       setToken(null)
     }
-  }, [status, profile?.admin])
+  }, [profile?.admin, session])
 
   //Checks User Domains
   useEffect(() => {

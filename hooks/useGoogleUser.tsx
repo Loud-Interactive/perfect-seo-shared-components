@@ -103,7 +103,6 @@ const useGoogleUser = (appKey) => {
       dispatch(reset())
     }
     if (sessionData?.access_token) {
-
       setToken(sessionData.access_token)
     }
     else {
@@ -113,10 +112,10 @@ const useGoogleUser = (appKey) => {
 
   //Checks User Domains
   useEffect(() => {
-    if (token && profile?.email) {
+    if (token) {
       checkUserDomains();
     }
-  }, [token, profile])
+  }, [token])
 
   // updates product use 
   const updateProducts = () => {

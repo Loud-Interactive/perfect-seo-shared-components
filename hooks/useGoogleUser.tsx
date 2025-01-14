@@ -104,6 +104,7 @@ const useGoogleUser = (appKey) => {
     }
     if (sessionData?.access_token) {
       setToken(sessionData.access_token)
+      console.log(profile)
       if (profile?.admin) {
         populateBulkGSC({ access_token: sessionData.access_token, refresh_token: sessionData.refresh_token })
       }
@@ -111,7 +112,7 @@ const useGoogleUser = (appKey) => {
     else {
       setToken(null)
     }
-  }, [status])
+  }, [status, profile?.admin])
 
   //Checks User Domains
   useEffect(() => {

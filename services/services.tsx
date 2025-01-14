@@ -421,5 +421,5 @@ export const getAhrefsKeywords = (reqObj: Request.PageRequest) => {
 }
 
 export const populateBulkGSC = (reqObj) => {
-  return axiosInstance.post(`https://gsc-batch-job-dev456.replit.app//trigger_gsc_job`, reqObj);
+  return axiosInstance.post(`https://gsc-batch-job-dev456.replit.app/trigger_gsc_job`, reqObj);
 }

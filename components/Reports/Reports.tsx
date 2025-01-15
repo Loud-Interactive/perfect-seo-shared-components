@@ -1,14 +1,14 @@
 import { useEffect, useMemo, useState } from 'react'
 import styles from './Reports.module.scss'
 import Table, { TableColumnArrayProps } from '@/perfect-seo-shared-components/components/Table/Table'
-import { deleteContentPlan, getAhrefsDomainRating, getGSCSearchAnalytics, getPostsByDomain } from '@/perfect-seo-shared-components/services/services'
+import { deleteContentPlan, getAhrefsDomainRating, getAhrefsUrlRating, getGSCSearchAnalytics, getPostsByDomain } from '@/perfect-seo-shared-components/services/services'
 import { useRouter } from 'next/navigation'
 import * as Modal from '@/perfect-seo-shared-components/components/Modal/Modal'
 import moment from 'moment-timezone'
 import TypeWriterText from '@/perfect-seo-shared-components/components/TypeWriterText/TypeWriterText'
 import { useDispatch, useSelector } from 'react-redux'
 import usePaginator from '@/perfect-seo-shared-components/hooks/usePaginator'
-import { addToast, selectEmail, selectIsAdmin } from '@/perfect-seo-shared-components/lib/features/User'
+import { selectEmail } from '@/perfect-seo-shared-components/lib/features/User'
 import LoadSpinner from '../LoadSpinner/LoadSpinner'
 import ContentPlanForm from '@/perfect-seo-shared-components/components/ContentPlanForm/ContentPlanForm'
 import { createClient } from '@/perfect-seo-shared-components/utils/supabase/client'
@@ -21,6 +21,7 @@ export interface PlanListProps {
 }
 const Reports = ({ domain_name, active }: PlanListProps) => {
   const [loading, setLoading] = useState(false)
+  const [postsLoading, setPostsLoading] = useState(false)
   const [data, setData] = useState<any>(null)
   const [GSCData, setGSCData] = useState<any>(null)
   const [deleteModal, setDeleteModal] = useState(null)
@@ -32,8 +33,9 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
   const [startDate, setStartDate] = useState(moment().subtract(90, "days").format("YYYY-MM-DD"));
   const [endDate, setEndDate] = useState(moment().format("YYYY-MM-DD"))
   const [showDetails, setShowDetails] = useState(true)
-  const [posts, setPosts] = useState<any>(null)
+  const [posts, setPosts] = useState<any[]>([])
   const paginator = usePaginator()
+  const postPaginator = usePaginator()
 
   const domainRatings = useMemo(() => {
     let ratings = {
@@ -91,39 +93,23 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
   }
 
   const fetchPosts = () => {
+    setPostsLoading(true)
     if (active) {
-      getPostsByDomain(domain_name, { has_live_post_url: true })
+      getPostsByDomain(domain_name, { ...postPaginator.paginationObj, page: postPaginator.currentPage, has_live_post_url: true })
         .then(res => {
-
+          postPaginator.setItemCount(res.data.total)
           setPosts(res.data.records)
-          setLoading(false)
+          setPostsLoading(false)
         })
         .catch(err => {
-          setLoading(false);
+          postPaginator.setItemCount(0)
+          setPostsLoading(false);
           setPosts(null)
-          paginator.setItemCount(0)
         })
     }
   }
 
 
-
-  const addToQueue = (obj) => {
-    let newObject: QueueItemProps = {
-      type: 'contentPlan',
-      domain: obj?.domain_name,
-      guid: obj?.guid,
-      email,
-      isComplete: obj?.status === 'Finished' ? true : false,
-    }
-    supabase
-      .from('user_queues')
-      .insert(newObject)
-      .select("*")
-      .then(res => {
-        dispatch(addToast({ title: "Content Plan Added Content to Watchlist", type: "info", content: `${obj?.target_keyword} Content Plan for ${obj?.domain_name} added to Watchlist` }))
-      })
-  }
 
   useEffect(() => {
     let interval;
@@ -147,7 +133,6 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
   useEffect(() => {
     let interval;
     if (active && !newModal) {
-      setLoading(true)
       fetchPosts();
       interval = setInterval(fetchPosts, 300000)
     }
@@ -155,18 +140,67 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
     return () => {
       clearInterval(interval);
     }
-  }, [domain_name, active, paginator.currentPage, paginator.limit, newModal])
+  }, [domain_name, active, postPaginator.currentPage, postPaginator.limit, newModal])
 
   const columnArray: TableColumnArrayProps[] = [
-    { id: 'date', Header: 'Date', accessor: (obj) => moment(obj.date + 'Z', "YYYY-MM-DD").format("dddd, MMMM Do, YYYY"), disableSortBy: false },
+    { id: 'date', Header: 'Date', accessor: (obj) => moment(obj?.date + 'Z', "YYYY-MM-DD").format("dddd, MMMM Do, YYYY"), disableSortBy: false },
     { id: 'domain_rating', Header: 'Rating', accessor: 'domain_rating', headerClassName: 'text-end', cellClassName: 'text-end' },
   ];
 
   const gscColumnArray: TableColumnArrayProps[] = [
-    { id: 'total_clicks', Header: 'Total Clicks', accessor: (obj) => obj.total_clicks.toLocaleString() },
-    { id: 'total_impressions', Header: 'Total Impressions', accessor: (obj) => obj.total_impressions.toLocaleString() },
+    { id: 'total_clicks', Header: 'Total Clicks', accessor: (obj) => obj?.total_clicks.toLocaleString() },
+    { id: 'total_impressions', Header: 'Total Impressions', accessor: (obj) => obj?.total_impressions.toLocaleString() },
     { id: 'avg_ctr', Header: 'Average CTR', accessor: (obj) => obj.avg_ctr.toFixed(5) },
     { id: 'avg_position', Header: 'Average Position', accessor: (obj) => obj.avg_position.toFixed(5) },
+  ];
+
+  const AHREFS = ({ obj }) => {
+    // console.log(obj)
+    const { live_post_url } = obj;
+    const [urlRating, setUrlRating] = useState(null)
+    const [gscData, setGSCData] = useState(null)
+
+    useEffect(() => {
+      let reqObj = {
+        start_date: startDate,
+        end_date: endDate,
+        page_url: live_post_url
+      }
+      getAhrefsUrlRating(reqObj)
+        .then(res => {
+          if (res.data?.data.length > 0) {
+            let newRating = res.data.data.reduce((prev, curr) => prev + curr.url_rating, 0)
+            setUrlRating(newRating / res.data.data.length) // average rating
+          }
+        })
+        .catch(err => {
+          console.log(err)
+        }
+        )
+      getGSCSearchAnalytics({ ...reqObj, domain: domain_name })
+        .then(res => {
+          if (res.data) {
+            setGSCData(res.data)
+          }
+        })
+        .catch(err => {
+          console.log(err)
+        }
+        )
+    }, [live_post_url])
+
+    return (
+      <div>
+        <span className='text-primary me-2'>Rating</span>{urlRating > 0 && urlRating.toFixed(2)}
+      </div>
+    )
+
+  }
+
+  const postColumnArray: TableColumnArrayProps[] = [
+    { id: 'title', Header: 'Title', accessor: 'title' },
+    { id: 'ahrefs', Header: 'AHREFS', accessor: (obj) => <AHREFS obj={obj} /> },
+
   ];
 
 
@@ -245,9 +279,23 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
               <h3 className='text-primary'>Google Search Console </h3>
             </div>
             {GSCData?.data?.length >= 0 && <div className='col-12'>
-              {GSCData?.data?.length > 0 ? <Table rawData={GSCData.data} isLoading={loading} columnArray={gscColumnArray} />
+              {GSCData?.data?.length > 0 ? <Table rawData={GSCData.data} isLoading={postsLoading} columnArray={gscColumnArray} />
                 : <h5><TypeWriterText withBlink string="The are no results for the given parameters" /></h5>}
             </div>}
+          </div>
+        </div>
+        <div className='col-12'>
+          <div className='card p-3'>
+            <div className='row d-flex'>
+              <h3 className='text-primary'>Live Posts </h3>
+            </div>
+            {posts?.length >= 0 && <div className='col-12'>
+              {posts.length > 0 ? <Table rawData={posts} isLoading={loading} columnArray={postColumnArray} />
+                : <h5><TypeWriterText withBlink string="The are no results for the given parameters" /></h5>}
+            </div>}
+            <div className='col-auto d-flex justify-content-center'>
+              {postPaginator.renderComponent()}
+            </div>
           </div>
         </div>
       </div>

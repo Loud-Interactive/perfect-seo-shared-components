@@ -77,12 +77,10 @@ const usePaginator = (): PaginatorController => {
   }, [phone, tablet]);
 
   const pageDataMetrics = useMemo((): PaginatorMetricsProps => {
-    console.log(limit, itemCount)
     let pageCount = Math.ceil(itemCount / limit);
     let pages = new Array(pageCount).fill(1).map((obj, i) => i + 1);
     let groupStart, groupEnd;
 
-    console.log(pageCount)
     if (!itemCount || itemCount === 0) {
 
     }

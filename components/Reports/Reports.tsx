@@ -323,7 +323,7 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
               <h3 className='text-primary'>Live Posts </h3>
             </div>
             {posts?.length >= 0 && <div className='col-12'>
-              {posts.length > 0 ? posts.map((obj, i) => <AHREFS key={i} obj={obj} />)
+              {posts.length > 0 ? <div className='row d-flex g-1'>{posts.map((obj, i) => <AHREFS key={i} obj={obj} />)}</div>
                 : <h5><TypeWriterText withBlink string="The are no results for the given parameters" /></h5>}
             </div>}
             <div className='col-auto d-flex justify-content-center'>

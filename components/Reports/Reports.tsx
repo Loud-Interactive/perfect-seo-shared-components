@@ -29,7 +29,7 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
   const supabase = createClient()
   const email = useSelector(selectEmail)
   const dispatch = useDispatch()
-  const [startDate, setStartDate] = useState(moment().subtract(30, "days").format("YYYY-MM-DD"));
+  const [startDate, setStartDate] = useState(moment().subtract(90, "days").format("YYYY-MM-DD"));
   const [endDate, setEndDate] = useState(moment().format("YYYY-MM-DD"))
   const [showDetails, setShowDetails] = useState(true)
   const [posts, setPosts] = useState<any>(null)
@@ -51,31 +51,50 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
     return ratings
   }, [data])
 
-  const fetchPlans = () => {
+  const fetchAHREFSData = () => {
     let reqObj: Request.GSCRequest = {
       domain: domain_name,
       start_date: startDate,
-      end_date: endDate
+      end_date: endDate,
+      limit: paginator.limit,
+      page: paginator.currentPage
     }
 
-    getGSCSearchAnalytics(reqObj)
-      .then(res => {
-        setLoading(false);
-        setGSCData(res.data)
-      })
     getAhrefsDomainRating(reqObj)
       .then(res => {
+        setLoading(false);
         setData(res.data)
+        paginator.setItemCount(res.data.meta.total_records)
+      })
+      .catch(() => {
+        setLoading(false);
+        setData(null)
       })
 
   }
 
+  const fetchGSCData = () => {
+    let reqObj: Request.GSCRequest = {
+      domain: domain_name,
+      start_date: startDate,
+      end_date: endDate,
+    }
+    getGSCSearchAnalytics(reqObj)
+      .then(res => {
+
+        setGSCData(res.data)
+      })
+      .catch(() => {
+
+        setGSCData(null)
+      })
+  }
+
   const fetchPosts = () => {
     if (active) {
-      getPostsByDomain(domain_name, { ...paginator.paginationObj, page: paginator.currentPage, has_live_post_url: true })
+      getPostsByDomain(domain_name, { has_live_post_url: true })
         .then(res => {
-          console.log("posts", res.data)
-          paginator.setItemCount(res.data.total)
+
           setPosts(res.data.records)
           setLoading(false)
         })
@@ -110,14 +129,20 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
     let interval;
     if (active && !newModal) {
       setLoading(true)
-      fetchPlans();
-      interval = setInterval(fetchPlans, 300000)
+      fetchAHREFSData();
+      interval = setInterval(fetchAHREFSData, 300000)
     }
 
     return () => {
       clearInterval(interval);
     }
-  }, [domain_name, active, newModal])
+  }, [domain_name, paginator?.currentPage, paginator?.limit, active, newModal])
+
+  useEffect(() => {
+    if (active && !newModal) {
+      fetchGSCData();
+    }
+  }, [domain_name, startDate, endDate, active, newModal])
 
   useEffect(() => {
     let interval;
@@ -149,7 +174,7 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
     deleteContentPlan(guid)
       .then(res => {
         setDeleteModal(null)
-        fetchPlans()
+        fetchAHREFSData()
       })
       .catch(err => {
         setDeleteModal(null)
@@ -159,7 +184,7 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
 
   const newCloseHandler = () => {
     setDuplicateInfo(null)
-    setTimeout(() => fetchPlans(), 60000)
+    setTimeout(() => fetchAHREFSData(), 60000)
     return setNewModal(false)
   }
 

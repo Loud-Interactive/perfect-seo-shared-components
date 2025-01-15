@@ -77,9 +77,12 @@ const usePaginator = (): PaginatorController => {
   }, [phone, tablet]);
 
   const pageDataMetrics = useMemo((): PaginatorMetricsProps => {
+    console.log(limit, itemCount)
     let pageCount = Math.ceil(itemCount / limit);
     let pages = new Array(pageCount).fill(1).map((obj, i) => i + 1);
     let groupStart, groupEnd;
+
+    console.log(pageCount)
     if (!itemCount || itemCount === 0) {
 
     }
@@ -195,10 +198,10 @@ const usePaginator = (): PaginatorController => {
                 handleLimitSet(e.target.value)
               }
               }>
-                <option value={10}>10</option>
-                <option value={25}>25</option>
-                <option value={50}>50</option>
-                <option value={100}>100</option>
+                {itemCount >= 10 && <option value={10}>10</option>}
+                {itemCount >= 25 && <option value={25}>25</option>}
+                {itemCount >= 50 && <option value={50}>50</option>}
+                {itemCount >= 100 && <option value={100}>100</option>}
               </select>
             </div>
           </div>

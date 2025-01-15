@@ -190,7 +190,7 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
     }, [live_post_url])
 
     return (
-      <div className='card p-3'>
+      <div className='card p-3 bg-dark'>
         <div className='row d-flex align-items-center justify-content-end'>
           <div className='col'>
             {obj.title}
@@ -268,14 +268,13 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
             <TypeWriterText string="Domain Reporting" withBlink />
           </h2>
           <div>
-
           </div>
         </div>
       </div>
       {loading && <LoadSpinner />}
       <div className='row d-flex justify-content-between align-items-start g-3'>
         <div className='col-12 col-xl-4'>
-          <div className='card p-3'>
+          <div className='card p-3 bg-secondary'>
             <div className='row d-flex align-items-end'>
               <h3 className='col-12'>
                 <span className='text-primary'>AHREFs Domain Rating</span>
@@ -307,7 +306,7 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
           </div>
         </div>
         <div className='col-12 col-xl-8'>
-          <div className='card p-3'>
+          <div className='card p-3 bg-secondary'>
             <div className='row d-flex'>
               <h3 className='text-primary'>Google Search Console </h3>
             </div>
@@ -318,7 +317,7 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
           </div>
         </div>
         <div className='col-12'>
-          <div className='card p-3'>
+          <div className='card p-3 bg-secondary'>
             <div className='row d-flex'>
               <h3 className='text-primary'>Live Posts </h3>
             </div>

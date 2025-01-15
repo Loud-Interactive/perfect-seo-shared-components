@@ -196,35 +196,35 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
             {obj.title}
           </div>
           <div className='col-12'>
-            <div className='row d-flex align-items-center justify-content-end'>
+            <div className='row d-flex align-items-center justify-content-between'>
               {gscData &&
                 <>
                   <div className='col-4 col-lg-2'>
-                    <p className='mb-0 text-end'>
+                    <p className='mb-0 no-wrap'>
                       <span className='text-primary me-2'>Total Clicks</span>
                       {gscData.total_clicks.toLocaleString()}
                     </p>
                   </div>
                   <div className='col-4 col-lg-2'>
-                    <p className='mb-0 text-end'>
+                    <p className='mb-0 no-wrap'>
                       <span className='text-primary me-2'>Total Impressions</span>
                       {gscData.total_impressions.toLocaleString()}
                     </p>
                   </div>
                   <div className='col-4 col-lg-2'>
-                    <p className='mb-0 text-end'>
+                    <p className='mb-0 no-wrap'>
                       <span className='text-primary me-2'>Average CTR</span>{gscData.avg_ctr.toFixed(3)}
                     </p>
                   </div>
                   <div className='col-4 col-lg-2'>
-                    <p className='mb-0 text-end'>
+                    <p className='mb-0 no-wrap'>
                       <span className='text-primary me-2'>Average Position</span>{gscData.avg_position.toFixed(3)}
                     </p>
                   </div>
                 </>
               }
               {urlRating > 0 && <div className='col-4 col-lg-2'>
-                <p className='mb-0 text-end'>
+                <p className='mb-0 no-wrap'>
                   <span className='text-primary me-2'>Rating</span>{urlRating.toFixed(2)}
                 </p>
               </div>}
@@ -268,7 +268,7 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
             <TypeWriterText string="Domain Reporting" withBlink />
           </h2>
           <div>
-            {paginator?.itemCount > 0 && <p className='badge rounded-pill text-bg-primary ms-3 d-flex align-items-center mb-1'>{paginator?.itemCount}</p>}
+
           </div>
         </div>
       </div>

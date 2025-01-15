@@ -150,8 +150,8 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
   const gscColumnArray: TableColumnArrayProps[] = [
     { id: 'total_clicks', Header: 'Total Clicks', accessor: (obj) => obj?.total_clicks.toLocaleString() },
     { id: 'total_impressions', Header: 'Total Impressions', accessor: (obj) => obj?.total_impressions.toLocaleString() },
-    { id: 'avg_ctr', Header: 'Average CTR', accessor: (obj) => obj.avg_ctr.toFixed(5) },
-    { id: 'avg_position', Header: 'Average Position', accessor: (obj) => obj.avg_position.toFixed(5) },
+    { id: 'avg_ctr', Header: 'Average CTR', accessor: (obj) => obj.avg_ctr.toFixed(3) },
+    { id: 'avg_position', Header: 'Average Position', accessor: (obj) => obj.avg_position.toFixed(3) },
   ];
 
   const AHREFS = ({ obj }) => {
@@ -180,7 +180,7 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
       getGSCSearchAnalytics({ ...reqObj, domain: domain_name })
         .then(res => {
           if (res.data) {
-            setGSCData(res.data)
+            setGSCData(res.data.data[0]);
           }
         })
         .catch(err => {
@@ -190,18 +190,51 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
     }, [live_post_url])
 
     return (
-      <div>
-        <span className='text-primary me-2'>Rating</span>{urlRating > 0 && urlRating.toFixed(2)}
+      <div className='card p-3'>
+        <div className='row d-flex align-items-center justify-content-end'>
+          <div className='col'>
+            {obj.title}
+          </div>
+          <div className='col-12'>
+            <div className='row d-flex align-items-center justify-content-end'>
+              {gscData &&
+                <>
+                  <div className='col-4 col-lg-2'>
+                    <p className='mb-0 text-end'>
+                      <span className='text-primary me-2'>Total Clicks</span>
+                      {gscData.total_clicks.toLocaleString()}
+                    </p>
+                  </div>
+                  <div className='col-4 col-lg-2'>
+                    <p className='mb-0 text-end'>
+                      <span className='text-primary me-2'>Total Impressions</span>
+                      {gscData.total_impressions.toLocaleString()}
+                    </p>
+                  </div>
+                  <div className='col-4 col-lg-2'>
+                    <p className='mb-0 text-end'>
+                      <span className='text-primary me-2'>Average CTR</span>{gscData.avg_ctr.toFixed(3)}
+                    </p>
+                  </div>
+                  <div className='col-4 col-lg-2'>
+                    <p className='mb-0 text-end'>
+                      <span className='text-primary me-2'>Average Position</span>{gscData.avg_position.toFixed(3)}
+                    </p>
+                  </div>
+                </>
+              }
+              {urlRating > 0 && <div className='col-4 col-lg-2'>
+                <p className='mb-0 text-end'>
+                  <span className='text-primary me-2'>Rating</span>{urlRating.toFixed(2)}
+                </p>
+              </div>}
+            </div>
+          </div>
+        </div>
       </div>
     )
 
   }
-
-  const postColumnArray: TableColumnArrayProps[] = [
-    { id: 'title', Header: 'Title', accessor: 'title' },
-    { id: 'ahrefs', Header: 'AHREFS', accessor: (obj) => <AHREFS obj={obj} /> },
-
-  ];
 
 
   const deleteHandler = (guid) => {
@@ -290,7 +323,7 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
               <h3 className='text-primary'>Live Posts </h3>
             </div>
             {posts?.length >= 0 && <div className='col-12'>
-              {posts.length > 0 ? <Table rawData={posts} isLoading={loading} columnArray={postColumnArray} />
+              {posts.length > 0 ? posts.map((obj, i) => <AHREFS key={i} obj={obj} />)
                 : <h5><TypeWriterText withBlink string="The are no results for the given parameters" /></h5>}
             </div>}
             <div className='col-auto d-flex justify-content-center'>

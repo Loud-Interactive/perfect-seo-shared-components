@@ -83,12 +83,12 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
 
 
   const gscColumnArray: TableColumnArrayProps[] = [
-    { id: 'title', Header: 'Title', accessor: 'title' },
-    { id: 'total_clicks', Header: 'Total Clicks', accessor: (obj) => obj?.total_clicks?.toLocaleString() },
-    { id: 'total_impressions', Header: 'Total Impressions', accessor: (obj) => obj?.total_impressions?.toLocaleString() },
-    { id: 'avg_ctr', Header: 'Average CTR', accessor: (obj) => obj?.avg_ctr ? `${(obj?.avg_ctr * 100).toFixed(1)}%` : null },
-    { id: 'avg_position', Header: 'Average Position', accessor: (obj) => obj?.avg_position?.toFixed(3) },
-    { id: 'ahref_rating', Header: 'AHREFs Rating', accessor: 'ahref_rating' },
+    { id: 'title', Header: 'Title', accessor: 'title', disableSortBy: false },
+    { id: 'total_clicks', Header: 'Total Clicks', accessor: (obj) => obj?.total_clicks?.toLocaleString(), disableSortBy: false },
+    { id: 'total_impressions', Header: 'Total Impressions', accessor: (obj) => obj?.total_impressions?.toLocaleString(), disableSortBy: false },
+    { id: 'avg_ctr', Header: 'Average CTR', accessor: (obj) => obj?.avg_ctr ? `${(obj?.avg_ctr * 100).toFixed(1)}%` : null, disableSortBy: false },
+    { id: 'avg_position', Header: 'Average Position', accessor: (obj) => obj?.avg_position?.toFixed(3), disableSortBy: false },
+    { id: 'ahref_rating', Header: 'AHREFs Rating', accessor: 'ahref_rating', disableSortBy: false },
   ];
 
 

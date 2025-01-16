@@ -152,6 +152,7 @@ const Table = ({ isLoading,
     getSortedRowModel: getSortedRowModel(),
     enableMultiSort: false,
     initialState: initialState,
+    enableRowPinning: true
   });
 
   const tableWrapClassName = classNames('table-wrap table-responsive',

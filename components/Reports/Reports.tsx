@@ -150,8 +150,9 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
   const gscColumnArray: TableColumnArrayProps[] = [
     { id: 'total_clicks', Header: 'Total Clicks', accessor: (obj) => obj?.total_clicks.toLocaleString() },
     { id: 'total_impressions', Header: 'Total Impressions', accessor: (obj) => obj?.total_impressions.toLocaleString() },
-    { id: 'avg_ctr', Header: 'Average CTR', accessor: (obj) => obj.avg_ctr.toFixed(3) },
+    { id: 'avg_ctr', Header: 'Average CTR', accessor: (obj) => (obj.avg_ctr * 100).toFixed(1) },
     { id: 'avg_position', Header: 'Average Position', accessor: (obj) => obj.avg_position.toFixed(3) },
+    { id: 'ahref', Header: 'AHREFs Rating', accessor: (obj) => domainRatings?.average?.toFixed(2) },
   ];
 
   const AHREFS = ({ obj }) => {
@@ -213,7 +214,7 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
                   </div>
                   <div className='col-4 col-lg-2'>
                     <p className='mb-0 no-wrap'>
-                      <span className='text-primary me-2'>Average CTR</span>{gscData.avg_ctr.toFixed(3)}
+                      <span className='text-primary me-2'>Average CTR</span>{(gscData.avg_ctr * 100).toFixed(1)}
                     </p>
                   </div>
                   <div className='col-4 col-lg-2'>
@@ -273,7 +274,32 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
       </div>
       {loading && <LoadSpinner />}
       <div className='row d-flex justify-content-between align-items-start g-3'>
-        <div className='col-12 col-xl-4'>
+        <div className='col-12'>
+          <div className='card p-3 bg-secondary'>
+            <div className='row d-flex'>
+              <h3 className='text-primary'>Google Search Console </h3>
+            </div>
+            {GSCData?.data?.length >= 0 && <div className='col-12'>
+              {GSCData?.data?.length > 0 ? <Table rawData={GSCData.data} isLoading={postsLoading} columnArray={gscColumnArray} />
+                : <h5><TypeWriterText withBlink string="The are no results for the given parameters" /></h5>}
+            </div>}
+          </div>
+        </div>
+        <div className='col-12'>
+          <div className='card p-3 bg-secondary'>
+            <div className='row d-flex'>
+              <h3 className='text-primary'>Live Posts </h3>
+            </div>
+            {posts?.length >= 0 && <div className='col-12'>
+              {posts.length > 0 ? <div className='row d-flex g-1'>{posts.map((obj, i) => <AHREFS key={i} obj={obj} />)}</div>
+                : <h5><TypeWriterText withBlink string="The are no results for the given parameters" /></h5>}
+            </div>}
+            <div className='col-auto d-flex justify-content-center'>
+              {postPaginator.renderComponent()}
+            </div>
+          </div>
+        </div>
+        <div className='col-12'>
           <div className='card p-3 bg-secondary'>
             <div className='row d-flex align-items-end'>
               <h3 className='col-12'>
@@ -303,31 +329,6 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
                   <h5><TypeWriterText withBlink string="The are no results for the given parameters" /></h5>
                   : null}
             </div>}
-          </div>
-        </div>
-        <div className='col-12 col-xl-8'>
-          <div className='card p-3 bg-secondary'>
-            <div className='row d-flex'>
-              <h3 className='text-primary'>Google Search Console </h3>
-            </div>
-            {GSCData?.data?.length >= 0 && <div className='col-12'>
-              {GSCData?.data?.length > 0 ? <Table rawData={GSCData.data} isLoading={postsLoading} columnArray={gscColumnArray} />
-                : <h5><TypeWriterText withBlink string="The are no results for the given parameters" /></h5>}
-            </div>}
-          </div>
-        </div>
-        <div className='col-12'>
-          <div className='card p-3 bg-secondary'>
-            <div className='row d-flex'>
-              <h3 className='text-primary'>Live Posts </h3>
-            </div>
-            {posts?.length >= 0 && <div className='col-12'>
-              {posts.length > 0 ? <div className='row d-flex g-1'>{posts.map((obj, i) => <AHREFS key={i} obj={obj} />)}</div>
-                : <h5><TypeWriterText withBlink string="The are no results for the given parameters" /></h5>}
-            </div>}
-            <div className='col-auto d-flex justify-content-center'>
-              {postPaginator.renderComponent()}
-            </div>
           </div>
         </div>
       </div>

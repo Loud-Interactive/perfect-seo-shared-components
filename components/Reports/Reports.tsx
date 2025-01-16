@@ -299,7 +299,7 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
             </div>
           </div>
         </div>
-        <div className='col-12'>
+        {/* <div className='col-12'>
           <div className='card p-3 bg-secondary'>
             <div className='row d-flex align-items-end'>
               <h3 className='col-12'>
@@ -330,7 +330,7 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
                   : null}
             </div>}
           </div>
-        </div>
+        </div> */}
       </div>
       <Modal.Overlay open={newModal} onClose={newCloseHandler} closeIcon>
         <Modal.Title title="New Content Plan" />

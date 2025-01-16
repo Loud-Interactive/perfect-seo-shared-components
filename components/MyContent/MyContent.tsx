@@ -149,7 +149,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
 
   const TabData = useMemo(() => {
     if (isAdmin) {
-      [
+      return [
         { key: "content-plans", title: "Generated Content Plans" },
         { key: "outlines", title: "Generated Outlines" },
         { key: "posts", title: "Generated Posts" },

@@ -147,14 +147,27 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
 
 
 
-  const TabData = [
-    { key: "content-plans", title: "Generated Content Plans" },
-    { key: "outlines", title: "Generated Outlines" },
-    { key: "posts", title: "Generated Posts" },
-    { key: "reports", title: "Stats & Reports" },
-    { key: "bulk-content", title: "Bulk Content Plans" },
-    { key: "bulk-posts", title: "Bulk Posts" },
-  ]
+  const TabData = useMemo(() => {
+    if (isAdmin) {
+      [
+        { key: "content-plans", title: "Generated Content Plans" },
+        { key: "outlines", title: "Generated Outlines" },
+        { key: "posts", title: "Generated Posts" },
+        { key: "reports", title: "Stats & Reports" },
+        { key: "bulk-content", title: "Bulk Content Plans" },
+        { key: "bulk-posts", title: "Bulk Posts" },
+      ]
+    }
+    else {
+      return [
+        { key: "content-plans", title: "Generated Content Plans" },
+        { key: "outlines", title: "Generated Outlines" },
+        { key: "posts", title: "Generated Posts" },
+        { key: "bulk-content", title: "Bulk Content Plans" },
+        { key: "bulk-posts", title: "Bulk Posts" },
+      ]
+    }
+  }, [isAdmin])
 
   const searchDomainChangeHandler = (e) => {
     if (e) {

@@ -103,6 +103,7 @@ const Table = ({ isLoading,
         newColumn.footer = newColumn.Footer;
       }
       newColumn.enableSorting = newColumn.disableSortBy === false ? true : false;
+      console.log(newColumn)
       return newColumn;
     });
 
@@ -152,7 +153,6 @@ const Table = ({ isLoading,
     getSortedRowModel: getSortedRowModel(),
     enableMultiSort: false,
     initialState: initialState,
-    enableRowPinning: true
   });
 
   const tableWrapClassName = classNames('table-wrap table-responsive',
@@ -178,6 +178,7 @@ const Table = ({ isLoading,
                 <tr key={headerGroup.id}>
                   {headerGroup.headers.map((header: any) => {
                     let { column } = header;
+                    console.log(column)
 
                     let isSorted = column.getIsSorted();
 
@@ -194,7 +195,11 @@ const Table = ({ isLoading,
                     });
 
                     return (
-                      <th title={!column.columnDef.enableSorting ? 'Toggle Sorting' : header.id} onClick={(e) => { e.preventDefault(); }} className={columnHeaderClasses} key={header.id}>
+                      <th
+                        title={column.columnDef.enableSorting ? 'Toggle Sorting' : header.id}
+                        onClick={header.column.getToggleSortingHandler()}
+                        className={columnHeaderClasses}
+                        key={header.id}>
                         {header.isPlaceholder ?
                           null
                           : flexRender(

@@ -113,7 +113,7 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
               <h3 className='text-primary'>Google Search Console </h3>
             </div>
             {tableData.length >= 0 && <div className='col-12'>
-              {tableData.length > 0 ? <Table rawData={tableData} isLoading={loading} columnArray={gscColumnArray} />
+              {tableData.length > 0 ? <Table pinnedRows={['0']} rawData={tableData} isLoading={loading} columnArray={gscColumnArray} />
                 : <h5><TypeWriterText withBlink string="The are no results for the given parameters" /></h5>}
             </div>}
             <div className='col-auto d-flex justify-content-center'>

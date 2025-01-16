@@ -99,7 +99,7 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
       <div className='row g-3 d-flex justify-content-between align-items-end mb-3'>
         <div className='col col-md-auto d-flex justify-content-center align-items-end'>
           <h2 className='text-white mb-0'>
-            <TypeWriterText string="Domain Reporting" withBlink />
+            <TypeWriterText string="SEO Reports" withBlink />
           </h2>
           <div>
           </div>
@@ -110,7 +110,7 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
         <div className='col-12'>
           <div className='card p-3 bg-secondary'>
             <div className='row d-flex'>
-              <h3 className='text-primary'>Google Search Console </h3>
+              <h3 className='text-primary'>Google Search Console and AHREF Rating </h3>
             </div>
             {tableData.length >= 0 && <div className='col-12'>
               {tableData.length > 0 ? <Table pinnedRows={['0']} rawData={tableData} isLoading={loading} columnArray={gscColumnArray} />

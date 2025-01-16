@@ -37,7 +37,7 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
 
     const ahrefsData = await getAhrefsDomainRating({ ...gscReqObj, domain: domain_name })
     let rating = ahrefsData.data?.data?.reduce((acc, obj) => acc + obj?.domain_rating, 0) / ahrefsData?.data?.data.length
-    newData = [{ ...data.data[0], title: domain_name, ahref_rating: rating }]
+    newData = [{ ...data.data[0], title: domain_name, ahref_rating: rating.toFixed(1) }]
     const postResults = await getPostsByDomain(domain_name, { ...paginator.paginationObj, page: paginator.currentPage, has_live_post_url: true })
     paginator.setItemCount(postResults.data.total)
     let postData = await Promise.all(postResults.data.records.map(async (obj) => {

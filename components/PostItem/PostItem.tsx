@@ -345,9 +345,6 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
                 </DropdownMenu.Portal>
               </DropdownMenu.Root>
             </div>
-            {localPost?.status !== "Complete" && <div className='col-12 text-end text-primary mt-2'>
-              <TypeWriterText string={status} withBlink />
-            </div>}
             {regenerateError && <div className='col-12 text-end text-primary mt-2'>
               <TypeWriterText string={regenerateError} withBlink />
             </div>}

@@ -114,7 +114,7 @@ const StatusBar = ({ content_plan_outline_guid, content_plan_guid, content_plan_
             </>
             :
             <>
-              <strong className="text-primary">Outline Status</strong> {outlineStatus}
+              <strong className="text-primary me-2">Outline Status</strong> {outlineStatus}
             </>
           }
         </div>
@@ -129,7 +129,7 @@ const StatusBar = ({ content_plan_outline_guid, content_plan_guid, content_plan_
             </>
             :
             <>
-              <strong className="text-primary">Post Status</strong> {postStatus}
+              <strong className="text-primary me-2">Post Status</strong> {postStatus}
             </>
           }
         </div>

@@ -3,6 +3,7 @@ import FieldErrors from './FieldErrors';
 import FormField from './FormField';
 import useFormInput from '@/perfect-seo-shared-components/hooks/useFormInput';
 import { Validator } from '@/perfect-seo-shared-components/utils/validators';
+import { useEffect } from 'react';
 
 interface TextAreaInputProps extends React.HTMLProps<HTMLTextAreaElement> {
   fieldName: string;
@@ -37,6 +38,8 @@ const TextArea = ({
 
   const inputClass = 'textArea-input';
 
+
+
   const inputClassNames = classNames(`${inputClass} form-control`, {
     [`${inputClass}_withError`]: hasErrors,
     [`${className}`]: className,
@@ -53,7 +56,9 @@ const TextArea = ({
   function onChange(e) {
     e.preventDefault()
     form.handleInputChange(e);
-    props.onChange?.(e);
+    if (props.onChange) {
+      props.onChange?.(e);
+    }
   }
 
   return (
@@ -62,7 +67,7 @@ const TextArea = ({
         <textarea
           {...props}
           {...ariaProps}
-          value={props.value ?? form.getState[fieldName]}
+          value={form.getState[fieldName]}
           onChange={onChange}
           className={inputClassNames}
           name={fieldName}

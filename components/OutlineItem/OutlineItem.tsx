@@ -155,6 +155,22 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
         dispatch(addToast({ title: "Outline Added to Watchlist", type: "info", content: `Outline ${localOutline?.post_title} to the watchlist` }))
       })
   }
+  const addPostToQueue = () => {
+    let newObject: QueueItemProps = {
+      type: 'post',
+      domain: localOutline?.client_domain,
+      guid: localOutline?.guid,
+      email,
+      isComplete: status === 'Finished' ? true : false,
+    }
+    supabase
+      .from('user_queues')
+      .insert(newObject)
+      .select("*")
+      .then(res => {
+        dispatch(addToast({ title: "Post Added to Watchlist", type: "info", content: `Post ${localOutline?.post_title} to the watchlist` }))
+      })
+  }
 
   const handleTitleChange = (e, title) => {
     e?.preventDefault()
@@ -217,6 +233,9 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
                     <DropdownMenu.Content align="end" className="bg-warning z-100 card">
                       {isAdmin && <DropdownMenu.Item>
                         <button className="btn btn-transparent text-black w-100" onClick={addToQueue}><i className="material-icons me-2">queue</i>Add to Watchlist</button>
+                      </DropdownMenu.Item>}
+                      {isAdmin && <DropdownMenu.Item>
+                        <button className="btn btn-transparent text-black w-100" onClick={addPostToQueue}><i className="material-icons me-2">queue</i>Add Post to Watchlist</button>
                       </DropdownMenu.Item>}
                       {localOutline?.content_plan_guid && <DropdownMenu.Item>
                         <Link

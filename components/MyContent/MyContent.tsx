@@ -147,14 +147,27 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
 
 
 
-  const TabData = [
-    { key: "content-plans", title: "Generated Content Plans" },
-    { key: "outlines", title: "Generated Outlines" },
-    { key: "posts", title: "Generated Posts" },
-    { key: "reports", title: "Stats & Reports" },
-    { key: "bulk-content", title: "Bulk Content Plans" },
-    { key: "bulk-posts", title: "Bulk Posts" },
-  ]
+  const TabData = useMemo(() => {
+    if (isAdmin) {
+      return [
+        { key: "content-plans", title: "Generated Content Plans" },
+        { key: "outlines", title: "Generated Outlines" },
+        { key: "posts", title: "Generated Posts" },
+        { key: "reports", title: "Stats & Reports" },
+        { key: "bulk-content", title: "Bulk Content Plans" },
+        { key: "bulk-posts", title: "Bulk Posts" },
+      ]
+    }
+    else {
+      return [
+        { key: "content-plans", title: "Generated Content Plans" },
+        { key: "outlines", title: "Generated Outlines" },
+        { key: "posts", title: "Generated Posts" },
+        { key: "bulk-content", title: "Bulk Content Plans" },
+        { key: "bulk-posts", title: "Bulk Posts" },
+      ]
+    }
+  }, [isAdmin])
 
   const searchDomainChangeHandler = (e) => {
     if (e) {
@@ -333,7 +346,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
     <>
       {hideTitle ? null :
         <div className='container-fluid container-xl'>
-          <div className='row px-3 g-3 align-items-center justify-content-between'>
+          <div className='row g-3 align-items-center justify-content-between'>
             {(synopsis && ['bulk-content', 'bulk-posts'].includes(selectedTab) === false) ?
               <>
                 <BrandHeader synopsis={synopsis} />
@@ -370,7 +383,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
           </div>
         </div>
       }
-      <div className='container-xl content-fluid'>
+      <div className='container-xl content-fluid rc'>
         {isLoading && <LoadSpinner />}
         <div className={styles.tabWrap}>
           <ul className="nav nav-tabs mb-0">

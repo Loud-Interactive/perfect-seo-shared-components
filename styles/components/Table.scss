@@ -1,5 +1,4 @@
 @use 'common' as *;
-@use 'common' as *;
 
 .table {
 
@@ -11,10 +10,12 @@
   margin-bottom: 2em;
   border-collapse: collapse;
   box-sizing: border-box;
+  border-radius: .375rem;
   display: table;
   width: 100%;
-
+  overflow: hidden;
   @include font-size-small;
+
 
   &-wrap {
     border-radius: 8px;
@@ -35,6 +36,7 @@
           opacity: .7;
         }
       }
+
     }
 
     tbody {

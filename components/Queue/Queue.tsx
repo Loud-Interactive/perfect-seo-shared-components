@@ -125,6 +125,7 @@ const Queue = ({ sidebar = false }) => {
       .eq('id', obj.id)
       .select("*")
       .then(res => {
+        fetchInfo()
       })
   }
 

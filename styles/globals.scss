@@ -5289,3 +5289,16 @@ a.text-primary {
 .min-350 {
   min-width: 350px;
 }
+
+.rc {
+  border-radius: .375rem;
+}
+
+.tab-content {
+  border-radius: .375rem !important;
+  overflow: hidden;
+}
+
+.nav-tabs {
+  border-bottom: none;
+}

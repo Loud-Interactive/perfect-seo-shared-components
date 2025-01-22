@@ -20,6 +20,7 @@ import useForm from "@/perfect-seo-shared-components/hooks/useForm"
 import FactCheckModal from "../FactCheckModal/FactCheckModal"
 import FactCheckResultPage from "../FactCheckResultPage/FactCheckResultPage"
 import StatusBar from "../StatusBar/StatusBar"
+import IndexModal from "../IndexModal/IndexModal"
 
 interface PostItemProps {
   post: any,
@@ -32,6 +33,7 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
   const [liveUrl, setLiveUrl] = useState(post?.live_post_url)
   const [status, setStatus] = useState(post?.status)
   const [localPost, setLocalPost] = useState(post)
+  const [showIndex, setShowIndex] = useState(false)
   const [deleteModal, setDeleteModal] = useState(false)
   const [completed, setCompleted] = useState(false)
   const [regenerateError, setRegerateError] = useState(null)
@@ -270,7 +272,6 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
                           href={`https://contentPerfect.ai/contentplan/${localPost?.content_plan_guid}`}
                           target="_blank"
                           className="btn btn-transparent"
-
                         >
                           View Content Plan
                         </a>
@@ -311,6 +312,14 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
                             Fact-Check Post
                           </a>
                         </DropdownMenu.Item>} */}
+                      {isAdmin && <DropdownMenu.Item>
+                        <button
+                          onClick={() => { setShowIndex(true) }}
+                          className="btn btn-transparent w-100"
+                        >
+                          Index Post
+                        </button>
+                      </DropdownMenu.Item>}
                       <DropdownMenu.Item>
                         <a
                           href={`https://socialperfect.ai?url=${encodeURI(localPost?.live_post_url)}`}
@@ -381,11 +390,16 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
       </Modal.Overlay>
       <Modal.Overlay closeIcon open={showFactCheck} onClose={() => setShowFactCheck(false)}>
         <div className="modal-body">
-          {/* {localPost?.factcheck_guid ? */}
-          {/* // <FactCheckResultPage isModal uuid={localPost?.factcheck_guid} />
-            // : */}
-          <FactCheckModal onClose={closeHandler} post={localPost} setLocalPost={setLocalPost} refresh={fetchStatus} />
-          {/* } */}
+          {localPost?.factcheck_guid ?
+            <FactCheckResultPage isModal uuid={localPost?.factcheck_guid} />
+            :
+            <FactCheckModal onClose={closeHandler} post={localPost} setLocalPost={setLocalPost} refresh={fetchStatus} />
+          }
+        </div>
+      </Modal.Overlay>
+      <Modal.Overlay closeIcon open={showIndex} onClose={() => setShowIndex(false)}>
+        <div className="modal-body">
+          <IndexModal post={localPost} onClose={closeHandler} setLocalPost={setLocalPost} refresh={fetchStatus} />
         </div>
       </Modal.Overlay>
     </div>

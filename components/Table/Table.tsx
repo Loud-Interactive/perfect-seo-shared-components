@@ -109,7 +109,6 @@ const Table = ({ isLoading,
         newColumn.footer = newColumn.Footer;
       }
       newColumn.enableSorting = newColumn.disableSortBy === false ? true : false;
-      console.log(newColumn)
       return newColumn;
     });
 

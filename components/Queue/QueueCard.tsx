@@ -180,7 +180,7 @@ const QueueCard = ({ queue, i, removeItem, bulkStatus }: QueueCardProps) => {
     if (status && !completedStatuses.includes(status.toLowerCase())) {
       interval = setInterval(() => {
         fetchStatus()
-      }, 30000) // 5 second interval
+      }, 60000) // 5 second interval
     }
     return () => {
       clearInterval(interval)

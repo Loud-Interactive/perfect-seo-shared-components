@@ -7,14 +7,13 @@ import TypeWriterText from "../TypeWriterText/TypeWriterText";
 interface StatusBarProps {
   content_plan_outline_guid?: string;
   content_plan_guid?: string
-  content_plan_post_guid?: string
   content_plan_factcheck_guid?: string
   content_plan_social_guid?: string
   onGeneratePost?: () => void
   type: StatusType
 }
 
-const StatusBar = ({ content_plan_outline_guid, content_plan_guid, content_plan_post_guid, content_plan_factcheck_guid, content_plan_social_guid, onGeneratePost, type
+const StatusBar = ({ content_plan_outline_guid, content_plan_guid, content_plan_factcheck_guid, content_plan_social_guid, onGeneratePost, type
 }: StatusBarProps) => {
   const [outlineStatus, setOutlineStatus] = useState<string>('');
   const [postStatus, setPostStatus] = useState<string>('');
@@ -32,8 +31,7 @@ const StatusBar = ({ content_plan_outline_guid, content_plan_guid, content_plan_
   const [outlineComplete, setOutlineComplete] = useState<boolean>(false);
   const [postComplete, setPostComplete] = useState<boolean>(false);
   const [factcheckComplete, setFactcheckComplete] = useState<boolean>(false);
-
-  let fetchStatus = () => {
+  const fetchOutlineStatusData = () => {
     if (content_plan_outline_guid) {
       setOutlineLoading(true);
       fetchOutlineStatus(content_plan_outline_guid)
@@ -46,9 +44,12 @@ const StatusBar = ({ content_plan_outline_guid, content_plan_guid, content_plan_
           setOutlineError(err?.response?.data?.message || err?.message || 'An error occurred');
         });
     }
-    if (content_plan_post_guid) {
+  };
+
+  const fetchPostStatusData = () => {
+    if (content_plan_outline_guid) {
       setPostLoading(true);
-      getPostStatus(content_plan_post_guid)
+      getPostStatus(content_plan_outline_guid)
         .then(res => {
           setPostLoading(false);
           setPostStatus(res.data.status);
@@ -58,39 +59,74 @@ const StatusBar = ({ content_plan_outline_guid, content_plan_guid, content_plan_
           setPostError(err?.response?.data?.message || err?.message || 'An error occurred');
         });
     }
+  };
+
+  const fetchFactcheckStatusData = () => {
     if (content_plan_factcheck_guid) {
       setFactcheckLoading(true);
       getFactCheckStatus(content_plan_factcheck_guid)
         .then(res => {
           let status = res.data.status.replaceAll("_", " ").split(":")[0];
           setFactcheckLoading(false);
-          setFactcheckStatus(status)
-        }
-        )
+          setFactcheckStatus(status);
+        })
         .catch(err => {
           setFactcheckLoading(false);
           setFactcheckError(err?.response?.data?.message || err?.message || 'An error occurred');
         });
     }
-  }
+  };
 
   useEffect(() => {
     setOutlineComplete(outlineStatus === 'completed');
     setPostComplete(postStatus === 'Complete');
-  }, [outlineStatus, postStatus, factcheckStatus])
+    setFactcheckComplete(factcheckStatus === 'completed');
+  }, [outlineStatus, postStatus, factcheckStatus]);
 
   useEffect(() => {
-    let interval;
-    if (!outlineComplete && !postComplete && !factcheckComplete) {
-      fetchStatus();
-      interval = setInterval(fetchStatus, 30000);
+    let outlineInterval;
+    if (!outlineComplete) {
+      fetchOutlineStatusData();
+      outlineInterval = setInterval(() => {
+        fetchOutlineStatusData();
+      }, 60000);
     }
     return () => {
-      if (interval) {
-        clearInterval(interval);
+      if (outlineInterval) {
+        clearInterval(outlineInterval);
       }
+    };
+  }, [outlineComplete]);
+
+  useEffect(() => {
+    let postInterval;
+    if (!postComplete) {
+      fetchPostStatusData();
+      postInterval = setInterval(() => {
+        fetchPostStatusData();
+      }, 60000);
     }
-  }, [outlineComplete, postComplete, factcheckComplete, content_plan_factcheck_guid, content_plan_guid, content_plan_outline_guid, content_plan_post_guid, content_plan_social_guid]);
+    return () => {
+      if (postInterval) {
+        clearInterval(postInterval);
+      }
+    };
+  }, [postComplete]);
+
+  useEffect(() => {
+    let factcheckInterval;
+    if (!factcheckComplete) {
+      fetchFactcheckStatusData();
+      factcheckInterval = setInterval(() => {
+        fetchFactcheckStatusData();
+      }, 60000);
+    }
+    return () => {
+      if (factcheckInterval) {
+        clearInterval(factcheckInterval);
+      }
+    };
+  }, [factcheckComplete]);
 
 
 

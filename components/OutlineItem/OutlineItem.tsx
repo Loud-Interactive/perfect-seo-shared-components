@@ -205,7 +205,7 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
               </div>
             </div>
             <div className="col-12 py-3">
-              <StatusBar type={StatusType.OUTLINE} content_plan_outline_guid={localOutline?.guid} content_plan_post_guid={localOutline?.guid} onGeneratePost={() => {
+              <StatusBar type={StatusType.OUTLINE} content_plan_outline_guid={localOutline?.guid} onGeneratePost={() => {
                 setShowGenerate(true)
               }} />
             </div>

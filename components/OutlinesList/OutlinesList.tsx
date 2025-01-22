@@ -22,6 +22,7 @@ const OutlinesList = ({ domain_name, active }: OutlinesListProps) => {
   const [deleteModal, setDeleteModal] = useState(null)
   const email = useSelector(selectEmail)
   const [modalOpen, setModalOpen] = useState(false)
+  const [hasPosts, setHasPosts] = useState(false)
 
   const paginator = usePaginator()
 

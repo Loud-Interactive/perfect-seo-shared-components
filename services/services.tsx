@@ -376,8 +376,15 @@ export const regenerateSocialPost = async (guid, platform) => {
 export const getContentPlanOutlinesByDomain = (domain: string, paginator: PaginationRequest) => {
   return axiosInstance.get(`https://planperfectapi.replit.app/get_content_plan_outlines_by_domain/${domain}${parseQueries(paginator)}`);
 }
+export const getContentPlanOutlinesByDomainWithoutPosts = (domain: string, paginator: PaginationRequest) => {
+  return axiosInstance.get(`https://planperfectapi.replit.app/get_content_plan_outlines_by_domain/${domain}${parseQueries(paginator)}`);
+}
+
 export const getContentPlanOutlinesByEmail = (email: string, paginator: PaginationRequest) => {
   return axiosInstance.get(`https://planperfectapi.replit.app/get_content_plan_outlines_with_posts_by_email/${email}${parseQueries(paginator)}`);
+}
+export const getContentPlanOutlinesByEmailWithoutPosts = (email: string, paginator: PaginationRequest) => {
+  return axiosInstance.get(`/get_content_plan_outlines_without_posts_by_email/${email}${parseQueries(paginator)}`);
 }
 
 export const getContentPlansByEmail = (email: string, paginator: PaginationRequest) => {

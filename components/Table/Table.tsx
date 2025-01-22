@@ -184,7 +184,6 @@ const Table = ({ isLoading,
                 <tr key={headerGroup.id}>
                   {headerGroup.headers.map((header: any) => {
                     let { column } = header;
-                    console.log(column)
 
                     let isSorted = column.getIsSorted();
 

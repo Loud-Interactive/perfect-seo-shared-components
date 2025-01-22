@@ -111,11 +111,18 @@ const useGoogleUser = (appKey) => {
       setToken(sessionData.access_token)
       sessionStorage.setItem('access_token', sessionData.access_token)
       if (sessionData?.refresh_token) {
+        console.log("refresh")
         populateBulkGSC({ access_token: sessionData.access_token, refresh_token: sessionData.refresh_token })
+      }
+      else {
+        console.log("no refresh")
       }
     }
     else {
       setToken(null)
+    }
+    if (session && userData && isLoggedIn) {
+      updateProducts()
     }
   }, [session])
 
@@ -149,12 +156,7 @@ const useGoogleUser = (appKey) => {
   }
 
 
-  // updates products based on session and userdata
-  useEffect(() => {
-    if (session && userData && isLoggedIn) {
-      updateProducts()
-    }
-  }, [session])
+
 
   // update user 
   const updateUser = () => {

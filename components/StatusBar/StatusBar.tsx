@@ -75,20 +75,15 @@ const StatusBar = ({ content_plan_outline_guid, content_plan_guid, content_plan_
   }
 
   useEffect(() => {
-    if (outlineStatus === 'completed') {
-      setOutlineComplete(true);
-    }
-    if (postStatus === 'Complete') {
-      setPostComplete(true);
-    }
-
+    setOutlineComplete(outlineStatus === 'completed');
+    setPostComplete(postStatus === 'Complete');
   }, [outlineStatus, postStatus, factcheckStatus])
 
   useEffect(() => {
     let interval;
     if (!outlineComplete && !postComplete && !factcheckComplete) {
       fetchStatus();
-      interval = setInterval(fetchStatus, 10000);
+      interval = setInterval(fetchStatus, 30000);
     }
     return () => {
       if (interval) {

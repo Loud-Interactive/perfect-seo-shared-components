@@ -8,12 +8,20 @@ interface StatusBarProps {
   content_plan_outline_guid?: string;
   content_plan_guid?: string
   content_plan_factcheck_guid?: string
-  content_plan_social_guid?: string
+  content_plan_social_guid?: string,
+  live_post_url?: string,
+  addLiveUrlHandler?: () => void
   onGeneratePost?: () => void
   type: StatusType
 }
 
-const StatusBar = ({ content_plan_outline_guid, content_plan_guid, content_plan_factcheck_guid, content_plan_social_guid, onGeneratePost, type
+const StatusBar = ({
+  content_plan_outline_guid,
+  content_plan_guid,
+  content_plan_factcheck_guid,
+  content_plan_social_guid,
+  addLiveUrlHandler,
+  live_post_url, onGeneratePost, type
 }: StatusBarProps) => {
   const [outlineStatus, setOutlineStatus] = useState<string>('');
   const [postStatus, setPostStatus] = useState<string>('');
@@ -83,6 +91,12 @@ const StatusBar = ({ content_plan_outline_guid, content_plan_guid, content_plan_
     setFactcheckComplete(factcheckStatus === 'completed');
   }, [outlineStatus, postStatus, factcheckStatus]);
 
+  const addLiveUrlClickHandler = (e) => {
+    e.preventDefault();
+    if (addLiveUrlHandler) {
+      addLiveUrlHandler();
+    }
+  }
   useEffect(() => {
     let outlineInterval;
     if (!outlineComplete) {
@@ -173,6 +187,14 @@ const StatusBar = ({ content_plan_outline_guid, content_plan_guid, content_plan_
               </div>
             </div>
             : null
+      }
+      {(type === StatusType.POST && !live_post_url && postComplete) && <div className="col-auto d-flex align-items-center">
+        <i className="bi bi-chevron-right mx-2" />
+        <>
+
+          <a onClick={addLiveUrlClickHandler} className="text-warning my-0 py-0"><i className="bi bi-plus" />Add Live Url</a>
+        </>
+      </div>
       }
       {
         factcheckStatus && <div className="col-auto d-flex align-items-center ">

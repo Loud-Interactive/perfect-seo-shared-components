@@ -198,6 +198,9 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
 
   }
 
+  const addLiveUrlHandler = () => {
+    setShowLivePost(true);
+  }
   const handleEditOutline = (e?) => {
     if (e) {
       e.preventDefault()
@@ -227,7 +230,7 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
             </div>
           </div>
           <div className="col-12 py-3">
-            <StatusBar type={StatusType.POST} content_plan_outline_guid={localPost.content_plan_outline_guid} content_plan_guid={localPost?.content_plan_guid} content_plan_factcheck_guid={localPost?.factcheck_guid} />
+            <StatusBar type={StatusType.POST} content_plan_outline_guid={localPost.content_plan_outline_guid} content_plan_guid={localPost?.content_plan_guid} content_plan_factcheck_guid={localPost?.factcheck_guid} addLiveUrlHandler={addLiveUrlHandler} />
           </div>
         </div>
         <div className="col-12 col-lg-auto">
@@ -336,7 +339,7 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
                           target="_blank"
                           className="btn btn-transparent"
                         >
-                          Ahrefs URL
+                          AHREFs Report
                         </a>
                       </DropdownMenu.Item>
                       <DropdownMenu.Item>

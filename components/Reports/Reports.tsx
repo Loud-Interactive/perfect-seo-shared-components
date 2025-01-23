@@ -22,6 +22,21 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
   const [tableData, setTableData] = useState<any[]>([])
   const [urlData, setUrlData] = useState<any[]>(null)
 
+
+  useEffect(() => {
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === 'google-api-token') {
+        console.log(JSON.parse(event.newValue));
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
+
   const fetchInfo = async () => {
     setUrlData(null)
     let newData = []
@@ -30,6 +45,7 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
       start_date: startDate,
       end_date: endDate,
     }
+
     const { data } = await getGSCSearchAnalytics(gscReqObj)
 
     const ahrefsGlobalData = await getAhrefsDomainRating({ ...gscReqObj, domain: domain_name })

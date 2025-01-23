@@ -42,6 +42,7 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
     if (domain_name) {
       getGSCLiveURLReport({
         domain: domain_name,
+
         start_date: startDate,
         end_date: endDate,
         limit: 1
@@ -204,7 +205,7 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
 
 
   const gscColumnArray: TableColumnArrayProps[] = [
-    { id: 'title', Header: 'Title', accessor: 'title', disableSortBy: false },
+    { id: 'title', Header: 'Title', accessor: 'title', disableSortBy: false, cellClassName: 'title-max' },
     { id: 'total_clicks', Header: 'Total Clicks', accessor: renderTotalClicks, disableSortBy: false },
     { id: 'total_impressions', Header: 'Total Impressions', accessor: renderTotalImpression, disableSortBy: false },
     { id: 'avg_ctr_percent', Header: 'Average CTR', accessor: renderAverageCTR, disableSortBy: false, cellClassName: "relative" },

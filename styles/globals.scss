@@ -5312,3 +5312,10 @@ a.text-primary {
     display: none;
   }
 }
+
+.title-max {
+  max-width: 55ch;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

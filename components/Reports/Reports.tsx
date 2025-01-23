@@ -23,6 +23,7 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
   const [urlData, setUrlData] = useState<any[]>(null)
 
   const fetchInfo = async () => {
+    setUrlData(null)
     let newData = []
     let gscReqObj: Request.GSCRequest = {
       domain: domain_name,
@@ -102,6 +103,7 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
 
   const renderTotalClicks = (obj, i) => {
     if (i === 0) {
+      if (obj?.total_clicks === 0) return null
       return obj?.total_clicks?.toLocaleString()
     }
     else if (urlData?.length > 0) {
@@ -117,6 +119,7 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
   }
   const renderTotalImpression = (obj, i) => {
     if (i === 0) {
+      if (obj?.total_impressions === 0) return null
       return obj?.total_impressions?.toLocaleString()
     }
     else if (urlData?.length > 0) {
@@ -132,7 +135,8 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
   }
   const renderAverageCTR = (obj, i) => {
     if (i === 0) {
-      return `${obj?.avg_ctr_percent.toFixed(1)}%`
+      if (obj?.avg_ctr_percent === 0 || !obj?.avg_ctr_percent) return null
+      return `${obj?.avg_ctr_percent?.toFixed(1)}%`
     }
     else if (urlData?.length > 0) {
       let newPost = urlData.find(post => post.title === obj.title)
@@ -147,6 +151,7 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
   }
   const renderAveragePosition = (obj, i) => {
     if (i === 0) {
+      if (obj?.avg_position === 0) return null
       return obj?.avg_position?.toFixed(3)
     }
     else if (urlData?.length > 0) {

@@ -30,25 +30,32 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
     }
     const { data } = await getGSCSearchAnalytics(gscReqObj)
 
-    const ahrefsData = await getAhrefsDomainRating({ ...gscReqObj, domain: domain_name })
-    let rating = ahrefsData.data?.data?.reduce((acc, obj) => acc + obj?.domain_rating, 0) / ahrefsData?.data?.data.length
-    newData = [{ ...data.data[0], title: `Domain: ${domain_name}`, ahref_rating: rating.toFixed(1) }]
+    const ahrefsGlobalData = await getAhrefsDomainRating({ ...gscReqObj, domain: domain_name })
+    let rating = ahrefsGlobalData.data?.data?.reduce((acc, obj) => acc + obj?.domain_rating || 0, 0)
+    if (rating > 0) {
+      rating = (rating / ahrefsGlobalData?.data?.data.length).toFixed(1)
+    }
+    else rating = null
+    newData = [{ ...data.data[0], title: `Domain: ${domain_name}`, ahref_rating: rating }]
     const postResults = await getPostsByDomain(domain_name, { ...paginator.paginationObj, page: paginator.currentPage, has_live_post_url: true })
     paginator.setItemCount(postResults.data.total)
     let postData = await Promise.all(postResults.data.records.map(async (obj) => {
       let reqObj = {
         start_date: startDate,
         end_date: endDate,
-        page_url: obj.live_post_url,
-        keyword: true
+        page_url: obj.live_post_url
       }
       const { data } = await getGSCSearchAnalytics({ ...reqObj, domain: domain_name })
       console.log(data)
       const ahrefsData = await getAhrefsUrlRating(reqObj)
-      let ahref_rating: any = ahrefsData.data?.data?.reduce((acc, obj) => acc + obj?.url_rating, 0) / ahrefsData?.data?.data.length
-      if (ahref_rating > 0) {
-        ahref_rating = ahref_rating.toFixed(1)
+      if (ahrefsData.data?.data?.length > 0) {
+        console.log(ahrefsData)
       }
+      let ahref_rating: any = ahrefsData.data?.data?.reduce((acc, obj) => acc + obj?.url_rating || 0, 0)
+      if (ahref_rating > 0) {
+        ahref_rating = (ahref_rating / ahrefsData?.data?.data.length).toFixed(1)
+      }
+      else ahref_rating = null
       if (data.data?.length > 0) {
         return { ...obj, ...data.data[0], ahref_rating }
       }
@@ -83,7 +90,7 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
     { id: 'title', Header: 'Title', accessor: 'title', disableSortBy: false },
     { id: 'total_clicks', Header: 'Total Clicks', accessor: (obj) => obj?.total_clicks?.toLocaleString(), disableSortBy: false },
     { id: 'total_impressions', Header: 'Total Impressions', accessor: (obj) => obj?.total_impressions?.toLocaleString(), disableSortBy: false },
-    { id: 'avg_ctr', Header: 'Average CTR', accessor: (obj) => obj?.avg_ctr ? `${(obj?.avg_ctr * 100).toFixed(1)}%` : null, disableSortBy: false },
+    { id: 'avg_ctr_percent', Header: 'Average CTR', accessor: (obj) => obj?.avg_ctr_percent ? `${obj?.avg_ctr_percent.toFixed(1)}%` : null, disableSortBy: false },
     { id: 'avg_position', Header: 'Average Position', accessor: (obj) => obj?.avg_position?.toFixed(3), disableSortBy: false },
     { id: 'ahref_rating', Header: 'AHREFs Rating', accessor: 'ahref_rating', disableSortBy: false },
   ];

@@ -5302,3 +5302,9 @@ a.text-primary {
 .nav-tabs {
   border-bottom: none;
 }
+
+@include PWA {
+  footer {
+    display: none;
+  }
+}

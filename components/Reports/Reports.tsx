@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import styles from './Reports.module.scss'
 import Table, { TableColumnArrayProps } from '@/perfect-seo-shared-components/components/Table/Table'
-import { getAhrefsDomainRating, getAhrefsUrlRating, getGSCSearchAnalytics, getPostsByDomain } from '@/perfect-seo-shared-components/services/services'
+import { getAhrefsDomainRating, getAhrefsUrlRating, getGSCSearchAnalytics, getPostsByDomain, populateBulkGSC } from '@/perfect-seo-shared-components/services/services'
 import moment from 'moment-timezone'
 import TypeWriterText from '@/perfect-seo-shared-components/components/TypeWriterText/TypeWriterText'
 import usePaginator from '@/perfect-seo-shared-components/hooks/usePaginator'
@@ -23,19 +23,6 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
   const [urlData, setUrlData] = useState<any[]>(null)
 
 
-  useEffect(() => {
-    const handleStorageChange = (event: StorageEvent) => {
-      if (event.key === 'google-api-token') {
-        console.log(JSON.parse(event.newValue));
-      }
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-    };
-  }, []);
 
   const fetchInfo = async () => {
     setUrlData(null)
@@ -44,6 +31,17 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
       domain: domain_name,
       start_date: startDate,
       end_date: endDate,
+    }
+    try {
+      let googleToken = sessionStorage.getItem('google-api-token')
+      if (googleToken) {
+        let token = JSON.parse(googleToken)
+        console.log("google token", googleToken)
+        await populateBulkGSC(token)
+      }
+    }
+    catch (e) {
+      console.log(e)
     }
 
     const { data } = await getGSCSearchAnalytics(gscReqObj)

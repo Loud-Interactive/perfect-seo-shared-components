@@ -110,6 +110,7 @@ const useGoogleUser = (appKey) => {
     }
     if (sessionData?.access_token) {
       setToken(sessionData.access_token)
+      fetchAllDomains(sessionData.access_token)
       if (sessionData?.token.refresh_token) {
         populateBulkGSC({ access_token: sessionData.access_token, refresh_token: sessionData.token.refresh_token })
         let googleApiObject = JSON.stringify({ access_token: sessionData.access_token, refresh_token: sessionData.token.refresh_token })
@@ -226,7 +227,7 @@ const useGoogleUser = (appKey) => {
   }
 
   // pulls all domains from Google 
-  const fetchAllDomains = async () => {
+  const fetchAllDomains = async (token) => {
     try {
       const { data } = await axios.get('https://www.googleapis.com/webmasters/v3/sites', { headers: { Authorization: `Bearer ${token}` } })
       if (data?.siteEntry) {
@@ -271,7 +272,7 @@ const useGoogleUser = (appKey) => {
   const checkUserDomains = async () => {
     let domain_access = [];
     try {
-      domain_access = await fetchAllDomains()
+      domain_access = await fetchAllDomains(token)
       if (domain_access === null) {
         return null;
       }

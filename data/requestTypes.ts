@@ -175,3 +175,8 @@ export interface PageRequest extends DateAndPageRequest {
 export interface DomainReportsRequest extends DateAndPageRequest {
   domain: string,
 }
+
+export interface GSCTotalsRequest extends DateRangeRequest {
+  domain: string,
+  limit: number
+}

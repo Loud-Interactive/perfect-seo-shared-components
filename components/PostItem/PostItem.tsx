@@ -230,7 +230,7 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
             </div>
           </div>
           <div className="col-12 py-3">
-            <StatusBar type={StatusType.POST} content_plan_outline_guid={localPost.content_plan_outline_guid} content_plan_guid={localPost?.content_plan_guid} content_plan_factcheck_guid={localPost?.factcheck_guid} addLiveUrlHandler={addLiveUrlHandler} />
+            <StatusBar type={StatusType.POST} content_plan_outline_guid={localPost.content_plan_outline_guid} content_plan_guid={localPost?.content_plan_guid} content_plan_factcheck_guid={localPost?.factcheck_guid} addLiveUrlHandler={addLiveUrlHandler} live_post_url={localPost.live_post_url} />
           </div>
         </div>
         <div className="col-12 col-lg-auto">

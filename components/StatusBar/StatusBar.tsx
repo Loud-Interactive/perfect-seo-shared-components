@@ -196,6 +196,13 @@ const StatusBar = ({
         </>
       </div>
       }
+      {(type === StatusType.POST && live_post_url && postComplete) &&
+        <div className="col-auto d-flex align-items-center">
+          <i className="bi bi-chevron-right mx-2" />
+          <strong className="text-primary">Live</strong>
+          <span className="badge rounded-pill ms-1 p-1 bg-success"><i className="bi bi-check-lg text-white"></i></span>
+        </div>
+      }
       {
         factcheckStatus && <div className="col-auto d-flex align-items-center ">
           <i className="bi bi-chevron-right mx-2" />

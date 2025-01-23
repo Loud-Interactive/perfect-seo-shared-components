@@ -109,13 +109,10 @@ const useGoogleUser = (appKey) => {
     }
     if (sessionData?.access_token) {
       setToken(sessionData.access_token)
-      sessionStorage.setItem('access_token', sessionData.access_token)
       if (sessionData?.refresh_token) {
-        console.log("refresh")
         populateBulkGSC({ access_token: sessionData.access_token, refresh_token: sessionData.refresh_token })
-      }
-      else {
-        console.log("no refresh")
+        let googleApiObject = JSON.stringify({ access_token: sessionData.access_token, refresh_token: sessionData.refresh_token })
+        sessionStorage.setItem('google-api-token', googleApiObject)
       }
     }
     else {

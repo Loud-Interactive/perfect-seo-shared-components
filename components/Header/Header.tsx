@@ -242,12 +242,17 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits, hasQueue }: 
                       </div>
                       {(isAdmin && queue?.length > 0) ?
                         <div className={metricClasses} onClick={metricClickHandler}>
-                          <span className="py-0 px-2" id="basic-addon1"><strong>Plans</strong></span>
-                          <span className="badge bg-primary py-1 px-2">{metrics?.contentPlans?.percentage}%</span>
-                          <span className="py-0 px-2" id="basic-addon1"><strong>Outlines</strong></span>
-                          <span className="badge bg-primary py-1 px-2">{metrics?.outlines?.percentage}%</span>
-                          <span className="py-0 px-2" id="basic-addon1"><strong>Posts</strong></span>
-                          <span className="py-1 px-2 badge bg-primary">{metrics?.posts?.percentage}%</span>
+                          {metrics?.contentPlans?.total > 0 && <>
+                            <span className="py-0 px-2" id="basic-addon1"><strong>Plans</strong></span>
+                            <span className="badge bg-primary py-1 px-2">{metrics?.contentPlans?.percentage}%</span>
+                          </>}
+                          {metrics?.outlines?.total > 0 && <>
+                            <span className="py-0 px-2" id="basic-addon1"><strong>Outlines</strong></span>
+                            <span className="badge bg-primary py-1 px-2">{metrics?.outlines?.percentage}%</span>
+                          </>}
+                          {metrics?.posts?.total > 0 && <>    <span className="py-0 px-2" id="basic-addon1"><strong>Posts</strong></span>
+                            <span className="py-1 px-2 badge bg-primary">{metrics?.posts?.percentage}%</span>
+                          </>}
                         </div> : points ? (
                           <div>
                             <strong className='text-primary'>Credits</strong> {points.toLocaleString()}

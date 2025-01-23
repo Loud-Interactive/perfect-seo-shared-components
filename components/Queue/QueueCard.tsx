@@ -402,7 +402,7 @@ const QueueCard = ({ queue, i, removeItem, bulkStatus }: QueueCardProps) => {
                               target="_blank"
                               className="btn btn-transparent w-100 text-black"
                             >
-                              Ahrefs URL
+                              AHREFs Report
                             </a>
                           </DropdownMenu.Item>
                           <DropdownMenu.Item>

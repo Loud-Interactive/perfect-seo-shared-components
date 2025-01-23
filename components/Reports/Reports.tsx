@@ -39,9 +39,11 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
       let reqObj = {
         start_date: startDate,
         end_date: endDate,
-        page_url: obj.live_post_url
+        page_url: obj.live_post_url,
+        keyword: true
       }
       const { data } = await getGSCSearchAnalytics({ ...reqObj, domain: domain_name })
+      console.log(data)
       const ahrefsData = await getAhrefsUrlRating(reqObj)
       let ahref_rating: any = ahrefsData.data?.data?.reduce((acc, obj) => acc + obj?.url_rating, 0) / ahrefsData?.data?.data.length
       if (ahref_rating > 0) {

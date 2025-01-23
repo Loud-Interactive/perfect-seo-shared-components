@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import styles from './Reports.module.scss'
 import Table, { TableColumnArrayProps } from '@/perfect-seo-shared-components/components/Table/Table'
-import { getAhrefsDomainRating, getAhrefsUrlRating, getGSCSearchAnalytics, getPostsByDomain } from '@/perfect-seo-shared-components/services/services'
+import { getAhrefsDomainRating, getAhrefsUrlRating, getGSCSearchAnalytics, getPostsByDomain, populateBulkGSC } from '@/perfect-seo-shared-components/services/services'
 import moment from 'moment-timezone'
 import TypeWriterText from '@/perfect-seo-shared-components/components/TypeWriterText/TypeWriterText'
 import usePaginator from '@/perfect-seo-shared-components/hooks/usePaginator'
@@ -22,7 +22,20 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
   const [tableData, setTableData] = useState<any[]>([])
   const [urlData, setUrlData] = useState<any[]>(null)
 
+  useEffect(() => {
+    let googleToken;
+    try {
+      googleToken = sessionStorage.getItem('google-api-token')
+    }
+    catch (e) {
+      console.log(e)
+    }
+    if (googleToken) {
+      let token = JSON.parse(googleToken)
+      populateBulkGSC(token)
+    }
 
+  }, [])
 
   const fetchInfo = async () => {
     setUrlData(null)
@@ -32,6 +45,7 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
       start_date: startDate,
       end_date: endDate,
     }
+
 
     const { data } = await getGSCSearchAnalytics(gscReqObj)
 

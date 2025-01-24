@@ -59,7 +59,11 @@ const ActionButtonGroup = ({
   // Form states 
   const liveURLForm = useForm()
 
-
+  useEffect(() => {
+    if (data?.live_post_url) {
+      liveURLForm.setState({ live_url: data?.live_post_url })
+    }
+  }, [data?.live_post_url])
 
   // Click handlers and data handlers 
   const deleteClickHandler = (e) => {

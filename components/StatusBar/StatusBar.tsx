@@ -51,7 +51,12 @@ const StatusBar = ({
         })
         .catch(err => {
           setOutlineLoading(false);
-          setOutlineError(err?.response?.data?.message || err?.message || 'An error occurred');
+          console.log(err.response)
+          if (err.response.data.detail.includes("No outline found for GUID")) {
+            setOutlineStatus("completed")
+          } else {
+            setOutlineError(err?.response?.data?.message || err?.message || 'An error occurred');
+          }
         });
     }
   };
@@ -152,20 +157,22 @@ const StatusBar = ({
   }
   return (
     <div className="row d-flex align-items-center justify-content-end g-0 ">
-      {
-        outlineStatus && <div className="col-auto d-flex align-items-center">
-          {outlineComplete ?
+      <div className="col-auto d-flex align-items-center">
+        {outlineComplete ?
+          <>
+            <strong className="text-primary">Outline</strong>
+            <span className="badge rounded-pill  ms-1 p-1 bg-success"><i className="bi bi-check-lg text-white"></i></span>
+          </>
+          : outlineError ?
             <>
-              <strong className="text-primary">Outline</strong>
-              <span className="badge rounded-pill  ms-1 p-1 bg-success"><i className="bi bi-check-lg text-white"></i></span>
+              <strong className="text-primary me-2">Outline Generation Error</strong> {outlineError}
             </>
             :
             <>
               <strong className="text-primary me-2">Outline Status</strong> {outlineStatus}
             </>
-          }
-        </div>
-      }
+        }
+      </div>
       {
         postStatus ? <div className="col-auto d-flex align-items-center">
           <i className="bi bi-chevron-right mx-2" />

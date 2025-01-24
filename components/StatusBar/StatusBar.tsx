@@ -157,7 +157,7 @@ const StatusBar = ({
   }
   return (
     <div className="row d-flex align-items-center justify-content-end g-0 ">
-      <div className="col-auto d-flex align-items-center">
+      {outlineStatus && <div className="col-auto d-flex align-items-center">
         {outlineComplete ?
           <>
             <strong className="text-primary">Outline</strong>
@@ -173,6 +173,7 @@ const StatusBar = ({
             </>
         }
       </div>
+      }
       {
         postStatus ? <div className="col-auto d-flex align-items-center">
           <i className="bi bi-chevron-right mx-2" />

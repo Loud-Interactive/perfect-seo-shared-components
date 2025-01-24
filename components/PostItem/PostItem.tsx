@@ -14,13 +14,14 @@ import CreateContentModal from "../CreateContentModal/CreateContentModal"
 import { createClient } from "@/perfect-seo-shared-components/utils/supabase/client"
 import en from '@/assets/en.json'
 import RegeneratePostModal, { GenerateTypes } from "../RegeneratePostModal/RegeneratePostModal"
-import { QueueItemProps, StatusType } from "@/perfect-seo-shared-components/data/types"
+import { QueueItemProps, ContentType } from "@/perfect-seo-shared-components/data/types"
 import Form from "../Form/Form"
 import useForm from "@/perfect-seo-shared-components/hooks/useForm"
 import FactCheckModal from "../FactCheckModal/FactCheckModal"
 import FactCheckResultPage from "../FactCheckResultPage/FactCheckResultPage"
 import StatusBar from "../StatusBar/StatusBar"
 import IndexModal from "../IndexModal/IndexModal"
+import ActionButtonGroup from "../ActionButtonGroup/ActionButtonGroup"
 
 interface PostItemProps {
   post: any,
@@ -229,137 +230,15 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
               {localPost?.live_post_url && <p className="m-0">  <strong className="text-primary me-1">Live URL</strong>  <a href={localPost?.live_post_url} target="_blank" title="View Live Post"><i className="bi bi-link" /> {localPost?.live_post_url}</a><a className="text-small ms-2 text-primary" onClick={e => { e.preventDefault(); setShowLivePost(true) }} title="Edit URL">Edit URL</a></p>}
             </div>
           </div>
-          <div className="col-12 py-3">
-            <StatusBar type={StatusType.POST} content_plan_outline_guid={localPost.content_plan_outline_guid} content_plan_guid={localPost?.content_plan_guid} content_plan_factcheck_guid={localPost?.factcheck_guid} addLiveUrlHandler={addLiveUrlHandler} live_post_url={localPost.live_post_url} />
-          </div>
         </div>
-        <div className="col-12 col-lg-auto">
-          <div className='row d-flex justify-content-end'>
-            <div className="input-group d-flex justify-content-end">
-              {(post?.google_doc_link && post?.html_link) &&
-                <>
-                  <a
-                    onClick={htmlClickHandler}
-                    className="btn btn-warning btn-standard"
-                    title="HTML File"
-                  >
-                    <i className="bi bi-filetype-html " />
-                  </a>
-                  <a
-                    onClick={docClickHandler}
-                    className="btn btn-warning btn-standard"
-                    title="Google Docs"
-                  >
-                    <i className="bi bi-filetype-doc " />
-                  </a>
-                </>}
-              <button className='btn btn-primary btn-standard d-flex justify-content-center align-items-center' onClick={deleteClickHandler} title={`View GUID: ${localPost?.guid}`}><i className="bi bi-trash pt-1" /></button>
-              <DropdownMenu.Root>
-                <DropdownMenu.Trigger className="btn btn-warning btn-standard d-flex align-items-center justify-content-center">
-                  <i className="bi bi-three-dots-vertical" />
-                </DropdownMenu.Trigger>
-                <DropdownMenu.Portal>
-                  <DropdownMenu.Content align="end" className="bg-primary z-100 card">
-                    {isAdmin && <DropdownMenu.Item>
-                      <button className="btn btn-transparent w-100" onClick={addToQueue}><i className="material-icons me-2">queue</i>Add to Watchlist</button>
-                    </DropdownMenu.Item>}
-                    {(localPost?.content_plan_outline_guid && localPost?.content_plan_guid) &&
-                      <DropdownMenu.Item>
-                        <button className="btn btn-transparent w-100" onClick={handleEditOutline}>
-                          Edit Outline
-                        </button>
-                      </DropdownMenu.Item>}
-                    {localPost?.content_plan_guid &&
-                      <DropdownMenu.Item>
-                        <a
-                          href={`https://contentPerfect.ai/contentplan/${localPost?.content_plan_guid}`}
-                          target="_blank"
-                          className="btn btn-transparent"
-                        >
-                          View Content Plan
-                        </a>
-                      </DropdownMenu.Item>}
-                    <DropdownMenu.Item>
-                      <button className="btn btn-transparent w-100" onClick={() => { setShowRegeneratePost(true) }}>Regenerate Post</button>
-                    </DropdownMenu.Item>
-                    <DropdownMenu.Item>
-                      <button className="btn btn-transparent w-100" onClick={() => { setShowLivePost(true) }}>{localPost?.live_post_url ? 'Edit' : 'Add'} Live Post URL</button>
-                    </DropdownMenu.Item>
-                    <DropdownMenu.Item>
-                      <button
-                        onClick={() => { setShowFactCheck(true) }}
-                        className="btn btn-transparent w-100"
-                      >
-                        {localPost?.factcheck_guid ? 'Fact-Check Results' : 'Fact-Check'}
-                      </button>
-                    </DropdownMenu.Item>
-                    {localPost?.live_post_url && <>
-                      {/* {localPost?.factcheck_guid ?
-                        <DropdownMenu.Item>
-                          <a
-                            href={`https://factcheckPerfect.ai/fact-checks/${localPost?.factcheck_guid}`}
-                            target="_blank"
-                            className="btn btn-transparent"
-
-                          >
-                            Fact-Check Results
-                          </a>
-                        </DropdownMenu.Item>
-                        : <DropdownMenu.Item>
-                          <a
-                            href={`https://factcheckPerfect.ai/fact-checks?url=${encodeURI(localPost?.live_post_url)}&post_guid=${localPost?.content_plan_outline_guid}`}
-                            target="_blank"
-                            className="btn btn-transparent"
-
-                          >
-                            Fact-Check Post
-                          </a>
-                        </DropdownMenu.Item>} */}
-                      {isAdmin && <DropdownMenu.Item>
-                        <button
-                          onClick={() => { setShowIndex(true) }}
-                          className="btn btn-transparent w-100"
-                        >
-                          Index Post
-                        </button>
-                      </DropdownMenu.Item>}
-                      <DropdownMenu.Item>
-                        <a
-                          href={`https://socialperfect.ai?url=${encodeURI(localPost?.live_post_url)}`}
-                          target="_blank"
-                          className="btn btn-transparent"
-
-                        >
-                          Generate Social Posts
-                        </a>
-                      </DropdownMenu.Item>
-                      <DropdownMenu.Item>
-                        <a
-                          href={`https://app.ahrefs.com/v2-site-explorer/organic-keywords?columns=CPC%7C%7CKD%7C%7CLastUpdated%7C%7COrganicTraffic%7C%7CPaidTraffic%7C%7CPosition%7C%7CPositionHistory%7C%7CSERP%7C%7CSF%7C%7CURL%7C%7CVolume&compareDate=dontCompare&country=us&currentDate=today&keywordRules=&limit=100&mode=prefix&offset=0&positionChanges=&serpFeatures=&sort=Volume&sortDirection=desc&target=${encodeURI(localPost?.live_post_url.replace("https://", '').replace("http://", "").replace("www.", ""))}&urlRules=&volume_type=average`}
-                          target="_blank"
-                          className="btn btn-transparent"
-                        >
-                          AHREFs Report
-                        </a>
-                      </DropdownMenu.Item>
-                      <DropdownMenu.Item>
-                        <a
-                          href={`https://search.google.com/search-console/performance/search-analytics?resource_id=sc-domain%3A${urlSanitization(localPost?.live_post_url)}&hl=en&page=*${encodeURI(localPost?.live_post_url)}`}
-                          target="_blank"
-                          className="btn btn-transparent"
-
-                        >
-                          GSC Report
-                        </a>
-                      </DropdownMenu.Item>
-                    </>}
-                  </DropdownMenu.Content>
-                </DropdownMenu.Portal>
-              </DropdownMenu.Root>
+        <div className="col-12">
+          <div className="row d-flex justify-content-end align-items-center w-100">
+            <div className="col-auto">
+              <StatusBar type={ContentType.POST} content_plan_outline_guid={localPost.content_plan_outline_guid} content_plan_guid={localPost?.content_plan_guid} content_plan_factcheck_guid={localPost?.factcheck_guid} addLiveUrlHandler={addLiveUrlHandler} live_post_url={localPost.live_post_url} />
             </div>
-            {regenerateError && <div className='col-12 text-end text-primary mt-2'>
-              <TypeWriterText string={regenerateError} withBlink />
-            </div>}
+            <div className="col-auto">
+              <ActionButtonGroup type={ContentType.POST} setData={setLocalPost} data={localPost} refresh={refresh} />
+            </div>
           </div>
         </div>
       </div>
@@ -396,13 +275,13 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
           {localPost?.factcheck_guid ?
             <FactCheckResultPage isModal uuid={localPost?.factcheck_guid} />
             :
-            <FactCheckModal onClose={closeHandler} post={localPost} setLocalPost={setLocalPost} refresh={fetchStatus} />
+            <FactCheckModal onClose={closeHandler} post={localPost} setLocalPost={setLocalPost} />
           }
         </div>
       </Modal.Overlay>
       <Modal.Overlay closeIcon open={showIndex} onClose={() => setShowIndex(false)}>
         <div className="modal-body">
-          <IndexModal post={localPost} onClose={closeHandler} setLocalPost={setLocalPost} refresh={fetchStatus} />
+          <IndexModal post={localPost} onClose={closeHandler} setLocalPost={setLocalPost} />
         </div>
       </Modal.Overlay>
     </div>

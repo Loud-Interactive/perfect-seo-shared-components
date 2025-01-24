@@ -672,13 +672,13 @@ export interface PlayerProps {
 
 export interface AssocGUIDS {
   guid: string,
-  type: 'outline' | 'contentPlan' | 'post'
+  type: ContentType | string
   isComplete?: boolean
 }
 
 export interface QueueItemProps {
   created_at?: string,
-  type: 'outline' | 'contentPlan' | 'post',
+  type: ContentType | string,
   domain: string,
   guid: string,
   associatedGuids?: AssocGUIDS[],
@@ -809,11 +809,11 @@ export enum ClaimResultStatus {
   FULLY_SUPPORTED = 'fully supported by the sources',
 }
 
-export enum StatusType {
-  PLAN,
-  OUTLINE,
-  POST,
-  FACTCHECK
+export enum ContentType {
+  PLAN = 'plan',
+  OUTLINE = 'outline',
+  POST = 'post',
+  FACTCHECK = 'factcheck'
 }
 
 export interface SchemaProgress {

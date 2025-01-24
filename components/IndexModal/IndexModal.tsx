@@ -6,10 +6,9 @@ interface IndexModalProps {
   post: PostProps;
   onClose: () => void;
   setLocalPost: (post: PostProps) => void;
-  refresh: () => void;
 }
 
-const IndexModal = ({ post, onClose, setLocalPost, refresh }: IndexModalProps) => {
+const IndexModal = ({ post, onClose, setLocalPost }: IndexModalProps) => {
 
   const clickHandler = (e) => {
     e.preventDefault();

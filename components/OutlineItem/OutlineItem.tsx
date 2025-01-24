@@ -9,10 +9,11 @@ import moment from "moment-timezone"
 import RegeneratePostModal, { GenerateTypes } from "../RegeneratePostModal/RegeneratePostModal";
 import { GenerateContentPost } from "@/perfect-seo-shared-components/data/requestTypes";
 import { useDispatch, useSelector } from "react-redux";
-import { addToast, selectEmail, selectIsAdmin } from "@/perfect-seo-shared-components/lib/features/User";
-import { QueueItemProps, StatusType } from "@/perfect-seo-shared-components/data/types";
+import { selectEmail, selectIsAdmin } from "@/perfect-seo-shared-components/lib/features/User";
+import { ContentType } from "@/perfect-seo-shared-components/data/types";
 import { createClient } from "@/perfect-seo-shared-components/utils/supabase/client";
 import StatusBar from "../StatusBar/StatusBar";
+import ActionButtonGroup from "../ActionButtonGroup/ActionButtonGroup";
 
 const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
   const [status, setStatus] = useState(outline?.status)
@@ -26,6 +27,7 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
   const email = useSelector(selectEmail)
   const isAdmin = useSelector(selectIsAdmin)
   const dispatch = useDispatch()
+
   useEffect(() => {
     if (outline?.status !== status) {
       setStatus(outline?.status)
@@ -114,10 +116,6 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
   }, [editModal])
 
 
-  const deleteClickHandler = (e) => {
-    e.preventDefault()
-    setDeleteModal(true)
-  }
 
 
   const deleteHandler = () => {
@@ -128,47 +126,6 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
       })
       .catch(err => {
         console.log(err)
-      })
-  }
-  const regenerateOutlineClickHandler = () => {
-    setLoading(true)
-    regenerateOutline(localOutline?.guid, { email: email, client_domain: localOutline?.client_domain, client_name: localOutline?.brand_name, post_title: localOutline?.post_title, content_plan_guid: localOutline?.content_plan_guid })
-      .then(res => {
-        dispatch(addToast({ title: "Regenerating Outline", type: "info", content: `Regenerating outline for ${localOutline?.post_title || localOutline?.client_domain}` }))
-        setStatus("Regenerating")
-        setLoading(false)
-      })
-  }
-  const addToQueue = () => {
-    let newObject: QueueItemProps = {
-      type: 'outline',
-      domain: localOutline?.client_domain,
-      guid: localOutline?.guid,
-      email,
-      isComplete: status === 'Finished' ? true : false,
-    }
-    supabase
-      .from('user_queues')
-      .insert(newObject)
-      .select("*")
-      .then(res => {
-        dispatch(addToast({ title: "Outline Added to Watchlist", type: "info", content: `Outline ${localOutline?.post_title} to the watchlist` }))
-      })
-  }
-  const addPostToQueue = () => {
-    let newObject: QueueItemProps = {
-      type: 'post',
-      domain: localOutline?.client_domain,
-      guid: localOutline?.guid,
-      email,
-      isComplete: status === 'Finished' ? true : false,
-    }
-    supabase
-      .from('user_queues')
-      .insert(newObject)
-      .select("*")
-      .then(res => {
-        dispatch(addToast({ title: "Post Added to Watchlist", type: "info", content: `Post ${localOutline?.post_title} to the watchlist` }))
       })
   }
 
@@ -185,6 +142,7 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
         return res
       })
   }
+
   return (
     <div className="card bg-secondary p-3" title={outline?.post_title}>
       <div className="row d-flex g-3 d-flex align-items-end">
@@ -204,72 +162,17 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
                 {moment(localOutline.created_at).format("dddd, MMM Do, YYYY h:mma")}
               </div>
             </div>
-            <div className="col-12 py-3">
-              <StatusBar type={StatusType.OUTLINE} content_plan_outline_guid={localOutline?.guid} onGeneratePost={() => {
+          </div>
+        </div>
+        <div className="col-12">
+          <div className="row d-flex justify-content-end align-items-center w-100">
+            <div className="col-auto">
+              <StatusBar type={ContentType.OUTLINE} content_plan_outline_guid={localOutline?.guid} onGeneratePost={() => {
                 setShowGenerate(true)
               }} />
             </div>
-          </div>
-        </div>
-        <div className="col-12 col-lg-auto">
-          <div className='row d-flex justify-content-end'>
-            <div className="input-group d-flex justify-content-end">
-              <>
-
-                <button
-                  title='edit outline'
-                  className="btn btn-warning btn-standard no-truncate"
-                  onClick={() => { setEditModal(true) }}
-                >
-                  <i className="bi bi-pencil-fill me-1" /> Edit
-                </button>
-
-                <button className='btn btn-primary btn-standard d-flex justify-content-center align-items-center' onClick={deleteClickHandler} title={`View GUID: ${localOutline?.guid}`}><i className="bi bi-trash pt-1" /></button>
-                <DropdownMenu.Root>
-                  <DropdownMenu.Trigger className="btn btn-warning btn-standard d-flex align-items-center justify-content-center">
-                    <i className="bi bi-three-dots-vertical" />
-                  </DropdownMenu.Trigger>
-                  <DropdownMenu.Portal>
-                    <DropdownMenu.Content align="end" className="bg-warning z-100 card">
-                      {isAdmin && <DropdownMenu.Item>
-                        <button className="btn btn-transparent text-black w-100" onClick={addToQueue}><i className="material-icons me-2">queue</i>Add to Watchlist</button>
-                      </DropdownMenu.Item>}
-                      {isAdmin && <DropdownMenu.Item>
-                        <button className="btn btn-transparent text-black w-100" onClick={addPostToQueue}><i className="material-icons me-2">queue</i>Add Post to Watchlist</button>
-                      </DropdownMenu.Item>}
-                      {localOutline?.content_plan_guid && <DropdownMenu.Item>
-                        <Link
-                          href={`https://contentPerfect.ai/contentplan/${localOutline?.content_plan_guid}`}
-                          title="View Content Plan"
-                          className="btn btn-transparent text-black"
-                        >
-                          View Content Plan
-                        </Link>
-                      </DropdownMenu.Item>}
-                      <DropdownMenu.Item>
-                        <button
-                          className="btn btn-transparent text-black w-100"
-                          onClick={(e) => {
-                            regenerateOutlineClickHandler();
-                          }}
-                        >
-                          Regenerate Outline
-                        </button>
-                      </DropdownMenu.Item>
-                      <DropdownMenu.Item>
-                        <button
-                          className="btn btn-transparent text-black w-100"
-                          onClick={() => { setShowGenerate(true) }}
-                        >
-                          Generate Post
-                        </button>
-                      </DropdownMenu.Item>
-                    </DropdownMenu.Content>
-                  </DropdownMenu.Portal>
-                </DropdownMenu.Root>
-
-
-              </>
+            <div className="col-auto">
+              <ActionButtonGroup data={localOutline} setData={setLocalOutline} refresh={refresh} type={ContentType.OUTLINE} />
             </div>
           </div>
         </div>

@@ -1,5 +1,5 @@
 'use client'
-import { StatusType } from "@/perfect-seo-shared-components/data/types";
+import { ContentType } from "@/perfect-seo-shared-components/data/types";
 import { fetchOutlineStatus, getFactCheckStatus, getPostStatus } from "@/perfect-seo-shared-components/services/services";
 import { useEffect, useState } from "react";
 import TypeWriterText from "../TypeWriterText/TypeWriterText";
@@ -12,7 +12,7 @@ interface StatusBarProps {
   live_post_url?: string,
   addLiveUrlHandler?: () => void
   onGeneratePost?: () => void
-  type: StatusType
+  type: ContentType
 }
 
 const StatusBar = ({
@@ -21,7 +21,9 @@ const StatusBar = ({
   content_plan_factcheck_guid,
   content_plan_social_guid,
   addLiveUrlHandler,
-  live_post_url, onGeneratePost, type
+  live_post_url,
+  onGeneratePost,
+  type
 }: StatusBarProps) => {
   const [outlineStatus, setOutlineStatus] = useState<string>('');
   const [postStatus, setPostStatus] = useState<string>('');
@@ -188,7 +190,7 @@ const StatusBar = ({
             </div>
             : null
       }
-      {(type === StatusType.POST && !live_post_url && postComplete) && <div className="col-auto d-flex align-items-center">
+      {(type === ContentType.POST && !live_post_url && postComplete) && <div className="col-auto d-flex align-items-center">
         <i className="bi bi-chevron-right mx-2" />
         <>
 
@@ -196,7 +198,7 @@ const StatusBar = ({
         </>
       </div>
       }
-      {(type === StatusType.POST && live_post_url && postComplete) &&
+      {(type === ContentType.POST && live_post_url && postComplete) &&
         <div className="col-auto d-flex align-items-center">
           <i className="bi bi-chevron-right mx-2" />
           <strong className="text-primary">Live</strong>

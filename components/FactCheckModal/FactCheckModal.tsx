@@ -15,11 +15,10 @@ import axios from 'axios';
 
 interface FactCheckModalProps {
   post: PostProps,
-  refresh: () => void
   setLocalPost: (post: PostProps) => void
   onClose: () => void
 }
-const FactCheckModal = ({ post, refresh, setLocalPost, onClose }: FactCheckModalProps) => {
+const FactCheckModal = ({ post, setLocalPost, onClose }: FactCheckModalProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [url, setUrl] = useState('');
   const [file, setFile] = useState<File | null>(null);

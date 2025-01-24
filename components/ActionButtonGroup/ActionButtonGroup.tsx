@@ -407,7 +407,7 @@ const ActionButtonGroup = ({
         <Modal.Title title="Add Live URL" />
         <div className="card bg-secondary p-3 w-100">
           <Form controller={liveURLForm}>
-            <TextInput fieldName="live_url" label="Live URL" validator={urlValidator} required
+            <TextInput fieldName="live_url" label="Live URL" validator={urlValidator} type="url" required
               button={<button className="btn btn-primary" onClick={saveLiveUrl} type="submit" ><i className="bi bi-floppy-fill" /></button>} />
           </Form>
         </div>

@@ -257,20 +257,26 @@ export const getPostsByDomain = (domain: string, reqObj?: any) => {
     if (!!reqObj?.has_live_post_url) {
       url += '&has_live_post_url=' + reqObj?.has_live_post_url
     }
+    if (reqObj.status) {
+      url += '&status=' + reqObj.status
+    }
   }
 
   return axiosInstance.get(
     url,
   );
 };
-export const getPostsByEmail = (email: string, pagination?: PaginationRequest) => {
+export const getPostsByEmail = (email: string, reqObj?: any) => {
   let url = `https://content-status.replit.app/content/email/${email}`;
-  if (pagination) {
-    if (pagination.page > 1) {
-      url += parseQueries({ skip: (pagination.page * 10) - 1, limit: 10 })
+  if (reqObj) {
+    if (reqObj.page > 1) {
+      url += parseQueries({ skip: (reqObj.page * 10) - 1, limit: 10 })
     }
     else {
-      url += parseQueries({ skip: pagination.page - 1, limit: 10 })
+      url += parseQueries({ skip: reqObj.page - 1, limit: 10 })
+    }
+    if (reqObj.status) {
+      url += '&status=' + reqObj.status
     }
 
   }

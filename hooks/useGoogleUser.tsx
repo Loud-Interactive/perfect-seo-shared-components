@@ -227,9 +227,10 @@ const useGoogleUser = (appKey) => {
   }
 
   // pulls all domains from Google 
-  const fetchAllDomains = async (token) => {
+  const fetchAllDomains = async (manualToken?) => {
+    let bearerToken = manualToken || token;
     try {
-      const { data } = await axios.get('https://www.googleapis.com/webmasters/v3/sites', { headers: { Authorization: `Bearer ${token}` } })
+      const { data } = await axios.get('https://www.googleapis.com/webmasters/v3/sites', { headers: { Authorization: `Bearer ${bearerToken}` } })
       if (data?.siteEntry) {
         return data.siteEntry.map(obj => {
           return ({
@@ -272,7 +273,7 @@ const useGoogleUser = (appKey) => {
   const checkUserDomains = async () => {
     let domain_access = [];
     try {
-      domain_access = await fetchAllDomains(token)
+      domain_access = await fetchAllDomains()
       if (domain_access === null) {
         return null;
       }

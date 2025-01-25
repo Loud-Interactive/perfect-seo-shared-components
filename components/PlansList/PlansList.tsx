@@ -80,7 +80,7 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
 
   const addToQueue = (obj) => {
     let newObject: QueueItemProps = {
-      type: 'contentPlan',
+      type: 'plan',
       domain: obj?.domain_name,
       guid: obj?.guid,
       email,

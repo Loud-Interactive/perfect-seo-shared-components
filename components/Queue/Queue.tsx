@@ -194,7 +194,7 @@ const Queue = ({ sidebar = false }) => {
             newMetrics.outlines.completed++
           }
         }
-        else if (item.type === 'contentPlan') {
+        else if (item.type === 'plan') {
           newMetrics.contentPlans.total++
           if (item.isComplete === true) {
             newMetrics.contentPlans.completed++

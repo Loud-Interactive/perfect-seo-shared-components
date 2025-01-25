@@ -5319,3 +5319,21 @@ a.text-primary {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.revert-styles {
+  * {
+    all: revert !important;
+  }
+}
+
+.html-embed {
+  .callout {
+    background-color: $primary !important;
+  }
+
+  .flex-container {
+    justify-content: space-between !important;
+    width: 100% !important;
+    max-width: unset !important;
+  }
+}

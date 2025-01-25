@@ -87,9 +87,7 @@ export const getCompletedPlan = (id: string, server?: boolean) => {
   }
 };
 
-export const getContentPlanPost = (reqObj: Request.ContentPlanPostRequest) => {
-  return axiosInstance.post(`${API_URL}/get_content_plan_post`, reqObj);
-};
+
 
 export const saveContentPlanPost = (reqObj: Request.SaveContentPost) => {
   return axiosInstance.post(`${API_URL}/post_outline`, reqObj);

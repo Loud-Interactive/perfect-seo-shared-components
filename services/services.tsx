@@ -88,7 +88,6 @@ export const getCompletedPlan = (id: string, server?: boolean) => {
 };
 
 
-
 export const saveContentPlanPost = (reqObj: Request.SaveContentPost) => {
   return axiosInstance.post(`${API_URL}/post_outline`, reqObj);
 };
@@ -244,7 +243,6 @@ export const getSpecificPairs = (domain: string, guids: string[]) => {
   return axiosInstance.post(`https://pp-api.replit.app/pairs/${domain}/specific`, guids);
 }
 export const getPostsByDomain = (domain: string, reqObj?: any) => {
-  console.log(reqObj)
   let url = `https://content-status.replit.app/content/domain/${domain}`;
   if (reqObj) {
     if (reqObj.page > 1) {

@@ -141,9 +141,6 @@ const QueueCard = ({ queue, i, removeItem, bulkStatus }: QueueCardProps) => {
         .eq('id', queue.id)
         .select("*")
         .then(res => {
-          if (res.data) {
-            dispatch(addToast({ title: `${queue?.type.toUpperCase()} is complete`, content: `Queue item ${queue.guid} is complete`, type: 'success' }))
-          }
         })
     } else if (status) {
       if (queue.isComplete && completedStatuses.includes(status?.toLowerCase()) === false) {

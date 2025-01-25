@@ -138,7 +138,7 @@ const Queue = ({ sidebar = false }) => {
     }
   )
   const contentPlans = useMemo(() => {
-    return data?.filter((item) => item.type === 'contentPlan')
+    return data?.filter((item) => item.type === 'plan')
   }, [data])
 
   const outlines = useMemo(() => {

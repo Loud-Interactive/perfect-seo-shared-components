@@ -12,7 +12,7 @@ import { convertFormDataToOutgoing, urlSanitization } from "@/perfect-seo-shared
 import useForm from "@/perfect-seo-shared-components/hooks/useForm";
 import { createClient } from "@/perfect-seo-shared-components/utils/supabase/client";
 import { selectEmail, selectIsLoggedIn } from "@/perfect-seo-shared-components/lib/features/User";
-import { ContentRequestFormProps } from "@/perfect-seo-shared-components/data/types";
+import { ContentRequestFormProps, QueueItemProps } from "@/perfect-seo-shared-components/data/types";
 import styles from "./ContentPlanForm.module.scss";
 
 // Testing Data 
@@ -135,7 +135,22 @@ const ContentPlanForm = ({ buttonLabel, initialData, submitResponse, isModal }: 
       addIncomingPlanItem(
         convertFormDataToOutgoing(form.getState as ContentRequestFormProps),
       )
-        .then((res) => {
+        .then(async (res) => {
+
+          let newObject: QueueItemProps = {
+            type: 'plan',
+            domain: form?.getState?.domainName,
+            guid: res.data.guid,
+            email,
+            isComplete: false,
+          }
+          supabase
+            .from('user_queues')
+            .insert(newObject)
+            .select("*")
+            .then(res => {
+              console.log(res)
+            })
           if (res.data.guid) {
             setLoad(false);
             submitResponse(res.data.guid);

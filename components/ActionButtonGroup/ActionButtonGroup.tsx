@@ -159,6 +159,10 @@ const ActionButtonGroup = ({
       writing_language: writing_language || 'English'
     };
     return createPost(reqBody)
+      .then((res) => {
+        addPostToQueue();
+        return res
+      })
   }
 
   const regeneratePostHandler = (receiving_email, writing_language) => {
@@ -260,7 +264,7 @@ const ActionButtonGroup = ({
                 {data?.content_plan_guid &&
                   <DropdownMenu.Item>
                     <a
-                      href={`https://contentPerfect.ai/contentplan/${data?.content_plan_guid}`}
+                      href={`/contentplan/${data?.content_plan_guid}`}
                       target="_blank"
                       className="btn btn-transparent"
                     >

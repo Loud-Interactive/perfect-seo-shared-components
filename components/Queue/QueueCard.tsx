@@ -66,7 +66,7 @@ const QueueCard = ({ queue, i, removeItem, bulkStatus }: QueueCardProps) => {
       return
     }
     switch (queue.type) {
-      case 'contentPlan':
+      case 'plan':
         getCompletedPlan(queue.guid)
           .then(res => {
             setData(res.data)
@@ -109,7 +109,7 @@ const QueueCard = ({ queue, i, removeItem, bulkStatus }: QueueCardProps) => {
 
   const fetchStatus = () => {
     switch (queue.type) {
-      case 'contentPlan':
+      case 'plan':
         getPlanStatus(queue.guid)
           .then(res => {
             setStatus(res.data.status)
@@ -176,7 +176,7 @@ const QueueCard = ({ queue, i, removeItem, bulkStatus }: QueueCardProps) => {
 
   useEffect(() => {
     let interval;
-    if (editOutline || generatePost || queue?.type === 'contentPlan') return
+    if (editOutline || generatePost || queue?.type === 'plan') return
     if (status && !completedStatuses.includes(status.toLowerCase())) {
       interval = setInterval(() => {
         fetchStatus()
@@ -189,7 +189,7 @@ const QueueCard = ({ queue, i, removeItem, bulkStatus }: QueueCardProps) => {
 
   const viewPlan = () => {
     switch (queue.type) {
-      case 'contentPlan':
+      case 'plan':
         return window.open(`/contentplan/${queue.guid}`, '_blank')
       default:
         if (data?.content_plan_guid) {
@@ -267,15 +267,16 @@ const QueueCard = ({ queue, i, removeItem, bulkStatus }: QueueCardProps) => {
   }
   const renderBody = () => {
     switch (queue.type) {
-      case 'contentPlan':
+      case 'plan':
         return (
           <div className="col-12" key={i}>
             <div className="card bg-secondary p-3">
-              <p className="mb-0"> {data?.target_keyword}
+              <p className="mb-0"> {data?.target_keyword || data?.keyword || data?.content_plan_keyword}
                 {queue?.isComplete && <i className="bi bi-check-circle-fill text-success ms-2" />}
               </p>
-              <p className="mb-0"><small><strong className="me-2 text-primary">{data?.brand_name}</strong><span className="text-white">{data?.domain_name}
-              </span>
+              <p className="mb-0"><small><strong className="me-2 text-primary">{data?.brand_name}</strong><br />
+                <span className="text-white">{data?.domain_name}
+                </span>
               </small>
               </p>
               <div className="d-flex justify-content-between align-items-end row">

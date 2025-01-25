@@ -9,6 +9,9 @@ import PostItem from '../PostItem/PostItem'
 import usePaginator from '@/perfect-seo-shared-components/hooks/usePaginator'
 import { useSelector } from 'react-redux'
 import { selectEmail } from '@/perfect-seo-shared-components/lib/features/User'
+import useForm from '@/perfect-seo-shared-components/hooks/useForm'
+import Form from '../Form/Form'
+import { Option, Select } from '../Form/Select'
 
 export interface PostsListProps {
   domain_name: string;
@@ -20,11 +23,23 @@ const PostsList = ({ domain_name, active }: PostsListProps) => {
   const [loading, setLoading] = useState(true)
   const [data, setData] = useState<any[]>()
   const [deleteModal, setDeleteModal] = useState(null)
+  const [filter, setFilter] = useState('all')
+  const form = useForm()
+
+  useEffect(() => {
+    form.setInitialState({ filter: 'all' })
+  }, [])
 
   const getPosts = () => {
+
     if (active) {
+      let status = filter
+      if (status === 'all') {
+        status = null;
+      }
+      let reqObj: any = { ...paginator.paginationObj, page: paginator.currentPage, status }
       if (domain_name) {
-        getPostsByDomain(domain_name, { ...paginator.paginationObj, page: paginator.currentPage })
+        getPostsByDomain(domain_name, reqObj)
           .then(res => {
             paginator.setItemCount(res.data.total)
             setData(res.data.records)
@@ -37,7 +52,7 @@ const PostsList = ({ domain_name, active }: PostsListProps) => {
           })
       }
       else {
-        getPostsByEmail(email, { ...paginator.paginationObj, page: paginator.currentPage })
+        getPostsByEmail(email, reqObj)
           .then(res => {
             paginator.setItemCount(res.data.total)
             setData(res.data.records)
@@ -76,19 +91,31 @@ const PostsList = ({ domain_name, active }: PostsListProps) => {
     return () => {
       clearInterval(interval);
     }
-  }, [domain_name, active, paginator.currentPage, paginator.limit])
+  }, [domain_name, active, paginator.currentPage, paginator.limit, filter])
 
+  const changeFilter = (e) => {
+    setFilter(e.target.value.toString())
+  }
 
   if (!active) return null
   else
     return (
       <div className={styles.wrap}>
         <div className='row d-flex justify-content-between align-items-end my-3'>
-          <div className='col-12 col-md-auto d-flex align-items-end'>
+          <div className='col d-flex align-items-end'>
             <h2 className='text-primary mb-0'>
               <TypeWriterText string="Generated Posts" withBlink />
             </h2>
             {paginator.itemCount > 0 && <p className='badge rounded-pill text-bg-primary ms-3 d-flex align-items-center mb-1'>{paginator.itemCount}</p>}
+          </div>
+          <div className='col-auto'>
+            <Form controller={form}>
+              <Select bottomSpacing={false} fieldName='filter' onChange={changeFilter} label="Filter by Status" value={filter}>
+                <Option value='all'>All</Option>
+                <Option value='completed'>Complete</Option>
+                <Option value='processing'>Processing</Option>
+              </Select>
+            </Form>
           </div>
         </div>
         {loading ? <Loader />

@@ -1,6 +1,6 @@
 import { PostProps } from "@/perfect-seo-shared-components/data/types";
 import axiosInstance from "@/perfect-seo-shared-components/utils/axiosInstance";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 interface IndexModalProps {
   post: PostProps;
@@ -10,12 +10,21 @@ interface IndexModalProps {
 
 const IndexModal = ({ post, onClose, setLocalPost }: IndexModalProps) => {
 
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
   const clickHandler = (e) => {
     e.preventDefault();
+    setLoading(true);
+    setSuccess(false)
 
     axiosInstance.post('/api/index-url', { url: post.live_post_url })
-      .then(res => console.log(res))
+      .then(res => {
+        setSuccess(true)
+        setLoading(false)
+        console.log(res)
+      })
       .catch(err => {
+        setLoading(false)
         alert(err.message)
       })
   }
@@ -24,7 +33,12 @@ const IndexModal = ({ post, onClose, setLocalPost }: IndexModalProps) => {
     <div className="card p-3">
       Index Modal
       <p>{post.live_post_url}</p>
-      <button className="btn btn-primary" onClick={clickHandler}>Index</button>
+      {success &&
+        <p>
+          Indexed Properly
+        </p>
+      }
+      <button className="btn btn-primary" disabled={loading} onClick={clickHandler}>{loading ? 'Indexing' : 'Index'}</button>
     </div>
   )
 }

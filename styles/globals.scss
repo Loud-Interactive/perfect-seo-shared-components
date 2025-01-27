@@ -5327,13 +5327,20 @@ a.text-primary {
 }
 
 .html-embed {
-  .callout {
-    background-color: $primary !important;
+  background-color: white;
+  color: black;
+
+  a {
+    all: unset;
   }
 
-  .flex-container {
-    justify-content: space-between !important;
-    width: 100% !important;
-    max-width: unset !important;
-  }
+  // .callout {
+  //   background-color: $primary !important;
+  // }
+
+  // .flex-container {
+  //   justify-content: space-between !important;
+  //   width: 100% !important;
+  //   max-width: unset !important;
+  // }
 }

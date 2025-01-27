@@ -12,9 +12,8 @@ const IndexModal = ({ post, onClose, setLocalPost }: IndexModalProps) => {
 
   const clickHandler = (e) => {
     e.preventDefault();
-    let access_token = sessionStorage.getItem('access_token')
 
-    axiosInstance.post('/api/index-url', { url: post.live_post_url, access_token })
+    axiosInstance.post('/api/index-url', { url: post.live_post_url })
       .then(res => console.log(res))
       .catch(err => {
         alert(err.message)

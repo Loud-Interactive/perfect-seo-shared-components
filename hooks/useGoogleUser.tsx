@@ -111,9 +111,10 @@ const useGoogleUser = (appKey) => {
     if (sessionData?.access_token) {
       setToken(sessionData.access_token)
       fetchAllDomains(sessionData.access_token)
-      if (sessionData?.token.refresh_token) {
-        populateBulkGSC({ access_token: sessionData.access_token, refresh_token: sessionData.token.refresh_token })
-        let googleApiObject = JSON.stringify({ access_token: sessionData.access_token, refresh_token: sessionData.token.refresh_token })
+      let sessionToken = sessionData?.token?.refresh_token || sessionData?.refresh_token
+      if (sessionToken) {
+        populateBulkGSC({ access_token: sessionData.access_token, refresh_token: sessionToken })
+        let googleApiObject = JSON.stringify({ access_token: sessionData.access_token, refresh_token: sessionToken })
         sessionStorage.setItem('google-api-token', googleApiObject)
       }
     }

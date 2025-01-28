@@ -217,27 +217,23 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
   return (
     <div className={styles.wrap}>
       <div className='row g-3 d-flex justify-content-between align-items-end mb-3'>
-        <div className='col col-md-auto d-flex justify-content-center align-items-end'>
-          <h2 className='text-white mb-0'>
-            <TypeWriterText string="SEO Reports" withBlink />
+        <div className='col-12 d-flex justify-content-between align-items-end'>
+          <h2 className='text-white'>
+            <TypeWriterText string="Google Search Console and AHREF Ratings" withBlink />
           </h2>
-          <div>
-          </div>
+          <p className='mb-0'>
+            <span className="text-primary me-2">Dates</span>
+            {moment(startDate).format("M/D/YY")} to {moment(endDate).format("M/D/YY")}</p>
         </div>
       </div>
       <div className='row d-flex justify-content-between align-items-start g-3'>
         <div className='col-12'>
-          <div className='card p-3 bg-secondary'>
-            <div className='row d-flex'>
-              <h3 className='text-primary'>Google Search Console and AHREF Rating </h3>
-            </div>
-            {tableData.length >= 0 && <div className='col-12 relative'>
-              {tableData.length > 0 ? <Table pinnedRows={['0', '1', '2', '3', '4', '5']} rawData={tableData} columnArray={gscColumnArray} />
-                : loading ? <LoadSpinner /> : <h5><TypeWriterText withBlink string="The are no results for the given parameters" /></h5>}
-            </div>}
-            <div className='col-auto d-flex justify-content-center'>
-              {paginator.renderComponent()}
-            </div>
+          {tableData.length >= 0 && <div className='col-12 relative'>
+            {tableData.length > 0 ? <Table pinnedRows={['0', '1', '2', '3', '4', '5']} rawData={tableData} columnArray={gscColumnArray} />
+              : loading ? <LoadSpinner /> : <h5><TypeWriterText withBlink string="The are no results for the given parameters" /></h5>}
+          </div>}
+          <div className='col-auto d-flex justify-content-center'>
+            {paginator.renderComponent()}
           </div>
         </div>
       </div>

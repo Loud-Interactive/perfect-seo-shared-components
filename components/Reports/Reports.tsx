@@ -203,12 +203,12 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
 
 
   const gscColumnArray: TableColumnArrayProps[] = [
-    { id: 'title', Header: 'Title', accessor: 'title', disableSortBy: false, cellClassName: 'title-max' },
-    { id: 'total_clicks', Header: 'Total Clicks', accessor: renderTotalClicks, disableSortBy: false },
-    { id: 'total_impressions', Header: 'Total Impressions', accessor: renderTotalImpression, disableSortBy: false },
-    { id: 'avg_ctr_percent', Header: 'Average CTR', accessor: renderAverageCTR, disableSortBy: false, cellClassName: "relative" },
-    { id: 'avg_position', Header: 'Average Position', accessor: renderAveragePosition, disableSortBy: false },
-    { id: 'ahref_rating', Header: 'AHREFs Rating', accessor: 'ahref_rating', disableSortBy: false },
+    { id: 'title', Header: 'Title', accessor: 'title', disableSortBy: false, cellClassName: 'title-max', headerClassName: 'bg-transparent text-white' },
+    { id: 'total_clicks', Header: 'Total Clicks', accessor: renderTotalClicks, disableSortBy: false, headerClassName: 'bg-transparent text-white' },
+    { id: 'total_impressions', Header: 'Total Impressions', accessor: renderTotalImpression, disableSortBy: false, headerClassName: 'bg-transparent text-white' },
+    { id: 'avg_ctr_percent', Header: 'Average CTR', accessor: renderAverageCTR, disableSortBy: false, cellClassName: "relative", headerClassName: 'bg-transparent text-white' },
+    { id: 'avg_position', Header: 'Average Position', accessor: renderAveragePosition, disableSortBy: false, headerClassName: 'bg-transparent text-white' },
+    { id: 'ahref_rating', Header: 'AHREFs Rating', accessor: 'ahref_rating', disableSortBy: false, headerClassName: 'bg-transparent text-white' },
   ];
 
 

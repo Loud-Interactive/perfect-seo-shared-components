@@ -78,7 +78,6 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
     paginator.setItemCount(postResults.data.total)
     const postData = postResults.data.records
     setTableData([...newData, ...postData])
-    console.log(newData)
     return setLoading(false)
   }
 

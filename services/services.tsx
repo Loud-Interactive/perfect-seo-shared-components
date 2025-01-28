@@ -51,10 +51,22 @@ export const getSynopsisInfo = (domain, regenerate?, server?: boolean) => {
     newDomain += "?regenerate=true";
   }
   if (server) {
-    return axios.get(`https://pp-api.replit.app/pairs/${newDomain}`, { headers: { 'Access-Control-Allow-Origin': '*' } })
+    return axios.get(`https://synopsisperfectai.replit.app/domain/${newDomain}`, { headers: { 'Access-Control-Allow-Origin': '*' } })
+      .then((res) => {
+        let newRes = res;
+        let newData = res.data.reduce((prev, curr) => ({ ...prev, [curr.key]: curr?.value }), {})
+        newRes.data = newData;
+        return newRes
+      })
   }
   else {
-    return axiosInstance.get(`https://pp-api.replit.app/pairs/${newDomain}`, { headers: { 'Access-Control-Allow-Origin': '*' } })
+    return axiosInstance.get(`https://synopsisperfectai.replit.app/domain/${newDomain}`, { headers: { 'Access-Control-Allow-Origin': '*' } })
+      .then((res) => {
+        let newRes = res;
+        let newData = res.data.reduce((prev, curr) => ({ ...prev, [curr.key]: curr?.value }), {})
+        newRes.data = newData;
+        return newRes
+      })
   }
 };
 

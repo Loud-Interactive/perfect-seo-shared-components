@@ -38,36 +38,16 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
 
   }, [])
 
-  useEffect(() => {
-    if (domain_name) {
-      getGSCLiveURLReport({
-        domain: domain_name,
 
-        start_date: startDate,
-        end_date: endDate,
-        limit: 1
-      })
-        .then(res => {
-          console.log(res)
-        })
-        .catch(err => {
-          console.log(err)
-        }
-
-        )
-    }
-  }, [domain_name, startDate, endDate])
 
   const fetchInfo = async () => {
+    setLoading(true)
     setUrlData(null)
-    let newData = []
     let gscReqObj: Request.GSCRequest = {
       domain: domain_name,
       start_date: startDate,
       end_date: endDate,
     }
-
-    const { data } = await getGSCSearchAnalytics(gscReqObj)
 
     const ahrefsGlobalData = await getAhrefsDomainRating({ ...gscReqObj, domain: domain_name })
     let rating = ahrefsGlobalData.data?.data?.reduce((acc, obj) => acc + obj?.domain_rating || 0, 0)
@@ -75,12 +55,31 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
       rating = (rating / ahrefsGlobalData?.data?.data.length).toFixed(1)
     }
     else rating = null
-    newData = [{ ...data.data[0], title: `Domain: ${domain_name}`, ahref_rating: rating }]
+    const { data: summaryData } = await getGSCLiveURLReport({
+      domain: domain_name,
+      start_date: startDate,
+      end_date: endDate,
+      limit: 1
+    })
+    let newData = await Object.entries(summaryData).map(([key, value], i) => {
+      let newObj: any = { ...value as object, title: key.split("_").map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ") }
+      if (i === 0) {
+        return { ...newObj, ahref_rating: rating }
+      }
+      else if (i === 1) {
+        return newObj
+      }
+      else {
+        return { ...newObj[0], title: newObj.title }
+      }
+
+    })
     const postResults = await getPostsByDomain(domain_name, { ...paginator.paginationObj, page: paginator.currentPage, has_live_post_url: true })
     paginator.setItemCount(postResults.data.total)
     const postData = postResults.data.records
     setTableData([...newData, ...postData])
-    setLoading(false)
+    console.log(newData)
+    return setLoading(false)
   }
 
   const retrievePostsGscInfo = async (data) => {
@@ -128,7 +127,6 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
   useEffect(() => {
     let interval;
     if (active) {
-      setLoading(true)
       fetchInfo();
       interval = setInterval(fetchInfo, 300000)
     }
@@ -139,7 +137,7 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
   }, [domain_name, paginator?.currentPage, paginator?.limit, active])
 
   const renderTotalClicks = (obj, i) => {
-    if (i === 0) {
+    if (i < 5) {
       if (obj?.total_clicks === 0) return null
       return obj?.total_clicks?.toLocaleString()
     }
@@ -155,7 +153,7 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
     }
   }
   const renderTotalImpression = (obj, i) => {
-    if (i === 0) {
+    if (i <= 5) {
       if (obj?.total_impressions === 0) return null
       return obj?.total_impressions?.toLocaleString()
     }
@@ -171,7 +169,7 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
     }
   }
   const renderAverageCTR = (obj, i) => {
-    if (i === 0) {
+    if (i <= 5) {
       if (obj?.avg_ctr_percent === 0 || !obj?.avg_ctr_percent) return null
       return `${obj?.avg_ctr_percent?.toFixed(1)}%`
     }
@@ -187,7 +185,7 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
     }
   }
   const renderAveragePosition = (obj, i) => {
-    if (i === 0) {
+    if (i <= 5) {
       if (obj?.avg_position === 0) return null
       return obj?.avg_position?.toFixed(3)
     }
@@ -233,9 +231,9 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
             <div className='row d-flex'>
               <h3 className='text-primary'>Google Search Console and AHREF Rating </h3>
             </div>
-            {tableData.length >= 0 && <div className='col-12'>
-              {tableData.length > 0 ? <Table pinnedRows={['0']} rawData={tableData} isLoading={loading} columnArray={gscColumnArray} />
-                : <h5><TypeWriterText withBlink string="The are no results for the given parameters" /></h5>}
+            {tableData.length >= 0 && <div className='col-12 relative'>
+              {tableData.length > 0 ? <Table pinnedRows={['0', '1', '2', '3', '4', '5']} rawData={tableData} columnArray={gscColumnArray} />
+                : loading ? <LoadSpinner /> : <h5><TypeWriterText withBlink string="The are no results for the given parameters" /></h5>}
             </div>}
             <div className='col-auto d-flex justify-content-center'>
               {paginator.renderComponent()}

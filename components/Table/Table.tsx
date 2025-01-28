@@ -271,7 +271,8 @@ const Table = ({ isLoading,
                 }
               }
             )}
-            {tableInstance.getCenterRows().map((row, i) => {
+            {tableInstance.getSortedRowModel().rows.map((row, i) => {
+              if (pinnedRows && i < pinnedRows.length) return null;
               let rowClassName;
 
               if (rowClassNames) {

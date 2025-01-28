@@ -430,7 +430,7 @@ export const getAhrefsKeywords = (reqObj: Request.PageRequest) => {
   return axiosInstance.get(`https://search-analytics-api-dev456.replit.app/ahrefs_keywords${parseQueries(reqObj)}`);
 }
 
-export const getGSCLiveURLReport = async (reqObj: Request.GSCTotalsRequest) => {
+export const getGSCLiveURLReport = (reqObj: Request.GSCTotalsRequest) => {
   return axiosInstance.get(`https://search-analytics-api-dev456.replit.app/gsc_live_url_report${parseQueries(reqObj)}`);
 }
 

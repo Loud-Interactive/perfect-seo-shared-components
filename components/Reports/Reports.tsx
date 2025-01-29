@@ -95,12 +95,10 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
       let newData = {
         ...obj,
         title: obj.title,
-        total_clicks: data.data.reduce((prev, curr) => prev + curr?.total_clicks, 0),
-        total_impressions: data.data.reduce((prev, curr) => prev + curr?.total_impressions, 0),
-        avg_ctr_percent: data.data.reduce((prev, curr) => prev + curr?.avg_ctr_percent, 0),
-        avg_position: data.data.reduce((prev, curr) => prev + curr?.avg_position, 0),
-        keyword_total: data.data.length,
-        keywords: data.data
+        total_clicks: data?.data?.length > 0 ? data.data.reduce((prev, curr) => prev + curr?.total_clicks, 0) : 'N/A',
+        total_impressions: data?.data?.length > 0 ? data.data.reduce((prev, curr) => prev + curr?.total_impressions, 0) : 'N/A',
+        avg_ctr_percent: data?.data?.length > 0 ? data.data.reduce((prev, curr) => prev + curr?.avg_ctr_percent, 0) : 'N/A',
+        avg_position: data?.data?.length > 0 ? data.data.reduce((prev, curr) => prev + curr?.avg_position, 0) : 'N/A',
       }
       // const ahrefsData = await getAhrefsUrlRating(reqObj)
       // let ahref_rating: any = ahrefsData.data?.data?.reduce((acc, obj) => acc + obj?.url_rating || 0, 0)

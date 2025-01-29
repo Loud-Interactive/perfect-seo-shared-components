@@ -239,40 +239,37 @@ const Table = ({ isLoading,
                   }
                 };
 
-                if (draggable) {
-                  return <DraggableRow selected={selected && selected} setSelected={setSelected} key={row.id} row={row} reorderRow={reorderRow} />;
-                } else {
-                  return (
-                    <tr key={row.id} className={rowClassName} onClick={clickHandler}>
-                      {row.getVisibleCells().map((cell: any) => {
 
-                        const cellClasses = classNames('bg-primary', {
-                          [cell.column.columnDef.cellClassName]: cell.column.columnDef.cellClassName,
-                          [cell.column.columnDef.columnClassName]: cell.column.columnDef.columnClassName,
-                          [`cell-align-${cell.column.columnDef.cellTextAlign}`]: cell.column.columnDef.cellTextAlign,
-                          'onClick': cell.column.columnDef.onClick,
-                          'hidden': hideColumn?.includes(cell.column.columnDef.id),
-                        });
+                return (
+                  <tr key={row.id} className={rowClassName} onClick={clickHandler}>
+                    {row.getVisibleCells().map((cell: any) => {
 
-                        const onClick = (e) => {
-                          e.preventDefault();
-                          if (cell.column.columnDef.onClick) {
-                            cell.column.columnDef.onClick(row.original);
-                          }
-                        };
+                      const cellClasses = classNames('bg-primary', {
+                        [cell.column.columnDef.cellClassName]: cell.column.columnDef.cellClassName,
+                        [cell.column.columnDef.columnClassName]: cell.column.columnDef.columnClassName,
+                        [`cell-align-${cell.column.columnDef.cellTextAlign}`]: cell.column.columnDef.cellTextAlign,
+                        'onClick': cell.column.columnDef.onClick,
+                        'hidden': hideColumn?.includes(cell.column.columnDef.id),
+                      });
 
-                        return (
-                          <td className={cellClasses} key={cell.id} onClick={onClick}>
-                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                          </td>);
-                      })}
-                    </tr>
-                  );
-                }
+                      const onClick = (e) => {
+                        e.preventDefault();
+                        if (cell.column.columnDef.onClick) {
+                          cell.column.columnDef.onClick(row.original);
+                        }
+                      };
+
+                      return (
+                        <td className={cellClasses} key={cell.id} onClick={onClick}>
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </td>);
+                    })}
+                  </tr>
+                );
+
               }
             )}
-            {tableInstance.getSortedRowModel().rows.map((row, i) => {
-              if (pinnedRows && i < pinnedRows.length) return null;
+            {tableInstance.getCenterRows().map((row, i) => {
               let rowClassName;
 
               if (rowClassNames) {
@@ -289,7 +286,6 @@ const Table = ({ isLoading,
                   rowOnClick(row.original);
                 }
               };
-
               if (draggable) {
                 return <DraggableRow selected={selected && selected} setSelected={setSelected} key={row.id} row={row} reorderRow={reorderRow} />;
               } else {

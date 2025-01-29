@@ -233,7 +233,6 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
             <TypeWriterText string="Google Search Console and AHREF Ratings" withBlink />
           </h2>
           <p className='mb-0'>
-            {paginator.paginationObj.page}
             <span className="text-primary me-2">Dates</span>
             {moment(startDate).format("M/D/YY")} to {moment(endDate).format("M/D/YY")}</p>
         </div>

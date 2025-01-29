@@ -149,7 +149,7 @@ const usePaginator = (): PaginatorController => {
       }
     }, [currentPage])
 
-    if (pageCount > 1) {
+    if (pageCount >= 1) {
       return (
         <div className='row d-flex align-items-center justify-content-between g-3'>
           <div className='col'>
@@ -197,13 +197,18 @@ const usePaginator = (): PaginatorController => {
               }
               }>
                 {itemCount >= 10 && <option value={10}>10</option>}
-                {itemCount >= 25 && <option value={25}>25</option>}
-                {itemCount >= 50 && <option value={50}>50</option>}
-                {itemCount >= 100 && <option value={100}>100</option>}
+                {itemCount > 10 && <option value={25}>25</option>}
+                {itemCount > 25 && <option value={50}>50</option>}
+                {itemCount > 50 && <option value={100}>100</option>}
               </select>
             </div>
           </div>
-        </div>
+          <div className='col-12 col-md-auto'>
+            <div className='d-flex align-items-center justify-content-start'>
+              <label className='mb-0 no-wrap me-2'>Total</label> {itemCount}
+            </div>
+          </div>
+        </div >
       );
     } else return null;
   };

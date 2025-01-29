@@ -15,8 +15,8 @@ export interface PlanListProps {
 const Reports = ({ domain_name, active }: PlanListProps) => {
   const [loading, setLoading] = useState(false)
 
-  const [startDate, setStartDate] = useState(moment().subtract(28, "days").format("YYYY-MM-DD"));
-  const [endDate, setEndDate] = useState(moment().format("YYYY-MM-DD"))
+  const [startDate, setStartDate] = useState(moment().subtract(29, "days").format("YYYY-MM-DD"));
+  const [endDate, setEndDate] = useState(moment().subtract(1, "days").format("YYYY-MM-DD"))
   const paginator = usePaginator()
 
   const [tableData, setTableData] = useState<any[]>([])

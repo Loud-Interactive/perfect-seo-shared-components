@@ -140,15 +140,14 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
 
   const renderTotalClicks = (obj, i) => {
     if (i < 5) {
-      if (obj?.total_clicks === 0) return null
+      if (obj?.total_clicks === 0) return 0
       return obj?.total_clicks?.toLocaleString()
     }
     else if (urlData?.length > 0) {
       let newPost = urlData.find(post => post.title === obj.title)
-      let totalClicks = newPost?.total_clicks > 0 ? newPost?.total_clicks?.toLocaleString() : null
+      let totalClicks = newPost?.total_clicks >= 0 ? newPost?.total_clicks?.toLocaleString() : null
 
       return totalClicks
-
     }
     else {
       return null
@@ -156,12 +155,12 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
   }
   const renderTotalImpression = (obj, i) => {
     if (i <= 5) {
-      if (obj?.total_impressions === 0) return null
+      if (obj?.total_impressions === 0) return 0
       return obj?.total_impressions?.toLocaleString()
     }
     else if (urlData?.length > 0) {
       let newPost = urlData.find(post => post.title === obj.title)
-      let totalImpressions = newPost?.total_impressions > 0 ? newPost?.total_impressions?.toLocaleString() : null
+      let totalImpressions = newPost?.total_impressions >= 0 ? newPost?.total_impressions?.toLocaleString() : null
 
       return totalImpressions
 
@@ -172,12 +171,15 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
   }
   const renderAverageCTR = (obj, i) => {
     if (i <= 5) {
-      if (obj?.avg_ctr_percent === 0 || !obj?.avg_ctr_percent) return null
+      if (obj?.avg_ctr_percent === 0) {
+        return 0
+      }
+      else if (!obj?.avg_ctr_percent) return null
       return `${obj?.avg_ctr_percent?.toFixed(1)}%`
     }
     else if (urlData?.length > 0) {
       let newPost = urlData.find(post => post.title === obj.title)
-      let avgCTR = newPost?.avg_ctr_percent > 0 ? `${newPost?.avg_ctr_percent.toFixed(1)}%` : null
+      let avgCTR = newPost?.avg_ctr_percent >= 0 ? `${newPost?.avg_ctr_percent.toFixed(1)}%` : null
 
       return avgCTR
 
@@ -193,7 +195,7 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
     }
     else if (urlData?.length > 0) {
       let newPost = urlData.find(post => post.title === obj.title)
-      let totalImpressions = newPost?.avg_position > 0 ? newPost?.avg_position?.toFixed(3) : null
+      let totalImpressions = newPost?.avg_position >= 0 ? newPost?.avg_position?.toFixed(3) : null
 
       return totalImpressions
 
@@ -231,6 +233,7 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
             <TypeWriterText string="Google Search Console and AHREF Ratings" withBlink />
           </h2>
           <p className='mb-0'>
+            {paginator.paginationObj.page}
             <span className="text-primary me-2">Dates</span>
             {moment(startDate).format("M/D/YY")} to {moment(endDate).format("M/D/YY")}</p>
         </div>

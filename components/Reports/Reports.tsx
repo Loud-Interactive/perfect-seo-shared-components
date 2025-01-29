@@ -49,24 +49,25 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
       end_date: endDate,
     }
 
-    const ahrefsGlobalData = await getAhrefsDomainRating({ ...gscReqObj, domain: domain_name })
-    let rating = ahrefsGlobalData.data?.data?.reduce((acc, obj) => acc + obj?.domain_rating || 0, 0)
-    if (rating > 0) {
-      rating = (rating / ahrefsGlobalData?.data?.data.length).toFixed(1)
-    }
-    else rating = null
+    // const ahrefsGlobalData = await getAhrefsDomainRating({ ...gscReqObj, domain: domain_name })
+    // let rating = ahrefsGlobalData.data?.data?.reduce((acc, obj) => acc + obj?.domain_rating || 0, 0)
+    // if (rating > 0) {
+    //   rating = (rating / ahrefsGlobalData?.data?.data.length).toFixed(1)
+    // }
+    // else rating = null
     const { data: summaryData } = await getGSCLiveURLReport({
       domain: domain_name,
       start_date: startDate,
       end_date: endDate,
-      limit: 1
+      limit: 1,
     })
     let newData = await Object.entries(summaryData).map(([key, value], i) => {
       let newObj: any = { ...value as object, title: key.split("_").map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ") }
-      if (i === 0) {
-        return { ...newObj, ahref_rating: rating }
-      }
-      else if (i === 1) {
+      // if (i === 0) {
+      //   return { ...newObj, ahref_rating: rating }
+      // }
+      // else if(i === 1){
+      if (i <= 1) {
         return newObj
       }
       else {
@@ -101,20 +102,20 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
         keyword_total: data.data.length,
         keywords: data.data
       }
-      const ahrefsData = await getAhrefsUrlRating(reqObj)
-      let ahref_rating: any = ahrefsData.data?.data?.reduce((acc, obj) => acc + obj?.url_rating || 0, 0)
-      if (ahref_rating > 0) {
-        ahref_rating = (ahref_rating / ahrefsData?.data?.data.length).toFixed(1)
-      }
-      else {
-        ahref_rating = null
-      }
-      if (ahref_rating) {
-        return { ...newData, ahref_rating }
-      }
-      else return newData
+      // const ahrefsData = await getAhrefsUrlRating(reqObj)
+      // let ahref_rating: any = ahrefsData.data?.data?.reduce((acc, obj) => acc + obj?.url_rating || 0, 0)
+      // if (ahref_rating > 0) {
+      //   ahref_rating = (ahref_rating / ahrefsData?.data?.data.length).toFixed(1)
+      // }
+      // else {
+      //   ahref_rating = null
+      // }
+      // if (ahref_rating) {
+      //   return { ...newData, ahref_rating }
+      // }
+      // else 
+      return newData
     }))
-    console.log(newGSCData)
     setUrlData(newGSCData)
   }
 
@@ -216,7 +217,7 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
     { id: 'total_impressions', Header: 'Total Impressions', accessor: renderTotalImpression, disableSortBy: false, headerClassName: 'bg-transparent text-white' },
     { id: 'avg_ctr_percent', Header: 'Average CTR', accessor: renderAverageCTR, disableSortBy: false, cellClassName: "relative", headerClassName: 'bg-transparent text-white' },
     { id: 'avg_position', Header: 'Average Position', accessor: renderAveragePosition, disableSortBy: false, headerClassName: 'bg-transparent text-white' },
-    { id: 'ahref_rating', Header: 'AHREFs Rating', accessor: 'ahref_rating', disableSortBy: false, headerClassName: 'bg-transparent text-white' },
+    // { id: 'ahref_rating', Header: 'AHREFs Rating', accessor: 'ahref_rating', disableSortBy: false, headerClassName: 'bg-transparent text-white' },
   ];
 
 

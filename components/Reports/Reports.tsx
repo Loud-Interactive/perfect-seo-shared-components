@@ -88,9 +88,10 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
         start_date: startDate,
         end_date: endDate,
         page_url: obj.live_post_url,
-        keyword: true
+        keyword: false
       }
       const { data } = await getGSCSearchAnalytics({ ...reqObj, domain: domain_name })
+      console.log(data)
       let newData = {
         title: obj.title,
         total_clicks: data.data.reduce((prev, curr) => prev + curr?.total_clicks, 0),

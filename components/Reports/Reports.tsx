@@ -91,8 +91,8 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
         keyword: false
       }
       const { data } = await getGSCSearchAnalytics({ ...reqObj, domain: domain_name })
-      console.log(data)
       let newData = {
+        ...obj,
         title: obj.title,
         total_clicks: data.data.reduce((prev, curr) => prev + curr?.total_clicks, 0),
         total_impressions: data.data.reduce((prev, curr) => prev + curr?.total_clicks, 0),
@@ -114,6 +114,7 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
       }
       else return newData
     }))
+    console.log(newGSCData)
     setUrlData(newGSCData)
   }
 
@@ -201,9 +202,16 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
     }
   }
 
+  const renderTitle = (obj) => (
+    <div className="d-flex flex-column">
+      <p className='mb-0'>{obj.title}</p>
+      {obj.live_post_url && <a href={obj.live_post_url} target="_blank" rel="noreferrer" className='text-primary text-wrap title-max mb-0 pb-0'>...{obj.live_post_url.replace("https://", "").replace("www.", "").replace(obj.client_domain, "")}</a>
+      }
+    </div>
+  )
 
   const gscColumnArray: TableColumnArrayProps[] = [
-    { id: 'title', Header: 'Title', accessor: 'title', disableSortBy: false, cellClassName: 'title-max', headerClassName: 'bg-transparent text-white' },
+    { id: 'title', Header: 'Title', accessor: renderTitle, disableSortBy: false, cellClassName: 'title-max', headerClassName: 'bg-transparent text-white' },
     { id: 'total_clicks', Header: 'Total Clicks', accessor: renderTotalClicks, disableSortBy: false, headerClassName: 'bg-transparent text-white' },
     { id: 'total_impressions', Header: 'Total Impressions', accessor: renderTotalImpression, disableSortBy: false, headerClassName: 'bg-transparent text-white' },
     { id: 'avg_ctr_percent', Header: 'Average CTR', accessor: renderAverageCTR, disableSortBy: false, cellClassName: "relative", headerClassName: 'bg-transparent text-white' },

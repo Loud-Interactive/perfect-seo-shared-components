@@ -95,9 +95,9 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
         ...obj,
         title: obj.title,
         total_clicks: data.data.reduce((prev, curr) => prev + curr?.total_clicks, 0),
-        total_impressions: data.data.reduce((prev, curr) => prev + curr?.total_clicks, 0),
-        avg_ctr_percent: data.data.reduce((prev, curr) => prev + curr?.total_clicks, 0),
-        avg_position: data.data.reduce((prev, curr) => prev + curr?.total_clicks, 0),
+        total_impressions: data.data.reduce((prev, curr) => prev + curr?.total_impressions, 0),
+        avg_ctr_percent: data.data.reduce((prev, curr) => prev + curr?.avg_ctr_percent, 0),
+        avg_position: data.data.reduce((prev, curr) => prev + curr?.avg_position, 0),
         keyword_total: data.data.length,
         keywords: data.data
       }

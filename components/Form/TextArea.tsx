@@ -16,6 +16,7 @@ interface TextAreaInputProps extends React.HTMLProps<HTMLTextAreaElement> {
   hideErrorMessage?: boolean;
   bottomSpacing?: boolean;
   button?: any;
+  hint?: string
 }
 
 const TextArea = ({
@@ -23,6 +24,7 @@ const TextArea = ({
   label,
   fieldName,
   required = false,
+  hint,
   validator,
   bottomSpacing,
   type = "text",
@@ -62,7 +64,7 @@ const TextArea = ({
   }
 
   return (
-    <FormField fieldName={fieldName} label={label} bottomSpacing={bottomSpacing}>
+    <FormField hint={hint} fieldName={fieldName} label={label} bottomSpacing={bottomSpacing}>
       <div className="textArea-container">
         <textarea
           {...props}

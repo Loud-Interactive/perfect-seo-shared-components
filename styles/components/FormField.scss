@@ -33,6 +33,13 @@
   position: relative;
   width: 100%;
 
+  &-hint {
+    color: $primary;
+    font-size: 12px;
+
+    margin-bottom: 0px;
+  }
+
   &:hover {
     .formField-label {
       color: $primary;

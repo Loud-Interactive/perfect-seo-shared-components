@@ -15,8 +15,8 @@ export interface PlanListProps {
 const Reports = ({ domain_name, active }: PlanListProps) => {
   const [loading, setLoading] = useState(false)
 
-  const [startDate, setStartDate] = useState(moment().subtract(28, "days").format("YYYY-MM-DD"));
-  const [endDate, setEndDate] = useState(moment().format("YYYY-MM-DD"))
+  const [startDate, setStartDate] = useState(moment().subtract(29, "days").format("YYYY-MM-DD"));
+  const [endDate, setEndDate] = useState(moment().subtract(1, "days").format("YYYY-MM-DD"))
   const paginator = usePaginator()
 
   const [tableData, setTableData] = useState<any[]>([])
@@ -49,24 +49,25 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
       end_date: endDate,
     }
 
-    const ahrefsGlobalData = await getAhrefsDomainRating({ ...gscReqObj, domain: domain_name })
-    let rating = ahrefsGlobalData.data?.data?.reduce((acc, obj) => acc + obj?.domain_rating || 0, 0)
-    if (rating > 0) {
-      rating = (rating / ahrefsGlobalData?.data?.data.length).toFixed(1)
-    }
-    else rating = null
+    // const ahrefsGlobalData = await getAhrefsDomainRating({ ...gscReqObj, domain: domain_name })
+    // let rating = ahrefsGlobalData.data?.data?.reduce((acc, obj) => acc + obj?.domain_rating || 0, 0)
+    // if (rating > 0) {
+    //   rating = (rating / ahrefsGlobalData?.data?.data.length).toFixed(1)
+    // }
+    // else rating = null
     const { data: summaryData } = await getGSCLiveURLReport({
       domain: domain_name,
       start_date: startDate,
       end_date: endDate,
-      limit: 1
+      limit: 1,
     })
     let newData = await Object.entries(summaryData).map(([key, value], i) => {
       let newObj: any = { ...value as object, title: key.split("_").map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ") }
-      if (i === 0) {
-        return { ...newObj, ahref_rating: rating }
-      }
-      else if (i === 1) {
+      // if (i === 0) {
+      //   return { ...newObj, ahref_rating: rating }
+      // }
+      // else if(i === 1){
+      if (i <= 1) {
         return newObj
       }
       else {
@@ -88,30 +89,30 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
         start_date: startDate,
         end_date: endDate,
         page_url: obj.live_post_url,
-        keyword: true
+        keyword: false
       }
       const { data } = await getGSCSearchAnalytics({ ...reqObj, domain: domain_name })
       let newData = {
+        ...obj,
         title: obj.title,
-        total_clicks: data.data.reduce((prev, curr) => prev + curr?.total_clicks, 0),
-        total_impressions: data.data.reduce((prev, curr) => prev + curr?.total_clicks, 0),
-        avg_ctr_percent: data.data.reduce((prev, curr) => prev + curr?.total_clicks, 0),
-        avg_position: data.data.reduce((prev, curr) => prev + curr?.total_clicks, 0),
-        keyword_total: data.data.length,
-        keywords: data.data
+        total_clicks: data?.data?.length > 0 ? data.data.reduce((prev, curr) => prev + curr?.total_clicks, 0) : 'N/A',
+        total_impressions: data?.data?.length > 0 ? data.data.reduce((prev, curr) => prev + curr?.total_impressions, 0) : 'N/A',
+        avg_ctr_percent: data?.data?.length > 0 ? data.data.reduce((prev, curr) => prev + curr?.avg_ctr_percent, 0) : 'N/A',
+        avg_position: data?.data?.length > 0 ? data.data.reduce((prev, curr) => prev + curr?.avg_position, 0) : 'N/A',
       }
-      const ahrefsData = await getAhrefsUrlRating(reqObj)
-      let ahref_rating: any = ahrefsData.data?.data?.reduce((acc, obj) => acc + obj?.url_rating || 0, 0)
-      if (ahref_rating > 0) {
-        ahref_rating = (ahref_rating / ahrefsData?.data?.data.length).toFixed(1)
-      }
-      else {
-        ahref_rating = null
-      }
-      if (ahref_rating) {
-        return { ...newData, ahref_rating }
-      }
-      else return newData
+      // const ahrefsData = await getAhrefsUrlRating(reqObj)
+      // let ahref_rating: any = ahrefsData.data?.data?.reduce((acc, obj) => acc + obj?.url_rating || 0, 0)
+      // if (ahref_rating > 0) {
+      //   ahref_rating = (ahref_rating / ahrefsData?.data?.data.length).toFixed(1)
+      // }
+      // else {
+      //   ahref_rating = null
+      // }
+      // if (ahref_rating) {
+      //   return { ...newData, ahref_rating }
+      // }
+      // else 
+      return newData
     }))
     setUrlData(newGSCData)
   }
@@ -137,15 +138,14 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
 
   const renderTotalClicks = (obj, i) => {
     if (i < 5) {
-      if (obj?.total_clicks === 0) return null
+      if (obj?.total_clicks === 0) return 0
       return obj?.total_clicks?.toLocaleString()
     }
     else if (urlData?.length > 0) {
       let newPost = urlData.find(post => post.title === obj.title)
-      let totalClicks = newPost?.total_clicks > 0 ? newPost?.total_clicks?.toLocaleString() : null
+      let totalClicks = newPost?.total_clicks >= 0 ? newPost?.total_clicks?.toLocaleString() : null
 
       return totalClicks
-
     }
     else {
       return null
@@ -153,12 +153,12 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
   }
   const renderTotalImpression = (obj, i) => {
     if (i <= 5) {
-      if (obj?.total_impressions === 0) return null
+      if (obj?.total_impressions === 0) return 0
       return obj?.total_impressions?.toLocaleString()
     }
     else if (urlData?.length > 0) {
       let newPost = urlData.find(post => post.title === obj.title)
-      let totalImpressions = newPost?.total_impressions > 0 ? newPost?.total_impressions?.toLocaleString() : null
+      let totalImpressions = newPost?.total_impressions >= 0 ? newPost?.total_impressions?.toLocaleString() : null
 
       return totalImpressions
 
@@ -169,12 +169,15 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
   }
   const renderAverageCTR = (obj, i) => {
     if (i <= 5) {
-      if (obj?.avg_ctr_percent === 0 || !obj?.avg_ctr_percent) return null
+      if (obj?.avg_ctr_percent === 0) {
+        return 0
+      }
+      else if (!obj?.avg_ctr_percent) return null
       return `${obj?.avg_ctr_percent?.toFixed(1)}%`
     }
     else if (urlData?.length > 0) {
       let newPost = urlData.find(post => post.title === obj.title)
-      let avgCTR = newPost?.avg_ctr_percent > 0 ? `${newPost?.avg_ctr_percent.toFixed(1)}%` : null
+      let avgCTR = newPost?.avg_ctr_percent >= 0 ? `${newPost?.avg_ctr_percent.toFixed(1)}%` : null
 
       return avgCTR
 
@@ -190,7 +193,7 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
     }
     else if (urlData?.length > 0) {
       let newPost = urlData.find(post => post.title === obj.title)
-      let totalImpressions = newPost?.avg_position > 0 ? newPost?.avg_position?.toFixed(3) : null
+      let totalImpressions = newPost?.avg_position >= 0 ? newPost?.avg_position?.toFixed(3) : null
 
       return totalImpressions
 
@@ -200,14 +203,21 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
     }
   }
 
+  const renderTitle = (obj) => (
+    <div className="d-flex flex-column">
+      <p className='mb-0'>{obj.title}</p>
+      {obj.live_post_url && <a href={obj.live_post_url} target="_blank" rel="noreferrer" className='text-primary text-wrap title-max mb-0 pb-0'>...{obj.live_post_url.replace("https://", "").replace("www.", "").replace(obj.client_domain, "")}</a>
+      }
+    </div>
+  )
 
   const gscColumnArray: TableColumnArrayProps[] = [
-    { id: 'title', Header: 'Title', accessor: 'title', disableSortBy: false, cellClassName: 'title-max', headerClassName: 'bg-transparent text-white' },
-    { id: 'total_clicks', Header: 'Total Clicks', accessor: renderTotalClicks, disableSortBy: false, headerClassName: 'bg-transparent text-white' },
-    { id: 'total_impressions', Header: 'Total Impressions', accessor: renderTotalImpression, disableSortBy: false, headerClassName: 'bg-transparent text-white' },
-    { id: 'avg_ctr_percent', Header: 'Average CTR', accessor: renderAverageCTR, disableSortBy: false, cellClassName: "relative", headerClassName: 'bg-transparent text-white' },
-    { id: 'avg_position', Header: 'Average Position', accessor: renderAveragePosition, disableSortBy: false, headerClassName: 'bg-transparent text-white' },
-    { id: 'ahref_rating', Header: 'AHREFs Rating', accessor: 'ahref_rating', disableSortBy: false, headerClassName: 'bg-transparent text-white' },
+    { id: 'title', Header: 'Title', accessor: renderTitle, cellClassName: 'title-max', headerClassName: 'bg-transparent text-white' },
+    { id: 'total_clicks', Header: 'Total Clicks', accessor: renderTotalClicks, headerClassName: 'bg-transparent text-white' },
+    { id: 'total_impressions', Header: 'Total Impressions', accessor: renderTotalImpression, headerClassName: 'bg-transparent text-white' },
+    { id: 'avg_ctr_percent', Header: 'Average CTR', accessor: renderAverageCTR, cellClassName: "relative", headerClassName: 'bg-transparent text-white' },
+    { id: 'avg_position', Header: 'Average Position', accessor: renderAveragePosition, headerClassName: 'bg-transparent text-white' },
+    // { id: 'ahref_rating', Header: 'AHREFs Rating', accessor: 'ahref_rating', headerClassName: 'bg-transparent text-white' },
   ];
 
 

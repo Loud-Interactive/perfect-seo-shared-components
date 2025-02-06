@@ -17,6 +17,7 @@ interface TextInputProps extends React.HTMLProps<HTMLInputElement> {
   bottomSpacing?: boolean
   button?: any;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  hint?: string;
 }
 
 const TextInput = ({
@@ -25,6 +26,7 @@ const TextInput = ({
   error,
   icon,
   label,
+  hint,
   fieldName,
   required,
   type = 'text',
@@ -70,7 +72,7 @@ const TextInput = ({
   }
 
   return (
-    <FormField fieldName={fieldName} label={label} bottomSpacing={bottomSpacing}>
+    <FormField hint={hint} fieldName={fieldName} label={label} bottomSpacing={bottomSpacing}>
       <div className="textInput-container">
         <input
           type={type}

@@ -279,10 +279,10 @@ export const getPostsByEmail = (email: string, reqObj?: any) => {
   let url = `https://content-status.replit.app/content/email/${email}`;
   if (reqObj) {
     if (reqObj.page > 1) {
-      url += parseQueries({ skip: (reqObj.page * 10) - 1, limit: 10 })
+      url += parseQueries({ skip: (reqObj.page * 10) - 1, limit: reqObj?.page_size })
     }
     else {
-      url += parseQueries({ skip: reqObj.page - 1, limit: 10 })
+      url += parseQueries({ skip: reqObj.page - 1, limit: reqObj?.page_size })
     }
     if (reqObj.status) {
       url += '&status=' + reqObj.status

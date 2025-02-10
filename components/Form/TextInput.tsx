@@ -79,7 +79,7 @@ const TextInput = ({
           {...props}
           {...ariaProps}
           autoFocus={autoFocus}
-          value={props.value || form.getState[fieldName] || ''}
+          value={type === 'file' ? '' : props.value || form.getState[fieldName] || ''}
           onChange={onChange}
           onPaste={onPaste}
           onKeyDown={props.onKeyDown}

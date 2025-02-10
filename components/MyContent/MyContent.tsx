@@ -383,8 +383,8 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
           </div>
         </div>
       }
-      <div className='container-xl content-fluid rc'>
-        {isLoading && <LoadSpinner />}
+      <div className='container-xl content-fluid rc relative'>
+        {/* {isLoading && <LoadSpinner />} */}
         <div className={styles.tabWrap}>
           <ul className="nav nav-tabs mb-0">
             {TabData.map((tab) => {
@@ -416,7 +416,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
             </div>
             <div className={`tab-pane fade ${selectedTab === 'content-plans' && 'show active'}`} id="content-plans" role="tabpanel" aria-labelledby="content-plans-tab">
               <div className='tab p-3'>
-                <Suspense fallback={<LoadSpinner />}>
+                <Suspense fallback={<h1>fallback</h1>}>
                   <PlansList active={!loading && selectedTab === 'content-plans'} domain_name={currentDomain || domain} />
                 </Suspense>
               </div>

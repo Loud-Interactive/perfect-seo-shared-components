@@ -30,13 +30,13 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
     catch (e) {
       console.log(e)
     }
-    if (googleToken) {
+    if (googleToken && active) {
       let token = JSON.parse(googleToken)
       populateBulkGSC(token)
     }
 
 
-  }, [])
+  }, [active])
 
 
 

@@ -109,13 +109,13 @@ const PostsList = ({ domain_name, active }: PostsListProps) => {
             {paginator.itemCount > 0 && <p className='badge rounded-pill text-bg-primary ms-3 d-flex align-items-center mb-1'>{paginator.itemCount}</p>}
           </div>
           <div className='col-auto'>
-            {/* <Form controller={form}>
+            <Form controller={form}>
               <Select bottomSpacing={false} fieldName='filter' onChange={changeFilter} label="Filter by Status" value={filter}>
                 <Option value='all'>All</Option>
                 <Option value='completed'>Complete</Option>
                 <Option value='processing'>Processing</Option>
               </Select>
-            </Form> */}
+            </Form>
           </div>
         </div>
         {loading ? <Loader />

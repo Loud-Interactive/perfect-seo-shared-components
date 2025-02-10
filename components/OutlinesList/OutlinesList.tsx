@@ -27,10 +27,11 @@ const OutlinesList = ({ domain_name, active }: OutlinesListProps) => {
   const paginator = usePaginator()
 
   const getOutlines = () => {
-    setLoading(true);
-    setData(null)
+
     if (active) {
       paginator.setItemCount(0)
+      setLoading(true);
+      setData(null)
       if (domain_name) {
         getContentPlanOutlinesByDomain(domain_name, paginator.paginationObj)
           .then(res => {

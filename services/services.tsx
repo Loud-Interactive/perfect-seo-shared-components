@@ -258,10 +258,10 @@ export const getPostsByDomain = (domain: string, reqObj?: any) => {
   let url = `https://content-status.replit.app/content/domain/${domain}`;
   if (reqObj) {
     if (reqObj.page > 1) {
-      url += parseQueries({ skip: (reqObj.page - 1) * 10, limit: reqObj?.page_size })
+      url += parseQueries({ ...reqObj, skip: (reqObj.page - 1) * 10, limit: reqObj?.page_size })
     }
     else {
-      url += parseQueries({ skip: reqObj.page - 1, limit: reqObj?.page_size })
+      url += parseQueries({ ...reqObj, skip: reqObj.page - 1, limit: reqObj?.page_size })
     }
     if (!!reqObj?.has_live_post_url) {
       url += '&has_live_post_url=' + reqObj?.has_live_post_url
@@ -279,10 +279,10 @@ export const getPostsByEmail = (email: string, reqObj?: any) => {
   let url = `https://content-status.replit.app/content/email/${email}`;
   if (reqObj) {
     if (reqObj.page > 1) {
-      url += parseQueries({ skip: (reqObj.page * 10) - 1, limit: 10 })
+      url += parseQueries({ ...reqObj, skip: (reqObj.page * 10) - 1, limit: reqObj?.page_size })
     }
     else {
-      url += parseQueries({ skip: reqObj.page - 1, limit: 10 })
+      url += parseQueries({ ...reqObj, skip: reqObj.page - 1, limit: reqObj?.page_size })
     }
     if (reqObj.status) {
       url += '&status=' + reqObj.status

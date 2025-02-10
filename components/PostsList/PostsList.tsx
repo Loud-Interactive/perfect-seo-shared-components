@@ -108,7 +108,7 @@ const PostsList = ({ domain_name, active }: PostsListProps) => {
             </h2>
             {paginator.itemCount > 0 && <p className='badge rounded-pill text-bg-primary ms-3 d-flex align-items-center mb-1'>{paginator.itemCount}</p>}
           </div>
-          <div className='col-auto'>
+          {/* <div className='col-auto'>
             <Form controller={form}>
               <Select bottomSpacing={false} fieldName='filter' onChange={changeFilter} label="Filter by Status" value={filter}>
                 <Option value='all'>All</Option>
@@ -116,7 +116,7 @@ const PostsList = ({ domain_name, active }: PostsListProps) => {
                 <Option value='processing'>Processing</Option>
               </Select>
             </Form>
-          </div>
+          </div> */}
         </div>
         {loading ? <Loader />
           : data?.length > 0 ?

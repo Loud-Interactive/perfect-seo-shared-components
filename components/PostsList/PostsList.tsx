@@ -33,11 +33,18 @@ const PostsList = ({ domain_name, active }: PostsListProps) => {
   const getPosts = () => {
 
     if (active) {
+      let reqObj: any = { ...paginator.paginationObj, page: paginator.currentPage }
       let status = filter
       if (status === 'all') {
         status = null;
       }
-      let reqObj: any = { ...paginator.paginationObj, page: paginator.currentPage, status }
+      else if (status === 'live') {
+        reqObj.has_live_post_url = true
+      }
+      else {
+        reqObj.status = status
+      }
+
       if (domain_name) {
         getPostsByDomain(domain_name, reqObj)
           .then(res => {
@@ -112,6 +119,7 @@ const PostsList = ({ domain_name, active }: PostsListProps) => {
             <Form controller={form}>
               <Select bottomSpacing={false} fieldName='filter' onChange={changeFilter} label="Filter by Status" value={filter}>
                 <Option value='all'>All</Option>
+                <Option value='live'>Live</Option>
                 <Option value='completed'>Complete</Option>
                 <Option value='processing'>Processing</Option>
               </Select>

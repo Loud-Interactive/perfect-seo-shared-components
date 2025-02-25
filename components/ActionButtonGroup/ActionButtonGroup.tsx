@@ -41,6 +41,10 @@ const ActionButtonGroup = ({
   const isAdmin = useSelector(selectIsAdmin)
   const email = useSelector(selectEmail)
 
+  const regenerateHandler = () => {
+    setShowEditModal(false);
+    refresh();
+  }
   // State management
   const supabase = createClient()
 
@@ -301,6 +305,14 @@ const ActionButtonGroup = ({
 
                       <button className="btn btn-transparent w-100" onClick={() => { setShowLiveURLModal(true) }}>{data?.live_post_url ? 'Edit' : 'Add'} Live Post URL</button>
                     </DropdownMenu.Item>
+                    <DropdownMenu.Item>
+                      <button
+                        onClick={() => { setShowFactCheckModal(true) }}
+                        className="btn btn-transparent w-100"
+                      >
+                        {data?.factcheck_guid ? 'Fact-Check Results' : 'Fact-Check'}
+                      </button>
+                    </DropdownMenu.Item>
                     {data?.live_post_url && <>
                       {isAdmin && <>
                         {data?.factcheck_guid ?
@@ -385,7 +397,7 @@ const ActionButtonGroup = ({
         </Modal.Description>
       </Modal.Overlay>
       <Modal.Overlay open={showEditModal} onClose={() => { setShowEditModal(null) }}>
-        <CreateContentModal standalone data={data} titleChange={() => { }} onClose={() => { setShowEditModal(false) }} isAuthorized={true} />
+        <CreateContentModal regenerateHandler={regenerateHandler} standalone data={data} titleChange={() => { }} onClose={() => { setShowEditModal(false) }} isAuthorized={true} />
       </Modal.Overlay>
       <Modal.Overlay
         open={showRegeneratePostModal}

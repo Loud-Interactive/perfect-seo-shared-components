@@ -28,6 +28,12 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
   const isAdmin = useSelector(selectIsAdmin)
   const dispatch = useDispatch()
 
+  const regenerateHandler = () => {
+    setEditModal(false);
+    setCompleted(false);
+    setStatus("in_progress");
+  }
+
   useEffect(() => {
     if (outline?.status !== status) {
       setStatus(outline?.status)
@@ -178,7 +184,7 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
         </div>
       </div>
       <Modal.Overlay open={editModal} onClose={() => { setEditModal(null) }}>
-        <CreateContentModal isAuthorized advancedData={{}} data={localOutline} onClose={() => { setEditModal(null); refresh(); }} index={1} titleChange={handleTitleChange} contentPlan={{ ...localOutline, guid: localOutline.content_plan_guid, 'Post Title': localOutline.post_title }} />
+        <CreateContentModal regenerateHandler={regenerateHandler} isAuthorized advancedData={{}} data={localOutline} onClose={() => { setEditModal(null); refresh(); }} index={1} titleChange={handleTitleChange} contentPlan={{ ...localOutline, guid: localOutline.content_plan_guid, 'Post Title': localOutline.post_title }} />
       </Modal.Overlay>
       <Modal.Overlay
         open={showGenerate}

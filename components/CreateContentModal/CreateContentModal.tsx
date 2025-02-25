@@ -25,6 +25,7 @@ interface CreateContentModalProps {
   contentPlan?: any;
   titleChange?: (e: any, title: string, index: number) => any;
   index?: number;
+  regenerateHandler: () => void
   isAuthorized: boolean;
   standalone?: boolean;
   track?: boolean;
@@ -39,6 +40,7 @@ const CreateContentModal = ({
   isAuthorized,
   index,
   advancedData,
+  regenerateHandler,
   standalone,
   generatePost,
   track
@@ -386,8 +388,7 @@ const CreateContentModal = ({
       { email: email, client_domain: contentPlan?.domain_name || contentPlan?.client_domain, client_name: contentPlan?.brand_name || contentPlan?.client_name, post_title: postTitle, content_plan_guid: contentPlan?.guid || data.content_plan_guid }
     )
       .then((result) => {
-        let newData = JSON.parse(result.data.outline);
-        processSections(newData.sections, true);
+        regenerateHandler();
         setLoading(false);
       })
       .catch(() => {

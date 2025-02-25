@@ -36,6 +36,11 @@ const QueueCard = ({ queue, i, removeItem, bulkStatus }: QueueCardProps) => {
   const [liveUrl, setLiveUrl] = useState<string>('')
   const form = useForm()
   const dispatch = useDispatch();
+  const regenerateHandler = () => {
+    setEditOutline(false);
+    setStatus('pending')
+    fetchData();
+  }
 
   const liveUrlChangeHandler = (e) => {
     setLiveUrl(e.target.value)
@@ -433,7 +438,7 @@ const QueueCard = ({ queue, i, removeItem, bulkStatus }: QueueCardProps) => {
     <div key={i}>
       {renderBody()}
       <Modal.Overlay open={editOutline} onClose={() => setEditOutline(false)} >
-        {data && <CreateContentModal isAuthorized standalone contentPlan={{ client_name: data?.brand_name || domainInfo?.brand_name, client_domain: data.domain || domainInfo?.domain }} data={{ ...data, content_plan_outline_guid: data?.guid || data?.content_plan_outline_guid }} onClose={() => setEditOutline(false)} track />}
+        {data && <CreateContentModal regenerateHandler={regenerateHandler} isAuthorized standalone contentPlan={{ client_name: data?.brand_name || domainInfo?.brand_name, client_domain: data.domain || domainInfo?.domain }} data={{ ...data, content_plan_outline_guid: data?.guid || data?.content_plan_outline_guid }} onClose={() => setEditOutline(false)} track />}
       </Modal.Overlay>
       <Modal.Overlay closeIcon open={generatePost !== null} onClose={() => setGeneratePost(null)} >
         <RegeneratePostModal onClose={() => { setGeneratePost(null) }} type={generatePost} submitHandler={generateSubmitHandler} onSuccess={() => { setGeneratePost(null) }} />

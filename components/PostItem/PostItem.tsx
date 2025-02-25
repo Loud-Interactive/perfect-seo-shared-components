@@ -46,6 +46,11 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
   const dispatch = useDispatch()
   const form = useForm()
 
+  const regenerateHandler = () => {
+    setCompleted(false);
+    setEditOutline(false);
+  }
+
   const saveLiveUrl = () => {
     let url = liveUrl
     if (url) {
@@ -253,7 +258,7 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
         </Modal.Description>
       </Modal.Overlay>
       <Modal.Overlay open={editOutline} onClose={() => { setEditOutline(null) }}>
-        <CreateContentModal standalone data={localPost} titleChange={() => { }} onClose={() => { setEditOutline(false) }} isAuthorized={true} />
+        <CreateContentModal regenerateHandler={regenerateHandler} standalone data={localPost} titleChange={() => { }} onClose={() => { setEditOutline(false) }} isAuthorized={true} />
       </Modal.Overlay>
       <Modal.Overlay
         open={showRegeneratePost}

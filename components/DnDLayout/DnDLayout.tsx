@@ -18,6 +18,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { selectIsAdmin, selectShowQueue, setShowQueue } from '@/perfect-seo-shared-components/lib/features/User';
 import Queue from '@/perfect-seo-shared-components/components/Queue/Queue';
 import { usePathname } from 'next/navigation';
+import usePwa from '@/perfect-seo-shared-components/hooks/usePwa';
 
 
 
@@ -52,6 +53,7 @@ const DnDLayout = ({ children, hideFooter, current, links, hasLogin = true, getC
     'queue-open': desktop && hasQueue && showQueue && isAdmin && !isQueuePage
   }
   )
+  usePwa();
 
   useEffect(() => {
     if (desktop && !showQueue) {

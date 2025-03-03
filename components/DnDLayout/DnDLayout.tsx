@@ -19,6 +19,7 @@ import { selectIsAdmin, selectShowQueue, setShowQueue } from '@/perfect-seo-shar
 import Queue from '@/perfect-seo-shared-components/components/Queue/Queue';
 import { usePathname } from 'next/navigation';
 import usePwa from '@/perfect-seo-shared-components/hooks/usePwa';
+import PWAFooter from '../PWAFooter/PWAFooter';
 
 
 
@@ -42,6 +43,7 @@ const DnDLayout = ({ children, hideFooter, current, links, hasLogin = true, getC
   const pathname = usePathname();
 
   const isQueuePage = pathname === '/watchlist'
+  const isPWA = usePwa();
 
   const showQueue = useMemo(() => {
     return (desktop && globalShowQueue && !isQueuePage)
@@ -74,7 +76,8 @@ const DnDLayout = ({ children, hideFooter, current, links, hasLogin = true, getC
               {(hasQueue && desktop && !isQueuePage && isAdmin) &&
                 <Queue sidebar />}
             </main>
-            {!hideFooter && <Footer current={current} />}
+            {(!hideFooter && !isPWA) && <Footer current={current} />}
+            {isPWA && <PWAFooter current={current} />}
           </DndProvider>
         </BrowserView>
         <MobileView>
@@ -85,7 +88,8 @@ const DnDLayout = ({ children, hideFooter, current, links, hasLogin = true, getC
             <main className={style.wrap}>
               {children}
             </main>
-            {!hideFooter && <Footer current={current} />}
+            {(!hideFooter && !isPWA) && <Footer current={current} />}
+            {isPWA && <PWAFooter current={current} />}
           </DndProvider>
         </MobileView>
       </SessionProvider >

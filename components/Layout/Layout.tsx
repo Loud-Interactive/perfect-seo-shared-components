@@ -8,6 +8,7 @@ import Script from 'next/script';
 import { SessionProvider } from "next-auth/react"
 import { Suspense } from 'react';
 import usePwa from '@/perfect-seo-shared-components/hooks/usePwa';
+import PWAFooter from '../PWAFooter/PWAFooter';
 interface LayoutProps extends React.HTMLProps<HTMLDivElement> {
   hideFooter?: boolean,
   current: string;
@@ -17,7 +18,7 @@ interface LayoutProps extends React.HTMLProps<HTMLDivElement> {
 }
 
 const Layout = ({ children, hideFooter, current, links, hasLogin = true, getCredits = false }: LayoutProps) => {
-  usePwa();
+  const isPWA = usePwa();
   return (
     <>
       <Script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossOrigin="anonymous" />
@@ -28,7 +29,8 @@ const Layout = ({ children, hideFooter, current, links, hasLogin = true, getCred
         <main className={style.wrap}>
           {children}
         </main>
-        {!hideFooter && <Footer current={current} />}
+        {(!hideFooter && !isPWA) && <Footer current={current} />}
+        {isPWA && <PWAFooter current={current} />}
       </SessionProvider>
     </>
   )

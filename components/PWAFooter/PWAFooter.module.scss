@@ -1,0 +1,29 @@
+@use 'common' as *;
+
+.logoLink {
+  cursor: pointer;
+
+  svg {
+    max-width: 300px;
+  }
+
+  &:hover {
+    svg path {
+      fill: white;
+    }
+  }
+
+}
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100dvw;
+  z-index: 1000;
+  height: 100px;
+  background-color: red !important;
+}

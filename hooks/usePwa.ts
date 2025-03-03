@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
 export default function usePwa() {
-  const [ isPwa, setIsPwa ] = useState(false);
+  const [isPwa, setIsPwa] = useState(false);
 
   const mediaWatcher = useMemo(() => {
     if (typeof window !== 'undefined') {
@@ -38,7 +38,7 @@ export default function usePwa() {
     if (typeof window !== 'undefined') {
 
       getMediaType();
-      mediaWatcher.addEventListener('change', getMediaType, { capture:true, passive:true });
+      mediaWatcher.addEventListener('change', getMediaType, { capture: true, passive: true });
     }
     mediaWatcher.removeEventListener('change', getMediaType);
 

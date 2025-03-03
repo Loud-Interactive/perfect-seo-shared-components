@@ -37,9 +37,21 @@ select {
   background-color: white;
 }
 
+html [data-pwa="true"] {
+
+  main {
+    box-sizing: border-box;
+    padding-bottom: 100px !important;
+  }
+}
+
 body {
   background-color: $secondary;
   position: relative;
+
+
+
+
 
   .modal-overlay {
     display: none !important;
@@ -5307,11 +5319,7 @@ a.text-primary {
   border-bottom: none;
 }
 
-@include PWA {
-  footer {
-    display: none;
-  }
-}
+
 
 .title-max {
   max-width: 75ch;

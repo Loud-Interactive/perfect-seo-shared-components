@@ -17,17 +17,19 @@ const IndexModal = ({ post, onClose, setLocalPost }: IndexModalProps) => {
     setLoading(true);
     setSuccess(false)
 
-    axiosInstance.post('/api/index-url', { url: post.live_post_url })
+    axiosInstance.post('/api/index-url', { url: post.live_post_url, contentPlanOutlineGuid: post.content_plan_outline_guid })
       .then(res => {
         setSuccess(true)
         setLoading(false)
-        console.log(res)
       })
       .catch(err => {
         setLoading(false)
-        alert(err.message)
       })
   }
+
+  useEffect(() => {
+    console.log(post)
+  }, [post])
 
   return (
     <div className="card p-3">
@@ -38,7 +40,9 @@ const IndexModal = ({ post, onClose, setLocalPost }: IndexModalProps) => {
           Indexed Properly
         </p>
       }
-      <button className="btn btn-primary" disabled={loading} onClick={clickHandler}>{loading ? 'Indexing' : 'Index'}</button>
+      <div>
+        <button className="btn btn-primary" disabled={loading} onClick={clickHandler}>{loading ? 'Indexing' : 'Index'}</button>
+      </div>
     </div>
   )
 }

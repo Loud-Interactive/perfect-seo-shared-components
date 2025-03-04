@@ -12,7 +12,9 @@ interface StatusBarProps {
   live_post_url?: string,
   addLiveUrlHandler?: () => void
   onGeneratePost?: () => void
-  type: ContentType
+  indexHandler?: () => void,
+  type: ContentType,
+  index_status?: string
 }
 
 const StatusBar = ({
@@ -23,6 +25,8 @@ const StatusBar = ({
   addLiveUrlHandler,
   live_post_url,
   onGeneratePost,
+  indexHandler,
+  index_status,
   type
 }: StatusBarProps) => {
   const [outlineStatus, setOutlineStatus] = useState<string>('');
@@ -227,6 +231,19 @@ const StatusBar = ({
             </>
           }
         </div>
+      }
+      {live_post_url && <> {index_status ?
+        <div className="col-auto d-flex align-items-center ">
+          <i className="bi bi-chevron-right mx-2" />
+          <strong className="text-primary">Indexed</strong>
+          <span className="badge rounded-pill ms-1 p-1 bg-success"><i className="bi bi-check-lg text-white"></i></span>
+        </div>
+        :
+        <div className="col-auto d-flex align-items-center ">
+          <i className="bi bi-chevron-right mx-2" />
+          <a onClick={indexHandler} className="text-warning my-0 py-0"><i className="bi bi-plus" />Index Post</a>
+        </div>}
+      </>
       }
     </div>
   )

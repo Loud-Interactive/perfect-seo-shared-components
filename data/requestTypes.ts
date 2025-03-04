@@ -40,6 +40,12 @@ export interface PostOutlineGenerateRequest {
   writing_language?: string
 }
 
+export interface RegeneratePost {
+  content_plan_outline_guid: string,
+  email?: string,
+  receuving_email?: string
+}
+
 export interface GenerateContentPost {
   email: string,
   keyword: string,
@@ -180,3 +186,4 @@ export interface GSCTotalsRequest extends DateRangeRequest {
   domain: string,
   limit: number
 }
+

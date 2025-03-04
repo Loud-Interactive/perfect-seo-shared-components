@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ContentType, QueueItemProps } from '@/perfect-seo-shared-components/data/types';
 import { addToast, selectEmail, selectIsAdmin } from '@/perfect-seo-shared-components/lib/features/User';
 import { useEffect, useMemo, useState } from 'react';
-import { createPost, deleteContentOutline, deleteOutline, regenerateOutline, regeneratePost, updateLiveUrl } from '@/perfect-seo-shared-components/services/services';
+import { createPost, deleteContentOutline, deleteOutline, regenerateHTML, regenerateOutline, regeneratePost, updateLiveUrl } from '@/perfect-seo-shared-components/services/services';
 import { createClient } from '@/perfect-seo-shared-components/utils/supabase/client';
 import en from '@/assets/en.json'
 import CreateContentModal from '../CreateContentModal/CreateContentModal';
@@ -20,6 +20,7 @@ import FactCheckResultPage from '../FactCheckResultPage/FactCheckResultPage';
 import FactCheckModal from '../FactCheckModal/FactCheckModal';
 import { GenerateContentPost } from '@/perfect-seo-shared-components/data/requestTypes';
 import { capitalizeFirst } from '@/perfect-seo-shared-components/utils/global';
+import RegeneratePostHTMLModal from '../RegeneratePostHTMLModal.tsx/RegeneratePostHTMLModal';
 
 interface ActionButtonGroupProps {
   data: any
@@ -56,6 +57,7 @@ const ActionButtonGroup = ({
   const [showLiveURLModal, setShowLiveURLModal] = useState<boolean>(false);
   const [showIndexModal, setShowIndexModal] = useState<boolean>(false);
   const [showFactCheckModal, setShowFactCheckModal] = useState<boolean>(false);
+  const [showRegenerateHTMLModal, setShowRegenerateHTMLModal] = useState<boolean>(false);
 
   // error states 
   const [regenerateError, setRegenerateError] = useState<string>('');
@@ -203,6 +205,14 @@ const ActionButtonGroup = ({
     }
   }
 
+  const regeneratePostHTMLSubmitHandler = (email) => {
+    let reqObj = {
+      email: email,
+      content_plan_outline_guid: data?.content_plan_outline_guid
+    }
+    return regenerateHTML(reqObj)
+  }
+
   const regenerateOutlineClickHandler = () => {
     regenerateOutline(data?.guid, { email: email, client_domain: data?.client_domain, client_name: data?.brand_name, post_title: data?.post_title, content_plan_guid: data?.content_plan_guid })
       .then(res => {
@@ -301,8 +311,10 @@ const ActionButtonGroup = ({
                     <DropdownMenu.Item>
                       <button className="btn btn-transparent w-100" onClick={() => { setShowRegeneratePostModal(true) }}>Regenerate Post</button>
                     </DropdownMenu.Item>
+                    {data?.html_link && <DropdownMenu.Item>
+                      <button className="btn btn-transparent w-100" onClick={() => { setShowRegenerateHTMLModal(true) }}>Regenerate Post HTML</button>
+                    </DropdownMenu.Item>}
                     <DropdownMenu.Item>
-
                       <button className="btn btn-transparent w-100" onClick={() => { setShowLiveURLModal(true) }}>{data?.live_post_url ? 'Edit' : 'Add'} Live Post URL</button>
                     </DropdownMenu.Item>
                     <DropdownMenu.Item>
@@ -439,6 +451,11 @@ const ActionButtonGroup = ({
             setShowIndexModal(false)
           }} setLocalPost={setData} />
         </div>
+      </Modal.Overlay>
+      <Modal.Overlay closeIcon open={showRegenerateHTMLModal} onClose={() => setShowRegenerateHTMLModal(false)}>
+        <RegeneratePostHTMLModal onClose={() => setShowRegenerateHTMLModal(false)} submitHandler={regeneratePostHTMLSubmitHandler} onSuccess={() => {
+          setShowRegenerateHTMLModal(false); return refresh()
+        }} />
       </Modal.Overlay>
     </>
   )

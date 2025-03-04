@@ -449,3 +449,7 @@ export const getGSCLiveURLReport = (reqObj: Request.GSCTotalsRequest) => {
 export const populateBulkGSC = (reqObj) => {
   return axiosInstance.post(`https://gsc-batch-job-dev456.replit.app/trigger_gsc_job`, reqObj);
 }
+
+export const regenerateHTML = (reqObj: Request.RegeneratePost) => {
+  return axiosInstance.post(`https://content-v5.replit.app/regenerate_html${parseQueries(reqObj)}`, reqObj);
+}

@@ -5,13 +5,15 @@ import { useEffect, useState } from "react";
 interface IndexModalProps {
   post: PostProps;
   onClose: () => void;
+  setPost: (post: PostProps) => void;
 }
 
-const IndexModal = ({ post, onClose }: IndexModalProps) => {
+const IndexModal = ({ post, onClose, setPost }: IndexModalProps) => {
 
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState();
+  const [reindex, setReindex] = useState(false);
   const clickHandler = (e) => {
     setErrorMessage(undefined)
     e.preventDefault();
@@ -23,6 +25,7 @@ const IndexModal = ({ post, onClose }: IndexModalProps) => {
     }
     axiosInstance.post('/api/index-url', reqObj)
       .then(res => {
+        setPost({ ...post, index_status: 'completed' })
         setSuccess(true)
         setLoading(false)
       })
@@ -58,7 +61,7 @@ const IndexModal = ({ post, onClose }: IndexModalProps) => {
             <button className="btn btn-primary" disabled={loading} onClick={onClose}>close</button>
           </div>
           : <div className="mt-3">
-            <button className="btn btn-primary" disabled={loading} onClick={clickHandler}>{loading ? 'Indexing...' : 'Index'}</button>
+            <button className="btn btn-primary" disabled={loading} onClick={clickHandler}>{loading ? 'Indexing...' : post?.index_status ? 'Reindex' : 'Index'}</button>
           </div>}
       </div>
     </div>

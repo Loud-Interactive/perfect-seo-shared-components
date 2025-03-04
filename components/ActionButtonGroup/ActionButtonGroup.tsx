@@ -439,10 +439,12 @@ const ActionButtonGroup = ({
       </Modal.Overlay>
       <Modal.Overlay closeIcon open={showIndexModal} onClose={() => setShowIndexModal(false)}>
         <div className="modal-body">
-          <IndexModal post={data} onClose={() => {
-            setShowIndexModal(false);
-            return refresh();
-          }} />
+          <IndexModal post={data}
+            setPost={setData}
+            onClose={() => {
+              setShowIndexModal(false);
+              return refresh();
+            }} />
         </div>
       </Modal.Overlay>
       <Modal.Overlay closeIcon open={showRegenerateHTMLModal} onClose={() => setShowRegenerateHTMLModal(false)}>

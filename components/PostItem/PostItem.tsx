@@ -286,7 +286,9 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
       </Modal.Overlay>
       <Modal.Overlay closeIcon open={showIndex} onClose={() => setShowIndex(false)}>
         <div className="modal-body">
-          <IndexModal post={localPost} onClose={closeHandler} setLocalPost={setLocalPost} />
+          <IndexModal post={localPost} setPost={setLocalPost} onClose={() => {
+            setShowIndex(false); return refresh();
+          }} />
         </div>
       </Modal.Overlay>
     </div>

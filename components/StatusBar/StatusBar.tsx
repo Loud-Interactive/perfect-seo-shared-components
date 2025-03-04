@@ -241,7 +241,7 @@ const StatusBar = ({
         :
         <div className="col-auto d-flex align-items-center ">
           <i className="bi bi-chevron-right mx-2" />
-          <a onClick={indexHandler} className="text-warning my-0 py-0"><i className="bi bi-plus" />Index Post</a>
+          <a onClick={indexHandler} className="text-warning my-0 py-0">Index Post</a>
         </div>}
       </>
       }

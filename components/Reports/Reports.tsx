@@ -70,6 +70,7 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
   }
 
   const fetchSummaryInfo = async () => {
+    setSummaryData(null)
     setSummaryLoading(true)
     getGSCLiveURLReport({
       domain: domain_name,

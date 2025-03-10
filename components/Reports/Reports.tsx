@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import styles from './Reports.module.scss'
 import Table, { TableColumnArrayProps } from '@/perfect-seo-shared-components/components/Table/Table'
 import { getAhrefsDomainRating, getAhrefsUrlRating, getGSCLiveURLReport, getGSCSearchAnalytics, getPostsByDomain, populateBulkGSC } from '@/perfect-seo-shared-components/services/services'
@@ -14,13 +14,14 @@ export interface PlanListProps {
 }
 const Reports = ({ domain_name, active }: PlanListProps) => {
   const [loading, setLoading] = useState(false)
-
+  const [summaryLoading, setSummaryLoading] = useState(false)
   const [startDate, setStartDate] = useState(moment().subtract(29, "days").format("YYYY-MM-DD"));
   const [endDate, setEndDate] = useState(moment().subtract(1, "days").format("YYYY-MM-DD"))
   const paginator = usePaginator()
 
   const [tableData, setTableData] = useState<any[]>([])
   const [urlData, setUrlData] = useState<any[]>(null)
+  const [summaryData, setSummaryData] = useState<any>(null)
 
   useEffect(() => {
     let googleToken;
@@ -55,31 +56,36 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
     //   rating = (rating / ahrefsGlobalData?.data?.data.length).toFixed(1)
     // }
     // else rating = null
-    const { data: summaryData } = await getGSCLiveURLReport({
+
+    try {
+      const postResults = await getPostsByDomain(domain_name, { ...paginator.paginationObj, page: paginator.currentPage, has_live_post_url: true })
+      paginator.setItemCount(postResults.data.total)
+      const postData = postResults.data.records
+      setTableData(postData)
+    } catch (error) {
+      console.error('Error fetching post results:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const fetchSummaryInfo = async () => {
+    setSummaryLoading(true)
+    getGSCLiveURLReport({
       domain: domain_name,
       start_date: startDate,
       end_date: endDate,
       limit: 1,
     })
-    let newData = await Object.entries(summaryData).map(([key, value], i) => {
-      let newObj: any = { ...value as object, title: key.split("_").map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ") }
-      // if (i === 0) {
-      //   return { ...newObj, ahref_rating: rating }
-      // }
-      // else if(i === 1){
-      if (i <= 1) {
-        return newObj
-      }
-      else {
-        return { ...newObj[0], title: newObj.title }
-      }
+      .then(res => {
+        setSummaryData(res.data.data)
+        setSummaryLoading(false)
+      })
+      .catch(err => {
+        setSummaryLoading(false)
+      })
 
-    })
-    const postResults = await getPostsByDomain(domain_name, { ...paginator.paginationObj, page: paginator.currentPage, has_live_post_url: true })
-    paginator.setItemCount(postResults.data.total)
-    const postData = postResults.data.records
-    setTableData([...newData, ...postData])
-    return setLoading(false)
+
   }
 
   const retrievePostsGscInfo = async (data) => {
@@ -136,12 +142,14 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
     }
   }, [domain_name, paginator?.currentPage, paginator?.limit, active])
 
-  const renderTotalClicks = (obj, i) => {
-    if (i < 5) {
-      if (obj?.total_clicks === 0) return 0
-      return obj?.total_clicks?.toLocaleString()
+  useEffect(() => {
+    if (active && domain_name) {
+      fetchSummaryInfo()
     }
-    else if (urlData?.length > 0) {
+  }, [domain_name, startDate, endDate, active])
+
+  const renderTotalClicks = (obj, i) => {
+    if (urlData?.length > 0) {
       let newPost = urlData.find(post => post.title === obj.title)
       let totalClicks = newPost?.total_clicks >= 0 ? newPost?.total_clicks?.toLocaleString() : null
 
@@ -152,11 +160,7 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
     }
   }
   const renderTotalImpression = (obj, i) => {
-    if (i <= 5) {
-      if (obj?.total_impressions === 0) return 0
-      return obj?.total_impressions?.toLocaleString()
-    }
-    else if (urlData?.length > 0) {
+    if (urlData?.length > 0) {
       let newPost = urlData.find(post => post.title === obj.title)
       let totalImpressions = newPost?.total_impressions >= 0 ? newPost?.total_impressions?.toLocaleString() : null
 
@@ -168,14 +172,7 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
     }
   }
   const renderAverageCTR = (obj, i) => {
-    if (i <= 5) {
-      if (obj?.avg_ctr_percent === 0) {
-        return 0
-      }
-      else if (!obj?.avg_ctr_percent) return null
-      return `${obj?.avg_ctr_percent?.toFixed(1)}%`
-    }
-    else if (urlData?.length > 0) {
+    if (urlData?.length > 0) {
       let newPost = urlData.find(post => post.title === obj.title)
       let avgCTR = newPost?.avg_ctr_percent >= 0 ? `${newPost?.avg_ctr_percent.toFixed(1)}%` : null
 
@@ -187,11 +184,7 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
     }
   }
   const renderAveragePosition = (obj, i) => {
-    if (i <= 5) {
-      if (obj?.avg_position === 0) return null
-      return obj?.avg_position?.toFixed(3)
-    }
-    else if (urlData?.length > 0) {
+    if (urlData?.length > 0) {
       let newPost = urlData.find(post => post.title === obj.title)
       let totalImpressions = newPost?.avg_position >= 0 ? newPost?.avg_position?.toFixed(3) : null
 
@@ -211,6 +204,16 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
     </div>
   )
 
+  const formatKeyToTitle = (key) => {
+    return key.split("_").map(word => {
+      if (['seo', 'url'].includes(word)) {
+        return word.toUpperCase()
+      } else {
+        return word.charAt(0).toUpperCase() + word.slice(1)
+      }
+    }
+    ).join(" ")
+  }
   const gscColumnArray: TableColumnArrayProps[] = [
     { id: 'title', Header: 'Title', accessor: renderTitle, cellClassName: 'title-max', headerClassName: 'bg-transparent text-white' },
     { id: 'total_clicks', Header: 'Total Clicks', accessor: renderTotalClicks, headerClassName: 'bg-transparent text-white' },
@@ -220,6 +223,13 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
     // { id: 'ahref_rating', Header: 'AHREFs Rating', accessor: 'ahref_rating', headerClassName: 'bg-transparent text-white' },
   ];
 
+  const summarySections = useMemo(() => {
+    let sections = [];
+    if (summaryData) {
+      sections = Object.keys(summaryData)
+    }
+    return sections
+  }, [summaryData])
 
 
 
@@ -236,14 +246,60 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
         </div>
       </div>
       <div className='row d-flex justify-content-between align-items-start g-3'>
-        <div className='col-12'>
-          {tableData.length >= 0 && <div className='col-12 relative'>
-            {tableData.length > 0 ? <Table pinnedRows={['0', '1', '2', '3', '4', '5']} rawData={tableData} columnArray={gscColumnArray} />
-              : loading ? <LoadSpinner /> : <h5><TypeWriterText withBlink string="The are no results for the given parameters" /></h5>}
-          </div>}
-          <div className='col-auto d-flex justify-content-center'>
-            {paginator.renderComponent()}
-          </div>
+        {!domain_name &&
+          <h5><TypeWriterText withBlink string="Please select a domain to view the reports" /></h5>}
+        {summaryData && <div className='col-12 relative'>
+          <h4 className="text-primary mb-3">Summary</h4>
+          {summaryData ?
+            <div className="table-wrap table-responsive card bg-secondary">
+              <table className="table table-responsive">
+                {summarySections?.length > 0 && summarySections.map((obj, i) => {
+                  return (
+                    <>
+                      <thead key={`summary-section-${i}`}>
+                        <tr>
+                          <th colSpan={5} className="text-center">{formatKeyToTitle(obj)}
+                          </th>
+                        </tr>
+                        <tr>
+                          <th className="bg-transparent text-white">Type</th>
+                          <th className="bg-transparent text-white">Clicks</th>
+                          <th className="bg-transparent text-white">Impressions</th>
+                          <th className="bg-transparent text-white">CTR</th>
+                          <th className="bg-transparent text-white">Position</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {Object.keys(summaryData[obj])?.map((data, i) => {
+                          let lineData = summaryData[obj][data]
+                          console.log(lineData)
+                          return (
+                            <tr key={`summary-section-data-${i}`}>
+                              <td>{formatKeyToTitle(data)}</td>
+                              <td>{lineData?.total_clicks >= 0 ? lineData?.total_clicks?.toLocaleString() : lineData?.clicks_percentage > 0 ? `${lineData.clicks_percentage}%` : null}</td>
+                              <td>{lineData?.total_impressions >= 0 ? lineData?.total_impressions?.toLocaleString() : lineData?.impressions_percentage > 0 ? `${lineData?.impressions_percentage}%` : null}</td>
+                              <td>{lineData?.avg_ctr_percent >= 0 ? `${lineData?.avg_ctr_percent.toFixed(1)}%` : lineData?.ctr_difference > 0 ? `${lineData?.ctr_difference}%` : null}</td>
+                              <td>{lineData?.avg_position >= 0 ? lineData?.avg_position?.toFixed(3) : lineData?.position_difference > 0 ? `${lineData?.position_difference?.toFixed(3)}` : null}</td>
+                            </tr>
+                          )
+                        })
+                        }
+                      </tbody>
+                    </>
+                  )
+                })}
+              </table>
+            </div>
+            : summaryLoading ? <LoadSpinner /> : <h5><TypeWriterText withBlink string="The are no summary results for the given parameters" /></h5>}
+        </div>}
+        {tableData.length >= 0 && <div className='col-12 relative'>
+          <h4 className="text-primary mb-3">By Post</h4>
+          {tableData.length > 0 ?
+            <div className="card bg-secondary"><Table rawData={tableData} columnArray={gscColumnArray} className="relative" /></div>
+            : loading ? <LoadSpinner /> : <h5><TypeWriterText withBlink string="The are no post results for the given parameters" /></h5>}
+        </div>}
+        <div className='col-auto d-flex justify-content-center'>
+          {paginator.renderComponent()}
         </div>
       </div>
     </div>

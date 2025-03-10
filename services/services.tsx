@@ -443,7 +443,7 @@ export const getAhrefsKeywords = (reqObj: Request.PageRequest) => {
 }
 
 export const getGSCLiveURLReport = (reqObj: Request.GSCTotalsRequest) => {
-  return axiosInstance.get(`https://search-analytics-api-dev456.replit.app/gsc_live_url_report${parseQueries(reqObj)}`);
+  return axiosInstance.get(`https://search-analytics-api-dev456.replit.app/gsc_benchmarks${parseQueries(reqObj)}`);
 }
 
 export const populateBulkGSC = (reqObj) => {

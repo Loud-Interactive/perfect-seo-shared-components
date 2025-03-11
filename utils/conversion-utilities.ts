@@ -121,3 +121,17 @@ export const convertIncomingToFormData = (data: ContentIncomingProps) => {
 export function text2Binary(text) {
   return text.split('').map((char) => char.charCodeAt(0).toString(2)).join(' ');
 }
+
+export function keyToLabel(text: string, capAll?: boolean) {
+  let newText = '';
+  if (capAll) {
+    newText = text.split("_").map((word) => {
+      return word.charAt(0).toUpperCase() + word.slice(1)
+    }).join(" ")
+  }
+  else {
+    newText = text.replaceAll("_", " ")
+  }
+  return newText
+
+}

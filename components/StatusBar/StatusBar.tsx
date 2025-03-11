@@ -3,6 +3,7 @@ import { ContentType } from "@/perfect-seo-shared-components/data/types";
 import { fetchOutlineStatus, getFactCheckStatus, getPostStatus } from "@/perfect-seo-shared-components/services/services";
 import { useEffect, useState } from "react";
 import TypeWriterText from "../TypeWriterText/TypeWriterText";
+import { keyToLabel } from "@/perfect-seo-shared-components/utils/conversion-utilities";
 
 interface StatusBarProps {
   content_plan_outline_guid?: string;
@@ -173,7 +174,7 @@ const StatusBar = ({
             </>
             :
             <>
-              <strong className="text-primary me-2">Outline Status</strong> {outlineStatus}
+              <strong className="text-primary me-2">Outline Status</strong> {keyToLabel(outlineStatus)}
             </>
         }
       </div>
@@ -188,7 +189,7 @@ const StatusBar = ({
             </>
             :
             <>
-              <strong className="text-primary me-2">Post Status</strong> {postStatus}
+              <strong className="text-primary me-2">Post Status</strong> {keyToLabel(postStatus)}
             </>
           }
         </div>
@@ -227,7 +228,7 @@ const StatusBar = ({
             </>
             :
             <>
-              <strong className="text-primary me-2">Fact Check Status</strong> <TypeWriterText withBlink string={factcheckStatus} />
+              <strong className="text-primary me-2">Fact Check Status</strong> <TypeWriterText withBlink string={keyToLabel(factcheckStatus)} />
             </>
           }
         </div>

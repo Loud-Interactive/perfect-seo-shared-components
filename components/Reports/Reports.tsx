@@ -277,9 +277,13 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
                           return (
                             <tr key={`summary-section-data-${i}`}>
                               <td>{formatKeyToTitle(data)}</td>
+
                               <td>{lineData?.total_clicks >= 0 ? lineData?.total_clicks?.toLocaleString() : lineData?.clicks_percentage > 0 ? `${lineData.clicks_percentage}%` : null}</td>
+
                               <td>{lineData?.total_impressions >= 0 ? lineData?.total_impressions?.toLocaleString() : lineData?.impressions_percentage > 0 ? `${lineData?.impressions_percentage}%` : null}</td>
+
                               <td>{lineData?.avg_ctr_percent >= 0 ? `${lineData?.avg_ctr_percent.toFixed(1)}%` : lineData?.ctr_difference > 0 ? `${lineData?.ctr_difference}%` : null}</td>
+
                               <td>{lineData?.avg_position >= 0 ? lineData?.avg_position?.toFixed(3) : lineData?.position_difference > 0 ? `${lineData?.position_difference?.toFixed(3)}` : null}</td>
                             </tr>
                           )

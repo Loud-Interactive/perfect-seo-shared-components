@@ -42,9 +42,11 @@ const QueueCard = ({ queue, i, removeItem, bulkStatus }: QueueCardProps) => {
     fetchData();
   }
 
+
   const liveUrlChangeHandler = (e) => {
     setLiveUrl(e.target.value)
   }
+
 
   const isComplete = useMemo(() => {
     return status && completedStatuses.includes(status?.toLowerCase())

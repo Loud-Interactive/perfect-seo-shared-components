@@ -5,13 +5,11 @@ import { deleteContentOutline, getContentPlanOutlinesByDomain, getContentPlanOut
 import * as Modal from '@/perfect-seo-shared-components/components/Modal/Modal'
 import Loader from '../Loader/Loader'
 import TypeWriterText from '@/perfect-seo-shared-components/components/TypeWriterText/TypeWriterText'
-import PostItem from '../PostItem/PostItem'
 import { useSelector } from 'react-redux'
-import { RootState } from '@/perfect-seo-shared-components/lib/store'
 import OutlineItem from '../OutlineItem/OutlineItem'
 import usePaginator from '@/perfect-seo-shared-components/hooks/usePaginator'
 import { selectEmail, selectIsAdmin } from '@/perfect-seo-shared-components/lib/features/User'
-
+import { createClient } from '@/perfect-seo-shared-components/utils/supabase/client'
 export interface OutlinesListProps {
   domain_name: string;
   active: boolean;
@@ -25,7 +23,7 @@ const OutlinesList = ({ domain_name, active }: OutlinesListProps) => {
   const [hasPosts, setHasPosts] = useState(false)
 
   const paginator = usePaginator()
-
+  const supabase = createClient()
   const getOutlines = () => {
 
     if (active) {
@@ -33,6 +31,24 @@ const OutlinesList = ({ domain_name, active }: OutlinesListProps) => {
       setLoading(true);
       setData(null)
       if (domain_name) {
+        let startIndex = paginator?.currentPage === 1 ? 0 : (paginator.currentPage - 1) * paginator.limit;
+        let endIndex = startIndex + paginator.limit - 1
+        return supabase
+          .from('content_plan_outlines')
+          .select('*', { count: 'planned' })
+          .range(startIndex, endIndex)
+          .eq('domain', domain_name)
+          .then(res => {
+            if (res.data) {
+              paginator.setItemCount(res.count)
+              setData(res.data)
+              setLoading(false)
+            }
+            else {
+              setLoading(false);
+              setData(null)
+            }
+          })
         getContentPlanOutlinesByDomain(domain_name, paginator.paginationObj)
           .then(res => {
             paginator.setItemCount(res.data.total)

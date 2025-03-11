@@ -119,7 +119,7 @@ const ActionButtonGroup = ({
   const addToQueue = () => {
     let newObject: QueueItemProps = {
       type: 'outline',
-      domain: data?.client_domain,
+      domain: data?.client_domain || data?.domain,
       guid: data?.guid || data?.content_plan_outline_guid,
       email,
       isComplete: false,
@@ -135,7 +135,7 @@ const ActionButtonGroup = ({
   const addPostToQueue = () => {
     let newObject: QueueItemProps = {
       type: 'post',
-      domain: data?.client_domain,
+      domain: data?.client_domain || data.domain,
       guid: data?.guid,
       email,
       isComplete: false,
@@ -264,9 +264,9 @@ const ActionButtonGroup = ({
                     <button className="btn btn-transparent w-100" onClick={addToQueue}><i className="material-icons me-2">queue</i>Add Outline to Queue
                     </button>
                   </DropdownMenu.Item>
-                  <DropdownMenu.Item>
+                  {type === ContentType.POST && <DropdownMenu.Item>
                     <button className="btn btn-transparent w-100" onClick={addPostToQueue}><i className="material-icons me-2">queue</i>Add Post to Watchlist</button>
-                  </DropdownMenu.Item>
+                  </DropdownMenu.Item>}
                 </>
                 }
                 {(data?.content_plan_outline_guid && data?.content_plan_guid) &&

@@ -4,6 +4,8 @@ import { fetchOutlineStatus, getFactCheckStatus, getPostStatus } from "@/perfect
 import { useEffect, useState } from "react";
 import TypeWriterText from "../TypeWriterText/TypeWriterText";
 import { keyToLabel } from "@/perfect-seo-shared-components/utils/conversion-utilities";
+import useStatus from "@/perfect-seo-shared-components/hooks/useStatus";
+// import useStatus from "@/perfect-seo-shared-components/hooks/useStatus";
 
 interface StatusBarProps {
   content_plan_outline_guid?: string;
@@ -20,9 +22,6 @@ interface StatusBarProps {
 
 const StatusBar = ({
   content_plan_outline_guid,
-  content_plan_guid,
-  content_plan_factcheck_guid,
-  content_plan_social_guid,
   addLiveUrlHandler,
   live_post_url,
   onGeneratePost,
@@ -30,78 +29,13 @@ const StatusBar = ({
   index_status,
   type
 }: StatusBarProps) => {
-  const [outlineStatus, setOutlineStatus] = useState<string>('');
-  const [postStatus, setPostStatus] = useState<string>('');
-  const [factcheckStatus, setFactcheckStatus] = useState<string>('');
-
-  const [outlineLoading, setOutlineLoading] = useState<boolean>(false);
-  const [postLoading, setPostLoading] = useState<boolean>(false);
-  const [factcheckLoading, setFactcheckLoading] = useState<boolean>(false);
-
-  const [outlineError, setOutlineError] = useState<string>('');
-  const [postError, setPostError] = useState<string>('');
-  const [factcheckError, setFactcheckError] = useState<string>('');
 
 
-  const [outlineComplete, setOutlineComplete] = useState<boolean>(false);
-  const [postComplete, setPostComplete] = useState<boolean>(false);
-  const [factcheckComplete, setFactcheckComplete] = useState<boolean>(false);
-  const fetchOutlineStatusData = () => {
-    if (content_plan_outline_guid) {
-      setOutlineLoading(true);
-      fetchOutlineStatus(content_plan_outline_guid)
-        .then(res => {
-          setOutlineLoading(false);
-          setOutlineStatus(res.data.status);
-        })
-        .catch(err => {
-          setOutlineLoading(false);
-          console.log(err.response)
-          if (err.response.data.detail.includes("No outline found for GUID")) {
-            setOutlineStatus("completed")
-          } else {
-            setOutlineError(err?.response?.data?.message || err?.message || 'An error occurred');
-          }
-        });
-    }
-  };
+  const { status, isComplete, resetStatus, data, error } = useStatus(content_plan_outline_guid);
+  const { outline: outlineStatus, post: postStatus, factcheck: factcheckStatus } = status;
+  const { outline: outlineComplete, post: postComplete, factcheck: factcheckComplete } = isComplete;
+  const { outline: outlineError, post: postError, factcheck: factcheckError } = error;
 
-  const fetchPostStatusData = () => {
-    if (content_plan_outline_guid) {
-      setPostLoading(true);
-      getPostStatus(content_plan_outline_guid)
-        .then(res => {
-          setPostLoading(false);
-          setPostStatus(res.data.status);
-        })
-        .catch(err => {
-          setPostLoading(false);
-          setPostError(err?.response?.data?.message || err?.message || 'An error occurred');
-        });
-    }
-  };
-
-  const fetchFactcheckStatusData = () => {
-    if (content_plan_factcheck_guid) {
-      setFactcheckLoading(true);
-      getFactCheckStatus(content_plan_factcheck_guid)
-        .then(res => {
-          let status = res.data.status.replaceAll("_", " ").split(":")[0];
-          setFactcheckLoading(false);
-          setFactcheckStatus(status);
-        })
-        .catch(err => {
-          setFactcheckLoading(false);
-          setFactcheckError(err?.response?.data?.message || err?.message || 'An error occurred');
-        });
-    }
-  };
-
-  useEffect(() => {
-    setOutlineComplete(outlineStatus === 'completed');
-    setPostComplete(postStatus === 'Complete');
-    setFactcheckComplete(factcheckStatus === 'completed');
-  }, [outlineStatus, postStatus, factcheckStatus]);
 
   const addLiveUrlClickHandler = (e) => {
     e.preventDefault();
@@ -109,51 +43,6 @@ const StatusBar = ({
       addLiveUrlHandler();
     }
   }
-  useEffect(() => {
-    let outlineInterval;
-    if (!outlineComplete) {
-      fetchOutlineStatusData();
-      outlineInterval = setInterval(() => {
-        fetchOutlineStatusData();
-      }, 60000);
-    }
-    return () => {
-      if (outlineInterval) {
-        clearInterval(outlineInterval);
-      }
-    };
-  }, [outlineComplete]);
-
-  useEffect(() => {
-    let postInterval;
-    if (!postComplete) {
-      fetchPostStatusData();
-      postInterval = setInterval(() => {
-        fetchPostStatusData();
-      }, 60000);
-    }
-    return () => {
-      if (postInterval) {
-        clearInterval(postInterval);
-      }
-    };
-  }, [postComplete]);
-
-  useEffect(() => {
-    let factcheckInterval;
-    if (!factcheckComplete) {
-      fetchFactcheckStatusData();
-      factcheckInterval = setInterval(() => {
-        fetchFactcheckStatusData();
-      }, 60000);
-    }
-    return () => {
-      if (factcheckInterval) {
-        clearInterval(factcheckInterval);
-      }
-    };
-  }, [factcheckComplete]);
-
 
 
   const generatePostClickHandler = (e) => {

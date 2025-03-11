@@ -268,6 +268,7 @@ export interface PostUploadItem {
   writing_language?: string
   status?: string;
   guid?: string;
+  domain?: string;
 }
 
 

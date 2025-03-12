@@ -36,24 +36,50 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
 
   const fetchPlans = () => {
     if (domain_name) {
-      getContentPlansByDomain(domain_name, paginator.paginationObj)
+      let startIndex = paginator?.currentPage === 1 ? 0 : (paginator.currentPage - 1) * paginator.limit;
+      let endIndex = startIndex + paginator.limit - 1
+      supabase
+        .from('content_plans')
+        .select("*")
+        .range(startIndex, endIndex)
+        .eq('domain_name', domain_name)
         .then(res => {
-          let newData = res.data.items.map(obj => {
-            let newObj = obj;
-            newObj.target_keyword = newObj?.keyword || 'N/A'
-            return newObj;
-          }
-          )
-          paginator.setItemCount(res.data.total)
-          setData(newData)
-          setLoading(false)
-        })
+          if (res.data) {
+            let newData = res.data.map(obj => {
+              let newObj = obj;
+              newObj.target_keyword = newObj?.keyword || 'N/A'
+              return newObj;
+            }
+            )
+            paginator.setItemCount(res.count)
+            setData(newData)
+            setLoading(false)
 
-        .catch(err => {
-          paginator.setItemCount(0)
-          setLoading(false);
-          setData(null)
+          }
+          else {
+            paginator.setItemCount(0)
+            setLoading(false);
+            setData(null)
+          }
         })
+      // getContentPlansByDomain(domain_name, paginator.paginationObj)
+      //   .then(res => {
+      //     let newData = res.data.items.map(obj => {
+      //       let newObj = obj;
+      //       newObj.target_keyword = newObj?.keyword || 'N/A'
+      //       return newObj;
+      //     }
+      //     )
+      //     paginator.setItemCount(res.data.total)
+      //     setData(newData)
+      //     setLoading(false)
+      //   })
+
+      //   .catch(err => {
+      //     paginator.setItemCount(0)
+      //     setLoading(false);
+      //     setData(null)
+      //   })
     }
     else {
       getContentPlansByEmail(email, paginator.paginationObj)

@@ -5,7 +5,7 @@ import styles from './Header.module.scss';
 import classNames from 'classnames';
 import useViewport from '@/perfect-seo-shared-components/hooks/useViewport';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectEmail, selectIsAdmin, selectIsLoading, selectIsLoggedIn, selectPoints, selectQueue, selectUser, setLoading, updatePoints } from '@/perfect-seo-shared-components/lib/features/User';
+import { selectEmail, selectIsAdmin, selectIsLoading, selectIsLoggedIn, selectPoints, selectUser, setLoading, updatePoints } from '@/perfect-seo-shared-components/lib/features/User';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { BrandStatus, Links, LinkType } from '@/perfect-seo-shared-components/data/types';
 import { useEffect, useMemo, useState } from 'react';
@@ -18,7 +18,6 @@ import { SEOPerfectLogo } from "@/perfect-seo-shared-components/assets/brandIcon
 import axiosInstance from "@/perfect-seo-shared-components/utils/axiosInstance";
 import { createClient } from "@/perfect-seo-shared-components/utils/supabase/client";
 import en from '@/assets/en.json';
-import Queue from "@/perfect-seo-shared-components/components/Queue/Queue";
 import { useRouter } from "next/navigation";
 
 export interface HeaderProps {
@@ -27,10 +26,9 @@ export interface HeaderProps {
   menuHeader?: any;
   hasLogin?: boolean;
   getCredits?: boolean;
-  hasQueue?: boolean
 }
 
-const Header = ({ links, menuHeader, current, hasLogin, getCredits, hasQueue }: HeaderProps) => {
+const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProps) => {
   const points = useSelector(selectPoints);
   const isLoggedIn = useSelector(selectIsLoggedIn);
   const isAdmin = useSelector(selectIsAdmin);
@@ -42,11 +40,7 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits, hasQueue }: 
   const { phone, desktop } = useViewport();
   const [currentPage, setCurrentPage] = useState('');
   const pathname = usePathname();
-  const queue = useSelector(selectQueue)
   const router = useRouter();
-  const metricClickHandler = () => {
-    router.push('/watchlist')
-  }
   // Function to load credit data for the user
   const loadCreditData = () => {
     checkUserCredits(email)
@@ -160,67 +154,15 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits, hasQueue }: 
     setOpen(!open);
   };
 
-  const metrics = useMemo(() => {
-    let newMetrics = { posts: { completed: 0, total: 0, percentage: 0 }, outlines: { completed: 0, total: 0, percentage: 0 }, contentPlans: { completed: 0, total: 0, percentage: 0 } }
-    if (queue) {
-      queue.forEach((item) => {
-        if (item.type === 'post') {
-          newMetrics.posts.total++
-          if (item.isComplete === true) {
-            newMetrics.posts.completed++
-          }
-        }
-        else if (item.type === 'outline') {
-          newMetrics.outlines.total++
-          if (item.isComplete === true) {
-            newMetrics.outlines.completed++
-          }
-        }
-        else if (item.type === 'plan') {
-          newMetrics.contentPlans.total++
-          if (item.isComplete === true) {
-            newMetrics.contentPlans.completed++
-          }
-        }
-      })
-    }
-    if (newMetrics.posts?.total >= 0) {
-      if (newMetrics.posts?.total === 0) {
-        newMetrics.posts.percentage = 0
-      }
-      else {
-        newMetrics.posts.percentage = Math.round((newMetrics.posts.completed / newMetrics.posts.total) * 100)
-      }
-    }
-    if (newMetrics.outlines?.total >= 0) {
-      if (newMetrics.outlines?.total === 0) {
-        newMetrics.outlines.percentage = 0
-      }
-      else {
-        newMetrics.outlines.percentage = Math.round((newMetrics.outlines.completed / newMetrics.outlines.total) * 100)
-      }
-    }
-    if (newMetrics.contentPlans?.total >= 0) {
-      if (newMetrics.contentPlans?.total === 0) {
-        newMetrics.contentPlans.percentage = 0
-      }
-      else {
-        newMetrics.contentPlans.percentage = Math.round((newMetrics?.contentPlans?.completed / newMetrics.contentPlans.total) * 100)
-      }
-    }
-    return newMetrics
-  }, [queue])
 
   const metricClasses = classNames('d-flex align-items-center mt-2 p-0',
     {
-      'cursor-pointer': isAdmin && queue?.length > 0 && currentPage !== '/watchlist',
       'justify-content-end': desktop,
       'justify-content-center': !desktop
     }
   )
   return (
     <header className={styles.header}>
-      {(!desktop && hasQueue) && <div className="d-none"><Queue /></div>}
       <div className='container-fluid container-xl'>
         <div className='row g-3 d-flex justify-content-between align-items-center'>
           <div className="col d-flex align-items-center justify-content-start">
@@ -240,24 +182,11 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits, hasQueue }: 
                         <strong className='me-2 text-primary'>Logged in as</strong>
                         {user?.email}
                       </div>
-                      {(isAdmin && queue?.length > 0) ?
-                        <div className={metricClasses} onClick={metricClickHandler}>
-                          {metrics?.contentPlans?.total > 0 && <>
-                            <span className="py-0 px-2" id="basic-addon1"><strong>Plans</strong></span>
-                            <span className="badge bg-primary py-1 px-2">{metrics?.contentPlans?.percentage}%</span>
-                          </>}
-                          {metrics?.outlines?.total > 0 && <>
-                            <span className="py-0 px-2" id="basic-addon1"><strong>Outlines</strong></span>
-                            <span className="badge bg-primary py-1 px-2">{metrics?.outlines?.percentage}%</span>
-                          </>}
-                          {metrics?.posts?.total > 0 && <>    <span className="py-0 px-2" id="basic-addon1"><strong>Posts</strong></span>
-                            <span className="py-1 px-2 badge bg-primary">{metrics?.posts?.percentage}%</span>
-                          </>}
-                        </div> : points ? (
-                          <div>
-                            <strong className='text-primary'>Credits</strong> {points.toLocaleString()}
-                          </div>
-                        ) : null}
+                      {points ? (
+                        <div>
+                          <strong className='text-primary'>Credits</strong> {points.toLocaleString()}
+                        </div>
+                      ) : null}
                     </>
                   ) : null : (
                     <button className="btn btn-google" onClick={loginWithGoogleHandler}>
@@ -288,15 +217,7 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits, hasQueue }: 
                                     <strong className='me-2 text-primary'>Logged in as</strong>
                                     {user?.email}
                                   </div>
-                                  {(isAdmin && queue?.length > 0) ?
-                                    <div className={metricClasses} onClick={metricClickHandler}>
-                                      <span className="py-0 px-2" id="basic-addon1"><strong>Plans</strong></span>
-                                      <span className="badge bg-primary py-1 px-2">{metrics?.contentPlans?.percentage}%</span>
-                                      <span className="py-0 px-2" id="basic-addon1"><strong>Outlines</strong></span>
-                                      <span className="badge bg-primary py-1 px-2">{metrics?.outlines?.percentage}%</span>
-                                      <span className="py-0 px-2" id="basic-addon1"><strong>Posts</strong></span>
-                                      <span className="py-1 px-2 badge bg-primary">{metrics?.posts?.percentage}%</span>
-                                    </div> :
+                                  {
                                     points ? (
                                       <div className='col-12 d-flex justify-content-start'>
                                         <strong className='me-2 text-primary'>Credits</strong> {points.toLocaleString()}
@@ -333,9 +254,6 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits, hasQueue }: 
                                         <i className="bi text-white bi-person-check-fill me-2" title="Logged In Only" />
                                       ) : null}
                                       {link.label}
-                                      {link?.href === '/watchlist' &&
-                                        <div className="input-group">
-                                        </div>}
                                     </Link>
                                   </div>
                                 );

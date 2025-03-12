@@ -5134,43 +5134,6 @@ header {
   background-color: #333333;
 }
 
-.queue-open {
-  >.col {
-    max-width: calc(100vw - 300px - calc(100% - 100vw));
-  }
-}
-
-.queue-sidebar {
-  max-width: 275px;
-  width: max-content;
-  max-height: calc(100dvh - 100px - env(safe-area-inset-bottom));
-  position: fixed;
-  right: 0;
-  top: 100px;
-  overflow-y: auto;
-  overflow-x: hidden;
-  font-size: 14px;
-  display: flex;
-  padding-right: env(safe-area-inset-right);
-
-
-  >.row {
-    margin: 0 !important;
-    flex-wrap: nowrap !important;
-  }
-
-  &.scrollbar-visible {
-    padding-right: calc(env(safe-area-inset-right) + 15px); // Adjust 15px based on scrollbar width
-  }
-
-  h3 {
-    font-size: 16px !important;
-  }
-
-  .btn {
-    font-size: 14px !important;
-  }
-}
 
 .max-screen {
   max-width: calc(100vw - calc(100% - 100vw));
@@ -5189,28 +5152,6 @@ header {
   font-size: 10px !important;
 }
 
-.queue-sidebar-button {
-  width: 15px;
-  position: sticky;
-  bottom: 0px;
-  left: 0;
-
-
-
-  .btn {
-    width: 15px !important;
-    min-width: 15px !important;
-    height: calc(100dvh - 10px);
-    border-radius: 0 !important;
-    padding: 0 !important;
-  }
-}
-
-.queue-footer {
-  @include Desktop {
-    max-width: calc(100vw - 300px - calc(100% - 100vw));
-  }
-}
 
 .tool-tip {
   z-index: 5000;

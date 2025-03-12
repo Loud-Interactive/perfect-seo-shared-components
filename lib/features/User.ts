@@ -1,6 +1,6 @@
 "use client";
 
-import { SettingsProps, GoogleUser, Profile, PreferencesProps, QueueItemProps, ToastProps, Schema } from "@/perfect-seo-shared-components/data/types";
+import { SettingsProps, GoogleUser, Profile, PreferencesProps, ToastProps, Schema } from "@/perfect-seo-shared-components/data/types";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
@@ -14,10 +14,8 @@ export type RootState = {
   domainInfo: Partial<PreferencesProps>[]
   profile: Profile,
   settings: SettingsProps
-  queue: QueueItemProps[],
   loading: LoadingStates[],
   toasts: ToastProps[]
-  show_queue: boolean;
   schema: Schema[]
 };
 
@@ -36,12 +34,10 @@ const initialState: RootState = {
   settings: null,
   domainAccessInfo: [],
   domainInfo: [],
-  queue: [],
   loading: [
     { loading: false, key: 'user' },
   ],
   toasts: [],
-  show_queue: false,
   schema: []
 };
 
@@ -139,45 +135,6 @@ export const UserSlice = createSlice({
         }
       }
     },
-    setQueue: (state, action: PayloadAction<QueueItemProps[]>) => {
-      return {
-        ...state,
-        queue: action.payload,
-      }
-    },
-    updateQueueItem: (state, action: PayloadAction<QueueItemProps>) => {
-      let queue = state.queue.map((item) => {
-        if (item.id === action.payload.id) {
-          return { ...item, ...action.payload };
-        }
-        else {
-          return item;
-        }
-      });
-      return {
-        ...state,
-        queue
-      }
-    },
-    addQueueItem: (state, action: PayloadAction<QueueItemProps>) => {
-      return {
-        ...state,
-        queue: [...state.queue, action.payload]
-      }
-    },
-    removeQueueItem: (state, action: PayloadAction<QueueItemProps>) => {
-      let queue = state.queue.filter((item) => item.id !== action.payload.id);
-      return {
-        ...state,
-        queue
-      }
-    },
-    clearQueue: (state) => {
-      return {
-        ...state,
-        queue: []
-      }
-    },
     setLoader: (state, action: PayloadAction<LoadingStates>) => {
       let loading = state.loading.map((item) => {
         if (item.key === action.payload.key) {
@@ -216,12 +173,6 @@ export const UserSlice = createSlice({
         toasts: []
       }
     },
-    setShowQueue: (state, action: PayloadAction<boolean>) => {
-      return {
-        ...state,
-        show_queue: action.payload
-      }
-    },
     setSchema: (state, action: PayloadAction<Schema[]>) => {
       return {
         ...state,
@@ -232,7 +183,7 @@ export const UserSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { setUser, setProfile, updatePoints, setLoggedIn, setLoading, setAdmin, setDomainInfo, setDomainAccess, reset, setUserSettings, updateDomainInfo, setQueue, updateQueueItem, clearQueue, setLoader, addQueueItem, removeQueueItem, removeToast, addToast, clearToasts, setShowQueue, setSchema } = UserSlice.actions;
+export const { setUser, setProfile, updatePoints, setLoggedIn, setLoading, setAdmin, setDomainInfo, setDomainAccess, reset, setUserSettings, updateDomainInfo, setLoader, removeToast, addToast, clearToasts, setSchema } = UserSlice.actions;
 
 // Selectors
 export const selectUser = (state: RootState) => state?.user;
@@ -245,11 +196,9 @@ export const selectDomainsInfo = (state: RootState) => state?.domainInfo;
 export const selectSettings = (state: RootState) => state?.settings;
 export const selectEmail = (state: RootState) => state?.profile?.email;
 export const selectDomains = (state: RootState) => state?.profile?.domain_access;
-export const selectQueue = (state: RootState) => state?.queue;
 export const selectLoader = (state: RootState) => state?.loading;
 export const selectDomainInfo = (key: string) => (state: RootState) => state?.domainInfo?.find((domain) => domain.domain_name === key || domain.domain === key);
 export const selectToasts = (state: RootState) => state?.toasts;
-export const selectShowQueue = (state: RootState) => state?.show_queue;
 export const selectSchema = (state: RootState) => state?.schema;
 
 export default UserSlice.reducer;

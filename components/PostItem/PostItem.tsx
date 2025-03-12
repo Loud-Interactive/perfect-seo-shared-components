@@ -4,17 +4,14 @@ import TextInput from "../Form/TextInput"
 import { urlValidator } from "@/perfect-seo-shared-components/utils/validators"
 import { deleteContentOutline, getPostStatus, regeneratePost, updateLiveUrl } from "@/perfect-seo-shared-components/services/services"
 import moment from "moment-timezone"
-import TypeWriterText from "../TypeWriterText/TypeWriterText"
 import * as Modal from '@/perfect-seo-shared-components/components/Modal/Modal'
-import { urlSanitization } from "@/perfect-seo-shared-components/utils/conversion-utilities"
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { useDispatch, useSelector } from "react-redux"
-import { addToast, selectEmail, selectIsAdmin } from "@/perfect-seo-shared-components/lib/features/User"
+import { selectEmail, selectIsAdmin } from "@/perfect-seo-shared-components/lib/features/User"
 import CreateContentModal from "../CreateContentModal/CreateContentModal"
 import { createClient } from "@/perfect-seo-shared-components/utils/supabase/client"
 import en from '@/assets/en.json'
 import RegeneratePostModal, { GenerateTypes } from "../RegeneratePostModal/RegeneratePostModal"
-import { QueueItemProps, ContentType } from "@/perfect-seo-shared-components/data/types"
+import { ContentType } from "@/perfect-seo-shared-components/data/types"
 import Form from "../Form/Form"
 import useForm from "@/perfect-seo-shared-components/hooks/useForm"
 import FactCheckModal from "../FactCheckModal/FactCheckModal"
@@ -165,22 +162,6 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
       })
   }
 
-  const addToQueue = () => {
-    let newObject: QueueItemProps = {
-      type: 'post',
-      domain: post?.client_domain,
-      guid: post?.content_plan_outline_guid,
-      email,
-      isComplete: status === 'Finished' ? true : false,
-    }
-    supabase
-      .from('user_queues')
-      .insert(newObject)
-      .select("*")
-      .then(res => {
-        dispatch(addToast({ title: "Post Added to Watchlist", type: "info", content: `${localPost?.title || localPost?.post_title || localPost?.content_plan_outline_title} added to Watchlist` }))
-      })
-  }
 
   const regeneratePostHandler = (receiving_email, writing_language) => {
     setRegerateError(null)

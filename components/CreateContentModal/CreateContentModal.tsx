@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import styles from "./CreateContentModal.module.scss";
 import OutlineRow from "./OutlineRow/OutlineRow";
-import { OutlineRowProps, QueueItemProps } from '@/perfect-seo-shared-components/data/types'
+import { OutlineRowProps } from '@/perfect-seo-shared-components/data/types'
 import useForm from "@/perfect-seo-shared-components/hooks/useForm";
 import Form from "@/perfect-seo-shared-components/components/Form/Form";
 import * as Modal from "@/perfect-seo-shared-components/components/Modal/Modal";
@@ -358,27 +358,6 @@ const CreateContentModal = ({
 
     setSubmitted(true);
     return createPost(reqBody)
-      .then((res) => {
-        if (res.data?.uuid) {
-          if (track) { }
-
-          let newObject: QueueItemProps = {
-            type: 'post',
-            domain: contentPlan.domain_name || contentPlan.client_domain,
-            guid: outlineGUID,
-            email,
-            isComplete: false,
-          }
-          supabase
-            .from('user_queues')
-            .insert(newObject)
-            .select("*")
-            .then(res => {
-              console.log(res.data)
-            })
-        }
-        return res
-      })
   };
 
   const regenerateClickHandler = () => {

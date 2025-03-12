@@ -1,9 +1,9 @@
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import * as Modal from '@/perfect-seo-shared-components/components/Modal/Modal'
 import { useDispatch, useSelector } from 'react-redux';
-import { ContentType, QueueItemProps } from '@/perfect-seo-shared-components/data/types';
+import { ContentType } from '@/perfect-seo-shared-components/data/types';
 import { addToast, selectEmail, selectIsAdmin } from '@/perfect-seo-shared-components/lib/features/User';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { createPost, deleteContentOutline, deleteOutline, regenerateHTML, regenerateOutline, regeneratePost, updateLiveUrl } from '@/perfect-seo-shared-components/services/services';
 import { createClient } from '@/perfect-seo-shared-components/utils/supabase/client';
 import en from '@/assets/en.json'
@@ -116,39 +116,6 @@ const ActionButtonGroup = ({
     setShowEditModal(true)
   }
 
-  const addToQueue = () => {
-    let newObject: QueueItemProps = {
-      type: 'outline',
-      domain: data?.client_domain,
-      guid: data?.guid || data?.content_plan_outline_guid,
-      email,
-      isComplete: false,
-    }
-    supabase
-      .from('user_queues')
-      .insert(newObject)
-      .select("*")
-      .then(res => {
-        dispatch(addToast({ title: "Outline Added to Watchlist", type: "info", content: `Outline ${data?.post_title} to the watchlist` }))
-      })
-  }
-  const addPostToQueue = () => {
-    let newObject: QueueItemProps = {
-      type: 'post',
-      domain: data?.client_domain,
-      guid: data?.guid,
-      email,
-      isComplete: false,
-    }
-    supabase
-      .from('user_queues')
-      .insert(newObject)
-      .select("*")
-      .then(res => {
-        dispatch(addToast({ title: "Post Added to Watchlist", type: "info", content: `Post ${data?.post_title} to the watchlist` }))
-      })
-  }
-
   const generatePostHandler = (receiving_email, writing_language?) => {
     let newOutline = typeof data?.outline === 'string' ? JSON.parse(data?.outline) : data?.outline
     let reqBody: GenerateContentPost = {
@@ -165,10 +132,6 @@ const ActionButtonGroup = ({
       writing_language: writing_language || 'English'
     };
     return createPost(reqBody)
-      .then((res) => {
-        addPostToQueue();
-        return res
-      })
   }
 
   const regeneratePostHandler = (receiving_email, writing_language) => {
@@ -259,16 +222,6 @@ const ActionButtonGroup = ({
             </DropdownMenu.Trigger>
             <DropdownMenu.Portal>
               <DropdownMenu.Content align="end" className="bg-primary z-100 card">
-                {isAdmin && <>
-                  <DropdownMenu.Item>
-                    <button className="btn btn-transparent w-100" onClick={addToQueue}><i className="material-icons me-2">queue</i>Add Outline to Queue
-                    </button>
-                  </DropdownMenu.Item>
-                  <DropdownMenu.Item>
-                    <button className="btn btn-transparent w-100" onClick={addPostToQueue}><i className="material-icons me-2">queue</i>Add Post to Watchlist</button>
-                  </DropdownMenu.Item>
-                </>
-                }
                 {(data?.content_plan_outline_guid && data?.content_plan_guid) &&
                   <DropdownMenu.Item>
                     <button className="btn btn-transparent w-100" onClick={handleEditOutline}>

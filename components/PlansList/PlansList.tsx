@@ -13,7 +13,6 @@ import { addToast, selectEmail, selectIsAdmin } from '@/perfect-seo-shared-compo
 import LoadSpinner from '../LoadSpinner/LoadSpinner'
 import ContentPlanForm from '@/perfect-seo-shared-components/components/ContentPlanForm/ContentPlanForm'
 import { createClient } from '@/perfect-seo-shared-components/utils/supabase/client'
-import { QueueItemProps } from '@/perfect-seo-shared-components/data/types'
 
 export interface PlanListProps {
   domain_name: string;
@@ -78,22 +77,7 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
     }
   }
 
-  const addToQueue = (obj) => {
-    let newObject: QueueItemProps = {
-      type: 'plan',
-      domain: obj?.domain_name,
-      guid: obj?.guid,
-      email,
-      isComplete: obj?.status === 'Finished' ? true : false,
-    }
-    supabase
-      .from('user_queues')
-      .insert(newObject)
-      .select("*")
-      .then(res => {
-        dispatch(addToast({ title: "Content Plan Added Content to Watchlist", type: "info", content: `${obj?.target_keyword} Content Plan for ${obj?.domain_name} added to Watchlist` }))
-      })
-  }
+
 
   useEffect(() => {
     let interval;
@@ -164,9 +148,6 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
           <button className='btn btn-primary d-flex align-items-center justify-content-center' onClick={(e) => { e.preventDefault(); duplicateClickHandler(obj) }} title={`Duplicate: ${obj.guid}`}>
             <i className="bi bi-copy" />
           </button>
-          {isAdmin && <button className='btn btn-primary d-flex align-items-center justify-content-center' onClick={(e) => { e.preventDefault(); addToQueue(obj) }} title={`Add to Watchlist: ${obj.guid}`}>
-            <i className="material-icons">queue</i>
-          </button>}
           <button className='btn btn-warning d-flex align-items-center justify-content-center' onClick={deleteClickHandler} title={`View GUID: ${obj.guid}`}><i className="bi bi-trash pt-1" /></button>
         </div>
       </div>

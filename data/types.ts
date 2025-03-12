@@ -670,24 +670,6 @@ export interface PlayerProps {
 
 }
 
-export interface AssocGUIDS {
-  guid: string,
-  type: ContentType | string
-  isComplete?: boolean
-}
-
-export interface QueueItemProps {
-  created_at?: string,
-  type: ContentType | string,
-  domain: string,
-  guid: string,
-  associatedGuids?: AssocGUIDS[],
-  isComplete?: boolean;
-  email: string;
-  data?: any
-  id?: string
-}
-
 export interface ToastProps {
   id?: string
   title: string

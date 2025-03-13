@@ -13,6 +13,7 @@ import { addToast, selectEmail, selectIsAdmin } from '@/perfect-seo-shared-compo
 import LoadSpinner from '../LoadSpinner/LoadSpinner'
 import ContentPlanForm from '@/perfect-seo-shared-components/components/ContentPlanForm/ContentPlanForm'
 import { createClient } from '@/perfect-seo-shared-components/utils/supabase/client'
+import ContentPlanStatusCell from './ContentPlanStatusCell'
 
 export interface PlanListProps {
   domain_name: string;
@@ -38,42 +39,45 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
     if (domain_name) {
       getContentPlansByDomain(domain_name, paginator.paginationObj)
         .then(res => {
-          let newData = res.data.items.map(obj => {
-            let newObj = obj;
-            newObj.target_keyword = newObj?.keyword || 'N/A'
-            return newObj;
+          if (res.data) {
+            let newData = res.data.map(obj => {
+              let newObj = obj;
+              newObj.keyword = newObj?.keyword || 'N/A'
+              return newObj;
+            }
+            )
+            paginator.setItemCount(res.count)
+            setData(newData)
+            setLoading(false)
           }
-          )
-          paginator.setItemCount(res.data.total)
-          setData(newData)
-          setLoading(false)
-        })
+          else {
+            paginator.setItemCount(0)
+            setLoading(false);
+            setData(null)
+          }
 
-        .catch(err => {
-          paginator.setItemCount(0)
-          setLoading(false);
-          setData(null)
         })
     }
     else {
       getContentPlansByEmail(email, paginator.paginationObj)
         .then(res => {
-          let newData = res.data.items.map(obj => {
-
-            let newObj = obj;
-            newObj.target_keyword = newObj?.keyword || 'N/A'
-            return newObj;
+          if (res.data) {
+            let newData = res.data.map(obj => {
+              let newObj = obj;
+              newObj.keyword = newObj?.keyword || 'N/A'
+              return newObj;
+            }
+            )
+            paginator.setItemCount(res.count)
+            setData(newData)
+            setLoading(false)
           }
-          )
-          paginator.setItemCount(res.data.total)
-          setData(newData)
-          setLoading(false)
-        })
+          else {
+            paginator.setItemCount(0)
+            setLoading(false);
+            setData(null)
+          }
 
-        .catch(err => {
-          paginator.setItemCount(0)
-          setLoading(false);
-          setData(null)
         })
     }
   }
@@ -92,67 +96,6 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
     }
   }, [domain_name, active, paginator.currentPage, paginator.limit, newModal])
 
-  const completeStatuses = ["Finished", "Your Content Plan Has Been Created"]
-
-  const renderStatusCell = (obj) => {
-
-    const { status } = obj;
-    const clickHandler = (e) => {
-      e.preventDefault();
-      if (completeStatuses.includes(status)) {
-        router.push(`/contentplan/${obj.guid}`)
-      }
-      else {
-        router.push(`/waiting-room/${obj.guid}`)
-      }
-    }
-    const deleteClickHandler = (e) => {
-      e.preventDefault();
-      setDeleteModal(obj.guid)
-    }
-
-    const duplicateClickHandler = (obj) => {
-
-      let newData = {
-        email: obj.email,
-        brandName: obj.brand_name,
-        domainName: obj.domain_name,
-        targetKeyword: obj.target_keyword,
-        entityVoice: obj?.entity_voice,
-        priorityCode: obj?.priority_code,
-        writing_language: obj?.writing_language,
-        url1: obj?.inspiration_url_1,
-        url2: obj?.inspiration_url_2,
-        url3: obj?.inspiration_url_3,
-        priority1: obj?.inspirational_url_1_priority,
-        priority2: obj?.inspirational_url_2_priority,
-        priority3: obj?.inspirational_url_3_priority
-      }
-
-      setDuplicateInfo(newData)
-      setNewModal(true)
-    }
-
-    return (
-      <div className='d-flex justify-content-end align-items-center'>
-        {/* {isAdmin && <div className='me-2'>{obj?.guid}</div>} */}
-        {(completeStatuses.includes(status) === false) &&
-          <span className='text-primary'>
-            <TypeWriterText string={status} withBlink />
-          </span>
-        }
-        <div className='input-group d-flex justify-content-end'>
-          {(completeStatuses.includes(status)) &&
-            <button className="btn btn-primary" onClick={clickHandler} title={`View GUID: ${obj.guid}`}>View Plan</button>
-          }
-          <button className='btn btn-primary d-flex align-items-center justify-content-center' onClick={(e) => { e.preventDefault(); duplicateClickHandler(obj) }} title={`Duplicate: ${obj.guid}`}>
-            <i className="bi bi-copy" />
-          </button>
-          <button className='btn btn-warning d-flex align-items-center justify-content-center' onClick={deleteClickHandler} title={`View GUID: ${obj.guid}`}><i className="bi bi-trash pt-1" /></button>
-        </div>
-      </div>
-    )
-  }
 
 
   const RenderTitle = ({ obj }) => {
@@ -160,7 +103,7 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
     return (
       <div>
         <p className='mb-0'>
-          {obj.target_keyword} {(domain !== domain_name) && <span className='badge bg-primary ms-2'>{obj.brand_name}</span>}
+          {obj.keyword} {(domain !== domain_name) && <span className='badge bg-primary ms-2'>{obj.brand_name}</span>}
         </p>
         {email !== obj?.email && <span> by <span className="text-primary">{obj?.email}</span></span>}
       </div>
@@ -171,16 +114,16 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
     if (phone || tablet) {
       return [
         {
-          id: 'target_keyword', Header: 'Target Keyword', accessor: (obj) => <RenderTitle obj={obj} />
+          id: 'keyword', Header: 'Keyword', accessor: (obj) => <RenderTitle obj={obj} />
         },
-        { id: 'guid', Header: 'Actions', accessor: renderStatusCell, headerClassName: 'text-end pe-3', cellClassName: 'max-325' },
+        { id: 'guid', Header: 'Actions', accessor: (obj) => <ContentPlanStatusCell plan={obj} setDeleteModal={setDeleteModal} setNewModal={setNewModal} setDuplicateInfo={setDuplicateInfo} />, headerClassName: 'text-end pe-3', cellClassName: 'max-325' },
       ];
     }
     else {
       return [
-        { id: 'target_keyword', Header: 'Target Keyword', accessor: obj => <RenderTitle obj={obj} />, disableSortBy: false },
+        { id: 'keyword', Header: 'Keyword', accessor: obj => <RenderTitle obj={obj} />, disableSortBy: false },
         { id: 'timestamp', Header: 'Timestamp', accessor: (obj) => moment(obj.timestamp + 'Z').format("dddd, MMMM Do, YYYY h:mma"), disableSortBy: false },
-        { id: 'guid', Header: 'Actions', accessor: renderStatusCell, headerClassName: 'text-end pe-3', cellClassName: 'max-325' },
+        { id: 'guid', Header: 'Actions', accessor: (obj) => <ContentPlanStatusCell plan={obj} setDeleteModal={setDeleteModal} setNewModal={setNewModal} setDuplicateInfo={setDuplicateInfo} />, headerClassName: 'text-end pe-3', cellClassName: 'max-325' },
       ];
     }
   }, [phone, tablet, domain_name])

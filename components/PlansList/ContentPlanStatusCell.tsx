@@ -1,0 +1,104 @@
+'use client'
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import TypeWriterText from "../TypeWriterText/TypeWriterText";
+import { createClient } from "@/perfect-seo-shared-components/utils/supabase/client";
+
+const ContentPlanStatusCell = ({ plan, setDeleteModal, setDuplicateInfo, setNewModal }) => {
+  const router = useRouter()
+  const completeStatuses = ["Finished", "Your Content Plan Has Been Created"]
+  const [status, setStatus] = useState(plan.status)
+  const { guid } = plan
+  const supabase = createClient()
+  const clickHandler = (e) => {
+    e.preventDefault();
+    if (completeStatuses.includes(status)) {
+      router.push(`/contentplan/${guid}`)
+    }
+    else {
+      router.push(`/waiting-room/${guid}`)
+    }
+  }
+  const deleteClickHandler = (e) => {
+    e.preventDefault();
+    setDeleteModal(guid)
+  }
+
+  const duplicateClickHandler = (obj) => {
+
+    let newData = {
+      email: obj.email,
+      brandName: obj.brand_name,
+      domainName: obj.domain_name,
+      targetKeyword: obj.keyword,
+      entityVoice: obj?.entity_voice,
+      priorityCode: obj?.priority_code,
+      writing_language: obj?.writing_language,
+      url1: obj?.inspiration_url_1,
+      url2: obj?.inspiration_url_2,
+      url3: obj?.inspiration_url_3,
+      priority1: obj?.inspirational_url_1_priority,
+      priority2: obj?.inspirational_url_2_priority,
+      priority3: obj?.inspirational_url_3_priority
+    }
+
+    setDuplicateInfo(newData)
+    setNewModal(true)
+  }
+
+  const fetchContentPlanStatus = () => {
+    return supabase
+      .from('content_plan_statuses')
+      .select('status')
+      .eq('plan_guid', guid)
+      .then(res => {
+        if (res.data) {
+          setStatus(res.data[0].status)
+        }
+      })
+  }
+
+  useEffect(() => {
+    let planStatusChannel;
+    if (guid) {
+      fetchContentPlanStatus()
+      planStatusChannel = supabase.channel(`plan-status-${guid}`)
+        .on(
+          'postgres_changes',
+          { event: 'INSERT', schema: 'public', table: 'content_plan_statuses', filter: `plan_guid=eq.${guid}` },
+          (payload) => {
+            setStatus(payload.new.status)
+          }
+        )
+        .subscribe()
+    }
+    if (planStatusChannel) {
+      return () => {
+        planStatusChannel.unsubscribe()
+      }
+    }
+  }, [guid])
+
+  return (
+
+    <div className='d-flex justify-content-end align-items-center'>
+      {/* {isAdmin && <div className='me-2'>{obj?.guid}</div>} */}
+      {(completeStatuses.includes(status) === false) &&
+        <span className='text-primary'>
+          <TypeWriterText string={status} withBlink />
+        </span>
+      }
+      <div className='input-group d-flex justify-content-end'>
+        {(completeStatuses.includes(status)) &&
+          <button className="btn btn-primary" onClick={clickHandler} title={`View GUID: ${guid}`}>View Plan</button>
+        }
+        <button className='btn btn-primary d-flex align-items-center justify-content-center' onClick={(e) => { e.preventDefault(); duplicateClickHandler(plan) }} title={`Duplicate: ${guid}`}>
+          <i className="bi bi-copy" />
+        </button>
+        <button className='btn btn-warning d-flex align-items-center justify-content-center' onClick={deleteClickHandler} title={`View GUID: ${guid}`}><i className="bi bi-trash pt-1" /></button>
+      </div>
+    </div>
+  )
+}
+
+export default ContentPlanStatusCell;

@@ -427,11 +427,22 @@ export const getContentPlanOutlinesByEmailWithoutPosts = (email: string, paginat
 }
 
 export const getContentPlansByEmail = (email: string, paginator: PaginationRequest) => {
-  return axiosInstance.get(`https://planperfectapi.replit.app/get_content_plans_by_email/${email}${parseQueries(paginator)}`);
+  let startIndex = paginator?.page === 1 ? 0 : (paginator.page - 1) * paginator.page_size;
+  let endIndex = startIndex + paginator.page_size - 1
+  return supabase.from('content_plans')
+    .select('*', { count: 'planned' })
+    .eq("email", email)
+    .range(startIndex, endIndex)
+    .order('timestamp', { ascending: false })
 }
 export const getContentPlansByDomain = (domain: string, paginator: PaginationRequest) => {
-
-  return axiosInstance.get(`https://planperfectapi.replit.app/get_content_plans_by_domain/${domain}${parseQueries(paginator)}`);
+  let startIndex = paginator?.page === 1 ? 0 : (paginator.page - 1) * paginator.page_size;
+  let endIndex = startIndex + paginator.page_size - 1
+  return supabase.from('content_plans')
+    .select('*', { count: 'planned' })
+    .eq("domain_name", domain)
+    .range(startIndex, endIndex)
+    .order('timestamp', { ascending: false })
 }
 
 

@@ -48,25 +48,7 @@ const StatusBar = ({
   const [postComplete, setPostComplete] = useState<boolean>(false);
   const [factcheckComplete, setFactcheckComplete] = useState<boolean>(false);
   const supabase = createClient();
-  useEffect(() => {
-    let contentPlanOutlines;
-    if (content_plan_outline_guid) {
-      contentPlanOutlines = supabase.channel(`statusbar-outline-status-${content_plan_outline_guid}`)
-        .on(
-          'postgres_changes',
-          { event: 'INSERT', schema: 'public', table: 'content_plan_outline_statuses', filter: `outline_guid=eq.${content_plan_outline_guid}` },
-          (payload) => {
-            setOutlineStatus(payload.new.status)
-          }
-        )
-        .subscribe()
-    }
-    if (contentPlanOutlines) {
-      return () => {
-        contentPlanOutlines.unsubscribe()
-      }
-    }
-  }, [content_plan_outline_guid])
+
 
   const fetchOutlineStatusData = () => {
     if (content_plan_outline_guid) {
@@ -90,6 +72,28 @@ const StatusBar = ({
         })
     }
   };
+
+  useEffect(() => {
+    let contentPlanOutlines;
+    if (content_plan_outline_guid) {
+      fetchOutlineStatusData();
+      contentPlanOutlines = supabase.channel(`statusbar-outline-status-${content_plan_outline_guid}`)
+        .on(
+          'postgres_changes',
+          { event: 'INSERT', schema: 'public', table: 'content_plan_outline_statuses', filter: `outline_guid=eq.${content_plan_outline_guid}` },
+          (payload) => {
+            setOutlineStatus(payload.new.status)
+          }
+        )
+        .subscribe()
+    }
+    if (contentPlanOutlines) {
+      return () => {
+        contentPlanOutlines.unsubscribe()
+      }
+    }
+  }, [content_plan_outline_guid])
+
 
   const fetchPostStatusData = () => {
     if (content_plan_outline_guid) {
@@ -134,11 +138,7 @@ const StatusBar = ({
       addLiveUrlHandler();
     }
   }
-  useEffect(() => {
-    if (content_plan_outline_guid) {
-      fetchOutlineStatusData();
-    }
-  }, []);
+
 
   useEffect(() => {
     let postInterval;

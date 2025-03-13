@@ -34,6 +34,7 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
   const paginator = usePaginator()
 
   const fetchPlans = () => {
+    setLoading(true)
     if (domain_name) {
       getContentPlansByDomain(domain_name, paginator.paginationObj)
         .then(res => {
@@ -82,7 +83,6 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
   useEffect(() => {
     let interval;
     if (active && !newModal) {
-      setLoading(true)
       fetchPlans();
       interval = setInterval(fetchPlans, 300000)
     }

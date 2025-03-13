@@ -105,12 +105,12 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
       }
     }
     else {
-      if (!status) {
-        fetchStatus();
-      }
-      interval = setInterval(() => {
-        fetchStatus()
-      }, 10000)
+      // if (!status) {
+      //   fetchStatus();
+      // }
+      // interval = setInterval(() => {
+      //   fetchStatus()
+      // }, 10000)
     }
     return () => clearTimeout(interval)
   }, [status, completed])
@@ -121,23 +121,26 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
 
   useEffect(() => {
     let contentPlanOutlines;
-    if (localOutline?.guid) {
-      contentPlanOutlines = supabase.channel('custom-update-channel')
+    if (outline?.guid) {
+      contentPlanOutlines = supabase.channel(`status-${outline.guid}`)
         .on(
           'postgres_changes',
-          { event: 'UPDATE', schema: 'public', table: 'content_plan_outlines', filter: `guid=eq.${localOutline.guid}` },
+          { event: '*', schema: 'public', table: 'content_plan_outline_statuses', filter: `outline_guid=eq.${outline.guid}` },
           (payload) => {
             console.log('Change received!', payload)
+            if (payload.eventType === 'INSERT') {
+              setStatus(payload.new.status)
+            }
           }
         )
         .subscribe()
     }
-    if (contentPlanOutlines) {
-      return () => {
-        contentPlanOutlines.unsubscribe()
-      }
-    }
-  }, [localOutline?.guid])
+    // if (contentPlanOutlines) {
+    //   return () => {
+    //     contentPlanOutlines.unsubscribe()
+    //   }
+    // }
+  }, [outline?.guid])
 
 
   const deleteHandler = () => {

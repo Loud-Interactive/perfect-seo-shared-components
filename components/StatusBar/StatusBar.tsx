@@ -4,6 +4,7 @@ import { fetchOutlineStatus, getFactCheckStatus, getPostStatus } from "@/perfect
 import { useEffect, useState } from "react";
 import TypeWriterText from "../TypeWriterText/TypeWriterText";
 import { keyToLabel } from "@/perfect-seo-shared-components/utils/conversion-utilities";
+import { createClient } from "@/perfect-seo-shared-components/utils/supabase/client";
 
 interface StatusBarProps {
   content_plan_outline_guid?: string;
@@ -46,6 +47,30 @@ const StatusBar = ({
   const [outlineComplete, setOutlineComplete] = useState<boolean>(false);
   const [postComplete, setPostComplete] = useState<boolean>(false);
   const [factcheckComplete, setFactcheckComplete] = useState<boolean>(false);
+  const supabase = createClient();
+  useEffect(() => {
+    let contentPlanOutlines;
+    if (content_plan_outline_guid) {
+      contentPlanOutlines = supabase.channel(`statusbar-outline-status-${content_plan_outline_guid}`)
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'content_plan_outline_statuses', filter: `outline_guid=eq.${content_plan_outline_guid}` },
+          (payload) => {
+            console.log('Change received!', payload)
+            if (payload.eventType === 'INSERT') {
+              setOutlineStatus(payload.new.status)
+            }
+          }
+        )
+        .subscribe()
+    }
+    // if (contentPlanOutlines) {
+    //   return () => {
+    //     contentPlanOutlines.unsubscribe()
+    //   }
+    // }
+  }, [content_plan_outline_guid])
+
   const fetchOutlineStatusData = () => {
     if (content_plan_outline_guid) {
       setOutlineLoading(true);
@@ -113,19 +138,10 @@ const StatusBar = ({
     }
   }
   useEffect(() => {
-    let outlineInterval;
-    if (!outlineComplete) {
+    if (content_plan_outline_guid) {
       fetchOutlineStatusData();
-      outlineInterval = setInterval(() => {
-        fetchOutlineStatusData();
-      }, 60000);
     }
-    return () => {
-      if (outlineInterval) {
-        clearInterval(outlineInterval);
-      }
-    };
-  }, [outlineComplete]);
+  }, []);
 
   useEffect(() => {
     let postInterval;

@@ -91,28 +91,14 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
 
 
   useEffect(() => {
-    let interval;
     if (status.includes("Error:")) {
       return
     }
     if (completedStatus.includes(status)) {
-      if (completed) {
+      if (!completed) {
         setCompleted(true)
-        setStatus("completed")
-      }
-      else {
-        return;
       }
     }
-    else {
-      // if (!status) {
-      //   fetchStatus();
-      // }
-      // interval = setInterval(() => {
-      //   fetchStatus()
-      // }, 10000)
-    }
-    return () => clearTimeout(interval)
   }, [status, completed])
 
   useEffect(() => {

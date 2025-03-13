@@ -64,11 +64,11 @@ const StatusBar = ({
         )
         .subscribe()
     }
-    // if (contentPlanOutlines) {
-    //   return () => {
-    //     contentPlanOutlines.unsubscribe()
-    //   }
-    // }
+    if (contentPlanOutlines) {
+      return () => {
+        contentPlanOutlines.unsubscribe()
+      }
+    }
   }, [content_plan_outline_guid])
 
   const fetchOutlineStatusData = () => {

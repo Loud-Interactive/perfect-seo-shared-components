@@ -94,12 +94,10 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
     if (status.includes("Error:")) {
       return
     }
-    if (completedStatus.includes(status)) {
-      if (!completed) {
-        setCompleted(true)
-      }
+    else {
+      setCompleted(completedStatus.includes(status))
     }
-  }, [status, completed])
+  }, [status])
 
   useEffect(() => {
     setModalOpen(editModal)

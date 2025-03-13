@@ -54,12 +54,9 @@ const StatusBar = ({
       contentPlanOutlines = supabase.channel(`statusbar-outline-status-${content_plan_outline_guid}`)
         .on(
           'postgres_changes',
-          { event: '*', schema: 'public', table: 'content_plan_outline_statuses', filter: `outline_guid=eq.${content_plan_outline_guid}` },
+          { event: 'INSERT', schema: 'public', table: 'content_plan_outline_statuses', filter: `outline_guid=eq.${content_plan_outline_guid}` },
           (payload) => {
-            console.log('Change received!', payload)
-            if (payload.eventType === 'INSERT') {
-              setOutlineStatus(payload.new.status)
-            }
+            setOutlineStatus(payload.new.status)
           }
         )
         .subscribe()

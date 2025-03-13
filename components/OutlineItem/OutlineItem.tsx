@@ -111,12 +111,9 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
       contentPlanOutlines = supabase.channel(`status-${outline.guid}`)
         .on(
           'postgres_changes',
-          { event: '*', schema: 'public', table: 'content_plan_outline_statuses', filter: `outline_guid=eq.${outline.guid}` },
+          { event: 'INSERT', schema: 'public', table: 'content_plan_outline_statuses', filter: `outline_guid=eq.${outline.guid}` },
           (payload) => {
-            console.log('Change received!', payload)
-            if (payload.eventType === 'INSERT') {
-              setStatus(payload.new.status)
-            }
+            setStatus(payload.new.status)
           }
         )
         .subscribe()

@@ -234,9 +234,19 @@ export const getContentPlanOutlines = (guid: string) => {
 export const fetchOutlineStatus = (guid: string) => {
   return supabase
     .from('content_plan_outline_statuses')
-    .select('status')
+    .select('*')
     .order('timestamp', { ascending: false })
     .eq('outline_guid', guid)
+    .then(res => {
+      if (res.data) {
+        let newData = res.data.sort((a, b) => a.timestamp - b.timestamp);
+        res.data = newData;
+        return res
+      }
+      else {
+        return res
+      }
+    })
 };
 export const fetchOutlineData = (guid: string) => {
   return supabase

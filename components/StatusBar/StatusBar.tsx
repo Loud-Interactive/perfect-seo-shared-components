@@ -57,7 +57,7 @@ const StatusBar = ({
         .then(res => {
           if (res.data[0]) {
             setOutlineLoading(false);
-            setOutlineStatus(res.data.reverse()[0]?.status);
+            setOutlineStatus(res.data[0]?.status);
           }
           else {
             setOutlineLoading(false);

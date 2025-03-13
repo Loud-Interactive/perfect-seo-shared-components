@@ -13,7 +13,7 @@ import StatusBar from "../StatusBar/StatusBar";
 import ActionButtonGroup from "../ActionButtonGroup/ActionButtonGroup";
 
 const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
-  const [status, setStatus] = useState(outline?.status)
+  const [status, setStatus] = useState('')
   const [localOutline, setLocalOutline] = useState<Outline>(outline)
   const [deleteModal, setDeleteModal] = useState(false)
   const [editModal, setEditModal] = useState(false)
@@ -72,16 +72,9 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
   const fetchStatus = () => {
     fetchOutlineStatus(outline?.guid)
       .then((res) => {
-        if (res.data.reverse()[0].status) {
-          if (res.data.reverse()[0].status !== status) {
-            setStatus(res.data.reverse()[0].status);
-          }
-          else if (completedStatus.includes(res.data.reverse()[0].status)) {
-            setStatus(res.data.reverse()[0].status)
-            if (!completed) {
-              setCompleted(true)
-            }
-          }
+        let newStatusItem = res.data[0]
+        if (newStatusItem.status) {
+          setStatus(newStatusItem.status);
         }
       })
   }
@@ -106,6 +99,7 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
   useEffect(() => {
     let contentPlanOutlines;
     if (outline?.guid) {
+      fetchStatus()
       contentPlanOutlines = supabase.channel(`status-${outline.guid}`)
         .on(
           'postgres_changes',

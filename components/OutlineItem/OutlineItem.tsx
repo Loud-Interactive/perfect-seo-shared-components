@@ -121,11 +121,11 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
         )
         .subscribe()
     }
-    // if (contentPlanOutlines) {
-    //   return () => {
-    //     contentPlanOutlines.unsubscribe()
-    //   }
-    // }
+    if (contentPlanOutlines) {
+      return () => {
+        contentPlanOutlines.unsubscribe()
+      }
+    }
   }, [outline?.guid])
 
 

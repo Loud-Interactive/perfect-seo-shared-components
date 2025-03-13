@@ -407,13 +407,21 @@ export const getContentPlanOutlinesByDomain = (domain: string, paginator: Pagina
     .order('created_at', { ascending: false })
 
 }
+
+export const getContentPlanOutlinesByEmail = (email: string, paginator: PaginationRequest) => {
+  let startIndex = paginator?.page === 1 ? 0 : (paginator.page - 1) * paginator.page_size;
+  let endIndex = startIndex + paginator.page_size - 1
+  return supabase.from('content_plan_outlines')
+    .select('*', { count: 'planned' })
+    .eq("email", email)
+    .range(startIndex, endIndex)
+    .order('created_at', { ascending: false })
+}
+
 export const getContentPlanOutlinesByDomainWithoutPosts = (domain: string, paginator: PaginationRequest) => {
   return axiosInstance.get(`https://planperfectapi.replit.app/get_content_plan_outlines_by_domain/${domain}${parseQueries(paginator)}`);
 }
 
-export const getContentPlanOutlinesByEmail = (email: string, paginator: PaginationRequest) => {
-  return axiosInstance.get(`https://planperfectapi.replit.app/get_content_plan_outlines_with_posts_by_email/${email}${parseQueries(paginator)}`);
-}
 export const getContentPlanOutlinesByEmailWithoutPosts = (email: string, paginator: PaginationRequest) => {
   return axiosInstance.get(`/get_content_plan_outlines_without_posts_by_email/${email}${parseQueries(paginator)}`);
 }

@@ -49,15 +49,16 @@ const OutlinesList = ({ domain_name, active }: OutlinesListProps) => {
       else {
         getContentPlanOutlinesByEmail(email, paginator.paginationObj)
           .then(res => {
-            paginator.setItemCount(res.data.total)
-            setData(res.data.items)
-            setLoading(false)
+            if (res.data) {
+              paginator.setItemCount(res.count)
+              setData(res.data)
+              setLoading(false)
+            }
+            else {
+              setLoading(false);
+              setData(null)
+            }
           })
-          .catch(err => {
-            setLoading(false);
-            setData(null)
-          }
-          )
       }
     }
   }

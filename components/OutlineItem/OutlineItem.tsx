@@ -181,7 +181,7 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
               </div>
               <div>
                 {localOutline?.created_at && <strong className="text-primary me-2">Date</strong>}
-                {moment(localOutline.created_at).format("dddd, MMM Do, YYYY h:mma")}
+                {moment(localOutline.created_at).format("dddd, MMM Do, YYYY h:mma")}{email !== localOutline.email && <span> by <span className="text-primary">by {localOutline.email}</span></span>}
               </div>
             </div>
           </div>

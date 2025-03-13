@@ -34,7 +34,7 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
   const fetchData = () => {
     fetchOutlineData(outline.guid)
       .then(res => {
-        console.log(res)
+        setLocalOutline(res.data[0])
       })
   }
 

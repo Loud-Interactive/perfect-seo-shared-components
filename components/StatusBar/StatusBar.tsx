@@ -61,6 +61,7 @@ const StatusBar = ({
           }
           else {
             setOutlineLoading(false);
+            setOutlineStatus('')
             // console.log(err.response)
             // if (err.response.data.detail.includes("No outline found for GUID")) {
             //   setOutlineStatus("completed")

@@ -3,6 +3,7 @@ import * as Request from "@/perfect-seo-shared-components/data/requestTypes";
 import { urlSanitization } from "@/perfect-seo-shared-components/utils/conversion-utilities";
 import axios from "axios";
 import { PaginationRequest } from "@/perfect-seo-shared-components/data/types";
+import { createClient } from "../utils/supabase/client";
 export interface PlanItemProps {
   brand_name: string;
   domain_name: string;
@@ -17,6 +18,7 @@ export interface PlanItemProps {
   target_keyword?: string;
 }
 
+const supabase = createClient();
 
 const API_URL = "https://planperfectapi.replit.app";
 
@@ -230,9 +232,16 @@ export const getContentPlanOutlines = (guid: string) => {
 }
 
 export const fetchOutlineStatus = (guid: string) => {
-  return axiosInstance.get(
-    `https://planperfectapi.replit.app/get_outline_status/${guid}`,
-  );
+  return supabase
+    .from('content_plan_outline_statuses')
+    .select('status')
+    .eq('outline_guid', guid)
+};
+export const fetchOutlineData = (guid: string) => {
+  return supabase
+    .from('content_plan_outlines')
+    .select('*')
+    .eq('guid', guid)
 };
 
 
@@ -389,7 +398,14 @@ export const regenerateSocialPost = async (guid, platform) => {
 }
 
 export const getContentPlanOutlinesByDomain = (domain: string, paginator: PaginationRequest) => {
-  return axiosInstance.get(`https://planperfectapi.replit.app/get_content_plan_outlines_by_domain/${domain}${parseQueries(paginator)}`);
+  let startIndex = paginator?.page === 1 ? 0 : (paginator.page - 1) * paginator.page_size;
+  let endIndex = startIndex + paginator.page_size - 1
+  return supabase.from('content_plan_outlines')
+    .select('*', { count: 'planned' })
+    .eq("domain", domain)
+    .range(startIndex, endIndex)
+    .order('created_at', { ascending: false })
+
 }
 export const getContentPlanOutlinesByDomainWithoutPosts = (domain: string, paginator: PaginationRequest) => {
   return axiosInstance.get(`https://planperfectapi.replit.app/get_content_plan_outlines_by_domain/${domain}${parseQueries(paginator)}`);
@@ -406,6 +422,7 @@ export const getContentPlansByEmail = (email: string, paginator: PaginationReque
   return axiosInstance.get(`https://planperfectapi.replit.app/get_content_plans_by_email/${email}${parseQueries(paginator)}`);
 }
 export const getContentPlansByDomain = (domain: string, paginator: PaginationRequest) => {
+
   return axiosInstance.get(`https://planperfectapi.replit.app/get_content_plans_by_domain/${domain}${parseQueries(paginator)}`);
 }
 

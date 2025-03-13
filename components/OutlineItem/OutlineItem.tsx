@@ -1,8 +1,5 @@
 import { useEffect, useState } from "react"
-import { createPost, deleteOutline, fetchOutlineStatus, regenerateOutline, saveContentPlanPost } from "@/perfect-seo-shared-components/services/services"
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import TypeWriterText from "../TypeWriterText/TypeWriterText"
-import Link from "next/link"
+import { createPost, deleteOutline, fetchOutlineData, fetchOutlineStatus, regenerateOutline, saveContentPlanPost } from "@/perfect-seo-shared-components/services/services"
 import * as Modal from '@/perfect-seo-shared-components/components/Modal/Modal'
 import CreateContentModal from "@/perfect-seo-shared-components/components/CreateContentModal/CreateContentModal"
 import moment from "moment-timezone"
@@ -10,14 +7,14 @@ import RegeneratePostModal, { GenerateTypes } from "../RegeneratePostModal/Regen
 import { GenerateContentPost } from "@/perfect-seo-shared-components/data/requestTypes";
 import { useDispatch, useSelector } from "react-redux";
 import { selectEmail, selectIsAdmin } from "@/perfect-seo-shared-components/lib/features/User";
-import { ContentType } from "@/perfect-seo-shared-components/data/types";
+import { ContentType, Outline, OutlineRowProps } from "@/perfect-seo-shared-components/data/types";
 import { createClient } from "@/perfect-seo-shared-components/utils/supabase/client";
 import StatusBar from "../StatusBar/StatusBar";
 import ActionButtonGroup from "../ActionButtonGroup/ActionButtonGroup";
 
 const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
   const [status, setStatus] = useState(outline?.status)
-  const [localOutline, setLocalOutline] = useState(outline)
+  const [localOutline, setLocalOutline] = useState<Outline>(outline)
   const [deleteModal, setDeleteModal] = useState(false)
   const [editModal, setEditModal] = useState(false)
   const [completed, setCompleted] = useState(false)
@@ -34,6 +31,13 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
     setStatus("in_progress");
   }
 
+  const fetchData = () => {
+    fetchOutlineData(outline.guid)
+      .then(res => {
+        console.log(res)
+      })
+  }
+
   useEffect(() => {
     if (outline?.status !== status) {
       setStatus(outline?.status)
@@ -41,6 +45,7 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
         if (!completed) {
           setCompleted(true)
         }
+        fetchData()
       }
     }
   }, [outline, completed])
@@ -67,30 +72,23 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
   const fetchStatus = () => {
     fetchOutlineStatus(outline?.guid)
       .then((res) => {
-        if (res.data.status) {
-          if (res.data.status !== status) {
-            setStatus(res.data.status);
-            setLocalOutline(res.data)
+        if (res.data.reverse()[0].status) {
+          if (res.data.reverse()[0].status !== status) {
+            setStatus(res.data.reverse()[0].status);
           }
-          else if (completedStatus.includes(res.data.status)) {
-            setStatus(res.data.status)
+          else if (completedStatus.includes(res.data.reverse()[0].status)) {
+            setStatus(res.data.reverse()[0].status)
             if (!completed) {
               setCompleted(true)
             }
-            setLocalOutline(res.data)
           }
         }
-        else if (res.data.message) {
-          setStatus(res.data.message);
-        }
       })
-      .catch((err) => {
-        setStatus(err?.response?.data?.detail ? `Error: ${err?.response?.data?.detail}` : "Error: not found");
-      });
   }
 
 
   const completedStatus = ["completed"]
+
 
   useEffect(() => {
     let interval;
@@ -121,7 +119,25 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
     setModalOpen(editModal)
   }, [editModal])
 
-
+  useEffect(() => {
+    let contentPlanOutlines;
+    if (localOutline?.guid) {
+      contentPlanOutlines = supabase.channel('custom-update-channel')
+        .on(
+          'postgres_changes',
+          { event: 'UPDATE', schema: 'public', table: 'content_plan_outlines', filter: `outline_guid=eq.${localOutline.guid}` },
+          (payload) => {
+            console.log('Change received!', payload)
+          }
+        )
+        .subscribe()
+    }
+    if (contentPlanOutlines) {
+      return () => {
+        contentPlanOutlines.unsubscribe()
+      }
+    }
+  }, [localOutline?.guid])
 
 
   const deleteHandler = () => {
@@ -157,11 +173,11 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
             <div className="col-12">
               <strong className="text-primary me-1">Title</strong>  {localOutline?.post_title} {(outline.client_domain !== domain_name) && <span className='badge bg-primary ms-2'>{outline?.brand_name}</span>}
               <div>
-                {localOutline?.content_plan_keyword && <strong className="text-primary me-2">Topic</strong>}
+                {/* {localOutline?.content_plan_keyword && <strong className="text-primary me-2">Topic</strong>}
                 {localOutline.content_plan_keyword}
                 <br />
                 {localOutline?.keyword && <strong className="text-primary me-2">Keyword</strong>}
-                {localOutline.keyword}
+                {localOutline.keyword} */}
               </div>
               <div>
                 {localOutline?.created_at && <strong className="text-primary me-2">Date</strong>}

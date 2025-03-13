@@ -11,7 +11,7 @@ import useViewport from "@/perfect-seo-shared-components/hooks/useViewport";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useSelector } from "react-redux";
 import { GenerateContentPost, GetPostOutlineRequest, SaveContentPost } from "@/perfect-seo-shared-components/data/requestTypes";
-import { fetchOutlineStatus, getContentPlanOutline, saveContentPlanPost } from "@/perfect-seo-shared-components/services/services";
+import { fetchOutlineData, fetchOutlineStatus, getContentPlanOutline, saveContentPlanPost } from "@/perfect-seo-shared-components/services/services";
 import { createPost, regenerateOutline } from "@/perfect-seo-shared-components/services/services";
 import Loader from "@/perfect-seo-shared-components/components/Loader/Loader";
 import { selectEmail, selectPoints } from "@/perfect-seo-shared-components/lib/features/User";
@@ -237,11 +237,16 @@ const CreateContentModal = ({
       setOutlineGUID(data.guid)
     }
     if (standalone) {
-      fetchOutlineStatus(data.content_plan_outline_guid)
+      let guid = data.guid || data.content_plan_outline_guid;
+      fetchOutlineData(guid)
         .then(res => {
-          if (res?.data?.outline?.sections?.length > 0) {
-            processSections(res.data.outline.sections, initial);
-            setLoading(false)
+          if (res.data[0]?.outline) {
+            let outline = JSON.parse(res.data[0].outline)
+            console.log(outline)
+            if (outline?.sections?.length > 0) {
+              processSections(outline.sections, initial);
+              setLoading(false)
+            }
           }
         })
     } else {
@@ -281,11 +286,11 @@ const CreateContentModal = ({
         })
         .catch((err) => {
           if (data.guid) {
-            fetchOutlineStatus(data.guid)
+            fetchOutlineData(data.guid)
               .then(res => {
                 console.log("outline status", res.data)
-                if (res?.data?.outline?.sections?.length > 0) {
-                  processSections(res.data.outline.sections, initial);
+                if (res?.data[0].outline?.sections?.length > 0) {
+                  processSections(res.data[0].outline.sections, initial);
                 }
               })
           }
@@ -336,7 +341,6 @@ const CreateContentModal = ({
     saveHandler(true);
   };
 
-  useEffect(() => { console.log(contentPlan, data) }, [data, contentPlan])
 
   const submitWithEmail = (receivingEmail, language?) => {
 

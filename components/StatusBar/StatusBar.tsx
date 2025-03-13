@@ -51,18 +51,21 @@ const StatusBar = ({
       setOutlineLoading(true);
       fetchOutlineStatus(content_plan_outline_guid)
         .then(res => {
-          setOutlineLoading(false);
-          setOutlineStatus(res.data.status);
-        })
-        .catch(err => {
-          setOutlineLoading(false);
-          console.log(err.response)
-          if (err.response.data.detail.includes("No outline found for GUID")) {
-            setOutlineStatus("completed")
-          } else {
-            setOutlineError(err?.response?.data?.message || err?.message || 'An error occurred');
+          if (res.data[0]) {
+            setOutlineLoading(false);
+            setOutlineStatus(res.data.reverse()[0]?.status);
           }
-        });
+          else {
+            setOutlineLoading(false);
+            // console.log(err.response)
+            // if (err.response.data.detail.includes("No outline found for GUID")) {
+            //   setOutlineStatus("completed")
+            // } else {
+            //   setOutlineError(err?.response?.data?.message || err?.message || 'An error occurred');
+            // }
+          }
+
+        })
     }
   };
 

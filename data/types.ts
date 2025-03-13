@@ -1,3 +1,5 @@
+import { OutlinesListProps } from "../components/OutlinesList/OutlinesList";
+
 export interface BrandInfo {
   "domain_name"?: string,
   "brand_name"?: string,
@@ -223,6 +225,16 @@ export interface Sitemap {
 }
 
 
+export interface Outline {
+  content_plan_guid: string;
+  created_at: string;
+  domain: string;
+  email: string;
+  guid: string;
+  outline: string | null;
+  post_title: string;
+  status: string;
+}
 
 export interface PostUploadItem {
   additional_data_URL?: string;

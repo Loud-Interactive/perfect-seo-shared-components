@@ -35,15 +35,16 @@ const OutlinesList = ({ domain_name, active }: OutlinesListProps) => {
       if (domain_name) {
         getContentPlanOutlinesByDomain(domain_name, paginator.paginationObj)
           .then(res => {
-            paginator.setItemCount(res.data.total)
-            setData(res.data.items)
-            setLoading(false)
+            if (res.data) {
+              paginator.setItemCount(res.count)
+              setData(res.data)
+              setLoading(false)
+            }
+            else {
+              setLoading(false);
+              setData(null)
+            }
           })
-          .catch(err => {
-            setLoading(false);
-            setData(null)
-          }
-          )
       }
       else {
         getContentPlanOutlinesByEmail(email, paginator.paginationObj)
@@ -78,7 +79,7 @@ const OutlinesList = ({ domain_name, active }: OutlinesListProps) => {
     let interval;
     if (active && !modalOpen) {
       getOutlines();
-      interval = setInterval(getOutlines, 60000)
+      interval = setInterval(getOutlines, 300000)
     }
 
     return () => {

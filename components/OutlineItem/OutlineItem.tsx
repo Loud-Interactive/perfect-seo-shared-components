@@ -125,7 +125,7 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
       contentPlanOutlines = supabase.channel('custom-update-channel')
         .on(
           'postgres_changes',
-          { event: 'UPDATE', schema: 'public', table: 'content_plan_outlines', filter: `outline_guid=eq.${localOutline.guid}` },
+          { event: 'UPDATE', schema: 'public', table: 'content_plan_outlines', filter: `guid=eq.${localOutline.guid}` },
           (payload) => {
             console.log('Change received!', payload)
           }

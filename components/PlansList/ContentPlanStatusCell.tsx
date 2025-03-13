@@ -47,10 +47,11 @@ const ContentPlanStatusCell = ({ plan, setDeleteModal, setDuplicateInfo, setNewM
   }
 
   const fetchContentPlanStatus = () => {
-    return supabase
+    supabase
       .from('content_plan_statuses')
       .select('status')
       .eq('plan_guid', guid)
+      .order('timestamp', { ascending: false })
       .then(res => {
         if (res.data) {
           setStatus(res.data[0].status)

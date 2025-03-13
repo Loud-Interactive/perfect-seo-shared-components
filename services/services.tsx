@@ -235,6 +235,7 @@ export const fetchOutlineStatus = (guid: string) => {
   return supabase
     .from('content_plan_outline_statuses')
     .select('status')
+    .order('timestamp', { ascending: false })
     .eq('outline_guid', guid)
 };
 export const fetchOutlineData = (guid: string) => {

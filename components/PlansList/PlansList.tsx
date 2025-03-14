@@ -105,7 +105,7 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
         <p className='mb-0'>
           {obj.keyword} {(domain !== domain_name) && <span className='badge bg-primary ms-2'>{obj.brand_name}</span>}
         </p>
-        {email !== obj?.email && <span> by <span className="text-primary">{obj?.email}</span></span>}
+        {(obj?.email && email !== obj?.email) && <span> by <span className="text-primary">{obj?.email}</span></span>}
       </div>
     )
   }

@@ -349,9 +349,7 @@ export const validatePromoCode = (promoCode, total) => {
 export const sendOptimizeRequest = (request: Request.MetaRequest) => {
   return axiosInstance.post(`https://pageperfectapi.replit.app/optimize_data/`, request);
 }
-export const getDashboard = (guid: string) => {
-  return axiosInstance.get(`https://pageperfectapi.replit.app/contentplan/${guid}`);
-}
+
 export const getOptimizedData = (guid: string) => {
   return axiosInstance.get(`https://pageperfectapi.replit.app/optimize_data/${guid}`);
 }

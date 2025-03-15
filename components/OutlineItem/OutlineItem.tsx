@@ -58,16 +58,8 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
   };
 
   useEffect(() => {
-    if (outline?.status !== status) {
-      setStatus(outline?.status)
-      if (completedStatus.includes(outline?.status)) {
-        if (!completed) {
-          setCompleted(true)
-        }
-        fetchData()
-      }
-    }
-  }, [outline, completed])
+    setCompleted(completedStatus.includes(status))
+  }, [status])
 
   const generatePostHandler = (receiving_email, writing_language?) => {
     let newOutline = typeof outline?.outline === 'string' ? JSON.parse(outline?.outline) : outline?.outline
@@ -186,7 +178,7 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
         <div className="col-12">
           <div className="row d-flex justify-content-end align-items-center w-100">
             <div className="col-auto">
-              <StatusBar type={ContentType.OUTLINE} content_plan_outline_guid={localOutline?.guid} onGeneratePost={() => {
+              <StatusBar outline_status={status} type={ContentType.OUTLINE} content_plan_outline_guid={localOutline?.guid} onGeneratePost={() => {
                 setShowGenerate(true)
               }} />
             </div>

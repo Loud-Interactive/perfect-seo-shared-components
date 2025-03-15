@@ -557,3 +557,7 @@ export const regenerateHTML = (reqObj: Request.RegeneratePost) => {
 export const regenerateHTMLfromDoc = (reqObj: Request.RegeneratePost) => {
   return axiosInstance.post(`https://content-v5.replit.app/regenerate_html_from_outline_guid${parseQueries(reqObj)}`, reqObj);
 }
+
+export const getPost = (guid: string) => {
+  return supabase.from('tasks').select('*').eq('task_id', guid).order('created_at', { ascending: false })
+}

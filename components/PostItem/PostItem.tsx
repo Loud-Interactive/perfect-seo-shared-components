@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react"
 import TextInput from "../Form/TextInput"
 import { urlValidator } from "@/perfect-seo-shared-components/utils/validators"
-import { deleteContentOutline, getPostStatus, regenerateHTML, regenerateHTMLfromDoc, regeneratePost, updateLiveUrl } from "@/perfect-seo-shared-components/services/services"
+import { deleteContentOutline, getPost, getPostStatus, regenerateHTML, regenerateHTMLfromDoc, regeneratePost, updateLiveUrl } from "@/perfect-seo-shared-components/services/services"
 import moment from "moment-timezone"
 import * as Modal from '@/perfect-seo-shared-components/components/Modal/Modal'
 import { useDispatch, useSelector } from "react-redux"
@@ -71,70 +71,45 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
   useEffect(() => {
     if (post?.status !== status) {
       setStatus(post?.status)
-      if (completedStatus.includes(post?.status)) {
-        if (!completed) {
-          setCompleted(true)
-        }
-      }
     }
-  }, [post, completed])
+  }, [post])
 
   const fetchStatus = () => {
-    getPostStatus(post?.content_plan_outline_guid)
+    getPost(post?.task_id)
       .then((res) => {
-        if (res.data.status) {
-          if (res.data.status !== status) {
-            setStatus(res.data.status);
-            setLocalPost(res.data)
-          }
-          else if (completedStatus.includes(res.data.status)) {
-            setStatus(res.data.status)
-            if (!completed) {
-              setCompleted(true)
-            }
-            setLocalPost(res.data)
-          }
-        }
-        else if (res.data.message) {
-          setStatus(res.data.message);
-        }
+        setStatus(res.data[0]?.status);
+        setLocalPost(res.data[0])
       })
-      .catch((err) => {
-        setStatus(err.message);
-      });
   }
 
+  useEffect(() => {
+    let contentPlanOutlines;
+    if (post?.task_id) {
+      fetchStatus()
+      contentPlanOutlines = supabase.channel(`status-${post.task_id}`)
+        .on(
+          'postgres_changes',
+          { event: 'INSERT', schema: 'public', table: 'tasks', filter: `task_id=eq.${post.task_id}` },
+          (payload) => {
+            setStatus(payload.new.status)
+            setLocalPost(payload.new)
+          }
+        )
+        .subscribe()
+    }
+    if (contentPlanOutlines) {
+      return () => {
+        contentPlanOutlines.unsubscribe()
+      }
+    }
+  }, [post?.task_id])
 
   const completedStatus = ["Complete", "Uploaded To Google Drive", "Uploading To Google Drive"]
 
   useEffect(() => {
-    let interval;
-    if (completedStatus.includes(status)) {
-      if (completed) {
-        setCompleted(true)
+    setCompleted(completedStatus.includes(status))
+  }, [status])
 
-      }
-      else {
-        return;
-      }
-    }
-    else if (!editOutline) {
-      interval = setInterval(() => {
-        fetchStatus()
-      }, 10000)
-    }
-    return () => clearTimeout(interval)
-  }, [status, completed, editOutline])
-
-  const docClickHandler = (e) => {
-    e.preventDefault();
-    window.open(localPost?.google_doc_link, '_blank')
-  }
-
-  const htmlClickHandler = (e) => {
-    e.preventDefault();
-    window.open(localPost?.html_link, '_blank')
-  }
 
   const deleteClickHandler = (e) => {
     e.preventDefault()
@@ -238,7 +213,7 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
         <div className="col-12">
           <div className="row d-flex justify-content-end align-items-center w-100">
             <div className="col-auto">
-              <StatusBar indexHandler={() => setShowIndex(true)} type={ContentType.POST} content_plan_outline_guid={localPost.content_plan_outline_guid} content_plan_guid={localPost?.content_plan_guid} content_plan_factcheck_guid={localPost?.factcheck_guid} addLiveUrlHandler={addLiveUrlHandler} live_post_url={localPost.live_post_url} index_status={localPost?.index_status} />
+              <StatusBar post_status={status} indexHandler={() => setShowIndex(true)} type={ContentType.POST} content_plan_outline_guid={localPost.content_plan_outline_guid} content_plan_guid={localPost?.content_plan_guid} content_plan_factcheck_guid={localPost?.factcheck_guid} addLiveUrlHandler={addLiveUrlHandler} live_post_url={localPost.live_post_url} index_status={localPost?.index_status} />
             </div>
             <div className="col-auto">
               <ActionButtonGroup type={ContentType.POST} setData={setLocalPost} data={localPost} refresh={refresh} />

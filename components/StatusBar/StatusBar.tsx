@@ -17,9 +17,13 @@ interface StatusBarProps {
   indexHandler?: () => void,
   type: ContentType,
   index_status?: string
+  post_status?: string,
+  outline_status?: string,
 }
 
 const StatusBar = ({
+  post_status,
+  outline_status,
   content_plan_outline_guid,
   content_plan_guid,
   content_plan_factcheck_guid,
@@ -62,12 +66,6 @@ const StatusBar = ({
           else {
             setOutlineLoading(false);
             setOutlineStatus('')
-            // console.log(err.response)
-            // if (err.response.data.detail.includes("No outline found for GUID")) {
-            //   setOutlineStatus("completed")
-            // } else {
-            //   setOutlineError(err?.response?.data?.message || err?.message || 'An error occurred');
-            // }
           }
 
         })
@@ -76,7 +74,7 @@ const StatusBar = ({
 
   useEffect(() => {
     let contentPlanOutlines;
-    if (content_plan_outline_guid) {
+    if (content_plan_outline_guid && !outlineStatus) {
       fetchOutlineStatusData();
       contentPlanOutlines = supabase.channel(`statusbar-outline-status-${content_plan_outline_guid}`)
         .on(
@@ -95,21 +93,17 @@ const StatusBar = ({
     }
   }, [content_plan_outline_guid])
 
-
-  const fetchPostStatusData = () => {
-    if (content_plan_outline_guid) {
-      setPostLoading(true);
-      getPostStatus(content_plan_outline_guid)
-        .then(res => {
-          setPostLoading(false);
-          setPostStatus(res.data.status);
-        })
-        .catch(err => {
-          setPostLoading(false);
-          setPostError(err?.response?.data?.message || err?.message || 'An error occurred');
-        });
+  useEffect(() => {
+    if (outline_status) {
+      setOutlineStatus(outline_status)
     }
-  };
+  }, [outline_status])
+
+  useEffect(() => {
+    if (post_status) {
+      setPostStatus(post_status)
+    }
+  }, [post_status])
 
   const fetchFactcheckStatusData = () => {
     if (content_plan_factcheck_guid) {
@@ -140,21 +134,11 @@ const StatusBar = ({
     }
   }
 
-
   useEffect(() => {
-    let postInterval;
-    if (!postComplete) {
-      fetchPostStatusData();
-      postInterval = setInterval(() => {
-        fetchPostStatusData();
-      }, 60000);
+    if (post_status) {
+      setPostStatus(post_status)
     }
-    return () => {
-      if (postInterval) {
-        clearInterval(postInterval);
-      }
-    };
-  }, [postComplete]);
+  }, [post_status])
 
   useEffect(() => {
     let factcheckInterval;

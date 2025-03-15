@@ -1,6 +1,6 @@
 'use client'
 import { ContentType } from "@/perfect-seo-shared-components/data/types";
-import { fetchOutlineStatus, getFactCheckStatus, getPostStatus } from "@/perfect-seo-shared-components/services/services";
+import { fetchOutlineStatus, getFactCheckStatus, getPost, getPostStatus } from "@/perfect-seo-shared-components/services/services";
 import { useEffect, useState } from "react";
 import TypeWriterText from "../TypeWriterText/TypeWriterText";
 import { keyToLabel } from "@/perfect-seo-shared-components/utils/conversion-utilities";
@@ -19,6 +19,7 @@ interface StatusBarProps {
   index_status?: string
   post_status?: string,
   outline_status?: string,
+  task_id?: string;
 }
 
 const StatusBar = ({
@@ -33,6 +34,7 @@ const StatusBar = ({
   onGeneratePost,
   indexHandler,
   index_status,
+  task_id,
   type
 }: StatusBarProps) => {
   const [outlineStatus, setOutlineStatus] = useState<string>('');
@@ -74,7 +76,7 @@ const StatusBar = ({
 
   useEffect(() => {
     let contentPlanOutlines;
-    if (content_plan_outline_guid && !outlineStatus) {
+    if (content_plan_outline_guid && !outline_status) {
       fetchOutlineStatusData();
       contentPlanOutlines = supabase.channel(`statusbar-outline-status-${content_plan_outline_guid}`)
         .on(
@@ -86,24 +88,46 @@ const StatusBar = ({
         )
         .subscribe()
     }
+    else if (outline_status) {
+      setOutlineStatus(outline_status)
+    }
     if (contentPlanOutlines) {
       return () => {
         contentPlanOutlines.unsubscribe()
       }
     }
-  }, [content_plan_outline_guid])
+  }, [content_plan_outline_guid, outline_status])
 
-  useEffect(() => {
-    if (outline_status) {
-      setOutlineStatus(outline_status)
+
+  const fetchPostStatusData = () => {
+    if (task_id) {
+      setPostLoading(true);
+      getPost(task_id)
+        .then(res => {
+          setPostLoading(false);
+          setPostStatus(res.data[0].status);
+        })
     }
-  }, [outline_status])
+  };
+
 
   useEffect(() => {
-    if (post_status) {
+    let postInterval;
+    if (task_id && !post_status) {
+      fetchPostStatusData();
+      postInterval = setInterval(() => {
+        fetchPostStatusData();
+      }, 60000);
+    }
+    else if (post_status) {
       setPostStatus(post_status)
     }
-  }, [post_status])
+    return () => {
+      if (postInterval) {
+        clearInterval(postInterval);
+      }
+    };
+  }, [task_id, post_status]);
 
   const fetchFactcheckStatusData = () => {
     if (content_plan_factcheck_guid) {
@@ -134,11 +158,7 @@ const StatusBar = ({
     }
   }
 
-  useEffect(() => {
-    if (post_status) {
-      setPostStatus(post_status)
-    }
-  }, [post_status])
+
 
   useEffect(() => {
     let factcheckInterval;

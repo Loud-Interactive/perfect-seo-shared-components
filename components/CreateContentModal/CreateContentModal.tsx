@@ -92,7 +92,6 @@ const CreateContentModal = ({
   }, [queryParam]);
 
 
-
   useEffect(() => {
     setSaved(false)
   }), [titleForm?.getState?.title]
@@ -307,7 +306,6 @@ const CreateContentModal = ({
 
   const saveHandler = (click?: boolean) => {
     if (!loading) {
-      console.log(contentPlan)
       let reqBody: SaveContentPost = {
         post_title: postTitle,
         outline_details: { sections: [...convertToTableData(form.getState)] },

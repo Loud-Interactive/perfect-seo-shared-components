@@ -186,7 +186,7 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
         <div className="col-12">
           <div className="row d-flex justify-content-end align-items-center w-100">
             <div className="col-auto">
-              <StatusBar type={ContentType.OUTLINE} content_plan_outline_guid={localOutline?.guid} onGeneratePost={() => {
+              <StatusBar type={ContentType.OUTLINE} content_plan_outline_guid={outline?.guid || localOutline?.guid} onGeneratePost={() => {
                 setShowGenerate(true)
               }} />
             </div>

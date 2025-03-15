@@ -191,7 +191,10 @@ export const regeneratePost = (
 
 
 export const getPostStatus = (guid: string) => {
-  return axiosInstance.get(`https://content-status.replit.app/content/status/${guid}`);
+  return supabase
+    .from('tasks')
+    .select('*')
+    .eq('content_plan_outline_guid', guid)
 };
 
 export const createUserCreditAccount = (email: string) => {

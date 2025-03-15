@@ -43,7 +43,7 @@ export interface PostOutlineGenerateRequest {
 export interface RegeneratePost {
   content_plan_outline_guid: string,
   email?: string,
-  receuving_email?: string
+  receiving_email?: string
 }
 
 export interface GenerateContentPost {

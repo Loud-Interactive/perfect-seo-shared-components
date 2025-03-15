@@ -12,12 +12,7 @@ const ContentPlanStatusCell = ({ plan, setDeleteModal, setDuplicateInfo, setNewM
   const supabase = createClient()
   const clickHandler = (e) => {
     e.preventDefault();
-    if (completeStatuses.includes(status)) {
-      router.push(`/contentplan/${guid}`)
-    }
-    else {
-      router.push(`/waiting-room/${guid}`)
-    }
+    router.push(`/contentplan/${guid}`)
   }
   const deleteClickHandler = (e) => {
     e.preventDefault();
@@ -87,15 +82,13 @@ const ContentPlanStatusCell = ({ plan, setDeleteModal, setDuplicateInfo, setNewM
 
     <div className='d-flex justify-content-end align-items-center'>
       {/* {isAdmin && <div className='me-2'>{obj?.guid}</div>} */}
-      {(completeStatuses.includes(status) === false) &&
+      {(completeStatuses.includes(status) === false && status) &&
         <span className='text-primary'>
           <TypeWriterText string={status} withBlink />
         </span>
       }
       <div className='input-group d-flex justify-content-end'>
-        {(completeStatuses.includes(status)) &&
-          <button className="btn btn-primary" onClick={clickHandler} title={`View GUID: ${guid}`}>View Plan</button>
-        }
+        <button className="btn btn-primary" onClick={clickHandler} title={`View GUID: ${guid}`}>View Plan</button>
         <button className='btn btn-primary d-flex align-items-center justify-content-center' onClick={(e) => { e.preventDefault(); duplicateClickHandler(plan) }} title={`Duplicate: ${guid}`}>
           <i className="bi bi-copy" />
         </button>

@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ContentType } from '@/perfect-seo-shared-components/data/types';
 import { addToast, selectEmail, selectIsAdmin } from '@/perfect-seo-shared-components/lib/features/User';
 import { useEffect, useState } from 'react';
-import { createPost, deleteContentOutline, deleteOutline, regenerateHTML, regenerateOutline, regeneratePost, updateLiveUrl } from '@/perfect-seo-shared-components/services/services';
+import { createPost, deleteContentOutline, deleteOutline, regenerateHTML, regenerateHTMLfromDoc, regenerateOutline, regeneratePost, updateLiveUrl } from '@/perfect-seo-shared-components/services/services';
 import { createClient } from '@/perfect-seo-shared-components/utils/supabase/client';
 import en from '@/assets/en.json'
 import CreateContentModal from '../CreateContentModal/CreateContentModal';
@@ -18,7 +18,7 @@ import { urlValidator } from '@/perfect-seo-shared-components/utils/validators';
 import { urlSanitization } from '@/perfect-seo-shared-components/utils/conversion-utilities';
 import FactCheckResultPage from '../FactCheckResultPage/FactCheckResultPage';
 import FactCheckModal from '../FactCheckModal/FactCheckModal';
-import { GenerateContentPost } from '@/perfect-seo-shared-components/data/requestTypes';
+import { GenerateContentPost, RegeneratePost } from '@/perfect-seo-shared-components/data/requestTypes';
 import { capitalizeFirst } from '@/perfect-seo-shared-components/utils/global';
 import RegeneratePostHTMLModal from '../RegeneratePostHTMLModal.tsx/RegeneratePostHTMLModal';
 
@@ -41,6 +41,26 @@ const ActionButtonGroup = ({
   const dispatch = useDispatch()
   const isAdmin = useSelector(selectIsAdmin)
   const email = useSelector(selectEmail)
+
+  const submitHTMLStylingHandler = (receivingEmail, language?) => {
+    let reqBody: RegeneratePost = {
+      email: email,
+      receiving_email: receivingEmail,
+      content_plan_outline_guid: data.content_plan_outline_guid
+    };
+
+    return regenerateHTML(reqBody)
+  };
+  const submitGoogleDocRegenerateHandler = (receivingEmail, language?) => {
+    let reqBody: RegeneratePost = {
+      email: email,
+      receiving_email: receivingEmail,
+      content_plan_outline_guid: data.content_plan_outline_guid,
+    };
+
+
+    return regenerateHTMLfromDoc(reqBody)
+  };
 
   const regenerateHandler = () => {
     setShowEditModal(false);
@@ -264,9 +284,6 @@ const ActionButtonGroup = ({
                     <DropdownMenu.Item>
                       <button className="btn btn-transparent w-100" onClick={() => { setShowRegeneratePostModal(true) }}>Regenerate Post</button>
                     </DropdownMenu.Item>
-                    {data?.html_link && <DropdownMenu.Item>
-                      <button className="btn btn-transparent w-100" onClick={() => { setShowRegenerateHTMLModal(true) }}>Regenerate Post HTML</button>
-                    </DropdownMenu.Item>}
                     <DropdownMenu.Item>
                       <button className="btn btn-transparent w-100" onClick={() => { setShowLiveURLModal(true) }}>{data?.live_post_url ? 'Edit' : 'Add'} Live Post URL</button>
                     </DropdownMenu.Item>
@@ -360,13 +377,13 @@ const ActionButtonGroup = ({
         open={showRegeneratePostModal}
         onClose={() => { setShowRegeneratePostModal(null); refresh() }}
       >
-        <RegeneratePostModal onClose={() => { setShowRegeneratePostModal(null); }} type={GenerateTypes.REGENERATE} submitHandler={regeneratePostHandler} onSuccess={() => { setShowRegeneratePostModal(false); refresh() }} />
+        <RegeneratePostModal submitHTMLStylingHandler={submitHTMLStylingHandler} submitGoogleDocRegenerateHandler={submitGoogleDocRegenerateHandler} onClose={() => { setShowRegeneratePostModal(null); }} type={GenerateTypes.REGENERATE} submitHandler={regeneratePostHandler} onSuccess={() => { setShowRegeneratePostModal(false); refresh() }} />
       </Modal.Overlay >
       <Modal.Overlay
         open={showGeneratePostModal}
         onClose={() => { setShowGeneratePostModal(null); refresh() }}
       >
-        <RegeneratePostModal onClose={() => { setShowGeneratePostModal(null); }} type={GenerateTypes.GENERATE} submitHandler={generatePostHandler} onSuccess={() => { setShowGeneratePostModal(false); refresh() }} />
+        <RegeneratePostModal submitHTMLStylingHandler={submitHTMLStylingHandler} submitGoogleDocRegenerateHandler={submitGoogleDocRegenerateHandler} onClose={() => { setShowGeneratePostModal(null); }} type={GenerateTypes.GENERATE} submitHandler={generatePostHandler} onSuccess={() => { setShowGeneratePostModal(false); refresh() }} />
       </Modal.Overlay >
       <Modal.Overlay closeIcon open={showLiveURLModal} onClose={() => setShowLiveURLModal(false)} className="modal-small">
         <Modal.Title title="Add Live URL" />

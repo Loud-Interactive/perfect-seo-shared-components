@@ -191,7 +191,7 @@ const StatusBar = ({
   }
   return (
     <div className="row d-flex align-items-center justify-content-end g-0 ">
-      {outlineStatus && <div className="col-auto d-flex align-items-center">
+      <div className="col-auto d-flex align-items-center">
         {outlineComplete ?
           <>
             <strong className="text-primary">Outline</strong>
@@ -201,13 +201,13 @@ const StatusBar = ({
             <>
               <strong className="text-primary me-2">Outline Generation Error</strong> {outlineError}
             </>
-            :
-            <>
-              <strong className="text-primary me-2">Outline Status</strong> {keyToLabel(outlineStatus)}
-            </>
+            : outlineStatus ?
+              <>
+                <strong className="text-primary me-2">Outline Status</strong> {keyToLabel(outlineStatus)}
+              </>
+              : <strong className="text-primary">Outline</strong>
         }
       </div>
-      }
       {
         postStatus ? <div className="col-auto d-flex align-items-center">
           <i className="bi bi-chevron-right mx-2" />

@@ -501,3 +501,6 @@ export const populateBulkGSC = (reqObj) => {
 export const regenerateHTML = (reqObj: Request.RegeneratePost) => {
   return axiosInstance.post(`https://content-v5.replit.app/regenerate_html${parseQueries(reqObj)}`, reqObj);
 }
+export const regenerateHTMLfromDoc = (reqObj: Request.RegeneratePost) => {
+  return axiosInstance.post(`https://content-v5.replit.app/regenerate_html_from_outline_guid${parseQueries(reqObj)}`, reqObj);
+}

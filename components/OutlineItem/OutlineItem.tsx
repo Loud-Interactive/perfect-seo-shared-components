@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react"
-import { createPost, deleteOutline, fetchOutlineData, fetchOutlineStatus, regenerateOutline, saveContentPlanPost } from "@/perfect-seo-shared-components/services/services"
+import { createPost, deleteOutline, fetchOutlineData, fetchOutlineStatus, regenerateHTML, regenerateHTMLfromDoc, regenerateOutline, saveContentPlanPost } from "@/perfect-seo-shared-components/services/services"
 import * as Modal from '@/perfect-seo-shared-components/components/Modal/Modal'
 import CreateContentModal from "@/perfect-seo-shared-components/components/CreateContentModal/CreateContentModal"
 import moment from "moment-timezone"
 import RegeneratePostModal, { GenerateTypes } from "../RegeneratePostModal/RegeneratePostModal";
-import { GenerateContentPost } from "@/perfect-seo-shared-components/data/requestTypes";
+import { GenerateContentPost, RegeneratePost } from "@/perfect-seo-shared-components/data/requestTypes";
 import { useDispatch, useSelector } from "react-redux";
 import { selectEmail, selectIsAdmin } from "@/perfect-seo-shared-components/lib/features/User";
 import { ContentType, Outline, OutlineRowProps } from "@/perfect-seo-shared-components/data/types";
@@ -37,6 +37,25 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
         setLocalOutline(res.data[0])
       })
   }
+
+
+  const submitHTMLStylingHandler = (receivingEmail, language?) => {
+    let reqBody: RegeneratePost = {
+      email: email,
+      receiving_email: receivingEmail,
+      content_plan_outline_guid: outline.guid,
+    };
+
+    return regenerateHTML(reqBody)
+  };
+  const submitGoogleDocRegenerateHandler = (receivingEmail, language?) => {
+    let reqBody: RegeneratePost = {
+      email: email,
+      receiving_email: receivingEmail,
+      content_plan_outline_guid: outline.guid,
+    };
+    return regenerateHTMLfromDoc(reqBody)
+  };
 
   useEffect(() => {
     if (outline?.status !== status) {
@@ -184,7 +203,7 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
         open={showGenerate}
         onClose={() => { setShowGenerate(false); refresh() }}
       >
-        <RegeneratePostModal onClose={() => { setShowGenerate(false); }} type={GenerateTypes.GENERATE} submitHandler={generatePostHandler} onSuccess={() => { setShowGenerate(false); refresh() }} />
+        <RegeneratePostModal submitGoogleDocRegenerateHandler={submitGoogleDocRegenerateHandler} submitHTMLStylingHandler={submitHTMLStylingHandler} onClose={() => { setShowGenerate(false); }} type={GenerateTypes.GENERATE} submitHandler={generatePostHandler} onSuccess={() => { setShowGenerate(false); refresh() }} />
       </Modal.Overlay >
       <Modal.Overlay open={deleteModal} onClose={() => { setDeleteModal(null) }}>
         <Modal.Title title="Delete Outline" />

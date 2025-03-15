@@ -15,9 +15,11 @@ interface RegeneratePostModalProps {
   submitHandler: (email, language?: string) => Promise<any>
   type: GenerateTypes;
   onSuccess: () => void;
+  submitHTMLStylingHandler: (email, language?: string) => Promise<any>;
+  submitGoogleDocRegenerateHandler: (email, language?: string) => Promise<any>;
 }
 
-const RegeneratePostModal = ({ onClose, type, submitHandler, onSuccess }: RegeneratePostModalProps) => {
+const RegeneratePostModal = ({ onClose, type, submitHandler, onSuccess, submitHTMLStylingHandler, submitGoogleDocRegenerateHandler }: RegeneratePostModalProps) => {
   const points = useSelector(selectPoints)
   const [showConfirm, setShowConfirm] = useState(false)
   const email = useSelector(selectEmail)
@@ -96,8 +98,33 @@ const RegeneratePostModal = ({ onClose, type, submitHandler, onSuccess }: Regene
         setSubmitted(false)
       });
   }
+  const regenerateFromGoogleDoc = () => {
+    setSubmitError(null)
+    setSubmitted(true)
+    submitGoogleDocRegenerateHandler(receivingEmail, langSelected.value)
+      .then(() => {
+        setShowConfirm(true);
+        setSubmitted(false)
+      })
+      .catch(() => {
+        setSubmitError("There was an error submitting your post. Please try again.")
+        setSubmitted(false)
+      });
+  }
 
-
+  const regenerateHTMLStylingHandler = () => {
+    setSubmitError(null)
+    setSubmitted(true)
+    submitHTMLStylingHandler(receivingEmail, langSelected.value)
+      .then(() => {
+        setShowConfirm(true);
+        setSubmitted(false)
+      })
+      .catch(() => {
+        setSubmitError("There was an error submitting your post. Please try again.")
+        setSubmitted(false)
+      });
+  }
   const buyCreditsHandler = () => {
     window.open("/my-credits", "_blank");
   };
@@ -170,6 +197,28 @@ const RegeneratePostModal = ({ onClose, type, submitHandler, onSuccess }: Regene
           >
             go back
           </button>
+          {type === GenerateTypes.REGENERATE && (
+            <button
+              className="btn btn-primary btn-standard"
+              onClick={(e) => {
+                e.preventDefault();
+                regenerateFromGoogleDoc();
+              }}
+            >
+              Regenerate Post from Google Doc
+            </button>
+          )}
+          {type === GenerateTypes.REGENERATE && (
+            <button
+              className="btn btn-primary btn-standard"
+              onClick={(e) => {
+                e.preventDefault();
+                regenerateHTMLStylingHandler();
+              }}
+            >
+              Regenerate HTML Document Styling
+            </button>
+          )}
           <button
             className="btn btn-primary btn-standard"
             onClick={(e) => {

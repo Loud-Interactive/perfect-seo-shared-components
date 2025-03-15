@@ -31,7 +31,8 @@ const PostsList = ({ domain_name, active }: PostsListProps) => {
   }, [])
 
   const getPosts = () => {
-
+    setLoading(true)
+    setData(null)
     if (active) {
       let reqObj: any = { ...paginator.paginationObj, page: paginator.currentPage }
       let status = filter
@@ -48,27 +49,31 @@ const PostsList = ({ domain_name, active }: PostsListProps) => {
       if (domain_name) {
         getPostsByDomain(domain_name, reqObj)
           .then(res => {
-            paginator.setItemCount(res.data.total)
-            setData(res.data.records)
-            setLoading(false)
-          })
-          .catch(err => {
-            setLoading(false);
-            setData(null)
-            paginator.setItemCount(0)
+            if (res.data) {
+              paginator.setItemCount(res.count)
+              setData(res.data)
+              setLoading(false)
+            }
+            else {
+              setLoading(false);
+              setData(null)
+              paginator.setItemCount(0)
+            }
           })
       }
       else {
         getPostsByEmail(email, reqObj)
           .then(res => {
-            paginator.setItemCount(res.data.total)
-            setData(res.data.records)
-            setLoading(false)
-          })
-
-          .catch(err => {
-            setLoading(false);
-            setData(null)
+            if (res.data) {
+              paginator.setItemCount(res.count)
+              setData(res.data)
+              setLoading(false)
+            }
+            else {
+              setLoading(false);
+              setData(null)
+              paginator.setItemCount(0)
+            }
           })
       }
     }
@@ -84,7 +89,6 @@ const PostsList = ({ domain_name, active }: PostsListProps) => {
         console.log(err)
       })
   }
-
 
 
 

@@ -275,43 +275,99 @@ export const getSpecificPairs = (domain: string, guids: string[]) => {
   return axiosInstance.post(`https://pp-api.replit.app/pairs/${domain}/specific`, guids);
 }
 export const getPostsByDomain = (domain: string, reqObj?: any) => {
-  let url = `https://content-status.replit.app/content/domain/${domain}`;
-  if (reqObj) {
-    if (reqObj.page > 1) {
-      url += parseQueries({ ...reqObj, skip: (reqObj.page - 1) * 10, limit: reqObj?.page_size })
+  let startIndex = reqObj?.page === 1 ? 0 : (reqObj.page - 1) * reqObj.page_size;
+  let endIndex = startIndex + reqObj.page_size - 1
+  if (!!reqObj?.has_live_post_url) {
+    if (reqObj?.has_live_post_url === true) {
+      return supabase.from('tasks')
+        .select('*', { count: 'planned' })
+        .eq("client_domain", domain)
+        .neq("live_post_url", null)
+        .range(startIndex, endIndex)
+        .order('created_at', { ascending: false })
     }
     else {
-      url += parseQueries({ ...reqObj, skip: reqObj.page - 1, limit: reqObj?.page_size })
-    }
-    if (!!reqObj?.has_live_post_url) {
-      url += '&has_live_post_url=' + reqObj?.has_live_post_url
-    }
-    if (reqObj.status) {
-      url += '&status=' + reqObj.status
+      return supabase.from('tasks')
+        .select('*', { count: 'planned' })
+        .eq("client_domain", domain)
+        .eq("live_post_url", null)
+        .range(startIndex, endIndex)
+        .order('created_at', { ascending: false })
     }
   }
-
-  return axiosInstance.get(
-    url,
-  );
+  else if (reqObj.status) {
+    if (reqObj?.status === 'completed') {
+      return supabase.from('tasks')
+        .select('*', { count: 'planned' })
+        .eq("client_domain", domain)
+        .eq("status", "Complete")
+        .range(startIndex, endIndex)
+        .order('created_at', { ascending: false })
+    }
+    else {
+      return supabase.from('tasks')
+        .select('*', { count: 'planned' })
+        .eq("client_domain", domain)
+        .neq("status", "Complete")
+        .range(startIndex, endIndex)
+        .order('created_at', { ascending: false })
+    }
+  }
+  else {
+    return supabase.from('tasks')
+      .select('*', { count: 'planned' })
+      .eq("client_domain", domain)
+      .range(startIndex, endIndex)
+      .order('created_at', { ascending: false })
+  }
 };
+
 export const getPostsByEmail = (email: string, reqObj?: any) => {
-  let url = `https://content-status.replit.app/content/email/${email}`;
-  if (reqObj) {
-    if (reqObj.page > 1) {
-      url += parseQueries({ ...reqObj, skip: (reqObj.page * 10) - 1, limit: reqObj?.page_size })
+  let startIndex = reqObj?.page === 1 ? 0 : (reqObj.page - 1) * reqObj.page_size;
+  let endIndex = startIndex + reqObj.page_size - 1
+  if (!!reqObj?.has_live_post_url) {
+    if (reqObj?.has_live_post_url === true) {
+      return supabase.from('tasks')
+        .select('*', { count: 'planned' })
+        .eq("email", email)
+        .neq("live_post_url", null)
+        .range(startIndex, endIndex)
+        .order('created_at', { ascending: false })
     }
     else {
-      url += parseQueries({ ...reqObj, skip: reqObj.page - 1, limit: reqObj?.page_size })
+      return supabase.from('tasks')
+        .select('*', { count: 'planned' })
+        .eq("email", email)
+        .eq("live_post_url", null)
+        .range(startIndex, endIndex)
+        .order('created_at', { ascending: false })
     }
-    if (reqObj.status) {
-      url += '&status=' + reqObj.status
-    }
-
   }
-  return axiosInstance.get(
-    url,
-  );
+  else if (reqObj.status) {
+    if (reqObj?.status === 'completed') {
+      return supabase.from('tasks')
+        .select('*', { count: 'planned' })
+        .eq("email", email)
+        .eq("status", "Complete")
+        .range(startIndex, endIndex)
+        .order('created_at', { ascending: false })
+    }
+    else {
+      return supabase.from('tasks')
+        .select('*', { count: 'planned' })
+        .eq("email", email)
+        .neq("status", "Complete")
+        .range(startIndex, endIndex)
+        .order('created_at', { ascending: false })
+    }
+  }
+  else {
+    return supabase.from('tasks')
+      .select('*', { count: 'planned' })
+      .eq("email", email)
+      .range(startIndex, endIndex)
+      .order('created_at', { ascending: false })
+  }
 };
 
 export const deleteContentPlan = (guid: string) => {

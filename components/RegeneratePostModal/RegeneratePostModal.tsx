@@ -198,26 +198,27 @@ const RegeneratePostModal = ({ onClose, type, submitHandler, onSuccess, submitHT
             go back
           </button>
           {type === GenerateTypes.REGENERATE && (
-            <button
-              className="btn btn-primary btn-standard"
-              onClick={(e) => {
-                e.preventDefault();
-                regenerateFromGoogleDoc();
-              }}
-            >
-              Regenerate Post from Google Doc
-            </button>
-          )}
-          {type === GenerateTypes.REGENERATE && (
-            <button
-              className="btn btn-primary btn-standard"
-              onClick={(e) => {
-                e.preventDefault();
-                regenerateHTMLStylingHandler();
-              }}
-            >
-              Regenerate HTML Document Styling
-            </button>
+            <>
+              <button
+                className="btn btn-primary btn-standard"
+                onClick={(e) => {
+                  e.preventDefault();
+                  regenerateFromGoogleDoc();
+                }}
+              >
+                Regenerate Post from Google Doc
+              </button>
+
+              <button
+                className="btn btn-primary btn-standard"
+                onClick={(e) => {
+                  e.preventDefault();
+                  regenerateHTMLStylingHandler();
+                }}
+              >
+                Regenerate HTML Document Styling
+              </button>
+            </>
           )}
           <button
             className="btn btn-primary btn-standard"

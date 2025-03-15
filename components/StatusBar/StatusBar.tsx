@@ -1,6 +1,6 @@
 'use client'
-import { ContentType } from "@/perfect-seo-shared-components/data/types";
-import { fetchOutlineStatus, getFactCheckStatus, getPostStatus } from "@/perfect-seo-shared-components/services/services";
+import { ContentType, Outline } from "@/perfect-seo-shared-components/data/types";
+import { fetchOutlineData, fetchOutlineStatus, getFactCheckStatus, getPostStatus } from "@/perfect-seo-shared-components/services/services";
 import { useEffect, useState } from "react";
 import TypeWriterText from "../TypeWriterText/TypeWriterText";
 import { keyToLabel } from "@/perfect-seo-shared-components/utils/conversion-utilities";
@@ -34,6 +34,7 @@ const StatusBar = ({
   const [outlineStatus, setOutlineStatus] = useState<string>('');
   const [postStatus, setPostStatus] = useState<string>('');
   const [factcheckStatus, setFactcheckStatus] = useState<string>('');
+  const [outlineData, setOutlineData] = useState<Outline>();
 
   const [outlineLoading, setOutlineLoading] = useState<boolean>(false);
   const [postLoading, setPostLoading] = useState<boolean>(false);
@@ -49,10 +50,19 @@ const StatusBar = ({
   const [factcheckComplete, setFactcheckComplete] = useState<boolean>(false);
   const supabase = createClient();
 
-
+  const getGenerateContent = () => {
+    fetchOutlineData(content_plan_outline_guid)
+      .then(res => {
+        if (res.data) {
+          setOutlineData(res.data[0]);
+          console.log(res.data[0])
+        }
+      })
+  }
   const fetchOutlineStatusData = () => {
     if (content_plan_outline_guid) {
       setOutlineLoading(true);
+      getGenerateContent();
       fetchOutlineStatus(content_plan_outline_guid)
         .then(res => {
           if (res.data[0]) {
@@ -101,13 +111,15 @@ const StatusBar = ({
       setPostLoading(true);
       getPostStatus(content_plan_outline_guid)
         .then(res => {
-          setPostLoading(false);
-          setPostStatus(res.data.status);
+          if (res.data) {
+            setPostLoading(false);
+            setPostStatus(res.data[0].status);
+          }
+          else {
+            setPostLoading(false);
+            setPostStatus('')
+          }
         })
-        .catch(err => {
-          setPostLoading(false);
-          setPostError(err?.response?.data?.message || err?.message || 'An error occurred');
-        });
     }
   };
 

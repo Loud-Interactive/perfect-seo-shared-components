@@ -49,7 +49,7 @@ const ContentPlanStatusCell = ({ plan, setDeleteModal, setDuplicateInfo, setNewM
       .order('timestamp', { ascending: false })
       .then(res => {
         if (res.data) {
-          setStatus(res.data[0].status)
+          setStatus(res.data[0]?.status)
         }
         else {
           setStatus('')

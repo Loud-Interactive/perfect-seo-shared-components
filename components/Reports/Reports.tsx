@@ -59,8 +59,8 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
 
     try {
       const postResults = await getPostsByDomain(domain_name, { ...paginator.paginationObj, page: paginator.currentPage, has_live_post_url: true })
-      paginator.setItemCount(postResults.data.total)
-      const postData = postResults.data.records
+      paginator.setItemCount(postResults.count)
+      const postData = postResults.data
       setTableData(postData)
     } catch (error) {
       console.error('Error fetching post results:', error)

@@ -304,6 +304,7 @@ const CreateContentModal = ({
 
 
   const saveHandler = (click?: boolean) => {
+    setSaving(true)
     if (!loading) {
       let reqBody: SaveContentPost = {
         post_title: postTitle,

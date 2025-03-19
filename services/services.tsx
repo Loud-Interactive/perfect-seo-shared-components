@@ -462,6 +462,25 @@ export const regenerateSocialPost = async (guid, platform) => {
   );
 }
 
+export const getOutlinesByContentPlan = async (content_plan_guid: string, paginator?: PaginationRequest) => {
+  if (paginator) {
+    let startIndex = paginator?.page === 1 ? 0 : (paginator.page - 1) * paginator.page_size;
+    let endIndex = startIndex + paginator.page_size - 1
+    return supabase.from('content_plan_outlines')
+      .select('*', { count: 'planned' })
+      .eq("content_plan_guid", content_plan_guid)
+      .range(startIndex, endIndex)
+      .order('created_at', { ascending: false })
+  }
+  else {
+    return supabase.from('content_plan_outlines')
+      .select('*')
+      .eq("content_plan_guid", content_plan_guid)
+      .order('created_at', { ascending: false })
+  }
+
+}
+
 export const getContentPlanOutlinesByDomain = (domain: string, paginator: PaginationRequest) => {
   let startIndex = paginator?.page === 1 ? 0 : (paginator.page - 1) * paginator.page_size;
   let endIndex = startIndex + paginator.page_size - 1

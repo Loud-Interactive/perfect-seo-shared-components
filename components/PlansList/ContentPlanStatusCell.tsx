@@ -88,7 +88,7 @@ const ContentPlanStatusCell = ({ plan, setDeleteModal, setDuplicateInfo, setNewM
         </span>
       }
       <div className='input-group d-flex justify-content-end'>
-        <button className="btn btn-primary" onClick={clickHandler} title={`View GUID: ${guid}`}>View Plan</button>
+        <a href={`https://contentperfect.ai/contentplan/${guid}`} className="btn btn-primary">View Plan</a>
         <button className='btn btn-primary d-flex align-items-center justify-content-center' onClick={(e) => { e.preventDefault(); duplicateClickHandler(plan) }} title={`Duplicate: ${guid}`}>
           <i className="bi bi-copy" />
         </button>

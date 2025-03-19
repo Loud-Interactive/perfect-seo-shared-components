@@ -82,7 +82,7 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
       email: email,
       seo_keyword: outline.Keyword || outline.keyword,
       content_plan_keyword: outline?.content_plan_keyword,
-      keyword: outline?.keyword,
+      keyword: outline?.post_title,
       content_plan_guid: outline.content_plan_guid,
       content_plan_outline_guid: outline.guid,
       client_name: localOutline.client_name || outline.brand_name || outline.client_name,

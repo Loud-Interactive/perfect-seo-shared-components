@@ -194,6 +194,15 @@ export const getPostStatus = (guid: string) => {
   return axiosInstance.get(`https://content-status.replit.app/content/status/${guid}`);
 };
 
+export const getLatestStatusByOutlineGUID = (guid: string) => {
+  return supabase
+    .from('tasks')
+    .select('*')
+    .eq('content_plan_outline_guid', guid)
+    .order('last_updated_at', { ascending: false })
+    .limit(1)
+}
+
 export const createUserCreditAccount = (email: string) => {
   return axiosInstance.post(
     "https://lucsperfect.replit.app/users/",

@@ -142,7 +142,7 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
 
   const newCloseHandler = () => {
     setDuplicateInfo(null)
-    setTimeout(() => fetchPlans(), 60000)
+    // setTimeout(() => fetchPlans(), 60000)
     return setNewModal(false)
   }
 

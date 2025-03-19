@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { createPost, deleteOutline, fetchOutlineData, fetchOutlineStatus, regenerateHTML, regenerateHTMLfromDoc, regenerateOutline, saveContentPlanPost } from "@/perfect-seo-shared-components/services/services"
+import { createPost, deleteOutline, fetchOutlineData, fetchOutlineStatus, getSynopsisInfo, regenerateHTML, regenerateHTMLfromDoc, regenerateOutline, saveContentPlanPost } from "@/perfect-seo-shared-components/services/services"
 import * as Modal from '@/perfect-seo-shared-components/components/Modal/Modal'
 import CreateContentModal from "@/perfect-seo-shared-components/components/CreateContentModal/CreateContentModal"
 import moment from "moment-timezone"
@@ -61,6 +61,20 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
     setCompleted(completedStatus.includes(status))
   }, [status])
 
+  useEffect(() => {
+    if (!outline?.client_name) {
+
+      getSynopsisInfo(domain_name)
+        .then(res => {
+
+          if (res.data) {
+            setLocalOutline({ ...outline, client_name: res.data.brand_name })
+          }
+        })
+    }
+
+  }, [outline?.client_name, domain_name])
+
   const generatePostHandler = (receiving_email, writing_language?) => {
     let newOutline = typeof outline?.outline === 'string' ? JSON.parse(outline?.outline) : outline?.outline
     let reqBody: GenerateContentPost = {
@@ -71,8 +85,8 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
       keyword: outline?.keyword,
       content_plan_guid: outline.content_plan_guid,
       content_plan_outline_guid: outline.guid,
-      client_name: outline.brand_name,
-      client_domain: outline.client_domain,
+      client_name: localOutline.client_name || outline.brand_name || outline.client_name,
+      client_domain: domain_name,
       receiving_email: receiving_email,
       writing_language: writing_language || 'English'
     };

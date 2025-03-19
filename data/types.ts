@@ -234,6 +234,7 @@ export interface Outline {
   outline: string | null;
   post_title: string;
   status: string;
+  client_name?: string
 }
 
 export interface PostUploadItem {

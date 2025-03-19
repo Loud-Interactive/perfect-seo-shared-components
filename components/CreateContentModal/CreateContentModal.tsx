@@ -242,7 +242,6 @@ const CreateContentModal = ({
         .then(res => {
           if (res.data[0]?.outline) {
             let outline = JSON.parse(res.data[0].outline)
-            console.log(outline)
             if (outline?.sections?.length > 0) {
               processSections(outline.sections, initial);
               setLoading(false)
@@ -267,7 +266,6 @@ const CreateContentModal = ({
       getContentPlanOutline(reqObj)
         .then((res) => {
           setLoading(false);
-          console.log(res.data)
           let newData;
           if (typeof res.data.outline === "string") {
             newData = JSON.parse(res.data.outline);
@@ -307,7 +305,6 @@ const CreateContentModal = ({
 
   const saveHandler = (click?: boolean) => {
     if (!loading) {
-      console.log(contentPlan)
       let reqBody: SaveContentPost = {
         post_title: postTitle,
         outline_details: { sections: [...convertToTableData(form.getState)] },

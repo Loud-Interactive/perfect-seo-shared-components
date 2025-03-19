@@ -80,7 +80,7 @@ const OutlinesList = ({ domain_name, active }: OutlinesListProps) => {
     let interval;
     if (active && !modalOpen) {
       getOutlines();
-      interval = setInterval(getOutlines, 300000)
+      // interval = setInterval(getOutlines, 300000)
     }
 
     return () => {

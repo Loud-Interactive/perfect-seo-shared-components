@@ -96,7 +96,7 @@ const PostsList = ({ domain_name, active }: PostsListProps) => {
     let interval;
     if (active) {
       getPosts();
-      interval = setInterval(getPosts, 60000)
+      // interval = setInterval(getPosts, 60000)
     }
 
     return () => {

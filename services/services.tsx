@@ -106,14 +106,6 @@ export const saveContentPlanPost = (reqObj: Request.SaveContentPost) => {
   return axiosInstance.post(`${API_URL}/post_outline`, reqObj);
 };
 
-export const getContentPlanOutline = (
-  reqObj: Request.GetPostOutlineRequest,
-) => {
-  return axiosInstance.get(
-    `${API_URL}/get_full_outline/${reqObj.content_plan_guid}/${reqObj.post_title}/${reqObj.client_domain}`,
-  );
-};
-
 export const generateContentPlanOutline = (
   reqObj: Request.PostOutlineGenerateRequest,
 ) => {

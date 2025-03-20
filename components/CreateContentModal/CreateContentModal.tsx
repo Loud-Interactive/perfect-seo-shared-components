@@ -11,7 +11,7 @@ import useViewport from "@/perfect-seo-shared-components/hooks/useViewport";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useSelector } from "react-redux";
 import { GenerateContentPost, GetPostOutlineRequest, RegeneratePost, SaveContentPost } from "@/perfect-seo-shared-components/data/requestTypes";
-import { fetchOutlineData, fetchOutlineStatus, getContentPlanOutline, regenerateHTML, regenerateHTMLfromDoc, saveContentPlanPost } from "@/perfect-seo-shared-components/services/services";
+import { fetchOutlineData, regenerateHTML, regenerateHTMLfromDoc, saveContentPlanPost } from "@/perfect-seo-shared-components/services/services";
 import { createPost, regenerateOutline } from "@/perfect-seo-shared-components/services/services";
 import Loader from "@/perfect-seo-shared-components/components/Loader/Loader";
 import { selectEmail, selectPoints } from "@/perfect-seo-shared-components/lib/features/User";

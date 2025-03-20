@@ -236,64 +236,65 @@ const CreateContentModal = ({
     if (data.guid) {
       setOutlineGUID(data.guid)
     }
-    if (standalone) {
-      let guid = data.guid || data.content_plan_outline_guid;
-      fetchOutlineData(guid)
-        .then(res => {
-          if (res.data[0]?.outline) {
-            let outline = JSON.parse(res.data[0].outline)
-            if (outline?.sections?.length > 0) {
-              processSections(outline.sections, initial);
-              setLoading(false)
-            }
+    // if (standalone) {
+    let guid = data.guid || data.content_plan_outline_guid;
+    fetchOutlineData(guid)
+      .then(res => {
+        if (res.data[0]?.outline) {
+          let outline = JSON.parse(res.data[0].outline)
+          if (outline?.sections?.length > 0) {
+            processSections(outline.sections, initial);
+            setLoading(false)
           }
-        })
-    } else {
-      let reqObj: GetPostOutlineRequest = {
-        client_name: contentPlan?.brand_name,
-        content_plan_guid: contentPlan?.guid,
-        post_title: data['Post Title'] || data?.post_title || postTitle,
-        priority_code: contentPlan?.priorityCode || '',
-        client_domain: contentPlan?.domain_name || contentPlan?.client_domain,
-        inspiration_url_1: contentPlan?.inspiration_url_1,
-        priority1: contentPlan?.inspiration_url_1_priority || undefined,
-        inspiration_url_2: contentPlan?.inspiration_url_2,
-        priority2: contentPlan?.inspiration_url_2_priority || undefined,
-        inspiration_url_3: contentPlan?.inspiration_url_3,
-        priority3: contentPlan?.inspiration_url_3_priority || undefined,
-      };
+        }
+      })
+    // } 
+    // else {
+    //   let reqObj: GetPostOutlineRequest = {
+    //     client_name: contentPlan?.brand_name,
+    //     content_plan_guid: contentPlan?.guid,
+    //     post_title: data['Post Title'] || data?.post_title || postTitle,
+    //     priority_code: contentPlan?.priorityCode || '',
+    //     client_domain: contentPlan?.domain_name || contentPlan?.client_domain,
+    //     inspiration_url_1: contentPlan?.inspiration_url_1,
+    //     priority1: contentPlan?.inspiration_url_1_priority || undefined,
+    //     inspiration_url_2: contentPlan?.inspiration_url_2,
+    //     priority2: contentPlan?.inspiration_url_2_priority || undefined,
+    //     inspiration_url_3: contentPlan?.inspiration_url_3,
+    //     priority3: contentPlan?.inspiration_url_3_priority || undefined,
+    //   };
 
-      getContentPlanOutline(reqObj)
-        .then((res) => {
-          setLoading(false);
-          let newData;
-          if (typeof res.data.outline === "string") {
-            newData = JSON.parse(res.data.outline);
-          } else {
-            newData = res.data.outline;
-          }
-          setOutlineGUID(res.data.guid);
-          if (typeof newData === "string") {
-            newData = JSON.parse(newData);
-          }
-          if (newData?.sections) {
-            if (newData.sections.length > 0) {
-              processSections(newData.sections, initial);
-            }
-          }
-        })
-        .catch((err) => {
-          if (data.guid) {
-            fetchOutlineData(data.guid)
-              .then(res => {
-                console.log("outline status", res.data)
-                if (res?.data[0].outline?.sections?.length > 0) {
-                  processSections(res.data[0].outline.sections, initial);
-                }
-              })
-          }
-        });
-    }
+    //   getContentPlanOutline(reqObj)
+    //     .then((res) => {
+    //       setLoading(false);
+    //       let newData;
+    //       if (typeof res.data.outline === "string") {
+    //         newData = JSON.parse(res.data.outline);
+    //       } else {
+    //         newData = res.data.outline;
+    //       }
+    //       setOutlineGUID(res.data.guid);
+    //       if (typeof newData === "string") {
+    //         newData = JSON.parse(newData);
+    //       }
+    //       if (newData?.sections) {
+    //         if (newData.sections.length > 0) {
+    //           processSections(newData.sections, initial);
+    //         }
+    //       }
+    //     })
+    //     .catch((err) => {
+    //       if (data.guid) {
+    //         fetchOutlineData(data.guid)
+    //           .then(res => {
+    //             console.log("outline status", res.data)
+    //             if (res?.data[0].outline?.sections?.length > 0) {
+    //               processSections(res.data[0].outline.sections, initial);
+    //             }
+    //           })
+    //       }
+    //     });
+    // }
   };
 
   useEffect(() => {

@@ -273,7 +273,6 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
                       <tbody>
                         {Object.keys(summaryData[obj])?.map((data, i) => {
                           let lineData = summaryData[obj][data]
-                          console.log(lineData)
                           return (
                             <tr key={`summary-section-data-${i}`}>
                               <td>{formatKeyToTitle(data)}</td>

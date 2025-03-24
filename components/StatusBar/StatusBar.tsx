@@ -1,6 +1,6 @@
 'use client'
 import { ContentType } from "@/perfect-seo-shared-components/data/types";
-import { fetchOutlineStatus, getFactCheckStatus, getPost, getPostStatus } from "@/perfect-seo-shared-components/services/services";
+import { fetchOutlineStatus, getFactCheckStatus, getPost, getPostStatus, getPostStatusFromOutline } from "@/perfect-seo-shared-components/services/services";
 import { useEffect, useState } from "react";
 import TypeWriterText from "../TypeWriterText/TypeWriterText";
 import { keyToLabel } from "@/perfect-seo-shared-components/utils/conversion-utilities";
@@ -100,9 +100,9 @@ const StatusBar = ({
 
 
   const fetchPostStatusData = () => {
-    if (task_id) {
+    if (content_plan_outline_guid) {
       setPostLoading(true);
-      getPost(task_id)
+      getPostStatusFromOutline(content_plan_outline_guid)
         .then(res => {
           setPostLoading(false);
           setPostStatus(res.data[0].status);
@@ -113,7 +113,7 @@ const StatusBar = ({
 
   useEffect(() => {
     let postInterval;
-    if (task_id && !post_status) {
+    if (content_plan_outline_guid && !post_status) {
       fetchPostStatusData();
       postInterval = setInterval(() => {
         fetchPostStatusData();
@@ -127,7 +127,7 @@ const StatusBar = ({
         clearInterval(postInterval);
       }
     };
-  }, [task_id, post_status]);
+  }, [content_plan_outline_guid, post_status]);
 
   const fetchFactcheckStatusData = () => {
     if (content_plan_factcheck_guid) {

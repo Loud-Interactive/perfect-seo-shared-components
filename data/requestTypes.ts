@@ -32,12 +32,11 @@ export interface SaveContentPost {
 }
 
 export interface PostOutlineGenerateRequest {
-  guid?: string,
   content_plan_guid: string,
   post_title: string,
-  client_name: string,
-  client_domain: string,
-  writing_language?: string
+  content_plan_keyword: string,
+  post_keyword: string,
+  domain: string
 }
 
 export interface RegeneratePost {

@@ -109,7 +109,8 @@ export const saveContentPlanPost = (reqObj: Request.SaveContentPost) => {
 export const generateContentPlanOutline = (
   reqObj: Request.PostOutlineGenerateRequest,
 ) => {
-  return axiosInstance.post(`${API_URL}/get_outline`, reqObj);
+  return axiosInstance.post('/api/outlines/generate', reqObj);
+  // return axiosInstance.post(`${API_URL}/get_outline`, reqObj);
 };
 
 export const getPreviousPlans = (domain_name) => {

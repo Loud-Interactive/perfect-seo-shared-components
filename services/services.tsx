@@ -282,7 +282,7 @@ export const getPostsByDomain = (domain: string, reqObj?: any) => {
   if (!!reqObj?.has_live_post_url) {
     if (reqObj?.has_live_post_url === true) {
       return supabase.from('tasks')
-        .select('*', { count: 'planned' })
+        .select('*', { count: 'exact' })
         .eq("client_domain", domain)
         .neq("live_post_url", null)
         .range(startIndex, endIndex)
@@ -290,7 +290,7 @@ export const getPostsByDomain = (domain: string, reqObj?: any) => {
     }
     else {
       return supabase.from('tasks')
-        .select('*', { count: 'planned' })
+        .select('*', { count: 'exact' })
         .eq("client_domain", domain)
         .eq("live_post_url", null)
         .range(startIndex, endIndex)
@@ -300,7 +300,7 @@ export const getPostsByDomain = (domain: string, reqObj?: any) => {
   else if (reqObj.status) {
     if (reqObj?.status === 'completed') {
       return supabase.from('tasks')
-        .select('*', { count: 'planned' })
+        .select('*', { count: 'exact' })
         .eq("client_domain", domain)
         .eq("status", "Complete")
         .range(startIndex, endIndex)
@@ -308,7 +308,7 @@ export const getPostsByDomain = (domain: string, reqObj?: any) => {
     }
     else {
       return supabase.from('tasks')
-        .select('*', { count: 'planned' })
+        .select('*', { count: 'exact' })
         .eq("client_domain", domain)
         .neq("status", "Complete")
         .range(startIndex, endIndex)
@@ -317,7 +317,7 @@ export const getPostsByDomain = (domain: string, reqObj?: any) => {
   }
   else {
     return supabase.from('tasks')
-      .select('*', { count: 'planned' })
+      .select('*', { count: 'exact' })
       .eq("client_domain", domain)
       .range(startIndex, endIndex)
       .order('created_at', { ascending: false })
@@ -330,7 +330,7 @@ export const getPostsByEmail = (email: string, reqObj?: any) => {
   if (!!reqObj?.has_live_post_url) {
     if (reqObj?.has_live_post_url === true) {
       return supabase.from('tasks')
-        .select('*', { count: 'planned' })
+        .select('*', { count: 'exact' })
         .eq("email", email)
         .neq("live_post_url", null)
         .range(startIndex, endIndex)
@@ -338,7 +338,7 @@ export const getPostsByEmail = (email: string, reqObj?: any) => {
     }
     else {
       return supabase.from('tasks')
-        .select('*', { count: 'planned' })
+        .select('*', { count: 'exact' })
         .eq("email", email)
         .eq("live_post_url", null)
         .range(startIndex, endIndex)
@@ -348,7 +348,7 @@ export const getPostsByEmail = (email: string, reqObj?: any) => {
   else if (reqObj.status) {
     if (reqObj?.status === 'completed') {
       return supabase.from('tasks')
-        .select('*', { count: 'planned' })
+        .select('*', { count: 'exact' })
         .eq("email", email)
         .eq("status", "Complete")
         .range(startIndex, endIndex)
@@ -356,7 +356,7 @@ export const getPostsByEmail = (email: string, reqObj?: any) => {
     }
     else {
       return supabase.from('tasks')
-        .select('*', { count: 'planned' })
+        .select('*', { count: 'exact' })
         .eq("email", email)
         .neq("status", "Complete")
         .range(startIndex, endIndex)
@@ -365,7 +365,7 @@ export const getPostsByEmail = (email: string, reqObj?: any) => {
   }
   else {
     return supabase.from('tasks')
-      .select('*', { count: 'planned' })
+      .select('*', { count: 'exact' })
       .eq("email", email)
       .range(startIndex, endIndex)
       .order('created_at', { ascending: false })
@@ -473,7 +473,7 @@ export const getOutlinesByContentPlan = async (content_plan_guid: string, pagina
     let startIndex = paginator?.page === 1 ? 0 : (paginator.page - 1) * paginator.page_size;
     let endIndex = startIndex + paginator.page_size - 1
     return supabase.from('content_plan_outlines')
-      .select('*', { count: 'planned' })
+      .select('*', { count: 'exact' })
       .eq("content_plan_guid", content_plan_guid)
       .range(startIndex, endIndex)
       .order('created_at', { ascending: false })
@@ -491,7 +491,7 @@ export const getContentPlanOutlinesByDomain = (domain: string, paginator: Pagina
   let startIndex = paginator?.page === 1 ? 0 : (paginator.page - 1) * paginator.page_size;
   let endIndex = startIndex + paginator.page_size - 1
   return supabase.from('content_plan_outlines')
-    .select('*', { count: 'planned' })
+    .select('*', { count: 'exact' })
     .eq("domain", domain)
     .range(startIndex, endIndex)
     .order('created_at', { ascending: false })
@@ -502,7 +502,7 @@ export const getContentPlanOutlinesByEmail = (email: string, paginator: Paginati
   let startIndex = paginator?.page === 1 ? 0 : (paginator.page - 1) * paginator.page_size;
   let endIndex = startIndex + paginator.page_size - 1
   return supabase.from('content_plan_outlines')
-    .select('*', { count: 'planned' })
+    .select('*', { count: 'exact' })
     .eq("email", email)
     .range(startIndex, endIndex)
     .order('created_at', { ascending: false })
@@ -520,7 +520,7 @@ export const getContentPlansByEmail = (email: string, paginator: PaginationReque
   let startIndex = paginator?.page === 1 ? 0 : (paginator.page - 1) * paginator.page_size;
   let endIndex = startIndex + paginator.page_size - 1
   return supabase.from('content_plans')
-    .select('*', { count: 'planned' })
+    .select('*', { count: 'exact' })
     .eq("email", email)
     .range(startIndex, endIndex)
     .order('timestamp', { ascending: false })
@@ -529,7 +529,7 @@ export const getContentPlansByDomain = (domain: string, paginator: PaginationReq
   let startIndex = paginator?.page === 1 ? 0 : (paginator.page - 1) * paginator.page_size;
   let endIndex = startIndex + paginator.page_size - 1
   return supabase.from('content_plans')
-    .select('*', { count: 'planned' })
+    .select('*', { count: 'exact' })
     .eq("domain_name", domain)
     .range(startIndex, endIndex)
     .order('timestamp', { ascending: false })

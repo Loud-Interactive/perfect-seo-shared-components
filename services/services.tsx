@@ -113,6 +113,10 @@ export const generateContentPlanOutline = (
   // return axiosInstance.post(`${API_URL}/get_outline`, reqObj);
 };
 
+export const generateSchema = (content_plan_outline_guid) => {
+  return axiosInstance.post('/api/post/generate-schema', { content_plan_outline_guid });
+}
+
 export const getPreviousPlans = (domain_name) => {
   return axiosInstance.get(`${API_URL}/incoming_plan_items_by_domain/${domain_name}`);
 };

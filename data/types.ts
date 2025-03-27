@@ -712,6 +712,7 @@ export interface PostProps {
   factcheck_status: string
   index_guid: string
   index_status: string
+  schema_data?: any
 }
 
 export interface Synopsis {

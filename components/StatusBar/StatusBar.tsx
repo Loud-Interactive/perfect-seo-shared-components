@@ -1,10 +1,11 @@
 'use client'
-import { ContentType } from "@/perfect-seo-shared-components/data/types";
-import { fetchOutlineStatus, getFactCheckStatus, getPost, getPostStatus, getPostStatusFromOutline } from "@/perfect-seo-shared-components/services/services";
+import { ContentType, PostProps } from "@/perfect-seo-shared-components/data/types";
+import { fetchOutlineStatus, generateSchema, getFactCheckStatus, getPost, getPostStatus, getPostStatusFromOutline } from "@/perfect-seo-shared-components/services/services";
 import { useEffect, useState } from "react";
 import TypeWriterText from "../TypeWriterText/TypeWriterText";
 import { keyToLabel } from "@/perfect-seo-shared-components/utils/conversion-utilities";
 import { createClient } from "@/perfect-seo-shared-components/utils/supabase/client";
+import * as Modal from "@/perfect-seo-shared-components/components/Modal/Modal";
 
 interface StatusBarProps {
   content_plan_outline_guid?: string;
@@ -20,6 +21,7 @@ interface StatusBarProps {
   post_status?: string,
   outline_status?: string,
   task_id?: string;
+  schema_data?: any;
 }
 
 const StatusBar = ({
@@ -34,8 +36,9 @@ const StatusBar = ({
   onGeneratePost,
   indexHandler,
   index_status,
-  task_id,
-  type
+  schema_data,
+  type,
+  ...props
 }: StatusBarProps) => {
   const [outlineStatus, setOutlineStatus] = useState<string>('');
   const [postStatus, setPostStatus] = useState<string>('');
@@ -44,6 +47,7 @@ const StatusBar = ({
   const [outlineLoading, setOutlineLoading] = useState<boolean>(false);
   const [postLoading, setPostLoading] = useState<boolean>(false);
   const [factcheckLoading, setFactcheckLoading] = useState<boolean>(false);
+  const [generateSchemaLoading, setGenerateSchemaLoading] = useState<boolean>(false);
 
   const [outlineError, setOutlineError] = useState<string>('');
   const [postError, setPostError] = useState<string>('');
@@ -53,8 +57,9 @@ const StatusBar = ({
   const [outlineComplete, setOutlineComplete] = useState<boolean>(false);
   const [postComplete, setPostComplete] = useState<boolean>(false);
   const [factcheckComplete, setFactcheckComplete] = useState<boolean>(false);
-  const supabase = createClient();
 
+  const [viewSchema, setViewSchema] = useState<boolean>(false);
+  const supabase = createClient();
 
   const fetchOutlineStatusData = () => {
     if (content_plan_outline_guid) {
@@ -113,14 +118,16 @@ const StatusBar = ({
 
   useEffect(() => {
     let postInterval;
-    if (content_plan_outline_guid && !post_status) {
-      fetchPostStatusData();
-      postInterval = setInterval(() => {
+    if (content_plan_outline_guid) {
+      if (post_status) {
+        setPostStatus(post_status)
+      }
+      else {
         fetchPostStatusData();
-      }, 60000);
-    }
-    else if (post_status) {
-      setPostStatus(post_status)
+        postInterval = setInterval(() => {
+          fetchPostStatusData();
+        }, 60000);
+      }
     }
     return () => {
       if (postInterval) {
@@ -175,7 +182,21 @@ const StatusBar = ({
     };
   }, [factcheckComplete]);
 
+  const generateSchemaHandler = (e) => {
+    e.preventDefault();
+    if (schema_data) {
+      setViewSchema(true)
+    }
+    else {
+      setGenerateSchemaLoading(true);
+      generateSchema(content_plan_outline_guid)
+        .then(res => {
+          console.log(res)
+          setGenerateSchemaLoading(false)
+        })
+    }
 
+  }
 
   const generatePostClickHandler = (e) => {
     e.preventDefault();
@@ -254,19 +275,37 @@ const StatusBar = ({
           }
         </div>
       }
-      {live_post_url && <> {index_status ?
-        <div className="col-auto d-flex align-items-center ">
-          <i className="bi bi-chevron-right mx-2" />
-          <strong className="text-primary">Indexed</strong>
-          <span className="badge rounded-pill ms-1 p-1 bg-success"><i className="bi bi-check-lg text-white"></i></span>
-        </div>
-        :
-        <div className="col-auto d-flex align-items-center ">
-          <i className="bi bi-chevron-right mx-2" />
-          <a onClick={indexHandler} className="text-warning my-0 py-0">Index Post</a>
-        </div>}
+      {live_post_url && <>
+        {schema_data ?
+          <div className="col-auto d-flex align-items-center ">
+            <i className="bi bi-chevron-right mx-2" />
+            <a onClick={generateSchemaHandler} className="text-warning my-0 py-0">View Schema</a>
+            <span className="badge rounded-pill ms-1 p-1 bg-success"><i className="bi bi-check-lg text-white"></i></span>
+          </div>
+          :
+          <div className="col-auto d-flex align-items-center ">
+            <i className="bi bi-chevron-right mx-2" />
+            <a onClick={generateSchemaHandler} className="text-warning my-0 py-0">{generateSchemaLoading ? 'Generating' : 'Generate Schema'}</a>
+          </div>}
+        {index_status ?
+          <div className="col-auto d-flex align-items-center ">
+            <i className="bi bi-chevron-right mx-2" />
+            <strong className="text-primary">Indexed</strong>
+            <span className="badge rounded-pill ms-1 p-1 bg-success"><i className="bi bi-check-lg text-white"></i></span>
+          </div>
+          :
+          <div className="col-auto d-flex align-items-center ">
+            <i className="bi bi-chevron-right mx-2" />
+            <a onClick={indexHandler} className="text-warning my-0 py-0">Index Post</a>
+          </div>}
       </>
       }
+      <Modal.Overlay open={viewSchema} onClose={() => { setViewSchema(null) }} closeIcon>
+        <Modal.Title title="Schema" />
+        <Modal.Description>
+          <pre>{schema_data}</pre>
+        </Modal.Description>
+      </Modal.Overlay>
     </div>
   )
 }

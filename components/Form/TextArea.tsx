@@ -28,6 +28,7 @@ const TextArea = ({
   validator,
   bottomSpacing,
   type = "text",
+  value,
   className,
   ...props
 }: TextAreaInputProps) => {
@@ -69,7 +70,7 @@ const TextArea = ({
         <textarea
           {...props}
           {...ariaProps}
-          value={form.getState[fieldName]}
+          value={form.getState[fieldName] || value}
           onChange={onChange}
           className={inputClassNames}
           name={fieldName}

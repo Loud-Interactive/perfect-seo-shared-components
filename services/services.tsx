@@ -385,7 +385,11 @@ export const patchOutlineTitle = (guid: string, title: string) => {
 }
 
 export const updateLiveUrl = (guid, url) => {
-  return axiosInstance.put(`https://content-status.replit.app/content/posts/${guid}/live-post-url`, url);
+  let reqObj = {
+    content_plan_outline_guid: guid,
+    live_post_url: url
+  }
+  return axiosInstance.post(`/api/post/update-live-url`, reqObj);
 }
 export const updateHTML = (guid, html) => {
   return axiosInstance.put(`https://content-status.replit.app/content/posts/${guid}/html`, html);

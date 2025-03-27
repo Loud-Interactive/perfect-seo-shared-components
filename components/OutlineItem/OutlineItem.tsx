@@ -98,8 +98,11 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
     fetchOutlineStatus(outline?.guid)
       .then((res) => {
         let newStatusItem = res.data[0]
-        if (newStatusItem.status) {
+        if (newStatusItem?.status) {
           setStatus(newStatusItem.status);
+        }
+        else {
+          console.log("no status", newStatusItem)
         }
       })
   }

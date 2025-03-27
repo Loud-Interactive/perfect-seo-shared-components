@@ -101,9 +101,7 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
         if (newStatusItem?.status) {
           setStatus(newStatusItem.status);
         }
-        else {
-          console.log("DEBUG - no status", newStatusItem)
-        }
+
       })
   }
 

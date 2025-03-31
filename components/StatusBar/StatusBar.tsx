@@ -316,7 +316,7 @@ const StatusBar = ({
             :
             <div className="col-auto d-flex align-items-center ">
               <i className="bi bi-chevron-right mx-2" />
-              <a onClick={generateSchemaHandler} className="text-warning my-0 py-0">{generateSchemaLoading ? 'Generating' : 'Generate Schema'}</a>
+              <a onClick={generateSchemaHandler} className="text-warning my-0 py-0"><TypeWriterText string={generateSchemaLoading ? 'Generating' : 'Generate Schema'} withBlink /></a>
             </div>}</>}
         {index_status ?
           <div className="col-auto d-flex align-items-center ">

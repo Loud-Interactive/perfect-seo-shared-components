@@ -52,14 +52,17 @@ const useGoogleUser = (appKey) => {
 
   useEffect(() => {
     let settingsChannel;
-    if (profile?.email && isLoggedIn) {
+    let email = user?.email || profile?.email
+    if (email && isLoggedIn) {
       getSettings()
       settingsChannel = supabase.channel('settings-channel')
         .on(
           'postgres_changes',
-          { event: '*', schema: 'public', table: 'settings', filter: `email=eq.${profile?.email}` },
+          { event: '*', schema: 'public', table: 'settings', filter: `email=eq.${email}` },
           (payload) => {
-            dispatch(setUserSettings(payload.new as SettingsProps))
+            if (payload?.new) {
+              dispatch(setUserSettings(payload.new as SettingsProps))
+            }
           }
         )
         .subscribe()

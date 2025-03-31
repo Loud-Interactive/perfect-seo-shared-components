@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ContentType } from '@/perfect-seo-shared-components/data/types';
 import { addToast, selectEmail, selectIsAdmin } from '@/perfect-seo-shared-components/lib/features/User';
 import { useEffect, useState } from 'react';
-import { createPost, deleteContentOutline, deleteOutline, fetchOutlineData, regenerateHTML, regenerateHTMLfromDoc, regenerateOutline, regeneratePost, updateLiveUrl } from '@/perfect-seo-shared-components/services/services';
+import { createPost, deletePost, deleteOutline, fetchOutlineData, regenerateHTML, regenerateHTMLfromDoc, regenerateOutline, regeneratePost, updateLiveUrl } from '@/perfect-seo-shared-components/services/services';
 import { createClient } from '@/perfect-seo-shared-components/utils/supabase/client';
 import en from '@/assets/en.json'
 import CreateContentModal from '../CreateContentModal/CreateContentModal';
@@ -129,25 +129,32 @@ const ActionButtonGroup = ({
       }
     }
   }, [])
+
   const deleteHandler = () => {
     if (type === ContentType.POST) {
-      deleteContentOutline(data?.content_plan_outline_guid)
-        .then(res => {
-          let historyItem: any = { guid: data?.content_plan_outline_guid, email }
-          if (data?.title) {
-            historyItem.title = data?.title
-          }
-          supabase
-            .from('user_history')
-            .insert({ email: email, domain: data?.client_domain, transaction_data: historyItem, product: en.product, type: "DELETE", action: "Delete Post" })
-            .select('*')
-            .then(res => { })
-          refresh();
-          setShowDeleteModal(false)
-        })
-        .catch(err => {
-          console.log(err)
-        })
+      if (data?.task_id) {
+        deletePost(data?.task_id)
+          .then(res => {
+            if (res.data) {
+              let historyItem: any = { guid: data?.content_plan_outline_guid, email }
+              if (data?.title) {
+                historyItem.title = data?.title
+              }
+              supabase
+                .from('user_history')
+                .insert({ email: email, domain: data?.client_domain, transaction_data: historyItem, product: en.product, type: "DELETE", action: "Delete Post" })
+                .select('*')
+                .then(res => { })
+              refresh();
+              setShowDeleteModal(false)
+            }
+          })
+
+
+      }
+      else {
+        console.log("no task id!", data)
+      }
     }
     else {
       deleteOutline(data?.guid)

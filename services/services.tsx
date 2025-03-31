@@ -275,6 +275,7 @@ export const getPostsByDomain = (domain: string, reqObj?: any) => {
         .select('*', { count: 'exact' })
         .eq("client_domain", domain)
         .neq("live_post_url", null)
+        .neq("is_deleted", true)
         .range(startIndex, endIndex)
         .order('created_at', { ascending: false })
     }
@@ -283,6 +284,7 @@ export const getPostsByDomain = (domain: string, reqObj?: any) => {
         .select('*', { count: 'exact' })
         .eq("client_domain", domain)
         .eq("live_post_url", null)
+        .neq("is_deleted", true)
         .range(startIndex, endIndex)
         .order('created_at', { ascending: false })
     }
@@ -293,6 +295,7 @@ export const getPostsByDomain = (domain: string, reqObj?: any) => {
         .select('*', { count: 'exact' })
         .eq("client_domain", domain)
         .eq("status", "Complete")
+        .neq("is_deleted", true)
         .range(startIndex, endIndex)
         .order('created_at', { ascending: false })
     }
@@ -301,6 +304,7 @@ export const getPostsByDomain = (domain: string, reqObj?: any) => {
         .select('*', { count: 'exact' })
         .eq("client_domain", domain)
         .neq("status", "Complete")
+        .neq("is_deleted", true)
         .range(startIndex, endIndex)
         .order('created_at', { ascending: false })
     }
@@ -310,6 +314,7 @@ export const getPostsByDomain = (domain: string, reqObj?: any) => {
       .select('*', { count: 'exact' })
       .eq("client_domain", domain)
       .range(startIndex, endIndex)
+      .neq("is_deleted", true)
       .order('created_at', { ascending: false })
   }
 };
@@ -323,6 +328,7 @@ export const getPostsByEmail = (email: string, reqObj?: any) => {
         .select('*', { count: 'exact' })
         .eq("email", email)
         .neq("live_post_url", null)
+        .neq("is_deleted", true)
         .range(startIndex, endIndex)
         .order('created_at', { ascending: false })
     }
@@ -331,6 +337,7 @@ export const getPostsByEmail = (email: string, reqObj?: any) => {
         .select('*', { count: 'exact' })
         .eq("email", email)
         .eq("live_post_url", null)
+        .neq("is_deleted", true)
         .range(startIndex, endIndex)
         .order('created_at', { ascending: false })
     }
@@ -341,6 +348,7 @@ export const getPostsByEmail = (email: string, reqObj?: any) => {
         .select('*', { count: 'exact' })
         .eq("email", email)
         .eq("status", "Complete")
+        .neq("is_deleted", true)
         .range(startIndex, endIndex)
         .order('created_at', { ascending: false })
     }
@@ -349,6 +357,7 @@ export const getPostsByEmail = (email: string, reqObj?: any) => {
         .select('*', { count: 'exact' })
         .eq("email", email)
         .neq("status", "Complete")
+        .neq("is_deleted", true)
         .range(startIndex, endIndex)
         .order('created_at', { ascending: false })
     }
@@ -357,6 +366,7 @@ export const getPostsByEmail = (email: string, reqObj?: any) => {
     return supabase.from('tasks')
       .select('*', { count: 'exact' })
       .eq("email", email)
+      .neq("is_deleted", true)
       .range(startIndex, endIndex)
       .order('created_at', { ascending: false })
   }
@@ -366,8 +376,12 @@ export const deleteContentPlan = (guid: string) => {
   return axiosInstance.delete(`${API_URL}/delete_content_plan/${guid}`);
 }
 
-export const deleteContentOutline = (content_plan_outline_guid: string) => {
-  return axiosInstance.delete(`https://content-status.replit.app/content/delete/${content_plan_outline_guid}`);
+export const deletePost = (task_id: string) => {
+  return supabase
+    .from('tasks')
+    .update({ is_deleted: true })
+    .eq('task_id', task_id)
+    .select("*")
 }
 
 export const patchOutlineTitle = (guid: string, title: string) => {
@@ -574,9 +588,11 @@ export const regenerateHTMLfromDoc = (reqObj: Request.RegeneratePost) => {
 }
 
 export const getPost = (guid: string) => {
-  return supabase.from('tasks').select('*').eq('task_id', guid).order('created_at', { ascending: false })
+  return supabase.from('tasks')
+    .select('*').eq('task_id', guid).neq("is_deleted", true).order('created_at', { ascending: false })
 }
 
 export const getPostStatusFromOutline = (guid: string) => {
-  return supabase.from('tasks').select('*').eq('content_plan_outline_guid', guid).order('created_at', { ascending: false })
+  return supabase.from('tasks')
+    .select('*').eq('content_plan_outline_guid', guid).neq("is_deleted", true).order('created_at', { ascending: false })
 }

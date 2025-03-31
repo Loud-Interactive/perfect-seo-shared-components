@@ -1,7 +1,7 @@
 'use client'
 import { useCallback, useEffect, useState } from 'react'
 import styles from './PostsList.module.scss'
-import { deleteContentOutline, getPostsByDomain, getPostsByEmail } from '@/perfect-seo-shared-components/services/services'
+import { deletePost, getPostsByDomain, getPostsByEmail } from '@/perfect-seo-shared-components/services/services'
 import * as Modal from '@/perfect-seo-shared-components/components/Modal/Modal'
 import Loader from '../Loader/Loader'
 import TypeWriterText from '@/perfect-seo-shared-components/components/TypeWriterText/TypeWriterText'
@@ -92,7 +92,7 @@ const PostsList = ({ domain_name, active }: PostsListProps) => {
   }
 
   const deleteHandler = (guid) => {
-    deleteContentOutline(guid)
+    deletePost(guid)
       .then(res => {
         getPosts()
         setDeleteModal(null)

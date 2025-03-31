@@ -316,7 +316,7 @@ const StatusBar = ({
         </div>
       }
       {live_post_url && <>
-        {isAdmin && <>{
+        {
           schema_data ?
             <div className="col-auto d-flex align-items-center ">
               < i className="bi bi-chevron-right mx-2" />
@@ -327,7 +327,7 @@ const StatusBar = ({
             <div className="col-auto d-flex align-items-center ">
               <i className="bi bi-chevron-right mx-2" />
               <a onClick={generateSchemaHandler} className="text-warning my-0 py-0"><TypeWriterText string={generateSchemaLoading ? 'Generating' : 'Generate Schema'} withBlink /></a>
-            </div>}</>}
+            </div>}
         {index_status ?
           <div className="col-auto d-flex align-items-center ">
             <i className="bi bi-chevron-right mx-2" />

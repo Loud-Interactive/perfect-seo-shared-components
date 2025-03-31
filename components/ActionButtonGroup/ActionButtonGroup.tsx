@@ -226,7 +226,7 @@ const ActionButtonGroup = ({
                 <i className="bi bi-filetype-doc " />
               </a>
             </>}
-          {type === ContentType.OUTLINE &&
+          {(type === ContentType.OUTLINE && data?.outline) &&
             <button
               title='edit outline'
               className="btn btn-warning btn-standard no-truncate"

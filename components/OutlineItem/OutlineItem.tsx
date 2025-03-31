@@ -121,6 +121,7 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
     }
     else {
       setCompleted(completedStatus.includes(status))
+      fetchData();
     }
   }, [status])
 

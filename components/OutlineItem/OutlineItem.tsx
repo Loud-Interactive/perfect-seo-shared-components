@@ -34,6 +34,7 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
   const fetchData = () => {
     fetchOutlineData(outline.guid)
       .then(res => {
+        console.log(res.data)
         setLocalOutline(res.data[0])
       })
   }
@@ -121,9 +122,15 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
     }
     else {
       setCompleted(completedStatus.includes(status))
-      fetchData();
+
     }
   }, [status])
+
+  useEffect(() => {
+    if (completed) {
+      fetchData();
+    }
+  }, [completed])
 
   useEffect(() => {
     setModalOpen(editModal)

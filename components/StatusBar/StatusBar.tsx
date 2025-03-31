@@ -76,7 +76,7 @@ const StatusBar = ({
 
   useEffect(() => {
     let contentPlanOutlines;
-    if (content_plan_outline_guid && !outline_status) {
+    if (content_plan_outline_guid) {
       fetchOutlineStatusData();
       contentPlanOutlines = supabase.channel(`statusbar-outline-status-${content_plan_outline_guid}`)
         .on(
@@ -88,7 +88,7 @@ const StatusBar = ({
         )
         .subscribe()
     }
-    else if (outline_status) {
+    if (outline_status) {
       setOutlineStatus(outline_status)
     }
     if (contentPlanOutlines) {

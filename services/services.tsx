@@ -22,6 +22,7 @@ const supabase = createClient();
 
 const API_URL = "https://planperfectapi.replit.app";
 
+const NEW_CONTENT_API_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
 const headers = {
   "X-API-Key": process.env.NEXT_PUBLIC_API_KEY,
   "Content-Type": "application/json",
@@ -184,7 +185,7 @@ export const regeneratePost = (
 
 
 export const getPostStatus = (guid: string) => {
-  return axiosInstance.get(`https://content-status.replit.app/content/status/${guid}`);
+  return axiosInstance.get(`${NEW_CONTENT_API_URL}/api/content/status/${guid}`);
 };
 
 export const getLatestStatusByOutlineGUID = (guid: string) => {
@@ -258,7 +259,7 @@ export const patchContentPlans = (guid: string, data: any) => {
 
 export const getBatchStatus = (guids: string[]) => {
   return axiosInstance.post(
-    `https://content-status.replit.app/content/status/batch`,
+    `${NEW_CONTENT_API_URL}/api/content/status/batch`,
     guids,
   );
 };
@@ -377,7 +378,7 @@ export const deleteContentPlan = (guid: string) => {
 }
 
 export const deletePost = (task_guid: string) => {
-  return axiosInstance.delete(`https://content-status.replit.app/content/delete/${task_guid}`);
+  return axiosInstance.delete(`${NEW_CONTENT_API_URL}/api/content/delete/${task_guid}`);
 }
 
 export const patchOutlineTitle = (guid: string, title: string) => {
@@ -392,10 +393,10 @@ export const updateLiveUrl = (guid, url) => {
   return axiosInstance.post(`/api/post/update-live-url`, reqObj);
 }
 export const updateHTML = (guid, html) => {
-  return axiosInstance.put(`https://content-status.replit.app/content/posts/${guid}/html`, html);
+  return axiosInstance.put(`${NEW_CONTENT_API_URL}/api/content/posts/${guid}/html`, html);
 }
 export const updateGoogleDoc = (guid, url) => {
-  return axiosInstance.put(`https://content-status.replit.app/content/posts/${guid}/google-doc`, url);
+  return axiosInstance.put(`${NEW_CONTENT_API_URL}/api/content/posts/${guid}/google-doc`, url);
 }
 
 // pagePerfect apis 
@@ -545,7 +546,7 @@ export const patchContentPlan = (guid: string, data: any) => {
 }
 
 export const patchPost = (guid: string, field: string, value: string) => {
-  return axiosInstance.patch(`https://content-status.replit.app/content/update/${guid}/field`, { "field": field, "value": value }, { headers: { 'Content-Type': 'application/json' } });
+  return axiosInstance.patch(`${NEW_CONTENT_API_URL}/api/content/update/${guid}/field`, { "field": field, "value": value }, { headers: { 'Content-Type': 'application/json' } });
 }
 
 export const factCheckByPostGuid = (reqObj: any) => {

@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ContentType } from '@/perfect-seo-shared-components/data/types';
 import { addToast, selectEmail, selectIsAdmin } from '@/perfect-seo-shared-components/lib/features/User';
 import { useEffect, useState } from 'react';
-import { createPost, deleteContentOutline, deleteOutline, regenerateHTML, regenerateHTMLfromDoc, regenerateOutline, regeneratePost, updateLiveUrl } from '@/perfect-seo-shared-components/services/services';
+import { createPost, deleteContentOutline, deleteOutline, fetchOutlineData, regenerateHTML, regenerateHTMLfromDoc, regenerateOutline, regeneratePost, updateLiveUrl } from '@/perfect-seo-shared-components/services/services';
 import { createClient } from '@/perfect-seo-shared-components/utils/supabase/client';
 import en from '@/assets/en.json'
 import CreateContentModal from '../CreateContentModal/CreateContentModal';
@@ -21,6 +21,7 @@ import FactCheckModal from '../FactCheckModal/FactCheckModal';
 import { GenerateContentPost, RegeneratePost } from '@/perfect-seo-shared-components/data/requestTypes';
 import { capitalizeFirst } from '@/perfect-seo-shared-components/utils/global';
 import RegeneratePostHTMLModal from '../RegeneratePostHTMLModal.tsx/RegeneratePostHTMLModal';
+import { content } from 'googleapis/build/src/apis/content';
 
 interface ActionButtonGroupProps {
   data: any
@@ -79,6 +80,7 @@ const ActionButtonGroup = ({
   const [showFactCheckModal, setShowFactCheckModal] = useState<boolean>(false);
   const [showRegenerateHTMLModal, setShowRegenerateHTMLModal] = useState<boolean>(false);
 
+  const [outlineData, setOutlineData] = useState<any>(null)
   // error states 
   const [regenerateError, setRegenerateError] = useState<string>('');
 
@@ -97,6 +99,36 @@ const ActionButtonGroup = ({
     setShowDeleteModal(true)
   }
 
+  const getOutlineData = () => {
+    fetchOutlineData(data?.guid)
+      .then(res => {
+        setOutlineData(res.data[0])
+      })
+  }
+  useEffect(() => {
+    let outlineChannel;
+    if (data?.guid && type === ContentType.OUTLINE) {
+
+      getOutlineData()
+      outlineChannel = supabase.channel(`actionbutton-outline-status-${data?.guid}`)
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'content_plan_outlines', filter: `guid=eq.${data?.guid}` },
+          (payload) => {
+            if (payload.new) {
+              setOutlineData(payload.new)
+            }
+
+          }
+        )
+        .subscribe()
+    }
+    if (outlineChannel) {
+      return () => {
+        outlineChannel.unsubscribe()
+      }
+    }
+  }, [])
   const deleteHandler = () => {
     if (type === ContentType.POST) {
       deleteContentOutline(data?.content_plan_outline_guid)
@@ -242,7 +274,7 @@ const ActionButtonGroup = ({
             </DropdownMenu.Trigger>
             <DropdownMenu.Portal>
               <DropdownMenu.Content align="end" className="bg-primary z-100 card">
-                {(data?.content_plan_outline_guid && data?.content_plan_guid) &&
+                {(data?.content_plan_outline_guid && outlineData?.outline) &&
                   <DropdownMenu.Item>
                     <button className="btn btn-transparent w-100" onClick={handleEditOutline}>
                       Edit Outline

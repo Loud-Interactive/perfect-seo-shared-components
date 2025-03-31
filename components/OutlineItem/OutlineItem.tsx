@@ -62,6 +62,12 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
   }, [status])
 
   useEffect(() => {
+    if (outline) {
+      setLocalOutline(outline)
+    }
+  }, [outline])
+
+  useEffect(() => {
     if (!outline?.client_name) {
 
       getSynopsisInfo(domain_name)

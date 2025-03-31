@@ -6,6 +6,8 @@ import TypeWriterText from "../TypeWriterText/TypeWriterText";
 import { keyToLabel } from "@/perfect-seo-shared-components/utils/conversion-utilities";
 import { createClient } from "@/perfect-seo-shared-components/utils/supabase/client";
 import * as Modal from "@/perfect-seo-shared-components/components/Modal/Modal";
+import { useSelector } from "react-redux";
+import { selectIsAdmin } from "@/perfect-seo-shared-components/lib/features/User";
 
 interface StatusBarProps {
   content_plan_outline_guid?: string;
@@ -53,12 +55,13 @@ const StatusBar = ({
   const [postError, setPostError] = useState<string>('');
   const [factcheckError, setFactcheckError] = useState<string>('');
 
-
   const [outlineComplete, setOutlineComplete] = useState<boolean>(false);
   const [postComplete, setPostComplete] = useState<boolean>(false);
   const [factcheckComplete, setFactcheckComplete] = useState<boolean>(false);
 
   const [viewSchema, setViewSchema] = useState<boolean>(false);
+
+  const isAdmin = useSelector(selectIsAdmin)
   const supabase = createClient();
 
   const fetchOutlineStatusData = () => {
@@ -282,17 +285,18 @@ const StatusBar = ({
         </div>
       }
       {live_post_url && <>
-        {schema_data ?
-          <div className="col-auto d-flex align-items-center ">
-            <i className="bi bi-chevron-right mx-2" />
-            <a onClick={generateSchemaHandler} className="text-warning my-0 py-0">View Schema</a>
-            <span className="badge rounded-pill ms-1 p-1 bg-success"><i className="bi bi-check-lg text-white"></i></span>
-          </div>
-          :
-          <div className="col-auto d-flex align-items-center ">
-            <i className="bi bi-chevron-right mx-2" />
-            <a onClick={generateSchemaHandler} className="text-warning my-0 py-0">{generateSchemaLoading ? 'Generating' : 'Generate Schema'}</a>
-          </div>}
+        {isAdmin && <>{
+          schema_data ?
+            <div className="col-auto d-flex align-items-center ">
+              < i className="bi bi-chevron-right mx-2" />
+              <a onClick={generateSchemaHandler} className="text-warning my-0 py-0">View Schema</a>
+              <span className="badge rounded-pill ms-1 p-1 bg-success"><i className="bi bi-check-lg text-white"></i></span>
+            </div>
+            :
+            <div className="col-auto d-flex align-items-center ">
+              <i className="bi bi-chevron-right mx-2" />
+              <a onClick={generateSchemaHandler} className="text-warning my-0 py-0">{generateSchemaLoading ? 'Generating' : 'Generate Schema'}</a>
+            </div>}</>}
         {index_status ?
           <div className="col-auto d-flex align-items-center ">
             <i className="bi bi-chevron-right mx-2" />
@@ -312,7 +316,7 @@ const StatusBar = ({
           <pre>{schema_data}</pre>
         </Modal.Description>
       </Modal.Overlay>
-    </div>
+    </div >
   )
 }
 export default StatusBar

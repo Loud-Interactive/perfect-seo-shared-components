@@ -19,7 +19,7 @@ import BulkContentComponent from '../BulkContentGenerator/BulkContentComponent';
 import OutlinesList from '../OutlinesList/OutlinesList';
 import BrandHeader from '../BrandHeader/BrandHeader';
 import LoadSpinner from '../LoadSpinner/LoadSpinner';
-import { selectDomains, selectDomainsInfo, selectEmail, selectIsAdmin, selectIsLoading, selectIsLoggedIn, selectSettings, selectUser } from '@/perfect-seo-shared-components/lib/features/User'
+import { selectDomains, selectDomainsInfo, selectEmail, selectIsAdmin, selectIsLoading, selectIsLoggedIn, selectSettings, selectUser, setUserSettings } from '@/perfect-seo-shared-components/lib/features/User'
 import Tooltip from '../Tooltip';
 import Reports from '../Reports/Reports';
 
@@ -85,7 +85,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
       }
     }
     return bool
-  }, [settings, selected])
+  }, [settings?.global?.defaultDomain, selected])
 
   const addDefaultHandler = (e?) => {
     e?.preventDefault();
@@ -94,12 +94,6 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
       .from('settings')
       .update({ global: { ...global, defaultDomain: selected?.value } })
       .eq('email', email)
-      .select("*")
-      .then(res => {
-        if (!res.error) {
-
-        }
-      })
   }
 
   useEffect(() => {

@@ -150,7 +150,7 @@ const StatusBar = ({
     setPostComplete(postStatus === 'Complete');
     setFactcheckComplete(factcheckStatus === 'completed');
     if (outlineStatus === "reset_completed") {
-      setOutlineError('error: retry utline generation')
+      setOutlineError('error: retry outline generation')
     }
   }, [outlineStatus, postStatus, factcheckStatus]);
 

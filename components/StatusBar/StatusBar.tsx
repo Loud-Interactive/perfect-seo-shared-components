@@ -152,6 +152,9 @@ const StatusBar = ({
     if (outlineStatus === "reset_completed") {
       setOutlineError('error: retry outline generation')
     }
+    else {
+      setOutlineError('')
+    }
   }, [outlineStatus, postStatus, factcheckStatus]);
 
   const addLiveUrlClickHandler = (e) => {

@@ -136,7 +136,7 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
   };
 
   const deleteHandler = () => {
-    deletePost(localPost?.content_plan_outline_guid)
+    deletePost(localPost?.task_id)
       .then(res => {
         if (res.data) {
           let historyItem: any = { guid: localPost?.content_plan_outline_guid, email }

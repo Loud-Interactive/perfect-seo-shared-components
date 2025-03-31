@@ -376,8 +376,8 @@ export const deleteContentPlan = (guid: string) => {
   return axiosInstance.delete(`${API_URL}/delete_content_plan/${guid}`);
 }
 
-export const deletePost = (content_plan_outline_guid: string) => {
-  return axiosInstance.delete(`https://content-status.replit.app/content/delete/${content_plan_outline_guid}`);
+export const deletePost = (task_guid: string) => {
+  return axiosInstance.delete(`https://content-status.replit.app/content/delete/${task_guid}`);
 }
 
 export const patchOutlineTitle = (guid: string, title: string) => {

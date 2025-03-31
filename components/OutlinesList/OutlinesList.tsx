@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useMemo, useState } from 'react'
 import styles from './OutlinesList.module.scss'
-import { deletePost, getContentPlanOutlinesByDomain, getContentPlanOutlinesByEmail } from '@/perfect-seo-shared-components/services/services'
+import { deleteOutline, getContentPlanOutlinesByDomain, getContentPlanOutlinesByEmail } from '@/perfect-seo-shared-components/services/services'
 import * as Modal from '@/perfect-seo-shared-components/components/Modal/Modal'
 import Loader from '../Loader/Loader'
 import TypeWriterText from '@/perfect-seo-shared-components/components/TypeWriterText/TypeWriterText'
@@ -64,7 +64,7 @@ const OutlinesList = ({ domain_name, active }: OutlinesListProps) => {
   }
 
   const deleteHandler = (guid) => {
-    deletePost(guid)
+    deleteOutline(guid)
       .then(res => {
         getOutlines()
         setDeleteModal(null)

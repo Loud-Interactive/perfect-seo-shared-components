@@ -320,7 +320,7 @@ const StatusBar = ({
           schema_data ?
             <div className="col-auto d-flex align-items-center ">
               < i className="bi bi-chevron-right mx-2" />
-              <a onClick={generateSchemaHandler} className="text-primary my-0 py-0">View Schema</a>
+              <strong><a onClick={generateSchemaHandler} className="text-primary my-0 py-0">View Schema</a></strong>
               <span className="badge rounded-pill ms-1 p-1 bg-success"><i className="bi bi-check-lg text-white"></i></span>
             </div>
             :

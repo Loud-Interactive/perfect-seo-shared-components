@@ -149,6 +149,9 @@ const StatusBar = ({
     setOutlineComplete(outlineStatus === 'completed');
     setPostComplete(postStatus === 'Complete');
     setFactcheckComplete(factcheckStatus === 'completed');
+    if (outlineStatus === "reset_completed") {
+      setOutlineError('error: retry utline generation')
+    }
   }, [outlineStatus, postStatus, factcheckStatus]);
 
   const addLiveUrlClickHandler = (e) => {

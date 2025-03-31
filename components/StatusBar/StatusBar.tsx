@@ -63,6 +63,7 @@ const StatusBar = ({
   const [factcheckComplete, setFactcheckComplete] = useState<boolean>(false);
 
   const [viewSchema, setViewSchema] = useState<boolean>(false);
+  const [schemaStatus, setSchemaStatus] = useState<string>('');
 
   const isAdmin = useSelector(selectIsAdmin)
   const supabase = createClient();
@@ -156,7 +157,7 @@ const StatusBar = ({
       .eq('task_id', props.task_id)
       .then(res => {
         if (res.status === 204) {
-          setViewSchema(false)
+          setSchemaStatus('Schema Updated')
         }
       })
   }
@@ -231,6 +232,15 @@ const StatusBar = ({
   const generatePostClickHandler = (e) => {
     e.preventDefault();
     onGeneratePost();
+  }
+
+  const copyClickHandler = (e) => {
+    e.preventDefault();
+    navigator.clipboard.writeText(schemaController.getState.schema_data).then(() => {
+      setSchemaStatus('Copied to clipboard')
+    }).catch(err => {
+      setSchemaStatus('Error copying to clipboard')
+    })
   }
   return (
     <div className="row d-flex align-items-center justify-content-end g-0 ">
@@ -336,7 +346,13 @@ const StatusBar = ({
         <Modal.Description>
           <Form controller={schemaController}>
             <TextArea fieldName="schema_data" label="Schema" />
-            <div className="row d-flex justify-content-end">
+            <div className="row d-flex justify-content-between align-items-center g-0">
+              <div className="col-auto d-flex align-items-center">
+                <button onClick={copyClickHandler} className="btn btn-primary me-2" type="button"><i className="bi bi-copy me-2" />Copy</button>
+              </div>
+              {schemaStatus !== '' && <div className="col-auto d-flex align-items-center">
+                <span className="text-warning"><TypeWriterText string={schemaStatus} withBlink /></span>
+              </div>}
               <div className="col-auto d-flex align-items-center">
                 <input type="submit" onClick={updateSchema} className="btn btn-primary" value="Update Schema" />
               </div>

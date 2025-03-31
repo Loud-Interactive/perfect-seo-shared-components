@@ -122,15 +122,13 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
     }
     else {
       setCompleted(completedStatus.includes(status))
-
+      if (completedStatus.includes(status)) {
+        console.log(status)
+        fetchData();
+      }
     }
   }, [status])
 
-  useEffect(() => {
-    if (completed) {
-      fetchData();
-    }
-  }, [completed])
 
   useEffect(() => {
     setModalOpen(editModal)

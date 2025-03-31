@@ -1,7 +1,7 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import styles from './PostsList.module.scss'
-import { deleteContentOutline, getPostsByDomain, getPostsByEmail } from '@/perfect-seo-shared-components/services/services'
+import { deletePost, getPostsByDomain, getPostsByEmail } from '@/perfect-seo-shared-components/services/services'
 import * as Modal from '@/perfect-seo-shared-components/components/Modal/Modal'
 import Loader from '../Loader/Loader'
 import TypeWriterText from '@/perfect-seo-shared-components/components/TypeWriterText/TypeWriterText'
@@ -12,6 +12,8 @@ import { selectEmail } from '@/perfect-seo-shared-components/lib/features/User'
 import useForm from '@/perfect-seo-shared-components/hooks/useForm'
 import Form from '../Form/Form'
 import { Option, Select } from '../Form/Select'
+import { useRouter, usePathname, useSearchParams } from 'next/navigation'
+
 
 export interface PostsListProps {
   domain_name: string;
@@ -24,11 +26,21 @@ const PostsList = ({ domain_name, active }: PostsListProps) => {
   const [data, setData] = useState<any[]>()
   const [deleteModal, setDeleteModal] = useState(null)
   const [filter, setFilter] = useState('all')
+  const router = useRouter()
   const form = useForm()
+  const searchParams = useSearchParams();
+  const queryParam = searchParams.get('filter');
+  const pathname = usePathname()
 
   useEffect(() => {
-    form.setInitialState({ filter: 'all' })
-  }, [])
+    if (queryParam) {
+      form.setInitialState({ filter: queryParam.toString() })
+      setFilter(queryParam.toString())
+    }
+    else {
+      form.setInitialState({ filter: 'all' })
+    }
+  }, [queryParam])
 
   const getPosts = () => {
     setLoading(true)
@@ -80,7 +92,7 @@ const PostsList = ({ domain_name, active }: PostsListProps) => {
   }
 
   const deleteHandler = (guid) => {
-    deleteContentOutline(guid)
+    deletePost(guid)
       .then(res => {
         getPosts()
         setDeleteModal(null)
@@ -90,7 +102,15 @@ const PostsList = ({ domain_name, active }: PostsListProps) => {
       })
   }
 
+  const createQueryString = useCallback(
+    (name: string, value: string) => {
+      const params = new URLSearchParams(searchParams.toString())
+      params.set(name, value)
 
+      return params.toString()
+    },
+    [searchParams]
+  )
 
   useEffect(() => {
     let interval;
@@ -105,6 +125,7 @@ const PostsList = ({ domain_name, active }: PostsListProps) => {
   }, [domain_name, active, paginator.currentPage, paginator.limit, filter])
 
   const changeFilter = (e) => {
+    router.replace(pathname + '?' + createQueryString('filter', e.target.value.toString()))
     setFilter(e.target.value.toString())
   }
 

@@ -9,7 +9,6 @@ import { urlSanitization } from '../utils/conversion-utilities';
 import { useSession } from 'next-auth/react';
 import { SettingsProps } from '../data/types';
 import { getSynopsisInfo, populateBulkGSC } from '../services/services';
-import { ConsoleView } from "react-device-detect";
 const useGoogleUser = (appKey) => {
   const isLoggedIn = useSelector(selectIsLoggedIn)
   const profile = useSelector(selectProfile)
@@ -52,24 +51,24 @@ const useGoogleUser = (appKey) => {
 
   useEffect(() => {
     let settingsChannel;
-    if (profile?.email && isLoggedIn) {
+    let email = user?.email
+    if (email && isLoggedIn) {
       getSettings()
+      console.log("logged in", email)
       settingsChannel = supabase.channel('settings-channel')
         .on(
           'postgres_changes',
-          { event: '*', schema: 'public', table: 'settings', filter: `email=eq.${profile?.email}` },
+          { event: '*', schema: 'public', table: 'settings', filter: `email=eq.${email}` },
           (payload) => {
-            dispatch(setUserSettings(payload.new as SettingsProps))
+            console.log(payload)
+            if (payload?.new) {
+              dispatch(setUserSettings(payload.new as SettingsProps))
+            }
           }
         )
         .subscribe()
     }
-    return () => {
-      if (settingsChannel) {
-        settingsChannel.unsubscribe()
-      }
-    }
-  }, [profile, isLoggedIn])
+  }, [user, isLoggedIn])
 
   useEffect(() => {
     if (session === null) {

@@ -81,7 +81,7 @@ const StatusBar = ({
 
   useEffect(() => {
     let contentPlanOutlines;
-    if (content_plan_outline_guid && !outline_status) {
+    if (content_plan_outline_guid) {
       fetchOutlineStatusData();
       contentPlanOutlines = supabase.channel(`statusbar-outline-status-${content_plan_outline_guid}`)
         .on(
@@ -93,7 +93,7 @@ const StatusBar = ({
         )
         .subscribe()
     }
-    else if (outline_status) {
+    if (outline_status) {
       setOutlineStatus(outline_status)
     }
     if (contentPlanOutlines) {
@@ -110,7 +110,7 @@ const StatusBar = ({
       getPostStatusFromOutline(content_plan_outline_guid)
         .then(res => {
           setPostLoading(false);
-          setPostStatus(res.data[0].status);
+          setPostStatus(res.data[0]?.status);
         })
     }
   };
@@ -156,6 +156,12 @@ const StatusBar = ({
     setOutlineComplete(outlineStatus === 'completed');
     setPostComplete(postStatus === 'Complete');
     setFactcheckComplete(factcheckStatus === 'completed');
+    if (outlineStatus === "reset_completed") {
+      setOutlineError('error: retry outline generation')
+    }
+    else {
+      setOutlineError('')
+    }
   }, [outlineStatus, postStatus, factcheckStatus]);
 
   const addLiveUrlClickHandler = (e) => {

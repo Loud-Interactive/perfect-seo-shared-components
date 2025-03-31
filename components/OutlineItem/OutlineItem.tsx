@@ -34,6 +34,7 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
   const fetchData = () => {
     fetchOutlineData(outline.guid)
       .then(res => {
+        console.log(res.data)
         setLocalOutline(res.data[0])
       })
   }
@@ -60,6 +61,12 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
   useEffect(() => {
     setCompleted(completedStatus.includes(status))
   }, [status])
+
+  useEffect(() => {
+    if (outline) {
+      setLocalOutline(outline)
+    }
+  }, [outline])
 
   useEffect(() => {
     if (!outline?.client_name) {
@@ -98,9 +105,10 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
     fetchOutlineStatus(outline?.guid)
       .then((res) => {
         let newStatusItem = res.data[0]
-        if (newStatusItem.status) {
+        if (newStatusItem?.status) {
           setStatus(newStatusItem.status);
         }
+
       })
   }
 
@@ -114,8 +122,13 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
     }
     else {
       setCompleted(completedStatus.includes(status))
+      if (completedStatus.includes(status)) {
+        console.log(status)
+        fetchData();
+      }
     }
   }, [status])
+
 
   useEffect(() => {
     setModalOpen(editModal)

@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react"
 import TextInput from "../Form/TextInput"
 import { urlValidator } from "@/perfect-seo-shared-components/utils/validators"
-import { deleteContentOutline, getPost, getPostStatus, regenerateHTML, regenerateHTMLfromDoc, regeneratePost, updateLiveUrl } from "@/perfect-seo-shared-components/services/services"
+import { deletePost, getPost, getPostStatus, regenerateHTML, regenerateHTMLfromDoc, regeneratePost, updateLiveUrl } from "@/perfect-seo-shared-components/services/services"
 import moment from "moment-timezone"
 import * as Modal from '@/perfect-seo-shared-components/components/Modal/Modal'
 import { useDispatch, useSelector } from "react-redux"
@@ -136,22 +136,21 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
   };
 
   const deleteHandler = () => {
-    deleteContentOutline(localPost?.content_plan_outline_guid)
+    deletePost(localPost?.task_id)
       .then(res => {
-        let historyItem: any = { guid: localPost?.content_plan_outline_guid, email }
-        if (localPost?.title || localPost?.post_title || localPost?.content_plan_outline_title) {
-          historyItem.title = localPost?.title || localPost?.post_title || localPost?.content_plan_outline_title
+        if (res.data) {
+          let historyItem: any = { guid: localPost?.content_plan_outline_guid, email }
+          if (localPost?.title || localPost?.post_title || localPost?.content_plan_outline_title) {
+            historyItem.title = localPost?.title || localPost?.post_title || localPost?.content_plan_outline_title
+          }
+          supabase
+            .from('user_history')
+            .insert({ email: email, domain: post?.client_domain, transaction_data: historyItem, product: en.product, type: "DELETE", action: "Delete Post" })
+            .select('*')
+            .then(res => { })
+          refresh();
+          setDeleteModal(false)
         }
-        supabase
-          .from('user_history')
-          .insert({ email: email, domain: post?.client_domain, transaction_data: historyItem, product: en.product, type: "DELETE", action: "Delete Post" })
-          .select('*')
-          .then(res => { })
-        refresh();
-        setDeleteModal(false)
-      })
-      .catch(err => {
-        console.log(err)
       })
   }
 

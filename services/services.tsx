@@ -22,8 +22,13 @@ const supabase = createClient();
 
 const API_URL = "https://planperfectapi.replit.app";
 
+const NEW_CONTENT_API_URL = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/api`
 const headers = {
   "X-API-Key": process.env.NEXT_PUBLIC_API_KEY,
+  "Content-Type": "application/json",
+};
+const newContentAPIHeader = {
+  "Authorization": `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`,
   "Content-Type": "application/json",
 };
 
@@ -188,7 +193,7 @@ export const regeneratePost = (
 
 
 export const getPostStatus = (guid: string) => {
-  return axiosInstance.get(`https://content-status.replit.app/content/status/${guid}`);
+  return axiosInstance.get(`${NEW_CONTENT_API_URL}/content/status/${guid}`, { headers: newContentAPIHeader });
 };
 
 export const getLatestStatusByOutlineGUID = (guid: string) => {
@@ -243,16 +248,6 @@ export const fetchOutlineStatus = (guid: string) => {
     .select('*')
     .order('timestamp', { ascending: false })
     .eq('outline_guid', guid)
-    .then(res => {
-      if (res.data) {
-        let newData = res.data.sort((a, b) => a.timestamp - b.timestamp);
-        res.data = newData;
-        return res
-      }
-      else {
-        return res
-      }
-    })
 };
 export const fetchOutlineData = (guid: string) => {
   return supabase
@@ -272,9 +267,9 @@ export const patchContentPlans = (guid: string, data: any) => {
 
 export const getBatchStatus = (guids: string[]) => {
   return axiosInstance.post(
-    `https://content-status.replit.app/content/status/batch`,
+    `${NEW_CONTENT_API_URL}/content/status/batch`,
     guids,
-  );
+    { headers: newContentAPIHeader });
 };
 
 export const getSpecificPairs = (domain: string, guids: string[]) => {
@@ -289,6 +284,7 @@ export const getPostsByDomain = (domain: string, reqObj?: any) => {
         .select('*', { count: 'exact' })
         .eq("client_domain", domain)
         .neq("live_post_url", null)
+        .neq("is_deleted", true)
         .range(startIndex, endIndex)
         .order('created_at', { ascending: false })
     }
@@ -297,6 +293,7 @@ export const getPostsByDomain = (domain: string, reqObj?: any) => {
         .select('*', { count: 'exact' })
         .eq("client_domain", domain)
         .eq("live_post_url", null)
+        .neq("is_deleted", true)
         .range(startIndex, endIndex)
         .order('created_at', { ascending: false })
     }
@@ -307,6 +304,7 @@ export const getPostsByDomain = (domain: string, reqObj?: any) => {
         .select('*', { count: 'exact' })
         .eq("client_domain", domain)
         .eq("status", "Complete")
+        .neq("is_deleted", true)
         .range(startIndex, endIndex)
         .order('created_at', { ascending: false })
     }
@@ -315,6 +313,7 @@ export const getPostsByDomain = (domain: string, reqObj?: any) => {
         .select('*', { count: 'exact' })
         .eq("client_domain", domain)
         .neq("status", "Complete")
+        .neq("is_deleted", true)
         .range(startIndex, endIndex)
         .order('created_at', { ascending: false })
     }
@@ -324,6 +323,7 @@ export const getPostsByDomain = (domain: string, reqObj?: any) => {
       .select('*', { count: 'exact' })
       .eq("client_domain", domain)
       .range(startIndex, endIndex)
+      .neq("is_deleted", true)
       .order('created_at', { ascending: false })
   }
 };
@@ -337,6 +337,7 @@ export const getPostsByEmail = (email: string, reqObj?: any) => {
         .select('*', { count: 'exact' })
         .eq("email", email)
         .neq("live_post_url", null)
+        .neq("is_deleted", true)
         .range(startIndex, endIndex)
         .order('created_at', { ascending: false })
     }
@@ -345,6 +346,7 @@ export const getPostsByEmail = (email: string, reqObj?: any) => {
         .select('*', { count: 'exact' })
         .eq("email", email)
         .eq("live_post_url", null)
+        .neq("is_deleted", true)
         .range(startIndex, endIndex)
         .order('created_at', { ascending: false })
     }
@@ -355,6 +357,7 @@ export const getPostsByEmail = (email: string, reqObj?: any) => {
         .select('*', { count: 'exact' })
         .eq("email", email)
         .eq("status", "Complete")
+        .neq("is_deleted", true)
         .range(startIndex, endIndex)
         .order('created_at', { ascending: false })
     }
@@ -363,6 +366,7 @@ export const getPostsByEmail = (email: string, reqObj?: any) => {
         .select('*', { count: 'exact' })
         .eq("email", email)
         .neq("status", "Complete")
+        .neq("is_deleted", true)
         .range(startIndex, endIndex)
         .order('created_at', { ascending: false })
     }
@@ -371,6 +375,7 @@ export const getPostsByEmail = (email: string, reqObj?: any) => {
     return supabase.from('tasks')
       .select('*', { count: 'exact' })
       .eq("email", email)
+      .neq("is_deleted", true)
       .range(startIndex, endIndex)
       .order('created_at', { ascending: false })
   }
@@ -380,8 +385,8 @@ export const deleteContentPlan = (guid: string) => {
   return axiosInstance.delete(`${API_URL}/delete_content_plan/${guid}`);
 }
 
-export const deleteContentOutline = (content_plan_outline_guid: string) => {
-  return axiosInstance.delete(`https://content-status.replit.app/content/delete/${content_plan_outline_guid}`);
+export const deletePost = (task_guid: string) => {
+  return axiosInstance.delete(`${NEW_CONTENT_API_URL}/content/delete/${task_guid}`, { headers: newContentAPIHeader });
 }
 
 export const patchOutlineTitle = (guid: string, title: string) => {
@@ -396,10 +401,10 @@ export const updateLiveUrl = (guid, url) => {
   return axiosInstance.post(`/api/post/update-live-url`, reqObj);
 }
 export const updateHTML = (guid, html) => {
-  return axiosInstance.put(`https://content-status.replit.app/content/posts/${guid}/html`, html);
+  return axiosInstance.put(`${NEW_CONTENT_API_URL}/content/posts/${guid}/html`, html, { headers: newContentAPIHeader });
 }
 export const updateGoogleDoc = (guid, url) => {
-  return axiosInstance.put(`https://content-status.replit.app/content/posts/${guid}/google-doc`, url);
+  return axiosInstance.put(`${NEW_CONTENT_API_URL}/content/posts/${guid}/google-doc`, url, { headers: newContentAPIHeader });
 }
 
 // pagePerfect apis 
@@ -549,7 +554,7 @@ export const patchContentPlan = (guid: string, data: any) => {
 }
 
 export const patchPost = (guid: string, field: string, value: string) => {
-  return axiosInstance.patch(`https://content-status.replit.app/content/update/${guid}/field`, { "field": field, "value": value }, { headers: { 'Content-Type': 'application/json' } });
+  return axiosInstance.patch(`${NEW_CONTENT_API_URL}/content/update/${guid}/field`, { "field": field, "value": value }, { headers: { 'Content-Type': 'application/json' } });
 }
 
 export const factCheckByPostGuid = (reqObj: any) => {
@@ -588,9 +593,11 @@ export const regenerateHTMLfromDoc = (reqObj: Request.RegeneratePost) => {
 }
 
 export const getPost = (guid: string) => {
-  return supabase.from('tasks').select('*').eq('task_id', guid).order('created_at', { ascending: false })
+  return supabase.from('tasks')
+    .select('*').eq('task_id', guid).neq("is_deleted", true).order('created_at', { ascending: false })
 }
 
 export const getPostStatusFromOutline = (guid: string) => {
-  return supabase.from('tasks').select('*').eq('content_plan_outline_guid', guid).order('created_at', { ascending: false })
+  return supabase.from('tasks')
+    .select('*').eq('content_plan_outline_guid', guid).neq("is_deleted", true).order('created_at', { ascending: false })
 }

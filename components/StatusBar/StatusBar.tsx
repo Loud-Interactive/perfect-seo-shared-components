@@ -8,6 +8,9 @@ import { createClient } from "@/perfect-seo-shared-components/utils/supabase/cli
 import * as Modal from "@/perfect-seo-shared-components/components/Modal/Modal";
 import { useSelector } from "react-redux";
 import { selectIsAdmin } from "@/perfect-seo-shared-components/lib/features/User";
+import TextArea from "../Form/TextArea";
+import Form from "../Form/Form";
+import useForm from "@/perfect-seo-shared-components/hooks/useForm";
 
 interface StatusBarProps {
   content_plan_outline_guid?: string;
@@ -63,6 +66,7 @@ const StatusBar = ({
 
   const isAdmin = useSelector(selectIsAdmin)
   const supabase = createClient();
+  const schemaController = useForm();
 
   const fetchOutlineStatusData = () => {
     if (content_plan_outline_guid) {
@@ -139,6 +143,23 @@ const StatusBar = ({
     };
   }, [content_plan_outline_guid, post_status]);
 
+  useEffect(() => {
+    if (schema_data) {
+      schemaController.setState({ 'schema_data': schema_data })
+    }
+  }, [schema_data])
+
+  const updateSchema = () => {
+    supabase
+      .from('tasks')
+      .update({ schema_data: schemaController.getState.schema_data })
+      .eq('task_id', props.task_id)
+      .then(res => {
+        if (res.status === 204) {
+          setViewSchema(false)
+        }
+      })
+  }
   const fetchFactcheckStatusData = () => {
     if (content_plan_factcheck_guid) {
       setFactcheckLoading(true);
@@ -313,7 +334,15 @@ const StatusBar = ({
       <Modal.Overlay open={viewSchema} onClose={() => { setViewSchema(null) }} closeIcon>
         <Modal.Title title="Schema" />
         <Modal.Description>
-          <pre>{schema_data}</pre>
+          <Form controller={schemaController}>
+            <TextArea fieldName="schema_data" label="Schema" />
+            <div className="row d-flex justify-content-end">
+              <div className="col-auto d-flex align-items-center">
+                <input type="submit" onClick={updateSchema} className="btn btn-primary" value="Update Schema" />
+              </div>
+            </div>
+          </Form>
+
         </Modal.Description>
       </Modal.Overlay>
     </div >

@@ -189,7 +189,7 @@ export const regeneratePost = (
 
 
 export const getPostStatus = (guid: string) => {
-  return axiosInstance.get(`${NEW_CONTENT_API_URL}/content/status/${guid}`);
+  return axiosInstance.get(`${NEW_CONTENT_API_URL}/content/status/${guid}`, { headers: newContentAPIHeader });
 };
 
 export const getLatestStatusByOutlineGUID = (guid: string) => {
@@ -265,7 +265,7 @@ export const getBatchStatus = (guids: string[]) => {
   return axiosInstance.post(
     `${NEW_CONTENT_API_URL}/content/status/batch`,
     guids,
-  );
+    { headers: newContentAPIHeader });
 };
 
 export const getSpecificPairs = (domain: string, guids: string[]) => {
@@ -397,10 +397,10 @@ export const updateLiveUrl = (guid, url) => {
   return axiosInstance.post(`/api/post/update-live-url`, reqObj);
 }
 export const updateHTML = (guid, html) => {
-  return axiosInstance.put(`${NEW_CONTENT_API_URL}/content/posts/${guid}/html`, html);
+  return axiosInstance.put(`${NEW_CONTENT_API_URL}/content/posts/${guid}/html`, html, { headers: newContentAPIHeader });
 }
 export const updateGoogleDoc = (guid, url) => {
-  return axiosInstance.put(`${NEW_CONTENT_API_URL}/content/posts/${guid}/google-doc`, url);
+  return axiosInstance.put(`${NEW_CONTENT_API_URL}/content/posts/${guid}/google-doc`, url, { headers: newContentAPIHeader });
 }
 
 // pagePerfect apis 

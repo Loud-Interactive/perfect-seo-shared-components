@@ -89,10 +89,15 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
       contentPlanOutlines = supabase.channel(`status-${post.task_id}`)
         .on(
           'postgres_changes',
-          { event: 'INSERT', schema: 'public', table: 'tasks', filter: `task_id=eq.${post.task_id}` },
+          { event: '*', schema: 'public', table: 'tasks', filter: `task_id=eq.${post.task_id}` },
           (payload) => {
-            setStatus(payload.new.status)
-            setLocalPost(payload.new)
+            if (payload?.new) {
+              if (payload?.new?.status) {
+                setStatus(payload.new?.status)
+              }
+
+              setLocalPost(payload.new)
+            }
           }
         )
         .subscribe()

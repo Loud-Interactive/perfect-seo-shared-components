@@ -52,7 +52,7 @@ const useGoogleUser = (appKey) => {
 
   useEffect(() => {
     let settingsChannel;
-    let email = user?.email || profile?.email
+    let email = user?.email
     if (email && isLoggedIn) {
       getSettings()
       settingsChannel = supabase.channel('settings-channel')
@@ -72,7 +72,7 @@ const useGoogleUser = (appKey) => {
         settingsChannel.unsubscribe()
       }
     }
-  }, [profile, isLoggedIn])
+  }, [user, isLoggedIn])
 
   useEffect(() => {
     if (session === null) {

@@ -200,7 +200,7 @@ const StatusBar = ({
       setGenerateSchemaLoading(true);
       generateSchema(content_plan_outline_guid)
         .then(res => {
-          console.log(res)
+
           setGenerateSchemaLoading(false)
         })
     }

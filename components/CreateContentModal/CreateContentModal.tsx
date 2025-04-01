@@ -237,7 +237,7 @@ const CreateContentModal = ({
       setOutlineGUID(data.guid)
     }
     // if (standalone) {
-    let guid = data.guid || data.content_plan_outline_guid;
+    let guid = data.content_plan_outline_guid || data.guid;
     fetchOutlineData(guid)
       .then(res => {
         if (res.data[0]?.outline) {

@@ -70,13 +70,13 @@
     max-width: unset;
     width: 100vw;
 
-    :global(.card) {
-      border-radius: 0 !important;
-    }
+    // :global(.card) {
+    //   border-radius: 0 !important;
+    // }
 
-    :global(.card-header) {
-      border-radius: 0 !important;
-    }
+    // :global(.card-header) {
+    //   border-radius: 0 !important;
+    // }
   }
 
   &Button {

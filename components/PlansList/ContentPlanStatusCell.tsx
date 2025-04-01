@@ -12,7 +12,7 @@ const ContentPlanStatusCell = ({ plan, setDeleteModal, setDuplicateInfo, setNewM
   const { guid } = plan
   const supabase = createClient()
   const clickHandler = () => {
-    window.open(`https://contentperfect.ai/contentplan/${guid}`)
+    window.open(`/contentplan/${guid}`)
 
   }
   const deleteClickHandler = (e) => {

@@ -175,7 +175,7 @@ const useGoogleUser = (appKey) => {
       .eq('email', email || user?.email || profile?.email)
       .select()
       .then(res => {
-
+        console.log(res.data)
         if (res?.data && res?.data?.length > 0) {
           if (res?.data[0]) {
             setUserData(res.data[0])
@@ -196,6 +196,7 @@ const useGoogleUser = (appKey) => {
             .insert(profileObj)
             .select("*")
             .then(res => {
+              console.log(res)
               if (!res.error) {
                 setUserData(profileObj)
               }

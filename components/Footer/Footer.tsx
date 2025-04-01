@@ -8,7 +8,7 @@ const Footer = ({ current }) => {
 
 
   return (
-    <footer className="mb-5">
+    <footer>
       <div className="container-fluid container-xl">
         <PerfectSEOBar current={current} />
       </div>

@@ -118,7 +118,7 @@ const useGoogleUser = (appKey) => {
     }
     if (sessionData?.access_token) {
       setToken(sessionData.access_token)
-      fetchAllDomains(sessionData.access_token)
+      checkUserDomains(sessionData.access_token)
       let sessionToken = sessionData?.token?.refresh_token || sessionData?.refresh_token
       if (sessionToken) {
         populateBulkGSC({ access_token: sessionData.access_token, refresh_token: sessionToken })
@@ -263,10 +263,21 @@ const useGoogleUser = (appKey) => {
         })
 
       }
-      else return null
+      else {
+        supabase
+          .from('user_history')
+          .insert({ email: session.user.email || user.email || profile.email, transaction_data: data, product: en.product, type: "Check Domains - no domains", action: "ERROR" })
+          .select('*')
+          .then(res => { })
+        return null
+      }
     }
     catch (err) {
-      return null
+      return supabase
+        .from('user_history')
+        .insert({ email: session.user.email || user.email || profile.email, transaction_data: err, product: en.product, type: "Check Domains - no domains", action: "ERROR" })
+        .select('*')
+        .then(res => { })
     }
   }
 
@@ -290,10 +301,10 @@ const useGoogleUser = (appKey) => {
   }, [profile?.domain_access, domainsInfo])
 
   // checks user domains 
-  const checkUserDomains = async () => {
+  const checkUserDomains = async (token?) => {
     let domain_access = [];
     try {
-      domain_access = await fetchAllDomains()
+      domain_access = await fetchAllDomains(token)
       if (domain_access === null) {
         return null;
       }

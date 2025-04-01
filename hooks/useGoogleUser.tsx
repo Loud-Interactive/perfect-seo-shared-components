@@ -229,6 +229,7 @@ const useGoogleUser = (appKey) => {
               { 'domain': urlSanitization(domain) }
             ])
             .select()
+
         }
       })
   }
@@ -239,6 +240,11 @@ const useGoogleUser = (appKey) => {
     try {
       const { data } = await axios.get('https://www.googleapis.com/webmasters/v3/sites', { headers: { Authorization: `Bearer ${bearerToken}` } })
       if (data?.siteEntry) {
+        supabase
+          .from('user_history')
+          .insert({ email: session.user.email || user.email || profile.email, transaction_data: data.siteEntry, product: en.product, type: "INFO", action: "Checked Domains" })
+          .select('*')
+          .then(res => { })
         return data.siteEntry.map(obj => {
           return ({
             type: obj.siteUrl.split(":")[0],

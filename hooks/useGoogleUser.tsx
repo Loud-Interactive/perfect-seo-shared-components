@@ -105,7 +105,7 @@ const useGoogleUser = (appKey) => {
       }
       supabase
         .from('user_history')
-        .insert({ email: session.user.email || user.email || profile.email, transaction_data: session, product: en.product, type: "INFO", action: "New Session" })
+        .insert({ email: session.user.email || user.email || profile.email, transaction_data: session, product: en.product, type: "New Session", action: "INFO" })
         .select('*')
         .then(res => { })
     }
@@ -242,7 +242,7 @@ const useGoogleUser = (appKey) => {
       if (data?.siteEntry) {
         supabase
           .from('user_history')
-          .insert({ email: session.user.email || user.email || profile.email, transaction_data: data.siteEntry, product: en.product, type: "INFO", action: "Checked Domains" })
+          .insert({ email: session.user.email || user.email || profile.email, transaction_data: data.siteEntry, product: en.product, type: "Checl Domains", action: "INFO" })
           .select('*')
           .then(res => { })
         return data.siteEntry.map(obj => {

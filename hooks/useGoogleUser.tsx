@@ -183,7 +183,7 @@ const useGoogleUser = (appKey) => {
             }
           }
         }
-        else if (res?.data?.length === 0) {
+        else if (res?.data) {
           let profileObj: any = { email: user.email }
           if (user.email.includes("atidiv") || user.email.includes('loud.us')) {
             profileObj = { ...profileObj, admin: true }
@@ -203,7 +203,9 @@ const useGoogleUser = (appKey) => {
 
   // update user if email is available 
   useEffect(() => {
+    console.log(user?.email, profile)
     if (user?.email && !profile) {
+      console.log('DEBUG': update user)
       updateUser()
     }
   }, [user?.email, profile])

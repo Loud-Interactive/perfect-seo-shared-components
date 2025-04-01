@@ -172,7 +172,7 @@ const useGoogleUser = (appKey) => {
     supabase
       .from('profiles')
       .select("*")
-      .eq('email', email || user?.email || profile?.email)
+      .eq('email', email ? email : user?.email || profile?.email)
       .select()
       .then(res => {
         console.log(res.data)

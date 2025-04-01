@@ -205,7 +205,7 @@ const useGoogleUser = (appKey) => {
   useEffect(() => {
     console.log(user?.email, profile)
     if (user?.email && !profile) {
-      console.log('DEBUG': update user)
+      console.log('DEBUG: update user')
       updateUser()
     }
   }, [user?.email, profile])

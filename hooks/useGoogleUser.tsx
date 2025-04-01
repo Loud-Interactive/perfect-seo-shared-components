@@ -247,7 +247,7 @@ const useGoogleUser = (appKey) => {
       if (data?.siteEntry) {
         supabase
           .from('user_history')
-          .insert({ email: session.user.email || user.email || profile.email, transaction_data: data.siteEntry, product: en.product, type: "Checl Domains", action: "INFO" })
+          .insert({ email: session.user.email || user.email || profile.email, transaction_data: data.siteEntry, product: en.product, type: "Check Domains", action: "INFO" })
           .select('*')
           .then(res => { })
         return data.siteEntry.map(obj => {

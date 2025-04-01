@@ -193,10 +193,10 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
   }
 
   return (
-    <div className="card bg-secondary p-3" title={post?.title}>
-      <div className="row d-flex g-3 d-flex align-items-end">
+    <div className="card bg-secondary p-2" title={post?.title}>
+      <div className="row d-flex g-2 d-flex align-items-end">
         <div className="col">
-          <div className="row g-3">
+          <div className="row g-2">
             <div className="col-12">
               <p className="mb-1">
                 <small>
@@ -211,7 +211,7 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
           </div>
         </div>
         <div className="col-12">
-          <div className="row d-flex justify-content-end align-items-center w-100">
+          <div className="row g-2 d-flex justify-content-end align-items-center w-100">
             <div className="col-auto">
               <StatusBar post_status={status} indexHandler={() => setShowIndex(true)} type={ContentType.POST} content_plan_outline_guid={localPost.content_plan_outline_guid} content_plan_guid={localPost?.content_plan_guid} content_plan_factcheck_guid={localPost?.factcheck_guid} addLiveUrlHandler={addLiveUrlHandler} live_post_url={localPost.live_post_url} index_status={localPost?.index_status} schema_data={localPost?.schema_data} />
             </div>

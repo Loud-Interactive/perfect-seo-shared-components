@@ -153,7 +153,7 @@ const PostsList = ({ domain_name, active }: PostsListProps) => {
         </div>
         {loading ? <Loader />
           : data?.length > 0 ?
-            <div className='row d-flex g-3 justify-content-center'>
+            <div className='row d-flex g-1 justify-content-center'>
               {data.map((obj, i) => {
                 return <PostItem post={obj} key={obj.content_plan_outline_guid} refresh={getPosts} domain_name={domain_name} />
               })}

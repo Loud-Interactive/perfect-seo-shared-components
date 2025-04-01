@@ -170,7 +170,6 @@ const ContentPlanForm = ({ buttonLabel, initialData, submitResponse, isModal }: 
     if (initialData) {
 
       if (!initialData?.brandName) {
-        console.log(initialData)
         getSynopsisInfo(initialData?.domainName)
           .then((res) => {
             if (res.data) {

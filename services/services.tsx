@@ -272,9 +272,7 @@ export const getBatchStatus = (guids: string[]) => {
     { headers: newContentAPIHeader });
 };
 
-export const getSpecificPairs = (domain: string, guids: string[]) => {
-  return axiosInstance.post(`https://pp-api.replit.app/pairs/${domain}/specific`, guids);
-}
+
 export const getPostsByDomain = (domain: string, reqObj?: any) => {
   let startIndex = reqObj?.page === 1 ? 0 : (reqObj.page - 1) * reqObj.page_size;
   let endIndex = startIndex + reqObj.page_size - 1

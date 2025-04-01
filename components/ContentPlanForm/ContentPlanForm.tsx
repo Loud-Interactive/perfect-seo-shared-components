@@ -7,7 +7,7 @@ import TextInput from "@/perfect-seo-shared-components/components/Form/TextInput
 import * as Select from "@/perfect-seo-shared-components/components/Form/Select";
 import SearchSelect from "@/perfect-seo-shared-components/components/SearchSelect/SearchSelect";
 import { domainValidator, emailValidator } from "@/perfect-seo-shared-components/utils/validators";
-import { addIncomingPlanItem } from "@/perfect-seo-shared-components/services/services";
+import { addIncomingPlanItem, getSynopsisInfo } from "@/perfect-seo-shared-components/services/services";
 import { convertFormDataToOutgoing, urlSanitization } from "@/perfect-seo-shared-components/utils/conversion-utilities";
 import useForm from "@/perfect-seo-shared-components/hooks/useForm";
 import { createClient } from "@/perfect-seo-shared-components/utils/supabase/client";
@@ -45,6 +45,7 @@ const ContentPlanForm = ({ buttonLabel, initialData, submitResponse, isModal }: 
   const [selected, setSelected] = useState({ label: 'English', value: 'English' });
   const [load, setLoad] = useState(false);
   const [showAdvanced, setShowAdvanced] = useState(false);
+
 
   const form = useForm();
 
@@ -155,7 +156,6 @@ const ContentPlanForm = ({ buttonLabel, initialData, submitResponse, isModal }: 
   };
 
 
-
   useEffect(() => {
     let formState = blankForm;
 
@@ -168,7 +168,19 @@ const ContentPlanForm = ({ buttonLabel, initialData, submitResponse, isModal }: 
 
   useEffect(() => {
     if (initialData) {
-      form.setState(initialData)
+
+      if (!initialData?.brandName) {
+        console.log(initialData)
+        getSynopsisInfo(initialData?.domainName)
+          .then((res) => {
+            if (res.data) {
+              form.setState({ ...initialData, brandName: res.data.brand_name })
+            }
+          })
+      }
+      else {
+        form.setState(initialData)
+      }
     }
   }, [initialData])
 

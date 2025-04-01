@@ -206,12 +206,10 @@ const useGoogleUser = (appKey) => {
 
   // update user if email is available 
   useEffect(() => {
-    console.log(user?.email, profile)
-    if (user?.email && !profile) {
-      console.log('DEBUG: update user')
+    if (user?.email) {
       updateUser()
     }
-  }, [user?.email, profile])
+  }, [user?.email])
 
   // gets decoded token 
   function getDecodedAccessToken(token: string): any {

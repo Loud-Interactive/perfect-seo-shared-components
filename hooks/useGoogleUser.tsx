@@ -178,6 +178,9 @@ const useGoogleUser = (appKey) => {
             setUserData(res.data[0])
             dispatch(setAdmin(res.data[0]?.admin))
             dispatch(setProfile(res.data[0]))
+            if (res.data[0]?.domain_access?.length <= 0) {
+              fetchAllDomains();
+            }
           }
         }
         else if (res?.data?.length === 0) {

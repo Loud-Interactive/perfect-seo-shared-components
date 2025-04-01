@@ -245,7 +245,7 @@ const StatusBar = ({
   return (
     <div className="row d-flex align-items-center justify-content-end g-0 ">
       <div className="col-auto d-flex align-items-center">
-        {outlineComplete ?
+        {(outlineComplete || (postStatus && !outlineStatus)) ?
           <>
             <strong className="text-primary">Outline</strong>
             <span className="badge rounded-pill  ms-1 p-1 bg-success"><i className="bi bi-check-lg text-white"></i></span>
@@ -263,7 +263,7 @@ const StatusBar = ({
       </div>
       {
         postStatus ? <div className="col-auto d-flex align-items-center">
-          <i className="bi bi-chevron-right mx-2" />
+          <i className="bi bi-chevron-right mx-1" />
           {postComplete ?
             <>
               <strong className="text-primary">Post</strong>
@@ -278,7 +278,7 @@ const StatusBar = ({
           :
           onGeneratePost ?
             <div className="col-auto d-flex align-items-center">
-              <i className="bi bi-chevron-right mx-2" />
+              <i className="bi bi-chevron-right mx-1" />
               <div>
                 <a title="Generate Post" className="text-warning my-0" onClick={generatePostClickHandler}>Generate Post</a>
               </div>
@@ -286,7 +286,7 @@ const StatusBar = ({
             : null
       }
       {(type === ContentType.POST && !live_post_url && postComplete) && <div className="col-auto d-flex align-items-center">
-        <i className="bi bi-chevron-right mx-2" />
+        <i className="bi bi-chevron-right mx-1" />
         <>
 
           <a onClick={addLiveUrlClickHandler} className="text-warning my-0 py-0"><i className="bi bi-plus" />Add Live Url</a>
@@ -295,14 +295,14 @@ const StatusBar = ({
       }
       {(type === ContentType.POST && live_post_url && postComplete) &&
         <div className="col-auto d-flex align-items-center">
-          <i className="bi bi-chevron-right mx-2" />
+          <i className="bi bi-chevron-right mx-1" />
           <strong className="text-primary">Live</strong>
           <span className="badge rounded-pill ms-1 p-1 bg-success"><i className="bi bi-check-lg text-white"></i></span>
         </div>
       }
       {
         factcheckStatus && <div className="col-auto d-flex align-items-center ">
-          <i className="bi bi-chevron-right mx-2" />
+          <i className="bi bi-chevron-right mx-1" />
           {factcheckComplete ?
             <>
               <strong className="text-primary">Fact Check</strong>
@@ -319,24 +319,24 @@ const StatusBar = ({
         {
           schema_data ?
             <div className="col-auto d-flex align-items-center ">
-              < i className="bi bi-chevron-right mx-2" />
+              < i className="bi bi-chevron-right mx-1" />
               <strong><a onClick={generateSchemaHandler} className="text-primary my-0 py-0">View Schema</a></strong>
               <span className="badge rounded-pill ms-1 p-1 bg-success"><i className="bi bi-check-lg text-white"></i></span>
             </div>
             :
             <div className="col-auto d-flex align-items-center ">
-              <i className="bi bi-chevron-right mx-2" />
+              <i className="bi bi-chevron-right mx-1" />
               <a onClick={generateSchemaHandler} className="text-warning my-0 py-0"><TypeWriterText string={generateSchemaLoading ? 'Generating' : 'Generate Schema'} withBlink /></a>
             </div>}
         {index_status ?
           <div className="col-auto d-flex align-items-center ">
-            <i className="bi bi-chevron-right mx-2" />
+            <i className="bi bi-chevron-right mx-1" />
             <strong className="text-primary">Indexed</strong>
             <span className="badge rounded-pill ms-1 p-1 bg-success"><i className="bi bi-check-lg text-white"></i></span>
           </div>
           :
           <div className="col-auto d-flex align-items-center ">
-            <i className="bi bi-chevron-right mx-2" />
+            <i className="bi bi-chevron-right mx-1" />
             <a onClick={indexHandler} className="text-warning my-0 py-0">Index Post</a>
           </div>}
       </>

@@ -196,7 +196,7 @@ const useGoogleUser = (appKey) => {
             .insert(profileObj)
             .select("*")
             .then(res => {
-              console.log(res)
+              checkUserDomains();
               if (!res.error) {
                 setUserData(profileObj)
               }

@@ -208,7 +208,7 @@ const useGoogleUser = (appKey) => {
   // update user if email is available 
   useEffect(() => {
     if (user?.email) {
-      updateUser()
+      updateUser(user?.email)
     }
   }, [user?.email])
 

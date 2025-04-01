@@ -108,6 +108,9 @@ const useGoogleUser = (appKey) => {
         .insert({ email: session.user.email || user.email || profile.email, transaction_data: session, product: en.product, type: "New Session", action: "INFO" })
         .select('*')
         .then(res => { })
+      if (!profile) {
+        updateUser()
+      }
     }
     else if (session === null) {
       dispatch(reset())

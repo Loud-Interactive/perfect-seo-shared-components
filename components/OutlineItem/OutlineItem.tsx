@@ -182,10 +182,10 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
   }
 
   return (
-    <div className="card bg-secondary p-3" title={outline?.post_title}>
-      <div className="row d-flex g-3 d-flex align-items-end">
+    <div className="card bg-secondary p-2" title={outline?.post_title}>
+      <div className="row d-flex g-0 d-flex align-items-end">
         <div className="col">
-          <div className="row g-3">
+          <div className="row g-2">
             <div className="col-12">
               <strong className="text-primary me-1">Title</strong>  {localOutline?.post_title} {(outline.client_domain !== domain_name) && <span className='badge bg-primary ms-2'>{outline?.brand_name}</span>}
               <div>
@@ -203,7 +203,7 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
           </div>
         </div>
         <div className="col-12">
-          <div className="row d-flex justify-content-end align-items-center w-100">
+          <div className="row g-2 d-flex justify-content-end align-items-center w-100">
             <div className="col-auto">
               <StatusBar outline_status={status} type={ContentType.OUTLINE} content_plan_outline_guid={localOutline?.guid} onGeneratePost={() => {
                 setShowGenerate(true)

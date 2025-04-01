@@ -108,8 +108,8 @@ const useGoogleUser = (appKey) => {
         .insert({ email: session.user.email || user.email || profile.email, transaction_data: session, product: en.product, type: "New Session", action: "INFO" })
         .select('*')
         .then(res => { })
-      if (!profile) {
-        updateUser()
+      if (!profile && session?.user?.email) {
+        updateUser(session?.user?.email)
       }
     }
     else if (session === null) {
@@ -168,11 +168,11 @@ const useGoogleUser = (appKey) => {
 
 
   // update user 
-  const updateUser = () => {
+  const updateUser = (email?) => {
     supabase
       .from('profiles')
       .select("*")
-      .eq('email', user.email)
+      .eq('email', email || user?.email || profile?.email)
       .select()
       .then(res => {
 

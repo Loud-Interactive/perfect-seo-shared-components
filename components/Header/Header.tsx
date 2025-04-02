@@ -114,8 +114,8 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
   const loginWithGoogleHandler = (e) => {
     e?.preventDefault();
     let url = `${window.location.origin}`;
-    if (['contentPerfect', 'preferencesPerfect'].includes(en.product)) {
-      url = `${window.location.origin}/dashboard`;
+    if (['preferencesPerfect'].includes(en.product)) {
+      url = `${window.location.origin}/content`;
     }
     signIn('google', { callbackUrl: url });
   };

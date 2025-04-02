@@ -3,15 +3,17 @@ import useGoogleUser from "@/perfect-seo-shared-components/hooks/useGoogleUser";
 import { selectDomains } from "@/perfect-seo-shared-components/lib/features/User";
 import { useMemo, useState } from "react"
 import { useSelector } from "react-redux";
+import en from '@/assets/en.json'
 
 const CheckGoogleDomains = () => {
   const domain_access = useSelector(selectDomains)
-  const { fetchAllDomains } = useGoogleUser('contentPerfect')
+  const { fetchAllDomains } = useGoogleUser(en.product)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const clickHandler = (e) => {
     setLoading(true)
     e.preventDefault();
+
     fetchAllDomains()
       .then(res => {
         if (!res) {

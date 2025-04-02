@@ -154,6 +154,7 @@ const useGoogleUser = (appKey) => {
         products = { ...products, [key]: new Date().toISOString() }
       }
     }
+    console.log(products)
     supabase
       .from('profiles')
       .upsert({ products: products, updated_at: new Date().toISOString(), email: user?.email })
@@ -326,7 +327,7 @@ const useGoogleUser = (appKey) => {
           checkDomain(domain);
           return domain !== ""
         })
-        let profileObj: any = { ...userData, domain_access, domains };
+        let profileObj: any = { ...userData, domain_access, domains, email: user?.email || profile?.email };
         dispatch(setProfile(profileObj))
         supabase
           .from('profiles')

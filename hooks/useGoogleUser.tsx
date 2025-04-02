@@ -102,11 +102,11 @@ const useGoogleUser = (appKey) => {
         dispatch(setUser(session.user))
         localStorage.setItem('email', session.user.email)
       }
-      supabase
-        .from('user_history')
-        .insert({ email: session.user.email || user.email || profile.email, transaction_data: session, product: en.product, type: "New Session", action: "INFO" })
-        .select('*')
-        .then(res => { })
+      // supabase
+      //   .from('user_history')
+      //   .insert({ email: session.user.email || user.email || profile.email, transaction_data: session, product: en.product, type: "New Session", action: "INFO" })
+      //   .select('*')
+      //   .then(res => { })
       if (!profile && session?.user?.email) {
         updateUser(session?.user?.email)
       }
@@ -249,7 +249,7 @@ const useGoogleUser = (appKey) => {
       if (data?.siteEntry) {
         supabase
           .from('user_history')
-          .insert({ email: session.user.email || user.email || profile.email, transaction_data: data.siteEntry, product: en.product, type: "Check Domains", action: "INFO" })
+          .insert({ email: session.user.email || user.email || profile.email, transaction_data: { ...data.siteEntry, url: window?.location?.href }, product: en.product, type: "Check Domains", action: "INFO" })
           .select('*')
           .then(res => { })
         return data.siteEntry.map(obj => {
@@ -265,7 +265,7 @@ const useGoogleUser = (appKey) => {
       else {
         supabase
           .from('user_history')
-          .insert({ email: session.user.email || user.email || profile.email, transaction_data: data, product: en.product, type: "Check Domains - no domains", action: "ERROR" })
+          .insert({ email: session.user.email || user.email || profile.email, transaction_data: { ...data, url: window?.location?.href }, product: en.product, type: "Check Domains - no domains", action: "ERROR" })
           .select('*')
           .then(res => { })
         return null
@@ -274,7 +274,7 @@ const useGoogleUser = (appKey) => {
     catch (err) {
       supabase
         .from('user_history')
-        .insert({ email: session.user.email || user.email || profile.email, transaction_data: err, product: en.product, type: "Check Domains - no domains", action: "ERROR" })
+        .insert({ email: session.user.email || user.email || profile.email, transaction_data: { ...err, url: window?.location?.href }, product: en.product, type: "Check Domains - failed", action: "ERROR" })
         .select('*')
         .then(res => { })
       return null

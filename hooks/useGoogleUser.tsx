@@ -68,6 +68,11 @@ const useGoogleUser = (appKey) => {
         )
         .subscribe()
     }
+    return () => {
+      if (settingsChannel) {
+        settingsChannel.unsubscribe()
+      }
+    }
   }, [user, isLoggedIn])
 
   useEffect(() => {

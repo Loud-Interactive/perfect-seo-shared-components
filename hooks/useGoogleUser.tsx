@@ -300,6 +300,18 @@ const useGoogleUser = (appKey) => {
     }
   }, [profile?.domain_access, domainsInfo])
 
+  const updateEmails = ({ domain_access, domains, email, interval }) => {
+    let profileObj: any = { ...userData, domain_access, domains, email: email };
+    dispatch(setProfile(profileObj))
+    supabase
+      .from('profiles')
+      .upsert(profileObj)
+      .eq('email', email)
+      .select("*")
+      .then(res => {
+        clearInterval(interval)
+      })
+  }
 
   // checks user domains 
   const checkUserDomains = async (token?) => {
@@ -329,15 +341,14 @@ const useGoogleUser = (appKey) => {
           return domain !== ""
         })
         let email = user?.email || profile?.email || localStorage.getItem('email')
-        let profileObj: any = { ...userData, domain_access, domains, email: email };
-        dispatch(setProfile(profileObj))
-        supabase
-          .from('profiles')
-          .upsert(profileObj)
-          .eq('email', email)
-          .select("*")
-          .then(res => {
-          })
+        let interval;
+        if (!email) {
+          interval = setInterval(() => updateEmails({ domain_access, domains, email, interval }), 30000)
+        }
+        else {
+          updateEmails({ domain_access, domains, email, interval })
+        }
+
       }
     }
     catch (err) {

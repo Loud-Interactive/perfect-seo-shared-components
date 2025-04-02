@@ -242,6 +242,20 @@ const ActionButtonGroup = ({
       })
   }
 
+  const copyOutlineGuid = () => {
+    let copiedGuid;
+    if (type === ContentType.POST) {
+      copiedGuid = data?.content_plan_outline_guid
+    } else if (type === ContentType.OUTLINE) {
+      copiedGuid = data?.guid
+    }
+    navigator.clipboard.writeText(copiedGuid)
+    dispatch(addToast({ title: "Copied Outline GUID", type: "success", content: `Outline GUID ${copiedGuid} copied to clipboard` }))
+  }
+  const copyPostGuid = () => {
+    navigator.clipboard.writeText(data?.task_id)
+    dispatch(addToast({ title: "Copied Post GUID", type: "success", content: `Post GUID ${data?.task_id} copied to clipboard` }))
+  }
   return (
     <>
       <div className='row d-flex justify-content-end'>
@@ -390,6 +404,27 @@ const ActionButtonGroup = ({
                       </DropdownMenu.Item>
                     </>}
                   </>}
+                {isAdmin && <>
+                  {(type === ContentType.OUTLINE && data?.guid) && <DropdownMenu.Item>
+                    <button className="btn btn-transparent w-100" onClick={copyOutlineGuid}>
+                      Copy Outline GUID
+                    </button>
+                  </DropdownMenu.Item>
+                  }
+                  {(type === ContentType.POST && data?.task_id) && <DropdownMenu.Item>
+                    <button className="btn btn-transparent w-100" onClick={copyPostGuid}>
+                      Copy Post GUID
+                    </button>
+                  </DropdownMenu.Item>
+                  }
+                  {(type === ContentType.POST && data?.content_plan_outline_guid) && <DropdownMenu.Item>
+                    <button className="btn btn-transparent w-100" onClick={copyOutlineGuid}>
+                      Copy Outline GUID
+                    </button>
+                  </DropdownMenu.Item>
+                  }
+                </>
+                }
               </DropdownMenu.Content>
             </DropdownMenu.Portal>
           </DropdownMenu.Root>

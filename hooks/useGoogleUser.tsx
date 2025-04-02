@@ -315,6 +315,9 @@ const useGoogleUser = (appKey) => {
 
   // checks user domains 
   const checkUserDomains = async (token?) => {
+    if (profile?.domain_access?.length > 0) {
+      return
+    }
     let domain_access = [];
     try {
       domain_access = await fetchAllDomains(token)

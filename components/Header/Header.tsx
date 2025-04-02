@@ -113,13 +113,17 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
   // Handler for Google login
   const loginWithGoogleHandler = (e) => {
     e?.preventDefault();
-    signIn('google', { callbackUrl: `${window.location.href}/` });
+    let url = `${window.location.origin}`;
+    if (['contentPerfect', 'preferencesPerfect'].includes(en.product)) {
+      url = `${window.location.origin}/dashboard`;
+    }
+    signIn('google', { callbackUrl: url });
   };
 
   // Handler for sign out
   const signOutHandler = (e) => {
     e.preventDefault();
-    signOut().then(() => {
+    signOut({ redirect: true, callbackUrl: "/" }).then(() => {
       dispatch(setLoading(false));
       setOpen(false);
     });

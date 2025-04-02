@@ -132,7 +132,7 @@ const useGoogleUser = (appKey) => {
     if (session && userData && isLoggedIn) {
       updateProducts()
     }
-  }, [session, isLoggedIn, userData])
+  }, [session, isLoggedIn])
 
   //Checks User Domains
   useEffect(() => {

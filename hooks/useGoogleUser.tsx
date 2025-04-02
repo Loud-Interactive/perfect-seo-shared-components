@@ -6,7 +6,7 @@ import { createClient } from '@/perfect-seo-shared-components/utils/supabase/cli
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 import { urlSanitization } from '../utils/conversion-utilities';
-import { useSession } from 'next-auth/react';
+import { signIn, useSession } from 'next-auth/react';
 import { SettingsProps } from '../data/types';
 import { getSynopsisInfo, populateBulkGSC } from '../services/services';
 import en from '@/assets/en.json'
@@ -55,7 +55,6 @@ const useGoogleUser = (appKey) => {
     let email = user?.email
     if (email && isLoggedIn) {
       getSettings()
-      console.log("logged in", email)
       settingsChannel = supabase.channel('settings-channel')
         .on(
           'postgres_changes',
@@ -272,11 +271,15 @@ const useGoogleUser = (appKey) => {
       }
     }
     catch (err) {
-      return supabase
+      if (err?.status.toString()[0] === '4') {
+        signIn('google')
+      }
+      supabase
         .from('user_history')
         .insert({ email: session.user.email || user.email || profile.email, transaction_data: err, product: en.product, type: "Check Domains - no domains", action: "ERROR" })
         .select('*')
         .then(res => { })
+      return null
     }
   }
 

@@ -156,7 +156,7 @@ const useGoogleUser = (appKey) => {
     }
     supabase
       .from('profiles')
-      .update({ products: products, updated_at: new Date().toISOString() })
+      .upsert({ products: products, updated_at: new Date().toISOString() })
       .eq('email', user?.email)
       .select("*")
       .then(res => {
@@ -192,7 +192,7 @@ const useGoogleUser = (appKey) => {
           }
           supabase
             .from('profiles')
-            .insert(profileObj)
+            .upsert(profileObj)
             .select("*")
             .then(res => {
               checkUserDomains();
@@ -333,7 +333,7 @@ const useGoogleUser = (appKey) => {
         dispatch(setProfile(profileObj))
         supabase
           .from('profiles')
-          .update(profileObj)
+          .upsert(profileObj)
           .eq('email', user?.email || profile?.email)
           .select("*")
           .then(res => {
@@ -351,7 +351,7 @@ const useGoogleUser = (appKey) => {
       if (!profile?.full_name && user?.name) {
         supabase
           .from('profiles')
-          .update({ full_name: user.name })
+          .upsert({ full_name: user.name })
           .eq('email', user?.email)
           .select("*")
           .then(res => {

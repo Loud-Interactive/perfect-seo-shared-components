@@ -245,7 +245,6 @@ const useGoogleUser = (appKey) => {
     let bearerToken = manualToken || token;
     try {
       const { data } = await axios.get('https://www.googleapis.com/webmasters/v3/sites', { headers: { Authorization: `Bearer ${bearerToken}` } })
-      console.log(data)
       if (data?.siteEntry) {
         supabase
           .from('user_history')
@@ -254,10 +253,10 @@ const useGoogleUser = (appKey) => {
           .then(res => { })
         return data.siteEntry.map(obj => {
           return ({
-            type: obj.siteUrl.split(":")[0],
-            siteUrl: urlSanitization(obj.siteUrl.split(":")[1]),
-            permissionLevel: obj.permissionLevel,
-            originalUrl: obj.siteUrl.split(":")[1]
+            type: obj?.siteUrl.split(":")[0],
+            siteUrl: urlSanitization(obj?.siteUrl.split(":")[1]),
+            permissionLevel: obj?.permissionLevel,
+            originalUrl: obj?.siteUrl.split(":")[1]
           })
         })
 

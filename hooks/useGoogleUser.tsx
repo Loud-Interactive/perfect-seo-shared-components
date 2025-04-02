@@ -300,6 +300,7 @@ const useGoogleUser = (appKey) => {
     }
   }, [profile?.domain_access, domainsInfo])
 
+
   // checks user domains 
   const checkUserDomains = async (token?) => {
     let domain_access = [];
@@ -327,12 +328,13 @@ const useGoogleUser = (appKey) => {
           checkDomain(domain);
           return domain !== ""
         })
-        let profileObj: any = { ...userData, domain_access, domains, email: user?.email || profile?.email };
+        let email = user?.email || profile?.email || localStorage.getItem('email')
+        let profileObj: any = { ...userData, domain_access, domains, email: email };
         dispatch(setProfile(profileObj))
         supabase
           .from('profiles')
           .upsert(profileObj)
-          .eq('email', user?.email || profile?.email)
+          .eq('email', email)
           .select("*")
           .then(res => {
           })

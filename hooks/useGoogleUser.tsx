@@ -156,7 +156,7 @@ const useGoogleUser = (appKey) => {
     }
     supabase
       .from('profiles')
-      .upsert({ products: products, updated_at: new Date().toISOString() })
+      .upsert({ products: products, updated_at: new Date().toISOString(), email: user?.email })
       .eq('email', user?.email)
       .select("*")
       .then(res => {
@@ -245,6 +245,7 @@ const useGoogleUser = (appKey) => {
     let bearerToken = manualToken || token;
     try {
       const { data } = await axios.get('https://www.googleapis.com/webmasters/v3/sites', { headers: { Authorization: `Bearer ${bearerToken}` } })
+      console.log(data)
       if (data?.siteEntry) {
         supabase
           .from('user_history')
@@ -348,7 +349,7 @@ const useGoogleUser = (appKey) => {
       if (!profile?.full_name && user?.name) {
         supabase
           .from('profiles')
-          .upsert({ full_name: user.name })
+          .upsert({ full_name: user.name, email: user?.email })
           .eq('email', user?.email)
           .select("*")
           .then(res => {

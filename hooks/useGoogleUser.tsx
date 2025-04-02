@@ -271,9 +271,6 @@ const useGoogleUser = (appKey) => {
       }
     }
     catch (err) {
-      if (err?.status.toString()[0] === '4') {
-        signIn('google')
-      }
       supabase
         .from('user_history')
         .insert({ email: session.user.email || user.email || profile.email, transaction_data: err, product: en.product, type: "Check Domains - no domains", action: "ERROR" })

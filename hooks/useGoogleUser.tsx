@@ -20,7 +20,7 @@ const useGoogleUser = (appKey) => {
   const dispatch = useDispatch();
   const supabase = createClient()
 
-  const { data: session, status } = useSession()
+  const { data: session, status, update } = useSession()
 
   const getSettings = () => {
     supabase
@@ -159,7 +159,6 @@ const useGoogleUser = (appKey) => {
         products = { ...products, [key]: new Date().toISOString() }
       }
     }
-    console.log(products)
     supabase
       .from('profiles')
       .upsert({ products: products, updated_at: new Date().toISOString(), email: user?.email })
@@ -270,18 +269,20 @@ const useGoogleUser = (appKey) => {
       else {
         supabase
           .from('user_history')
-          .insert({ email: session.user.email || user.email || profile.email, transaction_data: { ...data, url: window?.location?.href }, product: en.product, type: "Check Domains - no domains", action: "ERROR" })
+          .insert({ email: session.user.email || user.email || profile.email, transaction_data: { ...data, url: window?.location?.href }, product: en.product, type: "Check Domains - no domains found for user", action: "ERROR" })
           .select('*')
           .then(res => { })
         return null
       }
     }
     catch (err) {
+
       supabase
         .from('user_history')
         .insert({ email: session.user.email || user.email || profile.email, transaction_data: { ...err, url: window?.location?.href }, product: en.product, type: "Check Domains - failed", action: "ERROR" })
         .select('*')
         .then(res => { })
+
       return null
     }
   }

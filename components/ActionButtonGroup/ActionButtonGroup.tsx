@@ -19,9 +19,8 @@ import { urlSanitization } from '@/perfect-seo-shared-components/utils/conversio
 import FactCheckResultPage from '../FactCheckResultPage/FactCheckResultPage';
 import FactCheckModal from '../FactCheckModal/FactCheckModal';
 import { GenerateContentPost, RegeneratePost } from '@/perfect-seo-shared-components/data/requestTypes';
-import { capitalizeFirst } from '@/perfect-seo-shared-components/utils/global';
 import RegeneratePostHTMLModal from '../RegeneratePostHTMLModal.tsx/RegeneratePostHTMLModal';
-import { content } from 'googleapis/build/src/apis/content';
+
 
 interface ActionButtonGroupProps {
   data: any
@@ -79,6 +78,7 @@ const ActionButtonGroup = ({
   const [showIndexModal, setShowIndexModal] = useState<boolean>(false);
   const [showFactCheckModal, setShowFactCheckModal] = useState<boolean>(false);
   const [showRegenerateHTMLModal, setShowRegenerateHTMLModal] = useState<boolean>(false);
+  const [showImageGeneratePrompt, setShowImageGeneratePrompt] = useState<boolean>(false);
 
   const [outlineData, setOutlineData] = useState<any>(null)
   // error states 
@@ -256,6 +256,15 @@ const ActionButtonGroup = ({
     navigator.clipboard.writeText(data?.task_id)
     dispatch(addToast({ title: "Copied Post GUID", type: "success", content: `Post GUID ${data?.task_id} copied to clipboard` }))
   }
+  const copyImageThinking = () => {
+    navigator.clipboard.writeText(data?.hero_image_thinking)
+    dispatch(addToast({ title: "Copied Image Prompt", type: "success", content: `Image Prompt copied to clipboard` }))
+  }
+  const copyImagePrompt = () => {
+    navigator.clipboard.writeText(data?.hero_image_prompt)
+    dispatch(addToast({ title: "Copied Image Prompt", type: "success", content: `Image Prompt copied to clipboard` }))
+
+  }
   return (
     <>
       <div className='row d-flex justify-content-end'>
@@ -334,6 +343,10 @@ const ActionButtonGroup = ({
                   </>}
                 {type === ContentType.POST &&
                   <>
+                    {data?.hero_image_prompt && <DropdownMenu.Item>
+                      <button className="btn btn-transparent w-100" onClick={() => { setShowImageGeneratePrompt(true) }}>Show Hero Image Prompt</button>
+                    </DropdownMenu.Item>
+                    }
                     <DropdownMenu.Item>
                       <button className="btn btn-transparent w-100" onClick={() => { setShowRegeneratePostModal(true) }}>Regenerate Post</button>
                     </DropdownMenu.Item>
@@ -495,6 +508,22 @@ const ActionButtonGroup = ({
         <RegeneratePostHTMLModal onClose={() => setShowRegenerateHTMLModal(false)} submitHandler={regeneratePostHTMLSubmitHandler} onSuccess={() => {
           setShowRegenerateHTMLModal(false); return refresh()
         }} />
+      </Modal.Overlay>
+      <Modal.Overlay closeIcon open={showImageGeneratePrompt} onClose={() => setShowImageGeneratePrompt(false)}>
+        <div className="card p-3">
+          {data?.hero_image_prompt && <div className="card-body">
+            <h5 className="card-title">Image Generation Prompt</h5>
+            <pre className="card p-1 bg-secondary">{data?.hero_image_prompt}</pre>
+            <button className="btn btn-primary mt-1" onClick={copyImagePrompt}><i className="bi bi-copy" />Copy</button>
+          </div>
+          }
+          {data?.hero_image_thinking && <div className="card-body">
+            <h5 className="card-title">Image Generation Prompt</h5>
+            <pre className="card p-1 bg-secondary">{data?.hero_image_thinking}</pre>
+            <button className="btn btn-primary mt-1" onClick={copyImageThinking}><i className="bi bi-copy" />Copy</button>
+          </div>
+          }
+        </div>
       </Modal.Overlay>
     </>
   )

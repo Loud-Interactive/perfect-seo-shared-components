@@ -40,7 +40,6 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
   const { phone, desktop } = useViewport();
   const [currentPage, setCurrentPage] = useState('');
   const pathname = usePathname();
-  const router = useRouter();
   // Function to load credit data for the user
   const loadCreditData = () => {
     checkUserCredits(email)
@@ -79,21 +78,6 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
 
   // Initialize Supabase client
   const supabase = createClient();
-
-  // Effect to set up an interceptor for axios responses to log errors to Supabase
-  useEffect(() => {
-    axiosInstance.interceptors.response.use(
-      response => response,
-      error => {
-        supabase
-          .from('user_history')
-          .insert({ email: user?.email, transaction_data: error, product: en.product, type: "ERROR", action: "API Error" })
-          .select('*');
-        return Promise.reject(error);
-      }
-    );
-  }, []);
-
   // Custom hook to handle Google user
   useGoogleUser(current);
 

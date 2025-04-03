@@ -195,12 +195,13 @@ const useGoogleUser = (appKey) => {
           if (user.email.includes("atidiv") || user.email.includes('loud.us')) {
             profileObj = { ...profileObj, admin: true }
           }
+          checkUserDomains();
           supabase
             .from('profiles')
             .upsert(profileObj)
             .select("*")
             .then(res => {
-              checkUserDomains();
+
               if (!res.error) {
                 setUserData(profileObj)
               }
@@ -291,7 +292,6 @@ const useGoogleUser = (appKey) => {
     return getSynopsisInfo(domain, false)
   }
   useEffect(() => {
-
     if (profile?.domain_access && !domainsInfo) {
       let domains = profile.domain_access.map(({ siteUrl }) => urlSanitization(siteUrl))
       Promise.allSettled(
@@ -306,16 +306,16 @@ const useGoogleUser = (appKey) => {
     }
   }, [profile?.domain_access, domainsInfo])
 
-  const updateEmails = ({ domain_access, domains, email, interval }) => {
+  const updateEmails = ({ domain_access, domains, email }) => {
     let profileObj: any = { ...userData, domain_access, domains, email: email };
-    dispatch(setProfile(profileObj))
+
     supabase
       .from('profiles')
       .upsert(profileObj)
       .eq('email', email)
       .select("*")
       .then(res => {
-        clearInterval(interval)
+        dispatch(setProfile(profileObj))
       })
   }
 
@@ -350,12 +350,12 @@ const useGoogleUser = (appKey) => {
           return domain !== ""
         })
         let email = user?.email || profile?.email || localStorage.getItem('email')
-        let interval;
+
         if (!email) {
-          interval = setInterval(() => updateEmails({ domain_access, domains, email, interval }), 30000)
+          setTimeout(() => updateEmails({ domain_access, domains, email }), 30000)
         }
         else {
-          updateEmails({ domain_access, domains, email, interval })
+          updateEmails({ domain_access, domains, email })
         }
 
       }
@@ -368,15 +368,13 @@ const useGoogleUser = (appKey) => {
   useEffect(() => {
     let profiles;
     if (userData) {
-      if (!profile?.full_name && user?.name) {
+      if ((!profile?.full_name && user?.name) || (user?.name !== profile?.full_name)) {
         supabase
           .from('profiles')
           .upsert({ full_name: user.name, email: user?.email })
           .eq('email', user?.email)
           .select("*")
           .then(res => {
-            let profileObj = { ...userData, full_name: user.name }
-            dispatch(setProfile(profileObj));
           })
       }
       profiles = supabase.channel('profile-channel')

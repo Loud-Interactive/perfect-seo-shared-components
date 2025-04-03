@@ -41,10 +41,17 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
 
   // managing auth/session recognition 
   useEffect(() => {
-    dispatch(setLoggedIn(session !== undefined))
+    console.log(session)
     if (session) {
+      if (session === undefined) {
+        dispatch(setLoading(false));
+        dispatch(setLoggedIn(false));
+      }
       if (session?.user) {
+        console.log(session?.user)
         dispatch(setUser(session?.user));
+
+        dispatch(setLoggedIn(false));
         localStorage.setItem('email', session?.user?.email)
       }
       if (session?.token?.access_token) {

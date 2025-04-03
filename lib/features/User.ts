@@ -28,7 +28,7 @@ const initialState: RootState = {
   user: null,
   points: 0,
   isLoading: true,
-  isLoggedIn: null,
+  isLoggedIn: false,
   isAdmin: false,
   profile: null,
   settings: null,

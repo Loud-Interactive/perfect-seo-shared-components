@@ -52,18 +52,19 @@ const useGoogleUser = (appKey) => {
   useEffect(() => {
     let settingsChannel;
     let profileChannel;
+    console.log(email, user, isLoggedIn)
     if (email && isLoggedIn) {
       // retrieve settings
       getSettings()
       supabase
         .from('user_history')
-        .insert({ email: session.user.email || user.email || profile.email, transaction_data: session, product: en.product, type: "New Session", action: "INFO" })
+        .insert({ email: email, transaction_data: session, product: en.product, type: "New Session", action: "INFO" })
         .select('*')
         .then(res => { })
       settingsChannel = supabase.channel('settings-channel')
         .on(
           'postgres_changes',
-          { event: '*', schema: 'public', table: 'settings', filter: `email=eq.${email}` },
+          { event: 'UPDATE', schema: 'public', table: 'settings', filter: `email=eq.${email}` },
           (payload) => {
             console.log(payload)
             if (payload?.new) {
@@ -75,7 +76,7 @@ const useGoogleUser = (appKey) => {
       profileChannel = supabase.channel('profile-channel')
         .on(
           'postgres_changes',
-          { event: '*', schema: 'public', table: 'profiles', filter: `email=eq.${email}` },
+          { event: 'UPDATE', schema: 'public', table: 'profiles', filter: `email=eq.${email}` },
           (payload) => {
             if (payload?.new) {
               let newProfile: any = payload.new
@@ -138,6 +139,9 @@ const useGoogleUser = (appKey) => {
 
   useEffect(() => {
     dispatch(setLoading(isLoggedIn && !profile))
+    if (profile) {
+      console.log(profile)
+    }
   }, [isLoggedIn, profile])
 
   // updates product use 

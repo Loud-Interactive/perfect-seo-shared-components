@@ -19,11 +19,8 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
   const [editModal, setEditModal] = useState(false)
   const [completed, setCompleted] = useState(false)
   const [showGenerate, setShowGenerate] = useState(false)
-  const [loading, setLoading] = useState(false)
   const supabase = createClient()
   const email = useSelector(selectEmail)
-  const isAdmin = useSelector(selectIsAdmin)
-  const dispatch = useDispatch()
 
   const regenerateHandler = () => {
     setEditModal(false);
@@ -216,7 +213,7 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
         </div>
       </div>
       <Modal.Overlay open={editModal} onClose={() => { setEditModal(null) }}>
-        <CreateContentModal regenerateHandler={regenerateHandler} isAuthorized advancedData={{}} data={localOutline} onClose={() => { setEditModal(null); refresh(); }} index={1} titleChange={handleTitleChange} contentPlan={{ ...localOutline, guid: localOutline.content_plan_guid, 'Post Title': localOutline.post_title }} />
+        <CreateContentModal regenerateHandler={regenerateHandler} isAuthorized advancedData={{}} data={localOutline} onClose={() => { setEditModal(null); return refresh(); }} index={1} titleChange={handleTitleChange} contentPlan={{ ...localOutline, guid: localOutline.content_plan_guid, 'Post Title': localOutline.post_title }} />
       </Modal.Overlay>
       <Modal.Overlay
         open={showGenerate}

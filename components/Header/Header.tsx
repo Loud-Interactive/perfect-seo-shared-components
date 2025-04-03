@@ -41,13 +41,15 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
   const [currentPage, setCurrentPage] = useState('');
   const pathname = usePathname();
   const { data: session }: any = useSession();
+  const isLoggedIn = useSelector(selectIsLoggedIn);
 
+  // managing auth/session recognition 
   useEffect(() => {
-
     dispatch(setLoggedIn(session !== undefined))
     if (session) {
       if (session?.user) {
         dispatch(setUser(session?.user));
+        localStorage.setItem('email', session?.user?.email)
       }
       if (session?.token?.access_token) {
         localStorage.setItem('access_token', session?.token?.access_token);
@@ -57,7 +59,6 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
 
   }, [session])
 
-  const isLoggedIn = useSelector(selectIsLoggedIn);
   // Function to load credit data for the user
   const loadCreditData = () => {
     checkUserCredits(email)
@@ -94,8 +95,6 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
     }
   }, [email, getCredits]);
 
-  // Initialize Supabase client
-  const supabase = createClient();
   // Custom hook to handle Google user
   useGoogleUser(current);
 

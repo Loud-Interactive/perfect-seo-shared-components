@@ -27,11 +27,6 @@ interface DnDLayoutProps extends React.HTMLProps<HTMLDivElement> {
 
 // Main DnDLayout component
 const DnDLayout = ({ children, hideFooter, current, links, hasLogin = true, getCredits = false }: DnDLayoutProps) => {
-
-
-
-
-
   return (
     <>
       <SessionProvider refetchInterval={5 * 60} refetchOnWindowFocus={false} refetchWhenOffline={false}>

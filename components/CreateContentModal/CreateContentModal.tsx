@@ -11,7 +11,7 @@ import useViewport from "@/perfect-seo-shared-components/hooks/useViewport";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useSelector } from "react-redux";
 import { GenerateContentPost, GetPostOutlineRequest, RegeneratePost, SaveContentPost } from "@/perfect-seo-shared-components/data/requestTypes";
-import { fetchOutlineData, regenerateHTML, regenerateHTMLfromDoc, saveContentPlanPost } from "@/perfect-seo-shared-components/services/services";
+import { fetchOutlineData, patchOutlineTitle, regenerateHTML, regenerateHTMLfromDoc, saveContentPlanPost } from "@/perfect-seo-shared-components/services/services";
 import { createPost, regenerateOutline } from "@/perfect-seo-shared-components/services/services";
 import Loader from "@/perfect-seo-shared-components/components/Loader/Loader";
 import { selectEmail, selectPoints } from "@/perfect-seo-shared-components/lib/features/User";
@@ -91,32 +91,24 @@ const CreateContentModal = ({
     }
   }, [queryParam]);
 
-
-
-  useEffect(() => {
-    setSaved(false)
-  }), [titleForm?.getState?.title]
-
   const titleChangeHandler = (e) => {
     e.preventDefault();
+    setSaving(true)
+    patchOutlineTitle(outlineGUID, titleForm.getState.title)
+      .then(res => {
+        setSaved(true);
+        setSaving(false);
+      })
+      .catch(err => {
+        setSaving(false)
 
-    if (titleChange) {
-      setSaving(true);
-      titleChange(null, titleForm.getState.title, index)
-        .then(res => {
-          setSaved(true);
-          setSaving(false);
-        })
-        .catch(err => {
-          setSaving(false)
-
-        }
-        )
-    }
+      }
+      )
   }
 
+
   const TitleSaveButton = () => {
-    if (!isAuthorized || standalone) return ''
+    if (!isAuthorized) return ''
     return (
       <div className="d-flex h-100 align-items-center justify-content-center">
         <button className="btn btn-transparent d-flex align-items-center justify-content-center" onClick={titleChangeHandler} title="Save Live Url" disabled={saving}>

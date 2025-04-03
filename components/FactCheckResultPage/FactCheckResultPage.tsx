@@ -225,7 +225,6 @@ const FactCheckResultPage: FC<FactCheckResultPageProps> = ({ uuid, isModal }: Fa
 
   const loginWithGoogleHandler = (e) => {
     e?.preventDefault();
-    dispatch(setLoading(true))
 
     signIn('google', { callbackUrl: `${window.location.href}/` })
 

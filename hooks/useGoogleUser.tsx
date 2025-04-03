@@ -52,7 +52,6 @@ const useGoogleUser = (appKey) => {
   useEffect(() => {
     let settingsChannel;
     let profileChannel;
-    console.log(email, user, isLoggedIn)
     if (email && isLoggedIn) {
       // retrieve settings
       getSettings()

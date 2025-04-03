@@ -1,7 +1,7 @@
 'use client'
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from 'react'
-import { reset, selectDomainsInfo, selectIsLoggedIn, selectProfile, selectUser, setAdmin, setDomainInfo, setLoading, setLoggedIn, setProfile, setUser, setUserSettings } from '@/perfect-seo-shared-components/lib/features/User'
+import { reset, selectDomainsInfo, selectEmail, selectIsLoggedIn, selectProfile, selectUser, setAdmin, setDomainInfo, setLoading, setLoggedIn, setProfile, setUser, setUserSettings } from '@/perfect-seo-shared-components/lib/features/User'
 import { createClient } from '@/perfect-seo-shared-components/utils/supabase/client'
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
@@ -14,8 +14,7 @@ const useGoogleUser = (appKey) => {
   const isLoggedIn = useSelector(selectIsLoggedIn)
   const profile = useSelector(selectProfile)
   const user = useSelector(selectUser)
-  const { email } = user
-  const [userData, setUserData] = useState<any>(null)
+  const email = useSelector(selectEmail)
   const dispatch = useDispatch();
   const supabase = createClient()
 
@@ -48,14 +47,11 @@ const useGoogleUser = (appKey) => {
       })
   }
 
-  const checkAuthorizedDomains = () => {
-
-  }
 
   // Pull user settings on login, establish subscription to listen for changes
   useEffect(() => {
     let settingsChannel;
-    let email = user?.email
+    let profileChannel;
     if (email && isLoggedIn) {
       // retrieve settings
       getSettings()
@@ -76,6 +72,20 @@ const useGoogleUser = (appKey) => {
           }
         )
         .subscribe()
+      profileChannel = supabase.channel('profile-channel')
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'profiles', filter: `email=eq.${email}` },
+          (payload) => {
+            if (payload?.new) {
+              let newProfile: any = payload.new
+              dispatch(setAdmin(newProfile?.admin))
+              dispatch(setProfile(newProfile))
+            }
+            dispatch(setProfile(payload.new))
+          }
+        )
+        .subscribe()
       // retrieve profile 
       supabase
         .from('profiles')
@@ -83,14 +93,12 @@ const useGoogleUser = (appKey) => {
         .eq('email', email)
         .then(res => {
           if (res?.data && res?.data?.length > 0) {
-            if (res?.data[0]) {
-              let newProfile = res.data[0]
-              let products = updateProducts(res?.data[0])
-              dispatch(setAdmin(res.data[0]?.admin))
-              dispatch(setProfile({ newProfile, products }))
-              if (newProfile?.domain_access?.length <= 0) {
-                checkAuthorizedDomains()
-              }
+            let newProfile = res.data[0]
+            let products = updateProducts(res?.data[0])
+            dispatch(setAdmin(res.data[0]?.admin))
+            dispatch(setProfile({ newProfile, products }))
+            if (newProfile?.domain_access?.length <= 0) {
+              fetchAllDomains()
             }
           }
           else if (res?.data?.length === 0) {
@@ -110,12 +118,9 @@ const useGoogleUser = (appKey) => {
                     dispatch(setAdmin(res.data[0]?.admin))
                     dispatch(setProfile({ newProfile, products }))
                     if (newProfile?.domain_access?.length <= 0) {
-                      checkAuthorizedDomains()
+                      fetchAllDomains()
                     }
                   }
-                }
-                if (!res.error) {
-                  setUserData(profileObj)
                 }
               })
           }
@@ -124,6 +129,9 @@ const useGoogleUser = (appKey) => {
     return () => {
       if (settingsChannel) {
         settingsChannel.unsubscribe()
+      }
+      if (profileChannel) {
+        profileChannel.unsubscribe()
       }
     }
   }, [user, isLoggedIn])
@@ -200,7 +208,7 @@ const useGoogleUser = (appKey) => {
           .filter(domain => !!(domain?.split(".")?.length <= 2))
         supabase
           .from('user_history')
-          .insert({ email: session.user.email || user.email || profile.email, transaction_data: { domains, url: window?.location?.href }, product: en.product, type: "Check Domains", action: "INFO" })
+          .insert({ email: email, transaction_data: { domains, url: window?.location?.href }, product: en.product, type: "Check Domains", action: "INFO" })
           .select('*')
 
         supabase
@@ -222,37 +230,8 @@ const useGoogleUser = (appKey) => {
   }
 
 
-  useEffect(() => {
-    let profiles;
-    if (userData) {
-      if ((!profile?.full_name && user?.name) || (user?.name !== profile?.full_name)) {
-        supabase
-          .from('profiles')
-          .upsert({ full_name: user.name, email: user?.email })
-          .eq('email', user?.email)
-          .select("*")
-          .then(res => {
-          })
-      }
-      profiles = supabase.channel('profile-channel')
-        .on(
-          'postgres_changes',
-          { event: '*', schema: 'public', table: 'profiles', filter: `email=eq.${user?.email}` },
-          (payload) => {
-            dispatch(setProfile(payload.new))
-          }
-        )
-        .subscribe()
-    }
-    return () => {
-      if (profiles) {
-        profiles.unsubscribe()
-      }
-    }
-  }, [userData])
 
-
-  return ({ userData, checkDomain, fetchAllDomains, getDecodedAccessToken })
+  return ({ checkDomain, fetchAllDomains, getDecodedAccessToken })
 }
 
 export default useGoogleUser;

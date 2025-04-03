@@ -27,7 +27,7 @@ export type LoadingStates = {
 const initialState: RootState = {
   user: null,
   points: 0,
-  isLoading: true,
+  isLoading: false,
   isLoggedIn: null,
   isAdmin: false,
   profile: null,

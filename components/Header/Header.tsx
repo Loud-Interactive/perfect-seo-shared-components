@@ -48,10 +48,9 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
         dispatch(setLoggedIn(false));
       }
       if (session?.user) {
-        console.log(session?.user)
         dispatch(setUser(session?.user));
 
-        dispatch(setLoggedIn(false));
+        dispatch(setLoggedIn(true));
         localStorage.setItem('email', session?.user?.email)
       }
       if (session?.token?.access_token) {

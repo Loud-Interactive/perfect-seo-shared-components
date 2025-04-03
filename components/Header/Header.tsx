@@ -178,7 +178,7 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
           <div className={signedInClass}>
             {(hasLogin && !isLoading) && (
               <div className='col-auto flex-column pe-3 d-flex align-items-end'>
-                {isLoggedIn ? desktop ? (
+                {!desktop ? null : isLoggedIn ?
                   <>
                     <div>
                       <strong className='me-2 text-primary'>Logged in as</strong>
@@ -190,11 +190,11 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
                       </div>
                     ) : null}
                   </>
-                ) : null : (
+                  :
                   <button className="btn btn-google" onClick={loginWithGoogleHandler}>
                     <img src="/images/google-icon.png" /> Login
                   </button>
-                )}
+                }
               </div>
             )}
             {user?.image && (
@@ -301,7 +301,7 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
         </div>
       </div>
 
-    </header>
+    </header >
   );
 };
 

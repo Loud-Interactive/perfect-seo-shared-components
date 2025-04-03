@@ -34,7 +34,8 @@ const DnDLayout = ({ children, hideFooter, current, links, hasLogin = true, getC
 
   return (
     <>
-      <SessionProvider refetchInterval={20 * 60}>
+      <SessionProvider refetchInterval={5 * 60} refetchOnWindowFocus={false} refetchWhenOffline={false}>
+        {/* Use BrowserView and MobileView to render different layouts based on the device type */}
         <BrowserView>
           <DndProvider backend={HTML5Backend}>
             <Suspense>

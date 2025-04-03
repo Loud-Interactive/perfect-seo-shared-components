@@ -1,11 +1,11 @@
 'use client';
-import { signIn, signOut } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
 import Link from 'next/link';
 import styles from './Header.module.scss';
 import classNames from 'classnames';
 import useViewport from '@/perfect-seo-shared-components/hooks/useViewport';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectEmail, selectIsAdmin, selectIsLoading, selectIsLoggedIn, selectPoints, selectUser, setLoading, updatePoints } from '@/perfect-seo-shared-components/lib/features/User';
+import { selectEmail, selectIsAdmin, selectIsLoading, selectIsLoggedIn, selectPoints, selectUser, setLoading, setLoggedIn, setUser, updatePoints } from '@/perfect-seo-shared-components/lib/features/User';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { BrandStatus, Links, LinkType } from '@/perfect-seo-shared-components/data/types';
 import { useEffect, useMemo, useState } from 'react';
@@ -30,7 +30,7 @@ export interface HeaderProps {
 
 const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProps) => {
   const points = useSelector(selectPoints);
-  const isLoggedIn = useSelector(selectIsLoggedIn);
+
   const isAdmin = useSelector(selectIsAdmin);
   const isLoading = useSelector(selectIsLoading);
   const user = useSelector(selectUser);
@@ -40,6 +40,24 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
   const { phone, desktop } = useViewport();
   const [currentPage, setCurrentPage] = useState('');
   const pathname = usePathname();
+  const { data: session }: any = useSession();
+
+  useEffect(() => {
+
+    dispatch(setLoggedIn(session !== undefined))
+    if (session) {
+      if (session?.user) {
+        dispatch(setUser(session?.user));
+      }
+      if (session?.token?.access_token) {
+        localStorage.setItem('access_token', session?.token?.access_token);
+        localStorage.setItem('refresh_token', session?.token?.refresh_token);
+      }
+    }
+
+  }, [session])
+
+  const isLoggedIn = useSelector(selectIsLoggedIn);
   // Function to load credit data for the user
   const loadCreditData = () => {
     checkUserCredits(email)

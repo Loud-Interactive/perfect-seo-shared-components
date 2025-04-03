@@ -137,9 +137,7 @@ const useGoogleUser = (appKey) => {
   }, [user, isLoggedIn])
 
   useEffect(() => {
-    if ((isLoggedIn && !profile) || !isLoggedIn) {
-      dispatch(setLoading(true))
-    }
+    dispatch(setLoading(isLoggedIn && !profile))
   }, [isLoggedIn, profile])
 
   // updates product use 

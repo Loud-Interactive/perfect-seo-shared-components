@@ -168,9 +168,8 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
               </div>
             </Link>
           </div>
-
           <div className={signedInClass}>
-            {hasLogin && (
+            {(hasLogin && !isLoading) && (
               <div className='col-auto flex-column pe-3 d-flex align-items-end'>
                 {isLoggedIn ? desktop ? (
                   <>
@@ -204,7 +203,7 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
                 <DropdownMenu.Content align="end" sideOffset={25} className='bg-dark card z-100'>
                   <div className={styles.menu}>
                     <div>
-                      {(hasLogin && !desktop && !isLoading && session) && (
+                      {(hasLogin && !desktop && !isLoading) && (
                         <div className='card-header bg-secondary text-white'>
                           <div className='row justify-content-between d-flex'>
                             {isLoggedIn ? (

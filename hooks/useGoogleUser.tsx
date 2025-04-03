@@ -65,7 +65,7 @@ const useGoogleUser = (appKey) => {
           'postgres_changes',
           { event: 'UPDATE', schema: 'public', table: 'settings', filter: `email=eq.${email}` },
           (payload) => {
-            console.log(payload)
+
             if (payload?.new) {
               dispatch(setUserSettings(payload.new as SettingsProps))
             }
@@ -138,9 +138,6 @@ const useGoogleUser = (appKey) => {
 
   useEffect(() => {
     dispatch(setLoading(!!(isLoggedIn && !profile)))
-    if (profile) {
-      console.log(profile)
-    }
   }, [isLoggedIn, profile])
 
   // updates product use 

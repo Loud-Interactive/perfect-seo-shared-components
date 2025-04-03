@@ -194,7 +194,7 @@ export const selectIsLoggedIn = (state: RootState) => state?.isLoggedIn;
 export const selectIsAdmin = (state: RootState) => state?.isAdmin;
 export const selectDomainsInfo = (state: RootState) => state?.domainInfo;
 export const selectSettings = (state: RootState) => state?.settings;
-export const selectEmail = (state: RootState) => state?.profile?.email;
+export const selectEmail = (state: RootState) => state?.user?.email;
 export const selectDomains = (state: RootState) => state?.profile?.domain_access;
 export const selectLoader = (state: RootState) => state?.loading;
 export const selectDomainInfo = (key: string) => (state: RootState) => state?.domainInfo?.find((domain) => domain.domain_name === key || domain.domain === key);

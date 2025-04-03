@@ -137,7 +137,7 @@ const useGoogleUser = (appKey) => {
   }, [user, isLoggedIn])
 
   useEffect(() => {
-    dispatch(setLoading(isLoggedIn && !profile))
+    dispatch(setLoading(!!(isLoggedIn && !profile)))
     if (profile) {
       console.log(profile)
     }

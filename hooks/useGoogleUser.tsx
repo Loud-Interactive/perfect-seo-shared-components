@@ -95,6 +95,9 @@ const useGoogleUser = (appKey) => {
           if (res?.data && res?.data?.length > 0) {
             let newProfile = res.data[0]
             let products = updateProducts(res?.data[0])
+            if (newProfile.full_name !== user?.name) {
+              newProfile.full_name = user?.name
+            }
             dispatch(setAdmin(res.data[0]?.admin))
             dispatch(setProfile({ ...newProfile, products }))
             if (newProfile?.domain_access?.length <= 0) {
@@ -102,7 +105,7 @@ const useGoogleUser = (appKey) => {
             }
           }
           else if (res?.data?.length === 0) {
-            let profileObj: any = { email: user.email }
+            let profileObj: any = { email: user.email, full_name: user?.name }
             if (user.email.includes("atidiv") || user.email.includes('loud.us')) {
               profileObj = { ...profileObj, admin: true }
             }

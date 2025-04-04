@@ -41,7 +41,6 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
 
   // managing auth/session recognition 
   useEffect(() => {
-    console.log(session)
     if (session) {
       if (session === undefined) {
         dispatch(setLoading(false));

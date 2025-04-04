@@ -216,6 +216,10 @@ const useGoogleUser = (appKey) => {
           .from('profiles')
           .update({ email: email, domain_access: domains, domains: domains?.map((obj) => obj.siteUrl) })
           .select('*')
+          .then(res => {
+            dispatch(setProfile({ ...profile, domain_access: domains, domains: domains?.map((obj) => obj.siteUrl) }))
+          }
+          )
 
         return domains
 

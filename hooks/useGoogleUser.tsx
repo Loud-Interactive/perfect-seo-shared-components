@@ -206,7 +206,7 @@ const useGoogleUser = (appKey) => {
               originalUrl: obj?.siteUrl.split(":")[1]
             })
           })
-          .filter(domain => !!(domain?.split(".")?.length <= 2))
+          .filter(domain => !!(domain?.siteUrl?.split(".")?.length <= 2))
         supabase
           .from('user_history')
           .insert({ email: email, transaction_data: { domains, url: window?.location?.href }, product: en.product, type: "Check Domains", action: "INFO" })

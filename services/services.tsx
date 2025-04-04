@@ -201,8 +201,7 @@ export const getLatestStatusByOutlineGUID = (guid: string) => {
     .from('tasks')
     .select('*')
     .eq('content_plan_outline_guid', guid)
-    .order('last_updated_at', { ascending: false })
-    .limit(1)
+    .order('created_at', { ascending: false })
 }
 
 export const createUserCreditAccount = (email: string) => {

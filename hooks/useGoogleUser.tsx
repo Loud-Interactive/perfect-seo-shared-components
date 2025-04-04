@@ -100,7 +100,7 @@ const useGoogleUser = (appKey) => {
             }
             dispatch(setAdmin(res.data[0]?.admin))
             dispatch(setProfile({ ...newProfile, products }))
-            if (newProfile?.domain_access?.length <= 0) {
+            if (!newProfile?.domain_access) {
               fetchAllDomains()
             }
           }
@@ -120,7 +120,7 @@ const useGoogleUser = (appKey) => {
                     let products = updateProducts(res?.data[0])
                     dispatch(setAdmin(res.data[0]?.admin))
                     dispatch(setProfile({ ...newProfile, products }))
-                    if (newProfile?.domain_access?.length <= 0) {
+                    if (!newProfile?.domain_access?.length) {
                       fetchAllDomains()
                     }
                   }

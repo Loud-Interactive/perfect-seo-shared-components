@@ -216,8 +216,9 @@ const useGoogleUser = (appKey) => {
         supabase
           .from('profiles')
           .update({ email: email, domain_access: domains, domains: domains?.map((obj) => obj.siteUrl) })
-          .select('*')
           .eq('email', email)
+          .select('*')
+
           .then(res => {
             dispatch(setProfile({ ...profile, domain_access: domains, domains: domains?.map((obj) => obj.siteUrl) }))
           }

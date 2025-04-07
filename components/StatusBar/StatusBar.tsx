@@ -276,7 +276,7 @@ const StatusBar = ({
           }
         </div>
           :
-          onGeneratePost ?
+          (onGeneratePost && outlineComplete) ?
             <div className="col-auto d-flex align-items-center">
               <i className="bi bi-chevron-right mx-1" />
               <div>

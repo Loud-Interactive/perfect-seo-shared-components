@@ -76,20 +76,6 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
 
   }, [currentDomain, domainsInfo, domain])
 
-  const addDefaultHandler = (e?) => {
-    e?.preventDefault();
-    let global = settings?.global || {}
-    supabase
-      .from('settings')
-      .update({ global: { ...global, defaultDomain: selected?.value } })
-      .eq('email', email)
-      .select('*')
-      .then(res => {
-        setUserSettings({ ...settings, global: { ...global, defaultDomain: selected?.value } })
-      })
-
-  }
-
   useEffect(() => {
     if (email && domain && !dataTracked) {
       supabase
@@ -357,10 +343,6 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
                     Clear search field to see all content by email
                   </Tooltip>
                 </div>
-
-                {(!isDefaultDomain && selected) && <div className='col-auto'>
-                  <a className='text-primary' onClick={addDefaultHandler}>Make Default</a>
-                </div>}
               </div>
             </div>
             }

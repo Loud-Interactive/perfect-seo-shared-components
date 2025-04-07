@@ -94,6 +94,11 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
       .from('settings')
       .update({ global: { ...global, defaultDomain: selected?.value } })
       .eq('email', email)
+      .select('*')
+      .then(res => {
+        setUserSettings({ ...settings, global: { ...global, defaultDomain: selected?.value } })
+      })
+
   }
 
   useEffect(() => {

@@ -76,17 +76,6 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
 
   }, [currentDomain, domainsInfo, domain])
 
-
-  const isDefaultDomain = useMemo(() => {
-    let bool = false;
-    if (settings?.global?.defaultDomain) {
-      if (selected?.value === settings?.global?.defaultDomain) {
-        bool = true
-      }
-    }
-    return bool
-  }, [settings?.global?.defaultDomain, selected])
-
   const addDefaultHandler = (e?) => {
     e?.preventDefault();
     let global = settings?.global || {}
@@ -265,10 +254,6 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
           setSelected({ label: domainParam, value: domainParam })
           return setLoading(false)
         }
-      } else if (settings?.global?.defaultDomain) {
-        setDomain(settings.global.defaultDomain)
-        setSelected({ label: settings.global.defaultDomain, value: settings.global.defaultDomain })
-        return setLoading(false)
       }
       else {
         return setLoading(false)

@@ -72,7 +72,7 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
         .then(res => {
 
           if (res.data) {
-            setLocalOutline({ ...outline, client_name: res.data.brand_name })
+            setLocalOutline({ ...outline, client_name: res.data[0]?.brand_name })
           }
         })
     }

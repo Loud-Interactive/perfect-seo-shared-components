@@ -76,7 +76,6 @@ export const updateImpression = (domain: string, obj: any) => {
     .upsert(newData)
     .eq('domain', domain)
     .select('*')
-    .limit(300)
     .then((res) => {
       let newRes = res;
       newRes.data = [res.data.reduce((prev, curr) => ({ ...prev, [curr.key]: curr.value }), {})]

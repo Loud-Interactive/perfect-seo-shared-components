@@ -173,7 +173,7 @@ const ContentPlanForm = ({ buttonLabel, initialData, submitResponse, isModal }: 
         getSynopsisInfo(initialData?.domainName)
           .then((res) => {
             if (res.data) {
-              form.setState({ ...initialData, brandName: res.data.brand_name })
+              form.setState({ ...initialData, brandName: res.data[0].brand_name })
             }
           })
       }

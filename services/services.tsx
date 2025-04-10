@@ -75,6 +75,7 @@ export const updateImpression = (domain: string, obj: any) => {
   return supabase
     .from('pairs')
     .upsert(newData)
+    .eq('domain', domain)
     .select('*')
     .then((res) => {
       let newRes = res;

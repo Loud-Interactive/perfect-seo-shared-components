@@ -71,7 +71,6 @@ export const updateImpression = (domain: string, obj: any) => {
     return [...prev, newObj]
   }, [])
 
-  console.log(newData);
   return supabase
     .from('pairs')
     .upsert(newData)

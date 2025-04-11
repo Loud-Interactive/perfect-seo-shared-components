@@ -61,6 +61,13 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
       }
 
     }
+    else {
+      updateLiveUrl(localPost.content_plan_outline_guid, '')
+        .then(res => {
+          setLocalPost({ ...localPost, live_post_url: '' })
+          setShowLivePost(false)
+        })
+    }
 
   }
 

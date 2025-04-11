@@ -125,6 +125,10 @@ export const generateSchema = (content_plan_outline_guid) => {
   return axiosInstance.post('/api/post/generate-schema', { content_plan_outline_guid });
 }
 
+export const generateImagePrompt = (content_plan_outline_guid) => {
+  return axiosInstance.post('/api/post/generate-image-prompt', { content_plan_outline_guid });
+}
+
 export const getPreviousPlans = (domain_name) => {
   return axiosInstance.get(`${API_URL}/incoming_plan_items_by_domain/${domain_name}`);
 };
@@ -394,11 +398,19 @@ export const patchOutlineTitle = (guid: string, title: string) => {
 }
 
 export const updateLiveUrl = (guid, url) => {
-  let reqObj = {
-    content_plan_outline_guid: guid,
-    live_post_url: url
+  console.log(url, typeof url, url.toString())
+  let newUrl;
+  if (url && typeof url === 'string') {
+    newUrl = url.replace(/'/g, '"')
   }
-  return axiosInstance.post(`/api/post/update-live-url`, reqObj);
+  else {
+    newUrl = ''
+  }
+  return supabase
+    .from("tasks")
+    .update('live_post_url', newUrl)
+    .eq("content_plan_outline_guid", guid)
+    .select('*')
 }
 export const updateHTML = (guid, html) => {
   return axiosInstance.put(`${NEW_CONTENT_API_URL}/content/posts/${guid}/html`, html, { headers: newContentAPIHeader });

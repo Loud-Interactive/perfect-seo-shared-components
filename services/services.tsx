@@ -398,19 +398,11 @@ export const patchOutlineTitle = (guid: string, title: string) => {
 }
 
 export const updateLiveUrl = (guid, url) => {
-  console.log(url, typeof url, url.toString())
-  let newUrl;
-  if (url && typeof url === 'string') {
-    newUrl = url.replace(/'/g, '"')
+  let reqObj = {
+    content_plan_outline_guid: guid,
+    live_post_url: url || ''
   }
-  else {
-    newUrl = ''
-  }
-  return supabase
-    .from("tasks")
-    .update('live_post_url', newUrl)
-    .eq("content_plan_outline_guid", guid)
-    .select('*')
+  return axiosInstance.post(`/api/post/update-live-url`, reqObj);
 }
 export const updateHTML = (guid, html) => {
   return axiosInstance.put(`${NEW_CONTENT_API_URL}/content/posts/${guid}/html`, html, { headers: newContentAPIHeader });

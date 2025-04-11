@@ -208,7 +208,7 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
               <p className="mb-1">
                 <small>
                   <strong className="text-primary ">Created on</strong> {moment(`${localPost?.created_at}Z`).local().format("dddd, MMMM Do, YYYY h:mma")}
-                  {isAdmin ? <span className="text-primary ms-2">{localPost?.content_plan_outline_guid}</span> : null}
+                  {/* {isAdmin ? <span className="text-primary ms-2">{localPost?.content_plan_outline_guid}</span> : null} */}
                   {!localPost?.content_plan_guid && <span className="badge bg-warning ms-2">Bulk</span>}
                 </small>
               </p>

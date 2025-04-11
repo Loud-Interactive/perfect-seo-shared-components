@@ -8,7 +8,6 @@ import axios from 'axios';
 import { urlSanitization } from '../utils/conversion-utilities';
 import { signIn, useSession } from 'next-auth/react';
 import { SettingsProps } from '../data/types';
-import { getSynopsisInfo, populateBulkGSC } from '../services/services';
 import en from '@/assets/en.json'
 const useGoogleUser = (appKey) => {
   const isLoggedIn = useSelector(selectIsLoggedIn)

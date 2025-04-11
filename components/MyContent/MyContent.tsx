@@ -62,16 +62,19 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
       if (!data) {
         getSynopsisInfo(checkDomain)
           .then(res => {
-            setSynopsis(res?.data)
+            if (res.data) {
+              setSynopsis(res?.data[0])
+            }
+            else {
+
+              setSynopsis(null)
+
+            }
           })
-          .catch(err => {
-            setSynopsis(null)
-          }
-          )
       }
-      else {
-        setSynopsis(data)
-      }
+    }
+    else {
+      setSynopsis(data)
     }
 
   }, [currentDomain, domainsInfo, domain])

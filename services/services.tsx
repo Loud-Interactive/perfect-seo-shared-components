@@ -52,34 +52,37 @@ export const generateSynopsis = (domain) => {
 }
 
 // synopsisPerfect APIS 
-export const getSynopsisInfo = (domain, regenerate?, server?: boolean) => {
-  let newDomain = urlSanitization(domain);
-  if (regenerate) {
-    newDomain += "?regenerate=true";
-  }
-  if (server) {
-    return axios.get(`https://synopsisperfectai.replit.app/domain/${newDomain}`, { headers: { 'Access-Control-Allow-Origin': '*' } })
-      .then((res) => {
-        let newRes = res;
-        let newData = res.data.reduce((prev, curr) => ({ ...prev, [curr.key]: curr?.value }), {})
-        newRes.data = newData;
-        return newRes
-      })
-  }
-  else {
-    return axiosInstance.get(`https://synopsisperfectai.replit.app/domain/${newDomain}`, { headers: { 'Access-Control-Allow-Origin': '*' } })
-      .then((res) => {
-        let newRes = res;
-        let newData = res.data.reduce((prev, curr) => ({ ...prev, [curr.key]: curr?.value }), {})
-        newRes.data = newData;
-        return newRes
-      })
-  }
+export const getSynopsisInfo = (domain) => {
+  return supabase
+    .from('pairs')
+    .select('*')
+    .eq('domain', domain)
+    .then((res) => {
+      let newRes = res;
+      newRes.data = [res.data.reduce((prev, curr) => ({ ...prev, [curr.key]: curr.value }), {})]
+      return newRes
+    })
+
 };
 
 export const updateImpression = (domain: string, obj: any) => {
+  let newData = Object.keys(obj).reduce((prev, curr) => {
+    let newObj = { domain: domain, key: curr, value: obj[curr] }
+    return [...prev, newObj]
+  }, [])
 
-  return axiosInstance.patch(`https://pp-api.replit.app/pairs/${domain}`, obj, { headers });
+  return supabase
+    .from('pairs')
+    .upsert(newData)
+    .eq('domain', domain)
+    .select('*')
+    .then((res) => {
+      let newRes = res;
+      newRes.data = [res.data.reduce((prev, curr) => ({ ...prev, [curr.key]: curr.value }), {})]
+      return newRes
+    })
+
+
 };
 
 // check what this endpoint does

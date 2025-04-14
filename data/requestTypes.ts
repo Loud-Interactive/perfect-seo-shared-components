@@ -46,27 +46,14 @@ export interface RegeneratePost {
 }
 
 export interface GenerateContentPost {
-  email: string,
-  keyword: string,
-  seo_keyword: string,
-  content_plan_keyword: string,
-  content_plan_guid: string,
   content_plan_outline_guid: string,
-  client_name: string,
-  client_domain: string,
+  email: string,
   receiving_email: string,
-  outline: {
-    sections: OutlineRowProps[]
-  }
-  status?: string,
   entity_voice?: string,
-  inspiration_url_1?: string,
-  priority1?: 'high' | 'medium' | 'low'
-  inspiration_url_2?: string,
-  priority2?: 'high' | 'medium' | 'low'
-  inspiration_url_3?: string,
-  priority3?: 'high' | 'medium' | 'low',
   writing_language?: string,
+  html_template_url?: string,
+  voice_url?: string,
+  custom_outline?: string
 }
 
 export interface ContentPlanPostRequest {

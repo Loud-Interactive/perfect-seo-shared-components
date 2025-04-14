@@ -147,8 +147,11 @@ export const updateContentPlan = (guid, reqObj, other?) => {
   return axiosInstance.post(`${API_URL}/update_content_plan`, reqBody);
 };
 
-export const createPost = (reqBody: Request.GenerateContentPost) => {
-  return axiosInstance.post(`https://content-v5.replit.app/generate_content`, reqBody);
+export const createPost = (reqObj: Request.GenerateContentPost) => {
+  return axiosInstance.post(
+    `https://content-v5.replit.app/generate_content_from_outline_guid`,
+    reqObj
+  );
 };
 
 

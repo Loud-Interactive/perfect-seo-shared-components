@@ -178,15 +178,7 @@ const ActionButtonGroup = ({
   const generatePostHandler = (receiving_email, writing_language?) => {
     let newOutline = typeof data?.outline === 'string' ? JSON.parse(data?.outline) : data?.outline
     let reqBody: GenerateContentPost = {
-      outline: newOutline,
-      email: email,
-      seo_keyword: data.Keyword || data.keyword,
-      content_plan_keyword: data?.content_plan_keyword,
-      keyword: data?.keyword,
-      content_plan_guid: data.content_plan_guid,
-      content_plan_outline_guid: data.guid,
-      client_name: data.brand_name,
-      client_domain: data.client_domain,
+      email: email, content_plan_outline_guid: data.guid,
       receiving_email: receiving_email,
       writing_language: writing_language || 'English'
     };

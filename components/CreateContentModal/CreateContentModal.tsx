@@ -67,7 +67,6 @@ const CreateContentModal = ({
   const supabase = createClient();
 
   useEffect(() => {
-    console.log('client_name', client_name)
     if (contentPlan?.brand_name || contentPlan?.client_name) {
       setClient_name(contentPlan?.brand_name || contentPlan?.client_name)
     } else if (data?.client_name || data?.brand_name) {

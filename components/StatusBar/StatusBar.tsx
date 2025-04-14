@@ -50,6 +50,7 @@ const StatusBar = ({
   const [outlineStatus, setOutlineStatus] = useState<string>('');
   const [postStatus, setPostStatus] = useState<string>('');
   const [factcheckStatus, setFactcheckStatus] = useState<string>('');
+  const [generateImageStatus, setGenerateImageStatus] = useState<string>('');
 
   const [outlineLoading, setOutlineLoading] = useState<boolean>(false);
   const [postLoading, setPostLoading] = useState<boolean>(false);
@@ -270,9 +271,9 @@ const StatusBar = ({
   const copyHeroClickHandler = (e) => {
     e.preventDefault();
     navigator.clipboard.writeText(form.getState.hero_image_prompt).then(() => {
-      setSchemaStatus('Copied to clipboard')
+      setGenerateImageStatus('Copied to clipboard')
     }).catch(err => {
-      setSchemaStatus('Error copying to clipboard')
+      setGenerateImageStatus('Error copying to clipboard')
     })
   }
   return (
@@ -413,9 +414,13 @@ const StatusBar = ({
           <Form controller={form}>
             <TextArea fieldName="hero_image_prompt" label="Image Prompt" disabled />
             <div className="row d-flex justify-content-between align-items-center g-0">
+
               <div className="col-auto d-flex align-items-center">
                 <button onClick={copyHeroClickHandler} className="btn btn-primary me-2" type="button"><i className="bi bi-copy me-2" />Copy</button>
               </div>
+              {generateImageStatus !== '' && <div className="col-auto d-flex align-items-center">
+                <span className="text-warning"><TypeWriterText string={generateImageStatus} withBlink /></span>
+              </div>}
 
             </div>
           </Form>

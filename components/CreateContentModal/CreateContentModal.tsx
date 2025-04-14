@@ -55,6 +55,7 @@ const CreateContentModal = ({
   const titleForm = useForm();
   const { phone, portrait } = useViewport();
   const [creatingPost, setCreatingPost] = useState(generatePost || false);
+  const [client_name, setClient_name] = useState<string>(null);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -63,7 +64,30 @@ const CreateContentModal = ({
   const searchParams = useSearchParams();
   const queryParam = searchParams.get('generate');
   const pathname = usePathname()
+  const supabase = createClient();
 
+  useEffect(() => {
+    console.log('client_name', client_name)
+    if (contentPlan?.brand_name || contentPlan?.client_name) {
+      setClient_name(contentPlan?.brand_name || contentPlan?.client_name)
+    } else if (data?.client_name || data?.brand_name) {
+      setClient_name(data?.client_name || data?.brand_name)
+    } else {
+      let domain = contentPlan?.domain_name || contentPlan?.client_domain || data?.client_domain || data?.domain
+      supabase
+        .from('pairs')
+        .select("*")
+        .eq('domain', domain)
+        .eq('key', 'brand_name')
+        .limit(1)
+        .then(res => {
+          if (res?.data[0]?.value) {
+            setClient_name(res.data[0].value)
+          }
+        }
+        )
+    }
+  }, [contentPlan, client_name])
 
   const closeHandler = () => {
     form.setState({});
@@ -332,8 +356,6 @@ const CreateContentModal = ({
 
 
   const submitWithEmail = (receivingEmail, language?) => {
-
-
     let reqBody: GenerateContentPost = {
       outline: { sections: [...convertToTableData(form.getState)] },
       email: email,
@@ -343,17 +365,17 @@ const CreateContentModal = ({
       keyword: postTitle,
       content_plan_guid: contentPlan.guid,
       content_plan_outline_guid: outlineGUID,
-      client_name: contentPlan.brand_name || contentPlan.client_name,
+      client_name,
       client_domain: contentPlan.domain_name || contentPlan.client_domain,
       receiving_email: receivingEmail,
       writing_language: language || 'English'
     };
-    if (!reqBody?.client_name) {
-      console.log("no client name")
-    }
+
     setSubmitted(true);
     return createPost(reqBody)
+
   };
+
   const submitHTMLStylingHandler = (receivingEmail, language?) => {
     let reqBody: RegeneratePost = {
       email: email,

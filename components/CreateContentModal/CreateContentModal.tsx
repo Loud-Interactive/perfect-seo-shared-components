@@ -348,7 +348,9 @@ const CreateContentModal = ({
       receiving_email: receivingEmail,
       writing_language: language || 'English'
     };
-
+    if (!reqBody?.client_name) {
+      return console.log("no client name")
+    }
     setSubmitted(true);
     return createPost(reqBody)
   };

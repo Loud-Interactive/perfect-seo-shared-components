@@ -267,6 +267,14 @@ const StatusBar = ({
       setSchemaStatus('Error copying to clipboard')
     })
   }
+  const copyHeroClickHandler = (e) => {
+    e.preventDefault();
+    navigator.clipboard.writeText(form.getState.hero_image_prompt).then(() => {
+      setSchemaStatus('Copied to clipboard')
+    }).catch(err => {
+      setSchemaStatus('Error copying to clipboard')
+    })
+  }
   return (
     <div className="row d-flex align-items-center justify-content-end g-0 ">
       <div className="col-auto d-flex align-items-center">
@@ -381,7 +389,7 @@ const StatusBar = ({
       }
       <Modal.Overlay open={viewSchema} onClose={() => { setViewSchema(null) }} closeIcon>
         <Modal.Title title="Schema" />
-        <Modal.Description>
+        <Modal.Description className="modal-medium">
           <Form controller={form}>
             <TextArea fieldName="schema_data" label="Schema" />
             <div className="row d-flex justify-content-between align-items-center g-0">
@@ -401,12 +409,12 @@ const StatusBar = ({
       </Modal.Overlay>
       <Modal.Overlay open={viewImagePrompt} onClose={() => { setViewImagePrompt(null) }} closeIcon>
         <Modal.Title title="Image Prompt" />
-        <Modal.Description>
+        <Modal.Description className="modal-medium">
           <Form controller={form}>
-            <TextArea fieldName="imagePrompt" label="Image Prompt" disabled />
+            <TextArea fieldName="hero_image_prompt" label="Image Prompt" disabled />
             <div className="row d-flex justify-content-between align-items-center g-0">
               <div className="col-auto d-flex align-items-center">
-                <button onClick={copyClickHandler} className="btn btn-primary me-2" type="button"><i className="bi bi-copy me-2" />Copy</button>
+                <button onClick={copyHeroClickHandler} className="btn btn-primary me-2" type="button"><i className="bi bi-copy me-2" />Copy</button>
               </div>
 
             </div>

@@ -1,6 +1,6 @@
 'use client'
 import { ContentType, PostProps } from "@/perfect-seo-shared-components/data/types";
-import { fetchOutlineStatus, generateSchema, getFactCheckStatus, getPost, getPostStatus, getPostStatusFromOutline } from "@/perfect-seo-shared-components/services/services";
+import { fetchOutlineStatus, generateImagePrompt, generateSchema, getFactCheckStatus, getPost, getPostStatus, getPostStatusFromOutline } from "@/perfect-seo-shared-components/services/services";
 import { useEffect, useState } from "react";
 import TypeWriterText from "../TypeWriterText/TypeWriterText";
 import { keyToLabel } from "@/perfect-seo-shared-components/utils/conversion-utilities";
@@ -25,6 +25,7 @@ interface StatusBarProps {
   index_status?: string
   post_status?: string,
   outline_status?: string,
+  hero_image_prompt?: string,
   task_id?: string;
   schema_data?: any;
 }
@@ -40,6 +41,7 @@ const StatusBar = ({
   live_post_url,
   onGeneratePost,
   indexHandler,
+  hero_image_prompt,
   index_status,
   schema_data,
   type,
@@ -53,6 +55,7 @@ const StatusBar = ({
   const [postLoading, setPostLoading] = useState<boolean>(false);
   const [factcheckLoading, setFactcheckLoading] = useState<boolean>(false);
   const [generateSchemaLoading, setGenerateSchemaLoading] = useState<boolean>(false);
+  const [generateImagePromptLoading, setGenerateImagePromptLoading] = useState<boolean>(false);
 
   const [outlineError, setOutlineError] = useState<string>('');
   const [postError, setPostError] = useState<string>('');
@@ -65,9 +68,11 @@ const StatusBar = ({
   const [viewSchema, setViewSchema] = useState<boolean>(false);
   const [schemaStatus, setSchemaStatus] = useState<string>('');
 
+  const [viewImagePrompt, setViewImagePrompt] = useState<boolean>(false);
+
   const isAdmin = useSelector(selectIsAdmin)
   const supabase = createClient();
-  const schemaController = useForm();
+  const form = useForm();
 
   const fetchOutlineStatusData = () => {
     if (content_plan_outline_guid) {
@@ -145,15 +150,20 @@ const StatusBar = ({
   }, [content_plan_outline_guid, post_status]);
 
   useEffect(() => {
+    let formData = form.getState;
     if (schema_data) {
-      schemaController.setState({ 'schema_data': schema_data })
+      formData.schema_data = schema_data
     }
-  }, [schema_data])
+    if (hero_image_prompt) {
+      formData.hero_image_prompt = hero_image_prompt
+    }
+    form.setState(formData)
+  }, [schema_data, hero_image_prompt])
 
   const updateSchema = () => {
     supabase
       .from('tasks')
-      .update({ schema_data: schemaController.getState.schema_data })
+      .update({ schema_data: form.getState.schema_data })
       .eq('task_id', props.task_id)
       .then(res => {
         if (res.status === 204) {
@@ -161,6 +171,8 @@ const StatusBar = ({
         }
       })
   }
+
+
   const fetchFactcheckStatusData = () => {
     if (content_plan_factcheck_guid) {
       setFactcheckLoading(true);
@@ -226,7 +238,20 @@ const StatusBar = ({
           setGenerateSchemaLoading(false)
         })
     }
+  }
+  const generateImagePromptHandler = (e) => {
+    e.preventDefault();
+    if (hero_image_prompt) {
+      setViewImagePrompt(true)
+    }
+    else {
+      setGenerateImagePromptLoading(true);
+      generateImagePrompt(content_plan_outline_guid)
+        .then(res => {
 
+          setGenerateImagePromptLoading(false)
+        })
+    }
   }
 
   const generatePostClickHandler = (e) => {
@@ -236,7 +261,7 @@ const StatusBar = ({
 
   const copyClickHandler = (e) => {
     e.preventDefault();
-    navigator.clipboard.writeText(schemaController.getState.schema_data).then(() => {
+    navigator.clipboard.writeText(form.getState.schema_data).then(() => {
       setSchemaStatus('Copied to clipboard')
     }).catch(err => {
       setSchemaStatus('Error copying to clipboard')
@@ -285,13 +310,26 @@ const StatusBar = ({
             </div>
             : null
       }
-      {(type === ContentType.POST && !live_post_url && postComplete) && <div className="col-auto d-flex align-items-center">
-        <i className="bi bi-chevron-right mx-1" />
-        <>
+      {(type === ContentType.POST && !live_post_url && postComplete) && <>
+        {
+          hero_image_prompt ?
+            <div className="col-auto d-flex align-items-center ">
+              < i className="bi bi-chevron-right mx-1" />
+              <strong><a onClick={generateImagePromptHandler} className="text-primary my-0 py-0">View Image Prompt</a></strong>
+              <span className="badge rounded-pill ms-1 p-1 bg-success"><i className="bi bi-check-lg text-white"></i></span>
+            </div>
+            :
+            <div className="col-auto d-flex align-items-center ">
+              <i className="bi bi-chevron-right mx-1" />
+              <a onClick={generateImagePromptHandler} className="text-warning my-0 py-0">{generateImagePromptLoading ? <TypeWriterText string="Generating" withBlink /> : 'Generate Image Prompt'}</a>
+            </div>}
+        <div className="col-auto d-flex align-items-center">
+          <i className="bi bi-chevron-right mx-1" />
+
 
           <a onClick={addLiveUrlClickHandler} className="text-warning my-0 py-0"><i className="bi bi-plus" />Add Live Url</a>
-        </>
-      </div>
+        </div>
+      </>
       }
       {(type === ContentType.POST && live_post_url && postComplete) &&
         <div className="col-auto d-flex align-items-center">
@@ -326,7 +364,7 @@ const StatusBar = ({
             :
             <div className="col-auto d-flex align-items-center ">
               <i className="bi bi-chevron-right mx-1" />
-              <a onClick={generateSchemaHandler} className="text-warning my-0 py-0"><TypeWriterText string={generateSchemaLoading ? 'Generating' : 'Generate Schema'} withBlink /></a>
+              <a onClick={generateSchemaHandler} className="text-warning my-0 py-0">{generateSchemaLoading ? <TypeWriterText string='Generating' withBlink /> : 'Generate Schema'}</a>
             </div>}
         {index_status ?
           <div className="col-auto d-flex align-items-center ">
@@ -344,7 +382,7 @@ const StatusBar = ({
       <Modal.Overlay open={viewSchema} onClose={() => { setViewSchema(null) }} closeIcon>
         <Modal.Title title="Schema" />
         <Modal.Description>
-          <Form controller={schemaController}>
+          <Form controller={form}>
             <TextArea fieldName="schema_data" label="Schema" />
             <div className="row d-flex justify-content-between align-items-center g-0">
               <div className="col-auto d-flex align-items-center">
@@ -356,6 +394,21 @@ const StatusBar = ({
               <div className="col-auto d-flex align-items-center">
                 <input type="submit" onClick={updateSchema} className="btn btn-primary" value="Update Schema" />
               </div>
+            </div>
+          </Form>
+
+        </Modal.Description>
+      </Modal.Overlay>
+      <Modal.Overlay open={viewImagePrompt} onClose={() => { setViewImagePrompt(null) }} closeIcon>
+        <Modal.Title title="Image Prompt" />
+        <Modal.Description>
+          <Form controller={form}>
+            <TextArea fieldName="imagePrompt" label="Image Prompt" disabled />
+            <div className="row d-flex justify-content-between align-items-center g-0">
+              <div className="col-auto d-flex align-items-center">
+                <button onClick={copyClickHandler} className="btn btn-primary me-2" type="button"><i className="bi bi-copy me-2" />Copy</button>
+              </div>
+
             </div>
           </Form>
 

@@ -225,6 +225,13 @@ const ActionButtonGroup = ({
       }
 
     }
+    else {
+      updateLiveUrl(data.content_plan_outline_guid, '')
+        .then(res => {
+          setData({ ...data, live_post_url: 'url' })
+          setShowLiveURLModal(false)
+        })
+    }
   }
 
   const regeneratePostHTMLSubmitHandler = (email) => {

@@ -14,7 +14,7 @@ import { GenerateContentPost, GetPostOutlineRequest, RegeneratePost, SaveContent
 import { fetchOutlineData, patchOutlineTitle, regenerateHTML, regenerateHTMLfromDoc, saveContentPlanPost } from "@/perfect-seo-shared-components/services/services";
 import { createPost, regenerateOutline } from "@/perfect-seo-shared-components/services/services";
 import Loader from "@/perfect-seo-shared-components/components/Loader/Loader";
-import { selectEmail, selectPoints } from "@/perfect-seo-shared-components/lib/features/User";
+import { selectEmail } from "@/perfect-seo-shared-components/lib/features/User";
 import RegeneratePostModal, { GenerateTypes } from "../RegeneratePostModal/RegeneratePostModal";
 import { createClient } from "@/perfect-seo-shared-components/utils/supabase/client";
 
@@ -36,14 +36,10 @@ const CreateContentModal = ({
   data,
   onClose,
   contentPlan,
-  titleChange,
   isAuthorized,
-  index,
-  advancedData,
   regenerateHandler,
   standalone,
   generatePost,
-  track
 }: CreateContentModalProps) => {
   const [loading, setLoading] = useState(true);
   const [tableData, setTableData] = useState<OutlineRowProps[]>(null);
@@ -55,10 +51,8 @@ const CreateContentModal = ({
   const titleForm = useForm();
   const { phone, portrait } = useViewport();
   const [creatingPost, setCreatingPost] = useState(generatePost || false);
-  const [client_name, setClient_name] = useState<string>(null);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
   const router = useRouter();
   const email = useSelector(selectEmail)
   const searchParams = useSearchParams();
@@ -66,27 +60,7 @@ const CreateContentModal = ({
   const pathname = usePathname()
   const supabase = createClient();
 
-  useEffect(() => {
-    if (contentPlan?.brand_name || contentPlan?.client_name) {
-      setClient_name(contentPlan?.brand_name || contentPlan?.client_name)
-    } else if (data?.client_name || data?.brand_name) {
-      setClient_name(data?.client_name || data?.brand_name)
-    } else {
-      let domain = contentPlan?.domain_name || contentPlan?.client_domain || data?.client_domain || data?.domain
-      supabase
-        .from('pairs')
-        .select("*")
-        .eq('domain', domain)
-        .eq('key', 'brand_name')
-        .limit(1)
-        .then(res => {
-          if (res?.data[0]?.value) {
-            setClient_name(res.data[0].value)
-          }
-        }
-        )
-    }
-  }, [contentPlan, client_name])
+
 
   const closeHandler = () => {
     form.setState({});
@@ -249,7 +223,6 @@ const CreateContentModal = ({
     if (data.guid) {
       setOutlineGUID(data.guid)
     }
-    // if (standalone) {
     let guid = data.content_plan_outline_guid || data.guid;
     fetchOutlineData(guid)
       .then(res => {
@@ -261,53 +234,6 @@ const CreateContentModal = ({
           }
         }
       })
-    // } 
-    // else {
-    //   let reqObj: GetPostOutlineRequest = {
-    //     client_name: contentPlan?.brand_name,
-    //     content_plan_guid: contentPlan?.guid,
-    //     post_title: data['Post Title'] || data?.post_title || postTitle,
-    //     priority_code: contentPlan?.priorityCode || '',
-    //     client_domain: contentPlan?.domain_name || contentPlan?.client_domain,
-    //     inspiration_url_1: contentPlan?.inspiration_url_1,
-    //     priority1: contentPlan?.inspiration_url_1_priority || undefined,
-    //     inspiration_url_2: contentPlan?.inspiration_url_2,
-    //     priority2: contentPlan?.inspiration_url_2_priority || undefined,
-    //     inspiration_url_3: contentPlan?.inspiration_url_3,
-    //     priority3: contentPlan?.inspiration_url_3_priority || undefined,
-    //   };
-
-    //   getContentPlanOutline(reqObj)
-    //     .then((res) => {
-    //       setLoading(false);
-    //       let newData;
-    //       if (typeof res.data.outline === "string") {
-    //         newData = JSON.parse(res.data.outline);
-    //       } else {
-    //         newData = res.data.outline;
-    //       }
-    //       setOutlineGUID(res.data.guid);
-    //       if (typeof newData === "string") {
-    //         newData = JSON.parse(newData);
-    //       }
-    //       if (newData?.sections) {
-    //         if (newData.sections.length > 0) {
-    //           processSections(newData.sections, initial);
-    //         }
-    //       }
-    //     })
-    //     .catch((err) => {
-    //       if (data.guid) {
-    //         fetchOutlineData(data.guid)
-    //           .then(res => {
-    //             console.log("outline status", res.data)
-    //             if (res?.data[0].outline?.sections?.length > 0) {
-    //               processSections(res.data[0].outline.sections, initial);
-    //             }
-    //           })
-    //       }
-    //     });
-    // }
   };
 
   useEffect(() => {
@@ -356,21 +282,13 @@ const CreateContentModal = ({
 
   const submitWithEmail = (receivingEmail, language?) => {
     let reqBody: GenerateContentPost = {
-      outline: { sections: [...convertToTableData(form.getState)] },
       email: email,
-      seo_keyword: data.Keyword || data.keyword,
-      content_plan_keyword: contentPlan?.target_keyword || data?.keyword,
       entity_voice: contentPlan?.entity_voice,
-      keyword: postTitle,
-      content_plan_guid: contentPlan.guid,
       content_plan_outline_guid: outlineGUID,
-      client_name,
-      client_domain: contentPlan.domain_name || contentPlan.client_domain,
       receiving_email: receivingEmail,
       writing_language: language || 'English'
     };
 
-    setSubmitted(true);
     return createPost(reqBody)
 
   };
@@ -382,7 +300,6 @@ const CreateContentModal = ({
       content_plan_outline_guid: outlineGUID,
     };
 
-    setSubmitted(true);
     return regenerateHTML(reqBody)
   };
   const submitGoogleDocRegenerateHandler = (receivingEmail, language?) => {
@@ -392,7 +309,6 @@ const CreateContentModal = ({
       content_plan_outline_guid: outlineGUID,
     };
 
-    setSubmitted(true);
     return regenerateHTMLfromDoc(reqBody)
   };
 

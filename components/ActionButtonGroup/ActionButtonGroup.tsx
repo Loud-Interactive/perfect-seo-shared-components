@@ -347,9 +347,9 @@ const ActionButtonGroup = ({
                       <button className="btn btn-transparent w-100" onClick={() => { setShowImageGeneratePrompt(true) }}>Show Hero Image Prompt</button>
                     </DropdownMenu.Item>
                     }
-                    <DropdownMenu.Item>
+                    {(isAdmin && data?.task_id) && <DropdownMenu.Item>
                       <Link className="btn btn-transparent w-100" href={`/post/${data?.task_id}`} target="_blank">Post Page</Link>
-                    </DropdownMenu.Item>
+                    </DropdownMenu.Item>}
                     <DropdownMenu.Item>
                       <button className="btn btn-transparent w-100" onClick={() => { setShowRegeneratePostModal(true) }}>Regenerate Post</button>
                     </DropdownMenu.Item>

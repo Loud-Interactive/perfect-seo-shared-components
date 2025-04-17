@@ -61,7 +61,7 @@ const IndexModal = ({ post, onClose, setPost }: IndexModalProps) => {
             <button className="btn btn-primary" disabled={loading} onClick={onClose}>close</button>
           </div>
           : <div className="mt-3">
-            <button className="btn btn-primary" disabled={loading} onClick={clickHandler}>{loading ? 'Indexing...' : post?.index_status === 'indexed' ? 'Reindex' : 'Index'}</button>
+            <button className="btn btn-primary" disabled={loading} onClick={clickHandler}>{loading ? 'Indexing...' : ['indexed', 'submitted'].includes(post?.index_status) ? 'Reindex' : 'Index'}</button>
           </div>}
       </div>
     </div>

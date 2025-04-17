@@ -42,6 +42,7 @@ const StatusBar = ({
   onGeneratePost,
   indexHandler,
   hero_image_prompt,
+  task_id,
   index_status,
   schema_data,
   type,
@@ -165,7 +166,7 @@ const StatusBar = ({
     supabase
       .from('tasks')
       .update({ schema_data: form.getState.schema_data })
-      .eq('task_id', props.task_id)
+      .eq('task_id', task_id)
       .then(res => {
         if (res.status === 204) {
           setSchemaStatus('Schema Updated')
@@ -225,6 +226,44 @@ const StatusBar = ({
       }
     };
   }, [factcheckComplete]);
+
+  const checkIfIndexed = async (outlineGuid: string) => {
+    try {
+      const { data, error } = await supabase.functions.invoke('check-indexed-status', {
+        body: { content_plan_outline_guid: outlineGuid },
+      });
+
+      if (error) {
+        console.error('Error checking indexed status:', error);
+        return null;
+      }
+      if (data) {
+
+        if (index_status === 'submitted' && data?.indexed === true) {
+          supabase
+            .from('tasks')
+            .update({ index_status: 'indexed' })
+            .eq('task_id', task_id)
+            .select("*")
+            .then(res => {
+            })
+        }
+      }
+      return data;
+      // data will be: { indexed: boolean, url: string, message: string }
+    } catch (err) {
+      console.error('Failed to check indexed status:', err);
+      return null;
+    }
+  };
+
+  useEffect(() => {
+    if (type === ContentType.POST && content_plan_outline_guid && live_post_url) {
+      checkIfIndexed(content_plan_outline_guid)
+    }
+  }, [content_plan_outline_guid, live_post_url])
+
+
 
   const generateSchemaHandler = (e) => {
     e.preventDefault();
@@ -375,7 +414,7 @@ const StatusBar = ({
               <i className="bi bi-chevron-right mx-1" />
               <a onClick={generateSchemaHandler} className="text-warning my-0 py-0">{generateSchemaLoading ? <TypeWriterText string='Generating' withBlink /> : 'Generate Schema'}</a>
             </div>}
-        {index_status ?
+        {index_status === 'indexed' ?
           <div className="col-auto d-flex align-items-center ">
             <i className="bi bi-chevron-right mx-1" />
             <strong className="text-primary">Indexed</strong>

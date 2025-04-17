@@ -166,27 +166,45 @@ const CreateContentModal = ({
   };
 
   const convertToTableData = (object) => {
-    return Object.keys(object).reduce((prev, curr) => {
-      if (curr.startsWith("heading-")) {
-        let headingIndex = curr.split("-")[1];
-        let newHeading = {
-          title: object[curr],
-          subheadings: Object.keys(object)
-            .filter((key) => {
-              return key.startsWith(`${headingIndex}-subheading`);
-            })
-            .reduce((sPrev, sCurr, i) => {
-              let subheadingKey = `${headingIndex}-subheading-`;
+    try {
+      // First get all unique heading indices
+      const headingIndices = Object.keys(object)
+        .filter(key => key.startsWith("heading-"))
+        .map(key => key.split("-")[1]);
 
-              return [...sPrev, object[`${subheadingKey}${i}`]];
-            }, []),
+      // Build sections properly
+      return headingIndices.map(headingIndex => {
+        // Get the title for this heading
+        const title = object[`heading-${headingIndex}`] || '';
+
+        // Find all subheadings for this heading
+        const subheadingPattern = new RegExp(`^${headingIndex}-subheading-\\d+$`);
+        const subheadingKeys = Object.keys(object)
+          .filter(key => subheadingPattern.test(key))
+          .sort((a, b) => {
+            const aIndex = parseInt(a.split('-')[2]);
+            const bIndex = parseInt(b.split('-')[2]);
+            return aIndex - bIndex;
+          });
+
+        // Map subheadings to strings, ensuring no null or undefined values
+        const subheadings = subheadingKeys.map(key => object[key] || '');
+
+        // Ensure we have at least one subheading, even if empty
+        if (subheadings.length === 0) {
+          subheadings.push('');
+        }
+
+        return {
+          title,
+          subheadings
         };
-
-        return [...prev, newHeading];
-      } else {
-        return prev;
-      }
-    }, []);
+      });
+    } catch (error) {
+      console.error('Error converting form data to table data:', error);
+      // Return a minimal valid structure to prevent crashes
+      return [{ title: '', subheadings: [''] }];
+    }
   };
 
   const deleteSubheading = (headingIndex: number, index: number) => {

@@ -28,6 +28,7 @@ const IndexModal = ({ post, onClose, setPost }: IndexModalProps) => {
         setPost({ ...post, index_status: 'completed' })
         setSuccess(true)
         setLoading(false)
+        onClose();
       })
       .catch(err => {
         setErrorMessage(err.response.data.message)

@@ -223,7 +223,7 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
           </div>
         </div>
         <div className="col-12">
-          <div className="row g-2 d-flex justify-content-end align-items-center w-100">
+          <div className="row g-2 d-flex justify-content-between align-items-center w-100">
             <div className="col-auto">
               <StatusBar post_status={status} indexHandler={() => setShowIndex(true)} type={ContentType.POST} content_plan_outline_guid={localPost.content_plan_outline_guid} content_plan_guid={localPost?.content_plan_guid}
                 hero_image_prompt={localPost?.hero_image_prompt}

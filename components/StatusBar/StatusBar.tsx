@@ -316,7 +316,7 @@ const StatusBar = ({
     })
   }
   return (
-    <div className="row d-flex align-items-center justify-content-end g-0 ">
+    <div className="row d-flex align-items-center justify-content-between g-0 ">
       <div className="col-auto d-flex align-items-center">
         {(outlineComplete || (postStatus && !outlineStatus)) ?
           <>

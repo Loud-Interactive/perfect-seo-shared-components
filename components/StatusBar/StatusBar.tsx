@@ -420,11 +420,16 @@ const StatusBar = ({
             <strong className="text-primary">Indexed</strong>
             <span className="badge rounded-pill ms-1 p-1 bg-success"><i className="bi bi-check-lg text-white"></i></span>
           </div>
-          :
-          <div className="col-auto d-flex align-items-center ">
-            <i className="bi bi-chevron-right mx-1" />
-            <a onClick={indexHandler} className="text-warning my-0 py-0">Index Post</a>
-          </div>}
+          : index_status === 'submitted' ?
+            <div className="col-auto d-flex align-items-center ">
+              <i className="bi bi-chevron-right mx-1" /> Submitted
+              <a onClick={indexHandler} className="text-warning ms-1 my-0 py-0">Re-Index Post</a>
+            </div> :
+
+            <div className="col-auto d-flex align-items-center ">
+              <i className="bi bi-chevron-right mx-1" />
+              <a onClick={indexHandler} className="text-warning my-0 py-0">Index Post</a>
+            </div>}
       </>
       }
       <Modal.Overlay open={viewSchema} onClose={() => { setViewSchema(null) }} closeIcon>

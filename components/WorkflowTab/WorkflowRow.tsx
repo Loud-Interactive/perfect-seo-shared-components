@@ -21,7 +21,10 @@ const WorkflowRow = ({ posts, reorderRow, selected, setSelected, type }) => {
   return (
     <div className={rowClasses} ref={dropRefType}>
       <div className="row d-flex flex-column align-items-stretch justify-content-center g-3">
-
+        {isOver &&
+          <div className="card p-3 bg-primary text-center">
+            <h5 className="text-white">Drop here to reorder</h5>
+          </div>}
         {posts.length > 0 ? posts.map((post, index) => {
           return (
             <DraggablePost post={post} key={`indexed-${index}`} selected={selected} setSelected={setSelected} type={type} />

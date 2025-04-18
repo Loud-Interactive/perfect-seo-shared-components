@@ -295,7 +295,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
 
   if (isAuthorized === false && isLoading === false) {
     return (
-      <div className="container-fluid container-xl strip-padding">
+      <div className="container-fluid  strip-padding">
         <div className='row d-flex align-items-center justify-content-center'>
           <h1 className="text-3xl font-bold text-center mb-3"><TypeWriterText string={isLoggedIn ? `You are not authorized to view content for ${currentDomain || selected?.value || 'this domain'}` : 'Log in to view your content'} withBlink /></h1>
           <div className='col-12 col-lg-8 mt-3 d-flex justify-content-center'>
@@ -311,7 +311,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
 
   if (isLoading === false && isLoggedIn === false) {
     return (
-      <div className="container-fluid container-xl strip-padding d-flex justify-content-center align-items-center">
+      <div className="container-fluid  strip-padding d-flex justify-content-center align-items-center">
         <h1><TypeWriterText string="Please login to continue" withBlink /></h1>
       </div>
     )
@@ -320,7 +320,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
   return (
     <>
       {hideTitle ? null :
-        <div className='container-fluid container-xl'>
+        <div className='container-fluid'>
           <div className='row g-3 align-items-center justify-content-between'>
             {(synopsis && ['bulk-content', 'bulk-posts'].includes(selectedTab) === false) ?
               <>
@@ -354,7 +354,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
           </div>
         </div>
       }
-      <div className='container-xl content-fluid rc relative'>
+      <div className=' content-fluid rc relative'>
         {/* {isLoading && <LoadSpinner />} */}
         <div className={styles.tabWrap}>
           <ul className="nav nav-tabs mb-0">
@@ -415,7 +415,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
             </div>
           </div>
         </div>
-        {/* <div className="strip-padding container-fluid container-xl d-flex align-items-center justify-content-center">
+        {/* <div className="strip-padding container-fluid  d-flex align-items-center justify-content-center">
             <h2 className='text-center text-primary'><TypeWriterText string="No domain selected" withBlink /></h2>
           </div> */}
       </div>

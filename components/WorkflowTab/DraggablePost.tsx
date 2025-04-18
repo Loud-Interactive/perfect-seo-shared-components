@@ -48,7 +48,7 @@ const DraggablePost: FC<{
     <div className={rowClasses}>
       <div ref={previewRefType}>
         <div ref={dragRefType} className="">
-          <h5> {post?.title}</h5>
+          <p className="mb-0"> {post?.title}</p>
           {post?.live_post_url && <a href={post?.live_post_url} target="_blank" rel="noreferrer" className="text-decoration-none">{post?.live_post_url}</a>}
         </div>
       </div>

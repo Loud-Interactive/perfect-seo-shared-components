@@ -22,6 +22,7 @@ import LoadSpinner from '../LoadSpinner/LoadSpinner';
 import { selectDomains, selectDomainsInfo, selectEmail, selectIsAdmin, selectIsLoading, selectIsLoggedIn, selectSettings, selectUser, setUserSettings } from '@/perfect-seo-shared-components/lib/features/User'
 import Tooltip from '../Tooltip';
 import Reports from '../Reports/Reports';
+import WorkflowTab from '../WorkflowTab/WorkflowTab';
 
 
 export interface MyContentProps {
@@ -130,6 +131,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
         { key: "content-plans", title: "Generated Content Plans" },
         { key: "outlines", title: "Generated Outlines" },
         { key: "posts", title: "Generated Posts" },
+        { key: "workflow", title: "Workflow (BETA)" },
         { key: "reports", title: "Stats & Reports" },
         { key: "bulk-content", title: "Bulk Content Plans" },
         { key: "bulk-posts", title: "Bulk Posts" },
@@ -404,10 +406,10 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
                 </Suspense>
               </div>
             </div>
-            <div className={`tab-pane fade ${selectedTab === 'bulk-posts' && 'show active'}`} id="bulk-posts" role="tabpanel" aria-labelledby="bulk-posts-tab">
+            <div className={`tab-pane fade ${selectedTab === 'workflow' && 'show active'}`} id="workflow" role="tabpanel" aria-labelledby="workflow-tab">
               <div className='tab p-3'>
                 <Suspense fallback={<LoadSpinner />}>
-                  <BulkPostComponent currentDomain={currentDomain} active={!loading && selectedTab === 'bulk-posts'} />
+                  <WorkflowTab currentDomain={currentDomain || domain} active={!loading && selectedTab === 'workflow'} />
                 </Suspense>
               </div>
             </div>

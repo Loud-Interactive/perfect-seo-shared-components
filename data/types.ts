@@ -835,3 +835,9 @@ export interface Schema {
   processing_started_at: string | null;
   processing_heartbeat_at: string | null;
 }
+
+export enum WorkflowPanels {
+  GENERATED = 'generated',
+  LIVE = 'live',
+  INDEXED = 'indexed'
+}

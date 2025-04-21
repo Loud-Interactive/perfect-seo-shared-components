@@ -99,7 +99,6 @@ const StatusBar = ({
             .eq('is_active', true)
             .limit(1)
             .then(res => {
-              console.log('client api keys', res.data[0])
               if (res.data[0]) {
                 setWordPressPublish(true)
               }

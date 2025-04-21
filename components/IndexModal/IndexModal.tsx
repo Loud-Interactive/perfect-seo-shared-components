@@ -26,7 +26,7 @@ const IndexModal = ({ post, onClose, setPost }: IndexModalProps) => {
     }
     axiosInstance.post('/api/index-url', reqObj)
       .then(res => {
-        setPost({ ...post, index_status: 'completed' })
+        setPost({ ...post, index_status: 'submitted' })
         setSuccess(true)
         setLoading(false)
         onClose();

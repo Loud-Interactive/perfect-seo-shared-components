@@ -69,6 +69,8 @@ const StatusBar = ({
 
   const [viewSchema, setViewSchema] = useState<boolean>(false);
   const [schemaStatus, setSchemaStatus] = useState<string>('');
+  const [wordPressPublishStatus, setWordPressPublishStatus] = useState<string>(null);
+
   const [wordPressPublish, setWordPressPublish] = useState<boolean>(false);
 
   const [viewImagePrompt, setViewImagePrompt] = useState<boolean>(false);
@@ -246,9 +248,11 @@ const StatusBar = ({
   }
 
   const publishToWordPressClickHandler = (e) => {
+    setWordPressPublishStatus('Publishing...')
     publishToWordPress(content_plan_outline_guid)
       .then(res => {
         if (res.data) {
+          setWordPressPublishStatus('Published to WordPress')
           console.log(res.data)
         }
       })
@@ -415,21 +419,21 @@ const StatusBar = ({
               <a onClick={generateImagePromptHandler} className="text-warning my-0 py-0">{generateImagePromptLoading ? <TypeWriterText string="Generating" withBlink /> : 'Generate Image Prompt'}</a>
             </div>}
         {!live_post_url && <>
-          {wordPressPublish &&
-            <div className="col-auto d-flex align-items-center">
-              <i className="bi bi-chevron-right mx-1" />
-              <a onClick={publishToWordPressClickHandler} className="text-warning my-0 py-0"><i className="bi bi-wordpress" /> Publish</a> or
-            </div>
-          }
           <div className="col-auto d-flex align-items-center">
             <i className="bi bi-chevron-right mx-1" />
+            {wordPressPublish && <>
+              <a onClick={publishToWordPressClickHandler} className="text-warning my-0 py-0"><i className="bi bi-wordpress" /> Publish</a>
+              <span className="px-2">or</span>
+            </>
+            }
             <a onClick={addLiveUrlClickHandler} className="text-warning my-0 py-0"><i className="bi bi-plus" />Add Live Url</a>
           </div>
         </>}
 
       </>
       }
-      {(type === ContentType.POST && live_post_url && postComplete) &&
+      {
+        (type === ContentType.POST && live_post_url && postComplete) &&
         <div className="col-auto d-flex align-items-center">
           <i className="bi bi-chevron-right mx-1" />
           <strong className="text-primary">Live</strong>
@@ -451,36 +455,37 @@ const StatusBar = ({
           }
         </div>
       }
-      {live_post_url && <>
-        {
-          schema_data ?
+      {
+        live_post_url && <>
+          {
+            schema_data ?
+              <div className="col-auto d-flex align-items-center ">
+                < i className="bi bi-chevron-right mx-1" />
+                <strong><a onClick={generateSchemaHandler} className="text-primary my-0 py-0">Schema</a></strong>
+                <span className="badge rounded-pill ms-1 p-1 bg-success"><i className="bi bi-check-lg text-white"></i></span>
+              </div>
+              :
+              <div className="col-auto d-flex align-items-center ">
+                <i className="bi bi-chevron-right mx-1" />
+                <a onClick={generateSchemaHandler} className="text-warning my-0 py-0">{generateSchemaLoading ? <TypeWriterText string='Generating' withBlink /> : 'Generate Schema'}</a>
+              </div>}
+          {index_status === 'indexed' ?
             <div className="col-auto d-flex align-items-center ">
-              < i className="bi bi-chevron-right mx-1" />
-              <strong><a onClick={generateSchemaHandler} className="text-primary my-0 py-0">Schema</a></strong>
+              <i className="bi bi-chevron-right mx-1" />
+              <strong className="text-primary">Indexed</strong>
               <span className="badge rounded-pill ms-1 p-1 bg-success"><i className="bi bi-check-lg text-white"></i></span>
             </div>
-            :
-            <div className="col-auto d-flex align-items-center ">
-              <i className="bi bi-chevron-right mx-1" />
-              <a onClick={generateSchemaHandler} className="text-warning my-0 py-0">{generateSchemaLoading ? <TypeWriterText string='Generating' withBlink /> : 'Generate Schema'}</a>
-            </div>}
-        {index_status === 'indexed' ?
-          <div className="col-auto d-flex align-items-center ">
-            <i className="bi bi-chevron-right mx-1" />
-            <strong className="text-primary">Indexed</strong>
-            <span className="badge rounded-pill ms-1 p-1 bg-success"><i className="bi bi-check-lg text-white"></i></span>
-          </div>
-          : index_status === 'submitted' ?
-            <div className="col-auto d-flex align-items-center ">
-              <i className="bi bi-chevron-right mx-1" /> Submitted
-              <a onClick={indexHandler} className="text-warning ms-1 my-0 py-0">Re-Index Post</a>
-            </div> :
+            : index_status === 'submitted' ?
+              <div className="col-auto d-flex align-items-center ">
+                <i className="bi bi-chevron-right mx-1" /> Submitted
+                <a onClick={indexHandler} className="text-warning ms-1 my-0 py-0">Re-Index Post</a>
+              </div> :
 
-            <div className="col-auto d-flex align-items-center ">
-              <i className="bi bi-chevron-right mx-1" />
-              <a onClick={indexHandler} className="text-warning my-0 py-0">Index Post</a>
-            </div>}
-      </>
+              <div className="col-auto d-flex align-items-center ">
+                <i className="bi bi-chevron-right mx-1" />
+                <a onClick={indexHandler} className="text-warning my-0 py-0">Index Post</a>
+              </div>}
+        </>
       }
       <Modal.Overlay open={viewSchema} onClose={() => { setViewSchema(null) }} closeIcon>
         <Modal.Title title="Schema" />

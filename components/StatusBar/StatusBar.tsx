@@ -89,7 +89,7 @@ const StatusBar = ({
       .then(res => {
         if (res.data[0]) {
           const domain = res.data[0].client_domain;
-          console.log('domain', domain)
+          // console.log('domain', domain)
           // Check if the domain exists in the clients tables
 
           supabase

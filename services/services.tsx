@@ -608,3 +608,7 @@ export const getPostStatusFromOutline = (guid: string) => {
   return supabase.from('tasks')
     .select('*').eq('content_plan_outline_guid', guid).neq("is_deleted", true).order('created_at', { ascending: false })
 }
+
+export const publishToWordPress = async (guid: string) => {
+  return axiosInstance.post('/api/post/wordpress-publish', { content_plan_outline_guid: guid })
+}

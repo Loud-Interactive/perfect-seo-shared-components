@@ -1,6 +1,6 @@
 'use client'
 import { ContentType, PostProps } from "@/perfect-seo-shared-components/data/types";
-import { fetchOutlineStatus, generateImagePrompt, generateSchema, getFactCheckStatus, getPost, getPostStatus, getPostStatusFromOutline } from "@/perfect-seo-shared-components/services/services";
+import { fetchOutlineStatus, generateImagePrompt, generateSchema, getFactCheckStatus, getPost, getPostStatus, getPostStatusFromOutline, publishToWordPress } from "@/perfect-seo-shared-components/services/services";
 import { useEffect, useState } from "react";
 import TypeWriterText from "../TypeWriterText/TypeWriterText";
 import { keyToLabel } from "@/perfect-seo-shared-components/utils/conversion-utilities";
@@ -69,12 +69,46 @@ const StatusBar = ({
 
   const [viewSchema, setViewSchema] = useState<boolean>(false);
   const [schemaStatus, setSchemaStatus] = useState<string>('');
+  const [wordPressPublish, setWordPressPublish] = useState<boolean>(false);
 
   const [viewImagePrompt, setViewImagePrompt] = useState<boolean>(false);
 
   const isAdmin = useSelector(selectIsAdmin)
   const supabase = createClient();
   const form = useForm();
+
+  const checkWordPressPublish = async () => {
+    supabase
+      .from('tasks')
+      .select('client_domain')
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .then(res => {
+        if (res.data[0]) {
+          const domain = res.data[0].client_domain;
+          console.log('domain', domain)
+          // Check if the domain exists in the clients tables
+
+          supabase
+            .from('client_api_keys')
+            .select('*')
+            .eq('domain', domain)
+            .eq('is_active', true)
+            .limit(1)
+            .then(res => {
+              console.log('client api keys', res.data[0])
+              if (res.data[0]) {
+                setWordPressPublish(true)
+              }
+              else {
+                setWordPressPublish(false)
+              }
+            })
+
+        }
+      })
+
+  }
 
   const fetchOutlineStatusData = () => {
     if (content_plan_outline_guid) {
@@ -134,6 +168,7 @@ const StatusBar = ({
   useEffect(() => {
     let postInterval;
     if (content_plan_outline_guid) {
+      checkWordPressPublish()
       if (post_status) {
         setPostStatus(post_status)
       }
@@ -210,6 +245,14 @@ const StatusBar = ({
     }
   }
 
+  const publishToWordPressClickHandler = (e) => {
+    publishToWordPress(content_plan_outline_guid)
+      .then(res => {
+        if (res.data) {
+          console.log(res.data)
+        }
+      })
+  }
 
 
   useEffect(() => {
@@ -371,12 +414,19 @@ const StatusBar = ({
               <i className="bi bi-chevron-right mx-1" />
               <a onClick={generateImagePromptHandler} className="text-warning my-0 py-0">{generateImagePromptLoading ? <TypeWriterText string="Generating" withBlink /> : 'Generate Image Prompt'}</a>
             </div>}
-        {!live_post_url && <div className="col-auto d-flex align-items-center">
-          <i className="bi bi-chevron-right mx-1" />
+        {!live_post_url && <>
+          {wordPressPublish &&
+            <div className="col-auto d-flex align-items-center">
+              <i className="bi bi-chevron-right mx-1" />
+              <a onClick={publishToWordPressClickHandler} className="text-warning my-0 py-0"><i className="bi bi-wordpress" /> Publish</a> or
+            </div>
+          }
+          <div className="col-auto d-flex align-items-center">
+            <i className="bi bi-chevron-right mx-1" />
+            <a onClick={addLiveUrlClickHandler} className="text-warning my-0 py-0"><i className="bi bi-plus" />Add Live Url</a>
+          </div>
+        </>}
 
-
-          <a onClick={addLiveUrlClickHandler} className="text-warning my-0 py-0"><i className="bi bi-plus" />Add Live Url</a>
-        </div>}
       </>
       }
       {(type === ContentType.POST && live_post_url && postComplete) &&

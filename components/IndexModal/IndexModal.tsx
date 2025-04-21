@@ -14,13 +14,14 @@ const IndexModal = ({ post, onClose, setPost }: IndexModalProps) => {
   const [success, setSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState();
   const [reindex, setReindex] = useState(false);
+
   const clickHandler = (e) => {
     setErrorMessage(undefined)
     e.preventDefault();
     setLoading(true);
     setSuccess(false)
     let reqObj = { url: post.live_post_url, contentPlanOutlineGuid: post.content_plan_outline_guid, reindex: false }
-    if (post?.index_status) {
+    if (post?.index_status === 'submitted' || post?.index_status === 'indexed') {
       reqObj.reindex = true
     }
     axiosInstance.post('/api/index-url', reqObj)

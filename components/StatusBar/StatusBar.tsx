@@ -371,12 +371,12 @@ const StatusBar = ({
               <i className="bi bi-chevron-right mx-1" />
               <a onClick={generateImagePromptHandler} className="text-warning my-0 py-0">{generateImagePromptLoading ? <TypeWriterText string="Generating" withBlink /> : 'Generate Image Prompt'}</a>
             </div>}
-        <div className="col-auto d-flex align-items-center">
+        {!live_post_url && <div className="col-auto d-flex align-items-center">
           <i className="bi bi-chevron-right mx-1" />
 
 
           <a onClick={addLiveUrlClickHandler} className="text-warning my-0 py-0"><i className="bi bi-plus" />Add Live Url</a>
-        </div>
+        </div>}
       </>
       }
       {(type === ContentType.POST && live_post_url && postComplete) &&

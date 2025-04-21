@@ -84,6 +84,7 @@ const StatusBar = ({
       .from('tasks')
       .select('client_domain')
       .order('created_at', { ascending: false })
+      .eq('content_plan_outline_guid', content_plan_outline_guid)
       .limit(1)
       .then(res => {
         if (res.data[0]) {

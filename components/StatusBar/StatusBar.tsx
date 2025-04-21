@@ -358,12 +358,12 @@ const StatusBar = ({
             </div>
             : null
       }
-      {(type === ContentType.POST && !live_post_url && postComplete) && <>
+      {(type === ContentType.POST && postComplete) && <>
         {
           hero_image_prompt ?
             <div className="col-auto d-flex align-items-center ">
               < i className="bi bi-chevron-right mx-1" />
-              <strong><a onClick={generateImagePromptHandler} className="text-primary my-0 py-0">View Image Prompt</a></strong>
+              <strong><a onClick={generateImagePromptHandler} className="text-primary my-0 py-0">Image Prompt</a></strong>
               <span className="badge rounded-pill ms-1 p-1 bg-success"><i className="bi bi-check-lg text-white"></i></span>
             </div>
             :

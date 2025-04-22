@@ -75,7 +75,6 @@ const StatusBar = ({
 
   const [viewImagePrompt, setViewImagePrompt] = useState<boolean>(false);
 
-  const isAdmin = useSelector(selectIsAdmin)
   const supabase = createClient();
   const form = useForm();
 

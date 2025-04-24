@@ -325,7 +325,7 @@ const ContentPlanForm = ({ buttonLabel, initialData, submitResponse, isModal }: 
             </button>
           </div>
           {isModal &&
-            <p className="mt-3 text-warning"><small>*Please note it may take up to 5 minutes for your new plan to appear on you plans list.</small></p>}
+            <p className="mt-3 text-dark"><small>*Please note it may take up to 5 minutes for your new plan to appear on you plans list.</small></p>}
         </div>
       </Form>
     </div>

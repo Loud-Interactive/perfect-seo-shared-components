@@ -200,7 +200,7 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
   }
 
   return (
-    <div className="card bg-light p-2" title={post?.title}>
+    <div className="card p-2" title={post?.title}>
       <div className="row d-flex g-2 d-flex align-items-end">
         <div className="col">
           <div className="row g-2">

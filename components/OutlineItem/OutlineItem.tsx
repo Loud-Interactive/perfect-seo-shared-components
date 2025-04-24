@@ -170,19 +170,13 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
   }
 
   return (
-    <div className="card bg-light p-2" title={outline?.post_title}>
+    <div className="card p-2" title={outline?.post_title}>
       <div className="row d-flex g-0 d-flex align-items-end">
         <div className="col">
           <div className="row g-2">
             <div className="col-12">
               <strong className="text-primary me-1">Title</strong>  {localOutline?.post_title} {(outline.client_domain !== domain_name) && <span className='badge bg-primary ms-2'>{outline?.brand_name}</span>}
-              <div>
-                {/* {localOutline?.content_plan_keyword && <strong className="text-primary me-2">Topic</strong>}
-                {localOutline.content_plan_keyword}
-                <br />
-                {localOutline?.keyword && <strong className="text-primary me-2">Keyword</strong>}
-                {localOutline.keyword} */}
-              </div>
+
               <div>
                 {localOutline?.created_at && <strong className="text-primary me-2">Date</strong>}
                 {moment(localOutline.created_at).format("dddd, MMM Do, YYYY h:mma")}{email !== localOutline.email && <span> by <span className="text-primary">by {localOutline.email}</span></span>}

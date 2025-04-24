@@ -237,8 +237,8 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
                           <>
                             {currentPage !== "/" && (
                               <div className='col-12'>
-                                <Link href="/">
-                                  <i className="bi bi-house-fill me-2" />Return Home
+                                <Link href="/" className="text-primary">
+                                  <i className="bi bi-house-fill me-2 text-primary" />Return Home
                                 </Link>
                               </div>
                             )}

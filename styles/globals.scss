@@ -126,7 +126,7 @@ h1 {
 }
 
 a {
-  &:not(.btn) {
+  &:not(.btn-primary) {
     color: $primary !important;
   }
 
@@ -196,7 +196,7 @@ td {
     -webkit-transition: none;
     -o-transition: none;
     transition: none;
-    border-radius: 12px;
+
   }
 }
 
@@ -218,7 +218,7 @@ hr {
   background-color: $primary;
   transition: background-color 0.5s ease;
   transition: color 0.5s ease;
-  border-radius: 12px;
+
 }
 
 
@@ -5068,7 +5068,7 @@ button.input-group-append {
   justify-content: center;
 
   &.with-background {
-    background-color: rgba(black, .5);
+    background-color: rgba($lightOrange, .5);
   }
 
   z-index: 900;
@@ -5341,10 +5341,23 @@ a.text-primary {
 
 .btn-transparent.text-primary {
   &:hover {
-    color: $lightOrange !important
+    color: $lightOrange !important;
+
+    i {
+      color: $lightOrange !important;
+    }
   }
 }
 
 a.btn {
   text-decoration: none !important;
+}
+
+.bg-secondary .btn-transparent {
+  color: $orange !important;
+
+  &:hover {
+    background-color: $orange !important;
+    color: white !important;
+  }
 }

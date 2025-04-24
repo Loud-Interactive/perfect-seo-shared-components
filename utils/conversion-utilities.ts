@@ -28,18 +28,15 @@ export const trimSynopsis = (synopsis: any) => {
   }
 
   let emptyKeys = Object.keys(emptyObject)
-  console.log(synopsis)
+
   let newData: any = Object.keys(synopsis).reduce((prev, key) => {
     if (emptyKeys.includes(key) && synopsis[key] === emptyObject[key]) {
       return prev
     }
-    else if (synopsis.hasOwnProperty(key)) {
+    else {
 
       return { ...prev, [key]: synopsis[key] }
 
-    }
-    else {
-      return prev
     }
   }, {})
   return newData

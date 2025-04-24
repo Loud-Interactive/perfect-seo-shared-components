@@ -127,9 +127,9 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
   const TabData = useMemo(() => {
     if (isAdmin) {
       return [
-        { key: "content-plans", title: "Generated Content Plans" },
-        { key: "outlines", title: "Generated Outlines" },
-        { key: "posts", title: "Generated Posts" },
+        { key: "content-plans", title: "Content Plans" },
+        { key: "outlines", title: "Outlines" },
+        { key: "posts", title: "Posts" },
         { key: "reports", title: "Stats & Reports" },
         { key: "bulk-content", title: "Bulk Content Plans" },
         { key: "bulk-posts", title: "Bulk Posts" },
@@ -137,9 +137,9 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
     }
     else {
       return [
-        { key: "content-plans", title: "Generated Content Plans" },
-        { key: "outlines", title: "Generated Outlines" },
-        { key: "posts", title: "Generated Posts" },
+        { key: "content-plans", title: "Content Plans" },
+        { key: "outlines", title: "Outlines" },
+        { key: "posts", title: "Posts" },
         { key: "bulk-content", title: "Bulk Content Plans" },
         { key: "bulk-posts", title: "Bulk Posts" },
       ]

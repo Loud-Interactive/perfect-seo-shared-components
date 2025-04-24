@@ -147,8 +147,11 @@ export const updateContentPlan = (guid, reqObj, other?) => {
   return axiosInstance.post(`${API_URL}/update_content_plan`, reqBody);
 };
 
-export const createPost = (reqBody: Request.GenerateContentPost) => {
-  return axiosInstance.post(`https://content-v5.replit.app/generate_content`, reqBody);
+export const createPost = (reqObj: Request.GenerateContentPost) => {
+  return axiosInstance.post(
+    `https://content-v5.replit.app/generate_content_from_outline_guid`,
+    reqObj
+  );
 };
 
 
@@ -604,4 +607,8 @@ export const getPost = (guid: string) => {
 export const getPostStatusFromOutline = (guid: string) => {
   return supabase.from('tasks')
     .select('*').eq('content_plan_outline_guid', guid).neq("is_deleted", true).order('created_at', { ascending: false })
+}
+
+export const publishToWordPress = async (guid: string) => {
+  return axiosInstance.post('/api/post/wordpress-publish', { content_plan_outline_guid: guid })
 }

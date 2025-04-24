@@ -31,7 +31,6 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
   const fetchData = () => {
     fetchOutlineData(outline.guid)
       .then(res => {
-        console.log(res.data)
         setLocalOutline(res.data[0])
       })
   }
@@ -46,6 +45,7 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
 
     return regenerateHTML(reqBody)
   };
+
   const submitGoogleDocRegenerateHandler = (receivingEmail, language?) => {
     let reqBody: RegeneratePost = {
       email: email,
@@ -67,7 +67,6 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
 
   useEffect(() => {
     if (!outline?.client_name) {
-
       getSynopsisInfo(domain_name)
         .then(res => {
 
@@ -80,17 +79,9 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
   }, [outline?.client_name, domain_name])
 
   const generatePostHandler = (receiving_email, writing_language?) => {
-    let newOutline = typeof outline?.outline === 'string' ? JSON.parse(outline?.outline) : outline?.outline
     let reqBody: GenerateContentPost = {
-      outline: newOutline,
       email: email,
-      seo_keyword: outline.Keyword || outline.keyword,
-      content_plan_keyword: outline?.content_plan_keyword,
-      keyword: outline?.post_title,
-      content_plan_guid: outline.content_plan_guid,
       content_plan_outline_guid: outline.guid,
-      client_name: localOutline.client_name || outline.brand_name || outline.client_name,
-      client_domain: domain_name,
       receiving_email: receiving_email,
       writing_language: writing_language || 'English'
     };
@@ -200,7 +191,7 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
           </div>
         </div>
         <div className="col-12">
-          <div className="row g-2 d-flex justify-content-end align-items-center w-100">
+          <div className="row g-2 d-flex justify-content-between align-items-center w-100">
             <div className="col-auto">
               <StatusBar outline_status={status} type={ContentType.OUTLINE} content_plan_outline_guid={localOutline?.guid} onGeneratePost={() => {
                 setShowGenerate(true)

@@ -20,6 +20,7 @@ import FactCheckResultPage from '../FactCheckResultPage/FactCheckResultPage';
 import FactCheckModal from '../FactCheckModal/FactCheckModal';
 import { GenerateContentPost, RegeneratePost } from '@/perfect-seo-shared-components/data/requestTypes';
 import RegeneratePostHTMLModal from '../RegeneratePostHTMLModal.tsx/RegeneratePostHTMLModal';
+import Link from 'next/link';
 
 
 interface ActionButtonGroupProps {
@@ -178,15 +179,7 @@ const ActionButtonGroup = ({
   const generatePostHandler = (receiving_email, writing_language?) => {
     let newOutline = typeof data?.outline === 'string' ? JSON.parse(data?.outline) : data?.outline
     let reqBody: GenerateContentPost = {
-      outline: newOutline,
-      email: email,
-      seo_keyword: data.Keyword || data.keyword,
-      content_plan_keyword: data?.content_plan_keyword,
-      keyword: data?.keyword,
-      content_plan_guid: data.content_plan_guid,
-      content_plan_outline_guid: data.guid,
-      client_name: data.brand_name,
-      client_domain: data.client_domain,
+      email: email, content_plan_outline_guid: data.guid,
       receiving_email: receiving_email,
       writing_language: writing_language || 'English'
     };
@@ -354,6 +347,9 @@ const ActionButtonGroup = ({
                       <button className="btn btn-transparent w-100" onClick={() => { setShowImageGeneratePrompt(true) }}>Show Hero Image Prompt</button>
                     </DropdownMenu.Item>
                     }
+                    {(isAdmin && data?.task_id) && <DropdownMenu.Item>
+                      <Link className="btn btn-transparent w-100" href={`/post/${data?.task_id}`} target="_blank">Post Page</Link>
+                    </DropdownMenu.Item>}
                     <DropdownMenu.Item>
                       <button className="btn btn-transparent w-100" onClick={() => { setShowRegeneratePostModal(true) }}>Regenerate Post</button>
                     </DropdownMenu.Item>

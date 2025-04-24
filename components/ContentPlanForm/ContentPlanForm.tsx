@@ -146,7 +146,7 @@ const ContentPlanForm = ({ buttonLabel, initialData, submitResponse, isModal }: 
     }
   };
 
-  const buttonClasses = classNames("btn btn-secondary", {
+  const buttonClasses = classNames("btn btn-primary", {
     "btn-secondary": load,
   });
 

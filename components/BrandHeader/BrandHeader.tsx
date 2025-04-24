@@ -10,18 +10,18 @@ interface BrandHeaderProps {
 const BrandHeader = ({ synopsis, editable = true }: BrandHeaderProps) => {
   const logoCheck = useLogoCheck(synopsis?.logo_url, synopsis?.domain, null, synopsis)
 
-  const logoCardClasses = classNames('card p-3 h-100 d-flex align-items-center justify-content-center',
+  const logoCardClasses = classNames('p-3 h-100 d-flex align-items-center justify-content-center',
     {
       'bg-secondary': !synopsis?.logo_theme,
       'bg-light': synopsis?.logo_theme === 'dark',
-      'bg-dark': synopsis?.logo_theme === 'light'
+      'bg-primary card': synopsis?.logo_theme === 'light'
     }
   )
 
   if (!synopsis || !synopsis?.domain) return null
 
   return (
-    <div className='mb-3 bg-primary'>
+    <div className='mb-3 bg-secondary'>
       <div className='container-xl content-fluid py-3'>
         <div className='row d-flex justify-content-between g-3'>
           {synopsis?.logo_url && <div className='col-12 col-lg-4'>

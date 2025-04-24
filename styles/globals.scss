@@ -140,6 +140,11 @@ a {
   }
 }
 
+
+a:has(button) {
+  text-decoration: none !important;
+}
+
 a:hover {
   color: $primary;
 }
@@ -5338,4 +5343,8 @@ a.text-primary {
   &:hover {
     color: $lightOrange !important
   }
+}
+
+a.btn {
+  text-decoration: none !important;
 }

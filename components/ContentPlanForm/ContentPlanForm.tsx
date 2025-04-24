@@ -226,7 +226,7 @@ const ContentPlanForm = ({ buttonLabel, initialData, submitResponse, isModal }: 
           <div className="form-group col-12 col-md-6">
             <label htmlFor="targetKeyword">
               <div>
-                Keyword <i className="text-warning">*</i>
+                Keyword <i className="text-primary">*</i>
               </div>
               <span className={styles.subLabel}>What’s the topic?</span>
             </label>

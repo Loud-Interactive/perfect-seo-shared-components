@@ -36,7 +36,9 @@ h3,
 h4,
 h5 {
   color: $orange;
+  @include font-loud;
 }
+
 
 .vert-divider {
   width: 4px;
@@ -46,6 +48,7 @@ h5 {
 
 body {
   position: relative;
+  @include font-regular;
 
   .modal-overlay {
     display: none !important;

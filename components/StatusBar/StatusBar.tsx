@@ -1,13 +1,11 @@
 'use client'
-import { ContentType, PostProps } from "@/perfect-seo-shared-components/data/types";
-import { fetchOutlineStatus, generateImagePrompt, generateSchema, getFactCheckStatus, getPost, getPostStatus, getPostStatusFromOutline, publishToWordPress } from "@/perfect-seo-shared-components/services/services";
+import { ContentType } from "@/perfect-seo-shared-components/data/types";
+import { fetchOutlineStatus, generateImagePrompt, generateSchema, getFactCheckStatus, getPostStatusFromOutline, publishToWordPress } from "@/perfect-seo-shared-components/services/services";
 import { useEffect, useState } from "react";
 import TypeWriterText from "../TypeWriterText/TypeWriterText";
 import { keyToLabel } from "@/perfect-seo-shared-components/utils/conversion-utilities";
 import { createClient } from "@/perfect-seo-shared-components/utils/supabase/client";
 import * as Modal from "@/perfect-seo-shared-components/components/Modal/Modal";
-import { useSelector } from "react-redux";
-import { selectIsAdmin } from "@/perfect-seo-shared-components/lib/features/User";
 import TextArea from "../Form/TextArea";
 import Form from "../Form/Form";
 import useForm from "@/perfect-seo-shared-components/hooks/useForm";
@@ -362,7 +360,7 @@ const StatusBar = ({
     })
   }
   return (
-    <div className="row d-flex align-items-center justify-content-between g-0 ">
+    <div className="status-bar row d-flex align-items-center justify-content-between g-0 ">
       <div className="col-auto d-flex align-items-center">
         {(outlineComplete || (postStatus && !outlineStatus)) ?
           <>
@@ -415,17 +413,17 @@ const StatusBar = ({
             :
             <div className="col-auto d-flex align-items-center ">
               <i className="bi bi-chevron-right mx-1" />
-              <a onClick={generateImagePromptHandler} className=" my-0 py-0">{generateImagePromptLoading ? <TypeWriterText string="Generating" withBlink /> : 'Generate Image Prompt'}</a>
+              <a onClick={generateImagePromptHandler} className=" my-0 py-0">{generateImagePromptLoading ? <TypeWriterText string="Generating" withBlink /> : <span className="text-success">Generate Image Prompt</span>}</a>
             </div>}
         {!live_post_url && <>
           <div className="col-auto d-flex align-items-center">
             <i className="bi bi-chevron-right mx-1" />
             {wordPressPublish && <>
-              <a onClick={publishToWordPressClickHandler} className=" my-0 py-0"><i className="bi bi-wordpress" /> Publish</a>
+              <a onClick={publishToWordPressClickHandler} className="text-success my-0 py-0"><i className="bi bi-wordpress" /> Publish</a>
               <span className="px-2">or</span>
             </>
             }
-            <a onClick={addLiveUrlClickHandler} className=" my-0 py-0"><i className="bi bi-plus" />Add Live Url</a>
+            <a onClick={addLiveUrlClickHandler} className="my-0 py-0 text-success"><i className="bi bi-plus" />Add Live Url</a>
           </div>
         </>}
 
@@ -466,7 +464,7 @@ const StatusBar = ({
               :
               <div className="col-auto d-flex align-items-center ">
                 <i className="bi bi-chevron-right mx-1" />
-                <a onClick={generateSchemaHandler} className=" my-0 py-0">{generateSchemaLoading ? <TypeWriterText string='Generating' withBlink /> : 'Generate Schema'}</a>
+                <a onClick={generateSchemaHandler} className=" my-0 py-0">{generateSchemaLoading ? <TypeWriterText string='Generating' withBlink /> : <span className="text-success">Generate Schema</span>}</a>
               </div>}
           {index_status === 'indexed' ?
             <div className="col-auto d-flex align-items-center ">

@@ -5,7 +5,8 @@ $grey: #EDEDED;
 $black: #32373C;
 $lightBlue: #CEDFFE;
 $babyBlue: #EFF8FF;
-$lightYellow: #F8FCDA;
+// $lightGreen: #F8FCDA;
+$lightGreen: #9dc450;
 
 // SEO Branding Colors 
 $SEOPerfect: #E63946;
@@ -29,7 +30,7 @@ $dark: #212529;
 // localized colors
 $primary: $orange !default;
 $secondary: $lightOrange !default;
-$success: $preferencesPerfect;
+$success: $lightGreen !default;
 
 .text-SEOPerfect {
   color: $SEOPerfect !important;
@@ -85,4 +86,28 @@ $success: $preferencesPerfect;
 
 .text-socialPerfect {
   color: $socialPerfect !important;
+}
+
+.bg-light-blue {
+  background-color: $lightBlue !important;
+}
+
+.bg-baby-blue {
+  background-color: $babyBlue !important;
+}
+
+.bg-light-yellow {
+  background-color: $lightGreen !important;
+}
+
+.text-light-blue {
+  color: $lightBlue !important;
+}
+
+.text-baby-blue {
+  color: $babyBlue !important;
+}
+
+.text-light-yellow {
+  color: $lightGreen !important;
 }

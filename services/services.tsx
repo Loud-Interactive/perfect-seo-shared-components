@@ -211,7 +211,7 @@ export const getLatestStatusByOutlineGUID = (guid: string) => {
     .from('tasks')
     .select('*')
     .eq('content_plan_outline_guid', guid)
-    .order('created_at', { ascending: false })
+    .order('last_updated_at', { ascending: false })
 }
 
 export const createUserCreditAccount = (email: string) => {
@@ -293,7 +293,7 @@ export const getPostsByDomain = (domain: string, reqObj?: any) => {
         .neq("live_post_url", null)
         .neq("is_deleted", true)
         .range(startIndex, endIndex)
-        .order('created_at', { ascending: false })
+        .order('last_updated_at', { ascending: false })
     }
     else {
       return supabase.from('tasks')
@@ -302,7 +302,7 @@ export const getPostsByDomain = (domain: string, reqObj?: any) => {
         .eq("live_post_url", null)
         .neq("is_deleted", true)
         .range(startIndex, endIndex)
-        .order('created_at', { ascending: false })
+        .order('last_updated_at', { ascending: false })
     }
   }
   else if (reqObj.status) {
@@ -313,7 +313,7 @@ export const getPostsByDomain = (domain: string, reqObj?: any) => {
         .eq("status", "Complete")
         .neq("is_deleted", true)
         .range(startIndex, endIndex)
-        .order('created_at', { ascending: false })
+        .order('last_updated_at', { ascending: false })
     }
     else {
       return supabase.from('tasks')
@@ -322,7 +322,7 @@ export const getPostsByDomain = (domain: string, reqObj?: any) => {
         .neq("status", "Complete")
         .neq("is_deleted", true)
         .range(startIndex, endIndex)
-        .order('created_at', { ascending: false })
+        .order('last_updated_at', { ascending: false })
     }
   }
   else {
@@ -331,7 +331,7 @@ export const getPostsByDomain = (domain: string, reqObj?: any) => {
       .eq("client_domain", domain)
       .range(startIndex, endIndex)
       .neq("is_deleted", true)
-      .order('created_at', { ascending: false })
+      .order('last_updated_at', { ascending: false })
   }
 };
 
@@ -346,7 +346,7 @@ export const getPostsByEmail = (email: string, reqObj?: any) => {
         .neq("live_post_url", null)
         .neq("is_deleted", true)
         .range(startIndex, endIndex)
-        .order('created_at', { ascending: false })
+        .order('last_updated_at', { ascending: false })
     }
     else {
       return supabase.from('tasks')
@@ -355,7 +355,7 @@ export const getPostsByEmail = (email: string, reqObj?: any) => {
         .eq("live_post_url", null)
         .neq("is_deleted", true)
         .range(startIndex, endIndex)
-        .order('created_at', { ascending: false })
+        .order('last_updated_at', { ascending: false })
     }
   }
   else if (reqObj.status) {
@@ -366,7 +366,7 @@ export const getPostsByEmail = (email: string, reqObj?: any) => {
         .eq("status", "Complete")
         .neq("is_deleted", true)
         .range(startIndex, endIndex)
-        .order('created_at', { ascending: false })
+        .order('last_updated_at', { ascending: false })
     }
     else {
       return supabase.from('tasks')
@@ -375,7 +375,7 @@ export const getPostsByEmail = (email: string, reqObj?: any) => {
         .neq("status", "Complete")
         .neq("is_deleted", true)
         .range(startIndex, endIndex)
-        .order('created_at', { ascending: false })
+        .order('last_updated_at', { ascending: false })
     }
   }
   else {
@@ -384,7 +384,7 @@ export const getPostsByEmail = (email: string, reqObj?: any) => {
       .eq("email", email)
       .neq("is_deleted", true)
       .range(startIndex, endIndex)
-      .order('created_at', { ascending: false })
+      .order('last_updated_at', { ascending: false })
   }
 };
 

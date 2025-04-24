@@ -475,12 +475,12 @@ const StatusBar = ({
             : index_status === 'submitted' ?
               <div className="col-auto d-flex align-items-center ">
                 <i className="bi bi-chevron-right mx-1" /> Submitted
-                <a onClick={indexHandler} className=" ms-1 my-0 py-0 text-success">Re-Index Post</a>
+                <a onClick={indexHandler} className=" ms-1 my-0 py-0 text-success no-underline">Re-Index Post</a>
               </div> :
 
               <div className="col-auto d-flex align-items-center ">
                 <i className="bi bi-chevron-right mx-1" />
-                <a onClick={indexHandler} className=" my-0 py-0 text-success">Index Post</a>
+                <a onClick={indexHandler} className=" my-0 py-0 text-success no-underline">Index Post</a>
               </div>}
         </>
       }

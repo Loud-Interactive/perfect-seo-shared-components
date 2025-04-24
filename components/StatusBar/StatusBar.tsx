@@ -397,7 +397,7 @@ const StatusBar = ({
             <div className="col-auto d-flex align-items-center">
               <i className="bi bi-chevron-right mx-1" />
               <div>
-                <a title="Generate Post" className=" my-0" onClick={generatePostClickHandler}>Generate Post</a>
+                <a title="Generate Post" className=" my-0 text-success no-underline" onClick={generatePostClickHandler}>Generate Post</a>
               </div>
             </div>
             : null

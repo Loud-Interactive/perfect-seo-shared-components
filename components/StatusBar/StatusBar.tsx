@@ -407,7 +407,7 @@ const StatusBar = ({
           hero_image_prompt ?
             <div className="col-auto d-flex align-items-center ">
               < i className="bi bi-chevron-right mx-1" />
-              <strong><a onClick={generateImagePromptHandler} className="text-primary my-0 py-0">Image Prompt</a></strong>
+              <strong><a onClick={generateImagePromptHandler} className="text-primary my-0 py-0 no-underline">Image Prompt</a></strong>
               <span className="badge rounded-pill ms-1 p-1 bg-success"><i className="bi bi-check-lg text-white"></i></span>
             </div>
             :
@@ -423,7 +423,7 @@ const StatusBar = ({
               <span className="px-2">or</span>
             </>
             }
-            <a onClick={addLiveUrlClickHandler} className="my-0 py-0 text-success"><i className="bi bi-plus" />Add Live Url</a>
+            <a onClick={addLiveUrlClickHandler} className="my-0 py-0 text-success no-underline"><i className="bi bi-plus" />Add Live Url</a>
           </div>
         </>}
 
@@ -475,12 +475,12 @@ const StatusBar = ({
             : index_status === 'submitted' ?
               <div className="col-auto d-flex align-items-center ">
                 <i className="bi bi-chevron-right mx-1" /> Submitted
-                <a onClick={indexHandler} className=" ms-1 my-0 py-0">Re-Index Post</a>
+                <a onClick={indexHandler} className=" ms-1 my-0 py-0 text-success">Re-Index Post</a>
               </div> :
 
               <div className="col-auto d-flex align-items-center ">
                 <i className="bi bi-chevron-right mx-1" />
-                <a onClick={indexHandler} className=" my-0 py-0">Index Post</a>
+                <a onClick={indexHandler} className=" my-0 py-0 text-success">Index Post</a>
               </div>}
         </>
       }

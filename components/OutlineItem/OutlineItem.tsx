@@ -170,7 +170,7 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
   }
 
   return (
-    <div className="card bg-secondary p-2" title={outline?.post_title}>
+    <div className="card bg-light p-2" title={outline?.post_title}>
       <div className="row d-flex g-0 d-flex align-items-end">
         <div className="col">
           <div className="row g-2">
@@ -217,7 +217,7 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
         <Modal.Description>
           Are you sure you want to delete this outline?
           <div className='d-flex justify-content-between mt-5'>
-            <button onClick={() => { setDeleteModal(null) }} className="btn btn-warning">Cancel</button>
+            <button onClick={() => { setDeleteModal(null) }} className="btn btn-secondary">Cancel</button>
             <button onClick={(e) => { e.preventDefault(); deleteHandler() }} className="btn btn-primary">Yes</button>
           </div>
         </Modal.Description>

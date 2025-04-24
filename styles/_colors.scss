@@ -1,6 +1,16 @@
-// brand colors 
+// Loud SEO Brand Colors 
+$orange: #FF5900;
+$lightOrange: #FEDFCE;
+$grey: #EDEDED;
+$black: #32373C;
+$lightBlue: #CEDFFE;
+$babyBlue: #EFF8FF;
+$lightYellow: #F8FCDA;
+
+// SEO Branding Colors 
 $SEOPerfect: #E63946;
-$contentPerfect: #D14124;
+// $contentPerfect: #D14124;
+$contentPerfect: $orange;
 $preferencesPerfect: #9dc450;
 $productPerfect: #235789;
 $classifyPerfect: #ffd900;
@@ -17,8 +27,9 @@ $dark: #212529;
 // f59f3c
 
 // localized colors
-$primary: #E63946 !default;
-$secondary: #333333 !default;
+$primary: $orange !default;
+$secondary: $lightOrange !default;
+$success: $preferencesPerfect;
 
 .text-SEOPerfect {
   color: $SEOPerfect !important;

@@ -106,7 +106,7 @@ const CreateContentModal = ({
     if (!isAuthorized) return ''
     return (
       <div className="d-flex h-100 align-items-center justify-content-center">
-        <button className="btn btn-transparent d-flex align-items-center justify-content-center" onClick={titleChangeHandler} title="Save Live Url" disabled={saving}>
+        <button className="btn btn-transparent text-primary d-flex align-items-center justify-content-center" onClick={titleChangeHandler} title="Save Live Url" disabled={saving}>
 
           {saving ?
             <div className="spinner-border spinner-border-sm" role="status">
@@ -360,13 +360,13 @@ const CreateContentModal = ({
   return (
     <>
       <Modal.Title title={postTitle} className={styles.header}>
-        <h2 className="modal-title" id="outlineEditorModalLabel">
+        <h2 className="modal-title text-white" id="outlineEditorModalLabel">
           Review/Edit Your Outline
         </h2>
         <button
           className={`${styles.closeButton}
         btn
-        btn-warning`}
+        btn-secondary`}
           data-bs-dismiss="modal"
           aria-label="Close"
           onClick={closeHandler}
@@ -455,8 +455,9 @@ const CreateContentModal = ({
                     </button>
                   </div>
                 </div>
+                <hr />
               </div>
-              <hr />
+
               <Form controller={form}>
                 <div className={styles.contentForm}>
                   {tableData?.length > 0 ? (
@@ -495,7 +496,7 @@ const CreateContentModal = ({
         )}
         <div className={styles.footerButtons}>
           <button
-            className={`${styles.closeButton} btn btn-warning bg-warning text-dark`}
+            className={`${styles.closeButton} btn btn-secondary text-light`}
             data-bs-dismiss="modal"
             aria-label="Close"
             onClick={closeHandler}

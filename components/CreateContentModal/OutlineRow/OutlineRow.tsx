@@ -87,7 +87,7 @@ const OutlineRow = ({ rows,
     });
 
   const accordionClassname = classNames(
-    `${styles.accordionButton}  btn btn-primary`,
+    `${styles.accordionButton}  btn btn-secondary no-outline`,
     { [styles.collapsed]: show }
   )
 
@@ -115,7 +115,7 @@ const OutlineRow = ({ rows,
                 deleteHeadingHandler(index)
               }}
                 disabled={!isAuthorized}
-                className={`${styles.deleteButton} btn btn-warning ms-1`}><i className="bi bi-trash" /></button>
+                className={`${styles.deleteButton} btn btn-primary`}><i className="bi bi-trash" /></button>
               <button className={accordionClassname} onClick={accordionHandler} title={show ? 'Collapse' : 'Expand'}>
                 <span className={styles.dropDownArrow}>
                   {show ?
@@ -212,7 +212,7 @@ const SubheadingRow = ({ headingIndex, index, setSelected, selected, reorderRow,
             {isAuthorized && <button onClick={(e) => {
               e.preventDefault();
               deleteSubheadingHandler(index)
-            }} className={`${styles.deleteButton} btn btn-warning`}><i className="bi bi-trash" /></button>}
+            }} className={`${styles.deleteButton} btn btn-primary`}><i className="bi bi-trash" /></button>}
           </div>
         </div>
       </div>

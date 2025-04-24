@@ -399,7 +399,7 @@ const StatusBar = ({
             <div className="col-auto d-flex align-items-center">
               <i className="bi bi-chevron-right mx-1" />
               <div>
-                <a title="Generate Post" className="text-warning my-0" onClick={generatePostClickHandler}>Generate Post</a>
+                <a title="Generate Post" className=" my-0" onClick={generatePostClickHandler}>Generate Post</a>
               </div>
             </div>
             : null
@@ -415,17 +415,17 @@ const StatusBar = ({
             :
             <div className="col-auto d-flex align-items-center ">
               <i className="bi bi-chevron-right mx-1" />
-              <a onClick={generateImagePromptHandler} className="text-warning my-0 py-0">{generateImagePromptLoading ? <TypeWriterText string="Generating" withBlink /> : 'Generate Image Prompt'}</a>
+              <a onClick={generateImagePromptHandler} className=" my-0 py-0">{generateImagePromptLoading ? <TypeWriterText string="Generating" withBlink /> : 'Generate Image Prompt'}</a>
             </div>}
         {!live_post_url && <>
           <div className="col-auto d-flex align-items-center">
             <i className="bi bi-chevron-right mx-1" />
             {wordPressPublish && <>
-              <a onClick={publishToWordPressClickHandler} className="text-warning my-0 py-0"><i className="bi bi-wordpress" /> Publish</a>
+              <a onClick={publishToWordPressClickHandler} className=" my-0 py-0"><i className="bi bi-wordpress" /> Publish</a>
               <span className="px-2">or</span>
             </>
             }
-            <a onClick={addLiveUrlClickHandler} className="text-warning my-0 py-0"><i className="bi bi-plus" />Add Live Url</a>
+            <a onClick={addLiveUrlClickHandler} className=" my-0 py-0"><i className="bi bi-plus" />Add Live Url</a>
           </div>
         </>}
 
@@ -466,7 +466,7 @@ const StatusBar = ({
               :
               <div className="col-auto d-flex align-items-center ">
                 <i className="bi bi-chevron-right mx-1" />
-                <a onClick={generateSchemaHandler} className="text-warning my-0 py-0">{generateSchemaLoading ? <TypeWriterText string='Generating' withBlink /> : 'Generate Schema'}</a>
+                <a onClick={generateSchemaHandler} className=" my-0 py-0">{generateSchemaLoading ? <TypeWriterText string='Generating' withBlink /> : 'Generate Schema'}</a>
               </div>}
           {index_status === 'indexed' ?
             <div className="col-auto d-flex align-items-center ">
@@ -477,12 +477,12 @@ const StatusBar = ({
             : index_status === 'submitted' ?
               <div className="col-auto d-flex align-items-center ">
                 <i className="bi bi-chevron-right mx-1" /> Submitted
-                <a onClick={indexHandler} className="text-warning ms-1 my-0 py-0">Re-Index Post</a>
+                <a onClick={indexHandler} className=" ms-1 my-0 py-0">Re-Index Post</a>
               </div> :
 
               <div className="col-auto d-flex align-items-center ">
                 <i className="bi bi-chevron-right mx-1" />
-                <a onClick={indexHandler} className="text-warning my-0 py-0">Index Post</a>
+                <a onClick={indexHandler} className=" my-0 py-0">Index Post</a>
               </div>}
         </>
       }
@@ -496,7 +496,7 @@ const StatusBar = ({
                 <button onClick={copyClickHandler} className="btn btn-primary me-2" type="button"><i className="bi bi-copy me-2" />Copy</button>
               </div>
               {schemaStatus !== '' && <div className="col-auto d-flex align-items-center">
-                <span className="text-warning"><TypeWriterText string={schemaStatus} withBlink /></span>
+                <span className=""><TypeWriterText string={schemaStatus} withBlink /></span>
               </div>}
               <div className="col-auto d-flex align-items-center">
                 <input type="submit" onClick={updateSchema} className="btn btn-primary" value="Update Schema" />
@@ -517,7 +517,7 @@ const StatusBar = ({
                 <button onClick={copyHeroClickHandler} className="btn btn-primary me-2" type="button"><i className="bi bi-copy me-2" />Copy</button>
               </div>
               {generateImageStatus !== '' && <div className="col-auto d-flex align-items-center">
-                <span className="text-warning"><TypeWriterText string={generateImageStatus} withBlink /></span>
+                <span className=""><TypeWriterText string={generateImageStatus} withBlink /></span>
               </div>}
 
             </div>

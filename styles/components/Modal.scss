@@ -45,7 +45,7 @@
   }
 
   &-content {
-    background-color: $secondary;
+    background-color: var(--bs-body-bg);
     box-sizing: border-box;
     height: auto;
     max-height: calc(100vh - $bottom-gap - $top-gap - 32px);

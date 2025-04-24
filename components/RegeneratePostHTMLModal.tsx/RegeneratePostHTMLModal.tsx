@@ -89,7 +89,7 @@ const RegeneratePostHTMLModal = ({ onClose, submitHandler, onSuccess }: Regenera
       <Modal.Footer className="px-5">
         <Modal.ButtonBar className="py-3">
           <button
-            className="btn btn-warning btn-standard"
+            className="btn btn-secondary btn-standard"
             onClick={(e) => {
               e.preventDefault();
               onClose();
@@ -119,7 +119,7 @@ const RegeneratePostHTMLModal = ({ onClose, submitHandler, onSuccess }: Regenera
           <h3 className="mb-5">Your post is being regenerated</h3>
           <div>
             <button
-              className="btn btn-warning"
+              className="btn btn-secondary"
               onClick={(e) => {
                 e.preventDefault();
                 setShowConfirm(false);

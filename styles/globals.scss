@@ -1,4 +1,4 @@
-@use './_contentPerfect.scss';
+// @use './_contentPerfect.scss';
 @use './_bootstrap.scss';
 @use './_home.scss';
 @use './_mixins.scss' as *;
@@ -23,12 +23,19 @@ a {
 }
 
 select {
-  border-color: white !important;
+  border-color: $lightOrange !important;
 }
 
 .comp-font {
   @include font-digital;
   font-size: 1.4em;
+}
+
+h2,
+h3,
+h4,
+h5 {
+  color: $orange;
 }
 
 .vert-divider {
@@ -38,7 +45,6 @@ select {
 }
 
 body {
-  background-color: $secondary;
   position: relative;
 
   .modal-overlay {
@@ -98,9 +104,8 @@ label {
 
 
 h1 {
-  color: white;
+  color: $black;
   margin-bottom: 20px;
-  text-shadow: 1px 1px 2px #2e2e2e;
   @include TransitionQuick;
 
   &:hover {
@@ -121,11 +126,18 @@ h1 {
 }
 
 a {
-  color: white;
-  text-shadow: 1px 1px 2px #2e2e2e;
+  &:not(.btn) {
+    color: $primary !important;
+  }
+
   cursor: pointer;
   padding-bottom: 2rem;
-  text-decoration: none;
+  font-weight: 500;
+
+  &:hover {
+    text-decoration: none;
+    font-style: italic;
+  }
 }
 
 a:hover {
@@ -152,6 +164,7 @@ td {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+  min-height: none;
   min-width: 150px;
   /* border: 5px solid $primary; */
 
@@ -164,19 +177,13 @@ td {
     border-color 0.15s ease-in-out;
   -o-transition: color 0.15s ease-in-out,
     background-color 0.15s ease-in-out,
-    border-color 0.15s ease-in-out,
-    box-shadow 0.15s ease-in-out;
+    border-color 0.15s ease-in-out;
   transition: color 0.15s ease-in-out,
     background-color 0.15s ease-in-out,
-    border-color 0.15s ease-in-out,
-    box-shadow 0.15s ease-in-out;
+    border-color 0.15s ease-in-out;
   transition: color 0.15s ease-in-out,
     background-color 0.15s ease-in-out,
-    border-color 0.15s ease-in-out,
-    box-shadow 0.15s ease-in-out;
-  border-radius: 12px;
-  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2),
-    0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    border-color 0.15s ease-in-out;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -185,7 +192,6 @@ td {
     -o-transition: none;
     transition: none;
     border-radius: 12px;
-    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   }
 }
 
@@ -208,7 +214,6 @@ hr {
   transition: background-color 0.5s ease;
   transition: color 0.5s ease;
   border-radius: 12px;
-  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
 
@@ -218,7 +223,6 @@ hr {
 
 .contentBox {
   background: #444;
-  box-shadow: rgba(0, 0, 0, 0.25) 7px 7px 1px;
   margin: 40px auto;
 }
 
@@ -3033,12 +3037,14 @@ ul.why-list {
   margin-bottom: 16px;
 
   li {
+    color: $primary;
     font-size: 22px;
     padding: 8px 16px;
     background-color: white;
     border-radius: 8px;
     min-height: 4em;
     display: flex;
+    margin-bottom: .5em;
     align-items: center;
     text-align: center;
     width: 80%;
@@ -3072,7 +3078,7 @@ ul.why-list {
 
 .btn {
   min-width: 45px;
-  padding: 8px;
+  padding: 4px 8px;
 }
 
 
@@ -4807,7 +4813,6 @@ footer {
 }
 
 .btn-transparent {
-  box-shadow: none !important;
   background-color: transparent !important;
 
   &:hover {
@@ -4870,15 +4875,28 @@ a.text-white {
 }
 
 .btn-primary {
+  color: white;
+  border: 1px solid transparent;
+
   svg path {
     fill: white;
+  }
+
+  &:hover {
+    background-color: $lightOrange;
+    color: $orange;
+    border: 1px solid $orange;
+
+    svg path {
+      fill: orange;
+    }
   }
 }
 
 .btn-standard {
-  height: 50px;
-  display: flex;
-  align-items: center;
+  // height: 50px;
+  // display: flex;
+  // align-items: center;
 }
 
 .bg-robot {
@@ -5060,6 +5078,33 @@ button.input-group-append {
   border: none !important;
 }
 
+.card {
+  border-color: $orange;
+}
+
+.btn-secondary {
+  color: $orange !important;
+
+  &:not(.no-outline) {
+    border: 1px solid $orange;
+  }
+
+  &:hover {
+    color: white !important;
+  }
+}
+
+.nav-link {
+  border: 1px solid $lightOrange !important;
+  border-bottom: none !important;
+
+  &.active {
+    border-color: $orange !important;
+
+  }
+
+}
+
 .nav-link.bg-primary {
   background-color: rgba($primary, .5) !important;
 
@@ -5076,22 +5121,13 @@ button.input-group-append {
   font-size: 12px !important;
 }
 
-.select-input {
-  border: var(--bs-border-width) solid var(--bs-border-color) !important;
-  border-radius: var(--bs-border-radius);
+
+option {
+  &:hover {
+    background-color: $lightOrange;
+    color: $orange;
+  }
 }
-
-// .toast {
-//   width: 100%;
-//   display: flex;
-//   min-height: 10px;
-//   z-index: 2000;
-//   min-width: 250px;
-
-//   &s {
-//     z-index: 2000;
-//   }
-// }
 
 .toast-viewport {
   @include clear-list-properties;
@@ -5131,7 +5167,7 @@ header {
     max-height: 100px;
   }
 
-  background-color: #333333;
+  background-color: $primary;
 }
 
 
@@ -5242,10 +5278,12 @@ a.text-primary {
 .tab-content {
   border-radius: .375rem !important;
   overflow: hidden;
+  // border-top: 1px solid $primary;
 }
 
 .nav-tabs {
-  border-bottom: none;
+  margin-bottom: 0 !important;
+  border-color: $orange !important;
 }
 
 @include PWA {
@@ -5290,4 +5328,14 @@ a.text-primary {
   max-width: 600px;
   width: 100%;
 
+}
+
+.badge.rounded-pill.text-bg-primary {
+  color: white !important;
+}
+
+.btn-transparent.text-primary {
+  &:hover {
+    color: $lightOrange !important
+  }
 }

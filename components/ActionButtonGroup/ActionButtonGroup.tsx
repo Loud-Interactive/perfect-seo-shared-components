@@ -242,7 +242,8 @@ const ActionButtonGroup = ({
       })
   }
 
-  const copyOutlineGuid = () => {
+  const copyOutlineGuid = (e) => {
+    e.preventDefault();
     let copiedGuid;
     if (type === ContentType.POST) {
       copiedGuid = data?.content_plan_outline_guid
@@ -252,15 +253,18 @@ const ActionButtonGroup = ({
     navigator.clipboard.writeText(copiedGuid)
     dispatch(addToast({ title: "Copied Outline GUID", type: "success", content: `Outline GUID ${copiedGuid} copied to clipboard` }))
   }
-  const copyPostGuid = () => {
+  const copyPostGuid = (e) => {
+    e.preventDefault();
     navigator.clipboard.writeText(data?.task_id)
     dispatch(addToast({ title: "Copied Post GUID", type: "success", content: `Post GUID ${data?.task_id} copied to clipboard` }))
   }
-  const copyImageThinking = () => {
+  const copyImageThinking = (e) => {
+    e.preventDefault();
     navigator.clipboard.writeText(data?.hero_image_thinking)
     dispatch(addToast({ title: "Copied Image Prompt", type: "success", content: `Image Prompt copied to clipboard` }))
   }
-  const copyImagePrompt = () => {
+  const copyImagePrompt = (e) => {
+    e.preventDefault();
     navigator.clipboard.writeText(data?.hero_image_prompt)
     dispatch(addToast({ title: "Copied Image Prompt", type: "success", content: `Image Prompt copied to clipboard` }))
 
@@ -273,7 +277,7 @@ const ActionButtonGroup = ({
             <>
               <a
                 href={data.html_link}
-                className="btn btn-warning btn-standard"
+                className="btn btn-secondary btn-standard"
                 title="HTML File"
                 target="_blank"
               >
@@ -281,7 +285,7 @@ const ActionButtonGroup = ({
               </a>
               <a
                 href={data.google_doc_link}
-                className="btn btn-warning btn-standard"
+                className="btn btn-secondary btn-standard"
                 title="Google Docs"
                 target="_blank"
               >
@@ -289,24 +293,24 @@ const ActionButtonGroup = ({
               </a>
             </>}
           {(type === ContentType.OUTLINE && data?.outline) &&
-            <button
+            <a
               title='edit outline'
-              className="btn btn-warning btn-standard no-truncate"
-              onClick={() => { setShowEditModal(true) }}
+              className="btn btn-secondary btn-standard no-truncate"
+              onClick={(e) => { setShowEditModal(true) }}
             >
               <i className="bi bi-pencil-fill me-1" /> Edit
-            </button>
+            </a>
           }
           <button className='btn btn-primary btn-standard d-flex justify-content-center align-items-center' onClick={deleteClickHandler} title={`View GUID: ${data?.content_plan_outline_guid}`}><i className="bi bi-trash pt-1" /></button>
           <DropdownMenu.Root>
-            <DropdownMenu.Trigger className="btn btn-warning btn-standard d-flex align-items-center justify-content-center">
+            <DropdownMenu.Trigger className="btn btn-secondary btn-standard d-flex align-items-center justify-content-center">
               <i className="bi bi-three-dots-vertical" />
             </DropdownMenu.Trigger>
             <DropdownMenu.Portal>
-              <DropdownMenu.Content align="end" className="bg-primary z-100 card">
+              <DropdownMenu.Content align="end" className="bg-secondary z-100 card">
                 {(data?.content_plan_outline_guid && outlineData?.outline) &&
                   <DropdownMenu.Item>
-                    <button className="btn btn-transparent w-100" onClick={handleEditOutline}>
+                    <button className="btn btn-transparent" onClick={handleEditOutline}>
                       Edit Outline
                     </button>
                   </DropdownMenu.Item>}
@@ -323,38 +327,47 @@ const ActionButtonGroup = ({
                 {type === ContentType.OUTLINE &&
                   <>
                     <DropdownMenu.Item>
-                      <button
-                        className="btn btn-transparent text-black w-100"
+                      <a
+                        className="btn btn-transparent"
                         onClick={(e) => {
+                          e.preventDefault();
                           regenerateOutlineClickHandler();
                         }}
                       >
                         Regenerate Outline
-                      </button>
+                      </a>
                     </DropdownMenu.Item>
                     <DropdownMenu.Item>
-                      <button
-                        className="btn btn-transparent text-black w-100"
-                        onClick={() => { setShowGeneratePostModal(true) }}
+                      <a
+                        className="btn btn-transparent text-primary"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setShowGeneratePostModal(true)
+                        }}
                       >
                         Generate Post
-                      </button>
+                      </a>
                     </DropdownMenu.Item>
                   </>}
                 {type === ContentType.POST &&
                   <>
                     {data?.hero_image_prompt && <DropdownMenu.Item>
-                      <button className="btn btn-transparent w-100" onClick={() => { setShowImageGeneratePrompt(true) }}>Show Hero Image Prompt</button>
+                      <a className="btn btn-transparent" onClick={(e) => { e.preventDefault(); setShowImageGeneratePrompt(true) }}>Show Hero Image Prompt</a>
                     </DropdownMenu.Item>
                     }
                     {(isAdmin && data?.task_id) && <DropdownMenu.Item>
-                      <Link className="btn btn-transparent w-100" href={`/post/${data?.task_id}`} target="_blank">Post Page</Link>
+                      <Link className="btn btn-transparent" href={`/post/${data?.task_id}`} target="_blank">Post Page</Link>
                     </DropdownMenu.Item>}
                     <DropdownMenu.Item>
-                      <button className="btn btn-transparent w-100" onClick={() => { setShowRegeneratePostModal(true) }}>Regenerate Post</button>
+                      <a className="btn btn-transparent" onClick={(e) => {
+                        e.preventDefault();
+                        setShowRegeneratePostModal(true)
+                      }}>Regenerate Post</a>
                     </DropdownMenu.Item>
                     <DropdownMenu.Item>
-                      <button className="btn btn-transparent w-100" onClick={() => { setShowLiveURLModal(true) }}>{data?.live_post_url ? 'Edit' : 'Add'} Live Post URL</button>
+                      <a className="btn btn-transparent" onClick={(e) => {
+                        e.preventDefault(); setShowLiveURLModal(true)
+                      }}>{data?.live_post_url ? 'Edit' : 'Add'} Live Post URL</a>
                     </DropdownMenu.Item>
                     {data?.live_post_url && <>
                       {isAdmin && <>
@@ -363,7 +376,7 @@ const ActionButtonGroup = ({
                             <a
                               href={`https://factcheckPerfect.ai/fact-checks/${data?.factcheck_guid}`}
                               target="_blank"
-                              className="btn btn-transparent"
+                              className="btn btn-transparent text-primary"
 
                             >
                               Fact-Check Results
@@ -373,7 +386,7 @@ const ActionButtonGroup = ({
                             <a
                               href={`https://factcheckPerfect.ai/fact-checks?url=${encodeURI(data?.live_post_url)}&post_guid=${data?.content_plan_outline_guid}`}
                               target="_blank"
-                              className="btn btn-transparent"
+                              className="btn btn-transparent text-primary"
 
                             >
                               Fact-Check Post
@@ -382,18 +395,21 @@ const ActionButtonGroup = ({
                         }
                       </>}
                       {isAdmin && <DropdownMenu.Item>
-                        <button
-                          onClick={() => { setShowIndexModal(true) }}
-                          className="btn btn-transparent w-100"
+                        <a
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setShowIndexModal(true)
+                          }}
+                          className="btn btn-transparent"
                         >
                           Index Post
-                        </button>
+                        </a>
                       </DropdownMenu.Item>}
                       <DropdownMenu.Item>
                         <a
                           href={`https://socialperfect.ai?url=${encodeURI(data?.live_post_url)}`}
                           target="_blank"
-                          className="btn btn-transparent"
+                          className="btn btn-transparent text-primary"
 
                         >
                           Generate Social Posts
@@ -403,7 +419,7 @@ const ActionButtonGroup = ({
                         <a
                           href={`https://app.ahrefs.com/v2-site-explorer/organic-keywords?columns=CPC%7C%7CKD%7C%7CLastUpdated%7C%7COrganicTraffic%7C%7CPaidTraffic%7C%7CPosition%7C%7CPositionHistory%7C%7CSERP%7C%7CSF%7C%7CURL%7C%7CVolume&compareDate=dontCompare&country=us&currentDate=today&keywordRules=&limit=100&mode=prefix&offset=0&positionChanges=&serpFeatures=&sort=Volume&sortDirection=desc&target=${encodeURI(data?.live_post_url.replace("https://", '').replace("http://", "").replace("www.", ""))}&urlRules=&volume_type=average`}
                           target="_blank"
-                          className="btn btn-transparent"
+                          className="btn btn-transparent text-primary"
                         >
                           AHREFs Report
                         </a>
@@ -412,7 +428,7 @@ const ActionButtonGroup = ({
                         <a
                           href={`https://search.google.com/search-console/performance/search-analytics?resource_id=sc-domain%3A${urlSanitization(data?.live_post_url)}&hl=en&page=*${encodeURI(data?.live_post_url)}`}
                           target="_blank"
-                          className="btn btn-transparent"
+                          className="btn btn-transparent text-primary"
 
                         >
                           GSC Report
@@ -422,21 +438,21 @@ const ActionButtonGroup = ({
                   </>}
                 {isAdmin && <>
                   {(type === ContentType.OUTLINE && data?.guid) && <DropdownMenu.Item>
-                    <button className="btn btn-transparent w-100" onClick={copyOutlineGuid}>
+                    <a className="btn btn-transparent" onClick={copyOutlineGuid}>
                       Copy Outline GUID
-                    </button>
+                    </a>
                   </DropdownMenu.Item>
                   }
                   {(type === ContentType.POST && data?.task_id) && <DropdownMenu.Item>
-                    <button className="btn btn-transparent w-100" onClick={copyPostGuid}>
+                    <a className="btn btn-transparent" onClick={copyPostGuid}>
                       Copy Post GUID
-                    </button>
+                    </a>
                   </DropdownMenu.Item>
                   }
                   {(type === ContentType.POST && data?.content_plan_outline_guid) && <DropdownMenu.Item>
-                    <button className="btn btn-transparent w-100" onClick={copyOutlineGuid}>
+                    <a className="btn btn-transparent" onClick={copyOutlineGuid}>
                       Copy Outline GUID
-                    </button>
+                    </a>
                   </DropdownMenu.Item>
                   }
                 </>
@@ -455,7 +471,7 @@ const ActionButtonGroup = ({
         <Modal.Description>
           Are you sure you want to delete this post?
           <div className='d-flex justify-content-between mt-5'>
-            <button onClick={() => { setShowDeleteModal(null) }} className="btn btn-warning">Cancel</button>
+            <button onClick={() => { setShowDeleteModal(null) }} className="btn btn-transparent">Cancel</button>
             <button onClick={(e) => { e.preventDefault(); deleteHandler() }} className="btn btn-primary">Yes</button>
           </div>
         </Modal.Description>
@@ -477,7 +493,7 @@ const ActionButtonGroup = ({
       </Modal.Overlay >
       <Modal.Overlay closeIcon open={showLiveURLModal} onClose={() => setShowLiveURLModal(false)} className="modal-small">
         <Modal.Title title="Add Live URL" />
-        <div className="card bg-secondary p-3 w-100">
+        <div className="card bg-secondary p-3">
           <Form controller={liveURLForm}>
             <TextInput fieldName="live_url" label="Live URL" validator={urlValidator} type="url" required
               button={<button className="btn btn-primary" onClick={saveLiveUrl} type="submit" ><i className="bi bi-floppy-fill" /></button>} />

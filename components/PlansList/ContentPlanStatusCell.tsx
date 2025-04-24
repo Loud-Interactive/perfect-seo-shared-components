@@ -93,7 +93,7 @@ const ContentPlanStatusCell = ({ plan, setDeleteModal, setDuplicateInfo, setNewM
         <button className='btn btn-primary d-flex align-items-center justify-content-center' onClick={(e) => { e.preventDefault(); duplicateClickHandler(plan) }} title={`Duplicate: ${guid}`}>
           <i className="bi bi-copy" />
         </button>
-        <button className='btn btn-warning d-flex align-items-center justify-content-center' onClick={deleteClickHandler} title={`View GUID: ${guid}`}><i className="bi bi-trash pt-1" /></button>
+        <button className='btn btn-secondary d-flex align-items-center justify-content-center' onClick={deleteClickHandler} title={`View GUID: ${guid}`}><i className="bi bi-trash pt-1" /></button>
       </div>
     </div>
   )

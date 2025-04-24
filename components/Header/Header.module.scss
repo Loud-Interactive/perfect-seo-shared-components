@@ -41,13 +41,14 @@
     max-height: inherit;
 
     path {
-      color: $primary;
+      fill: white;
+
       @include TransitionQuick;
     }
 
     &:hover {
       path {
-        fill: white;
+        fill: $lightOrange;
       }
     }
   }
@@ -56,10 +57,11 @@
 .menu {
   max-width: 400px;
 
+  color: white;
 
   a {
     text-decoration: none;
-    color: $primary;
+    color: white;
   }
 
   @include Phone {
@@ -92,11 +94,11 @@
     align-items: center;
     justify-content: center;
     line-height: 50px;
-    color: $primary;
+    color: white;
 
 
     &:hover {
-      color: white;
+      color: $lightOrange;
     }
   }
 }

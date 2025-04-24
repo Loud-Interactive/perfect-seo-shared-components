@@ -216,11 +216,11 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
     ).join(" ")
   }
   const gscColumnArray: TableColumnArrayProps[] = [
-    { id: 'title', Header: 'Title', accessor: renderTitle, cellClassName: 'title-max', headerClassName: 'bg-transparent text-white' },
-    { id: 'total_clicks', Header: 'Total Clicks', accessor: renderTotalClicks, headerClassName: 'bg-transparent text-white' },
-    { id: 'total_impressions', Header: 'Total Impressions', accessor: renderTotalImpression, headerClassName: 'bg-transparent text-white' },
-    { id: 'avg_ctr_percent', Header: 'Average CTR', accessor: renderAverageCTR, cellClassName: "relative", headerClassName: 'bg-transparent text-white' },
-    { id: 'avg_position', Header: 'Average Position', accessor: renderAveragePosition, headerClassName: 'bg-transparent text-white' },
+    { id: 'title', Header: 'Title', accessor: renderTitle, cellClassName: 'title-max', headerClassName: 'bg-transparent' },
+    { id: 'total_clicks', Header: 'Total Clicks', accessor: renderTotalClicks, headerClassName: 'bg-transparent' },
+    { id: 'total_impressions', Header: 'Total Impressions', accessor: renderTotalImpression, headerClassName: 'bg-transparent' },
+    { id: 'avg_ctr_percent', Header: 'Average CTR', accessor: renderAverageCTR, cellClassName: "relative", headerClassName: 'bg-transparent' },
+    { id: 'avg_position', Header: 'Average Position', accessor: renderAveragePosition, headerClassName: 'bg-transparent' },
     // { id: 'ahref_rating', Header: 'AHREFs Rating', accessor: 'ahref_rating', headerClassName: 'bg-transparent text-white' },
   ];
 
@@ -238,7 +238,7 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
     <div className={styles.wrap}>
       <div className='row g-3 d-flex justify-content-between align-items-end mb-3'>
         <div className='col-12 d-flex justify-content-between align-items-end'>
-          <h2 className='text-white'>
+          <h2>
             <TypeWriterText string="Google Search Console and AHREF Ratings" withBlink />
           </h2>
           <p className='mb-0'>
@@ -263,11 +263,11 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
                           </th>
                         </tr>
                         <tr>
-                          <th className="bg-transparent text-white">Type</th>
-                          <th className="bg-transparent text-white">Clicks</th>
-                          <th className="bg-transparent text-white">Impressions</th>
-                          <th className="bg-transparent text-white">CTR</th>
-                          <th className="bg-transparent text-white">Position</th>
+                          <th className="bg-transparent">Type</th>
+                          <th className="bg-transparent">Clicks</th>
+                          <th className="bg-transparent">Impressions</th>
+                          <th className="bg-transparent">CTR</th>
+                          <th className="bg-transparent">Position</th>
                         </tr>
                       </thead>
                       <tbody>

@@ -184,18 +184,18 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
   return (
     <div className={styles.wrap}>
       {/* Header Section */}
-      <div className="row g-3 d-flex justify-content-between align-items-end mb-3">
-        <div className="col col-md-auto d-flex justify-content-center align-items-end">
-          <h2 className="text-white mb-0">
+      <div className="row g-3 d-flex justify-content-between align-items-center mb-3">
+        <div className="col col-md-auto d-flex justify-content-start align-items-end">
+          <h2 className="mb-0">
             <TypeWriterText string="Content Plans" withBlink />
           </h2>
           {paginator?.itemCount > 0 && (
-            <p className="badge rounded-pill text-bg-primary ms-3 d-flex align-items-center mb-1">
+            <p className="badge rounded-pill text-white text-bg-primary ms-3 d-flex align-items-center mb-1">
               {paginator?.itemCount}
             </p>
           )}
         </div>
-        <div className="col-12 col-md-auto d-flex justify-content-center align-items-center">
+        <div className="col-auto d-flex justify-content-center align-items-center">
           <div className="input-group">
             <button
               onClick={() => setNewModal(true)}
@@ -207,7 +207,7 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
             <button
               onClick={() => fetchPlans()}
               disabled={loading}
-              className="btn btn-warning"
+              className="btn btn-secondary"
             >
               <i className="bi bi-arrow-clockwise" />
             </button>
@@ -252,7 +252,7 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
           <div className="d-flex justify-content-between mt-5">
             <button
               onClick={() => setDeleteModal(null)}
-              className="btn btn-warning"
+              className="btn btn-secondary"
             >
               Cancel
             </button>

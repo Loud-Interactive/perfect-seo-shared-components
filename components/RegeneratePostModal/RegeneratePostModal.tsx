@@ -241,7 +241,7 @@ const RegeneratePostModal = ({ onClose, type, submitHandler, onSuccess, submitHT
       <Modal.Footer>
         <Modal.ButtonBar>
           <button
-            className="btn btn-warning btn-standard"
+            className="btn btn-secondary btn-standard"
             onClick={(e) => {
               e.preventDefault();
               onClose();
@@ -280,7 +280,7 @@ const RegeneratePostModal = ({ onClose, type, submitHandler, onSuccess, submitHT
           <h3 className="mb-5">Your post is being generated</h3>
           <div>
             <button
-              className="btn btn-warning"
+              className="btn btn-secondary"
               onClick={(e) => {
                 e.preventDefault();
                 setShowConfirm(false);

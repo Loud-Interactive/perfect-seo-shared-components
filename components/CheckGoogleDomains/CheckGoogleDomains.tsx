@@ -45,7 +45,7 @@ const CheckGoogleDomains = () => {
   return (
     <div className="card bg-primary p-3">
       <h4 className="text-center">Re-verify Google Search Console Domain Access</h4>
-      <div className="card p-3 bg-dark mt-3 text-white">
+      <div className="card p-3 bg-light mt-3 text-white">
         <h5 className="text-center">Current Domains</h5>
         {Object.keys(domainRenderList)?.length > 0 && <ul className="clear-list-properties d-flex row align-items-center justify-content-start">
           {domainRenderList?.keys?.sort((a, b) => a.localeCompare(b))?.map((domainKey, index) => {

@@ -98,7 +98,7 @@ const OutlinesList = ({ domain_name, active }: OutlinesListProps) => {
           <h2 className='text-primary mb-0'>
             <TypeWriterText string="Generated Outlines" withBlink />
           </h2>
-          {paginator?.itemCount > 0 && <p className='badge rounded-pill text-bg-primary ms-3 d-flex align-items-center mb-1'>{paginator?.itemCount}</p>}
+          {paginator?.itemCount > 0 && <p className='badge rounded-pill text-white text-bg-primary ms-3 d-flex align-items-center mb-1'>{paginator?.itemCount}</p>}
         </div>
       </div>
       {loading ? <Loader />
@@ -118,7 +118,7 @@ const OutlinesList = ({ domain_name, active }: OutlinesListProps) => {
         <Modal.Description>
           Are you sure you want to delete this outline?
           <div className='d-flex justify-content-between mt-5'>
-            <button onClick={() => { setDeleteModal(null) }} className="btn btn-warning">Cancel</button>
+            <button onClick={() => { setDeleteModal(null) }} className="btn btn-secondary">Cancel</button>
             <button onClick={(e) => { e.preventDefault(); deleteHandler(deleteModal) }} className="btn btn-primary">Yes</button>
           </div>
         </Modal.Description>

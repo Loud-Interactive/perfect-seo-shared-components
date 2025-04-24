@@ -110,6 +110,7 @@ h1 {
   color: $black;
   margin-bottom: 20px;
   @include TransitionQuick;
+  @include font-loud;
 
   &:hover {
     color: $primary;

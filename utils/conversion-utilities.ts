@@ -56,7 +56,7 @@ export const findUniqueKeys = (newObj, oldObj) => {
       return ({ ...prev, [curr]: false })
     }
     else {
-      return prev
+      return ({ ...prev, [curr]: newObj[curr] })
     }
   }, {})
   return finalObj

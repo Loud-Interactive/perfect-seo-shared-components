@@ -411,7 +411,7 @@ const StatusBar = ({
             :
             <div className="col-auto d-flex align-items-center ">
               <i className="bi bi-chevron-right mx-1" />
-              <a onClick={generateImagePromptHandler} className=" my-0 py-0">{generateImagePromptLoading ? <TypeWriterText string="Generating" withBlink /> : <span className="text-success">Generate Image Prompt</span>}</a>
+              {generateImagePromptLoading ? <TypeWriterText string="Generating" withBlink /> : <a onClick={generateImagePromptHandler} className=" my-0 py-0"> <span className="text-success">Generate Image Prompt</span></a>}
             </div>}
         {!live_post_url && <>
           <div className="col-auto d-flex align-items-center">

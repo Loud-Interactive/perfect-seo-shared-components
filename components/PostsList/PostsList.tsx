@@ -145,7 +145,7 @@ const PostsList = ({ domain_name, active }: PostsListProps) => {
               <Select bottomSpacing={false} fieldName='filter' onChange={changeFilter} label="Filter by Status" value={filter}>
                 <Option value='all'>All</Option>
                 <Option value='live'>Live</Option>
-                <Option value='completed'>Complete</Option>
+                <Option value='completed'>Finished</Option>
                 <Option value='processing'>Processing</Option>
               </Select>
             </Form>

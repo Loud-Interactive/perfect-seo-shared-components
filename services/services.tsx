@@ -312,6 +312,7 @@ export const getPostsByDomain = (domain: string, reqObj?: any) => {
         .eq("client_domain", domain)
         .eq("status", "Complete")
         .neq("is_deleted", true)
+        .eq("live_post_url", null)
         .range(startIndex, endIndex)
         .order('last_updated_at', { ascending: false })
     }

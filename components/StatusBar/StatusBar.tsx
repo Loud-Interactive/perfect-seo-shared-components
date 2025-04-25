@@ -9,6 +9,7 @@ import * as Modal from "@/perfect-seo-shared-components/components/Modal/Modal";
 import TextArea from "../Form/TextArea";
 import Form from "../Form/Form";
 import useForm from "@/perfect-seo-shared-components/hooks/useForm";
+import HeroImageGenerator from "../HeroImageGenerator/HeroImageGenerator";
 
 interface StatusBarProps {
   content_plan_outline_guid?: string;
@@ -26,6 +27,7 @@ interface StatusBarProps {
   hero_image_prompt?: string,
   task_id?: string;
   schema_data?: any;
+  hero_image_url?: string
 }
 
 const StatusBar = ({
@@ -36,6 +38,7 @@ const StatusBar = ({
   content_plan_factcheck_guid,
   content_plan_social_guid,
   addLiveUrlHandler,
+  hero_image_url,
   live_post_url,
   onGeneratePost,
   indexHandler,
@@ -49,7 +52,7 @@ const StatusBar = ({
   const [outlineStatus, setOutlineStatus] = useState<string>('');
   const [postStatus, setPostStatus] = useState<string>('');
   const [factcheckStatus, setFactcheckStatus] = useState<string>('');
-  const [generateImageStatus, setGenerateImageStatus] = useState<string>('');
+
 
   const [outlineLoading, setOutlineLoading] = useState<boolean>(false);
   const [postLoading, setPostLoading] = useState<boolean>(false);
@@ -72,6 +75,7 @@ const StatusBar = ({
   const [wordPressPublish, setWordPressPublish] = useState<boolean>(false);
 
   const [viewImagePrompt, setViewImagePrompt] = useState<boolean>(false);
+  const [generateImageModal, setGenerateImageModal] = useState<boolean>(false);
 
   const supabase = createClient();
   const form = useForm();
@@ -207,6 +211,7 @@ const StatusBar = ({
         }
       })
   }
+
 
 
   const fetchFactcheckStatusData = () => {
@@ -351,14 +356,6 @@ const StatusBar = ({
       setSchemaStatus('Error copying to clipboard')
     })
   }
-  const copyHeroClickHandler = (e) => {
-    e.preventDefault();
-    navigator.clipboard.writeText(form.getState.hero_image_prompt).then(() => {
-      setGenerateImageStatus('Copied to clipboard')
-    }).catch(err => {
-      setGenerateImageStatus('Error copying to clipboard')
-    })
-  }
   return (
     <div className="status-bar row d-flex align-items-center justify-content-between g-0 ">
       <div className="col-auto d-flex align-items-center">
@@ -404,12 +401,13 @@ const StatusBar = ({
       }
       {(type === ContentType.POST && postComplete) && <>
         {
-          hero_image_prompt ?
-            <div className="col-auto d-flex align-items-center ">
-              < i className="bi bi-chevron-right mx-1" />
-              <strong><a onClick={generateImagePromptHandler} className="text-primary my-0 py-0 no-underline">Image Prompt</a></strong>
+          hero_image_prompt ? <div className="col-auto d-flex align-items-center ">
+            <i className="bi bi-chevron-right mx-1" />
+            {hero_image_url ? <> <strong><a onClick={generateImagePromptHandler} className="text-primary my-0 py-0 no-underline">View Image</a></strong>
               <span className="badge rounded-pill ms-1 p-1 bg-success"><i className="bi bi-check-lg text-white"></i></span>
-            </div>
+            </>
+              : <a onClick={generateImagePromptHandler} className=" my-0 py-0 text-success no-underline"><i className="bi bi-plus" />Generate Image</a>}
+          </div>
             :
             <div className="col-auto d-flex align-items-center ">
               <i className="bi bi-chevron-right mx-1" />
@@ -505,24 +503,9 @@ const StatusBar = ({
         </Modal.Description>
       </Modal.Overlay>
       <Modal.Overlay open={viewImagePrompt} onClose={() => { setViewImagePrompt(null) }} closeIcon>
-        <Modal.Title title="Image Prompt" />
-        <Modal.Description className="modal-medium">
-          <Form controller={form}>
-            <TextArea fieldName="hero_image_prompt" label="Image Prompt" disabled />
-            <div className="row d-flex justify-content-between align-items-center g-0">
-
-              <div className="col-auto d-flex align-items-center">
-                <button onClick={copyHeroClickHandler} className="btn btn-primary me-2" type="button"><i className="bi bi-copy me-2" />Copy</button>
-              </div>
-              {generateImageStatus !== '' && <div className="col-auto d-flex align-items-center">
-                <span className=""><TypeWriterText string={generateImageStatus} withBlink /></span>
-              </div>}
-
-            </div>
-          </Form>
-
-        </Modal.Description>
+        <HeroImageGenerator hero_image_prompt={hero_image_prompt} hero_image_url={hero_image_url} task_id={task_id} guid={content_plan_outline_guid} />
       </Modal.Overlay>
+
     </div >
   )
 }

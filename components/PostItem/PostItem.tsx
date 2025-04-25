@@ -231,7 +231,7 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
           <div className="row g-2 d-flex justify-content-between align-items-center w-100">
             <div className="col-auto">
               <StatusBar post_status={status} indexHandler={() => setShowIndex(true)} type={ContentType.POST} content_plan_outline_guid={localPost.content_plan_outline_guid} content_plan_guid={localPost?.content_plan_guid}
-                hero_image_prompt={localPost?.hero_image_prompt}
+                hero_image_prompt={localPost?.hero_image_prompt} hero_image_url={localPost?.hero_image_url}
                 content_plan_factcheck_guid={localPost?.factcheck_guid} task_id={localPost.task_id} addLiveUrlHandler={addLiveUrlHandler} live_post_url={localPost.live_post_url} index_status={localPost?.index_status} schema_data={localPost?.schema_data} />
             </div>
             <div className="col-auto">

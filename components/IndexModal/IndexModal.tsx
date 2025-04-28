@@ -50,7 +50,7 @@ const IndexModal = ({ post, onClose, setPost }: IndexModalProps) => {
           </p>
           <p>
             <strong>URL</strong><br />
-            <a href={post.live_post_url} target="_blank">{post.live_post_url}</a>
+            <a href={post.live_post_url} target="_blank" className="text-primary">{post.live_post_url}</a>
           </p>
         </>
           :

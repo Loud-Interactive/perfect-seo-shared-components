@@ -4863,6 +4863,10 @@ a.text-white {
       fill: orange;
     }
   }
+
+  &:disabled {
+    color: $black;
+  }
 }
 
 .btn-standard {

@@ -120,56 +120,56 @@ export default function HeroImageGenerator({ task_id, guid, hero_image_url, hero
               </div>
             </>}
 
-          </div>
-          {result ? (
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <h2 className="text-xl font-semibold mb-2">{result.title}</h2>
 
-              <div className="mb-4">
-                <div className="text-sm text-gray-500">Prompt:</div>
-                <div className="bg-gray-100 p-3 rounded">{result.prompt}</div>
-              </div>
+            {result ? (
+              <div className="bg-white rounded-lg shadow-md p-6">
+                <h2 className="text-xl font-semibold mb-2">{result.title}</h2>
 
-              {result.hero_image_url && (
                 <div className="mb-4">
-                  <div className="text-sm text-gray-500 mb-2">Generated Image:</div>
-                  <div className="relative h-80 w-full">
-                    <Image
-                      src={result.hero_image_url}
+                  <div className="text-sm text-gray-500">Prompt:</div>
+                  <div className="bg-gray-100 p-3 rounded">{result.prompt}</div>
+                </div>
+
+                {result.hero_image_url && (
+                  <div className="mb-4">
+                    <div className="text-sm text-gray-500 mb-2">Generated Image:</div>
+                    <div className="relative h-80 w-full">
+                      <Image
+                        src={result.hero_image_url}
+                        alt="Generated hero image"
+                        fill
+                        style={{ objectFit: 'contain' }}
+                        className="rounded"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <span className="font-medium">GUID:</span> {result.guid}
+                  </div>
+                  <div>
+                    <span className="font-medium">Tokens Used:</span> {result.openai_usage?.total_tokens || 'N/A'}
+                  </div>
+                </div>
+              </div>
+            )
+              : hero_image_url ?
+
+                <div className="mb-4">
+                  <div className="text-sm text-gray-500 mb-2">Hero Image</div>
+                  <div className="relative h-100 w-100">
+                    <img
+                      src={hero_image_url}
                       alt="Generated hero image"
-                      fill
-                      style={{ objectFit: 'contain' }}
-                      className="rounded"
+
+                      className="w-100 dynamic-image"
                     />
                   </div>
                 </div>
-              )}
-
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div>
-                  <span className="font-medium">GUID:</span> {result.guid}
-                </div>
-                <div>
-                  <span className="font-medium">Tokens Used:</span> {result.openai_usage?.total_tokens || 'N/A'}
-                </div>
-              </div>
-            </div>
-          )
-            : hero_image_url ?
-
-              <div className="mb-4">
-                <div className="text-sm text-gray-500 mb-2">Hero Image</div>
-                <div className="relative h-80 w-full">
-                  <Image
-                    src={hero_image_url}
-                    alt="Generated hero image"
-                    fill
-                    style={{ objectFit: 'contain' }}
-                    className="rounded"
-                  />
-                </div>
-              </div>
-              : null}
+                : null}
+          </div>
         </Form>
 
       </Modal.Description>

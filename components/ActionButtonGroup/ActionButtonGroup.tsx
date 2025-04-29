@@ -3,7 +3,7 @@ import * as Modal from '@/perfect-seo-shared-components/components/Modal/Modal'
 import { useDispatch, useSelector } from 'react-redux';
 import { ContentType } from '@/perfect-seo-shared-components/data/types';
 import { addToast, selectEmail, selectIsAdmin } from '@/perfect-seo-shared-components/lib/features/User';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { createPost, deletePost, deleteOutline, fetchOutlineData, regenerateHTML, regenerateHTMLfromDoc, regenerateOutline, regeneratePost, updateLiveUrl } from '@/perfect-seo-shared-components/services/services';
 import { createClient } from '@/perfect-seo-shared-components/utils/supabase/client';
 import en from '@/assets/en.json'
@@ -273,7 +273,10 @@ const ActionButtonGroup = ({
     dispatch(addToast({ title: "Copied Image Prompt", type: "success", content: `Image Prompt copied to clipboard` }))
 
   }
-  if (data?.content_plan_outline_guid) {
+
+
+
+  if ((data?.content_plan_outline_guid && type === ContentType.POST) || (data?.guid && type === ContentType.OUTLINE)) {
     return (
       <>
         <div className='row d-flex justify-content-end'>

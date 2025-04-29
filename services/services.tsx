@@ -613,3 +613,7 @@ export const getPostStatusFromOutline = (guid: string) => {
 export const publishToWordPress = async (guid: string) => {
   return axiosInstance.post('/api/post/wordpress-publish', { content_plan_outline_guid: guid })
 }
+
+export const getContentPlanChildren = async (guid: string) => {
+  return axiosInstance.post(`/api/content-plan/get-child-content`, { content_plan_guid: guid });
+}

@@ -97,11 +97,15 @@ const Table = ({ isLoading,
 
       if (typeof column.accessor === 'string') {
         newColumn.accessorKey = column.accessor;
-      } else {
+      } else if (column.accessor) {
         newColumn.accessorKey = column.id;
         newColumn.cell = (obj) => {
           return column.accessor(obj.row.original, obj.row.index);
         };
+      }
+      else {
+        newColumn.accessorKey = column.id;
+
       }
 
       newColumn.header = newColumn.Header;

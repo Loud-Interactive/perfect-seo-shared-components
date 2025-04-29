@@ -27,7 +27,7 @@ interface ActionButtonGroupProps {
   data: any
   refresh: () => void
   type: ContentType
-  setData: (data: any) => void
+  setData?: (data: any) => void
 }
 
 
@@ -212,8 +212,10 @@ const ActionButtonGroup = ({
       if (liveURLForm.validate({ requiredFields: ['live_url'], validatorFields: ['live_url'] })) {
         updateLiveUrl(data.content_plan_outline_guid, url || '')
           .then(res => {
-            setData({ ...data, live_post_url: url })
-            setShowLiveURLModal(false)
+            if (setData) {
+              setData({ ...data, live_post_url: url })
+              setShowLiveURLModal(false)
+            }
           })
       }
 
@@ -221,7 +223,9 @@ const ActionButtonGroup = ({
     else {
       updateLiveUrl(data.content_plan_outline_guid, '')
         .then(res => {
-          setData({ ...data, live_post_url: 'url' })
+          if (setData) {
+            setData({ ...data, live_post_url: 'url' })
+          }
           setShowLiveURLModal(false)
         })
     }

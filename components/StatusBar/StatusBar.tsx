@@ -1,6 +1,6 @@
 'use client'
 import { ContentType } from "@/perfect-seo-shared-components/data/types";
-import { fetchOutlineStatus, generateImagePrompt, generateSchema, getFactCheckStatus, getPostStatusFromOutline, publishToWordPress } from "@/perfect-seo-shared-components/services/services";
+import { fetchOutlineStatus, generateContentPlanOutline, generateImagePrompt, generateSchema, getFactCheckStatus, getPostStatusFromOutline, publishToWordPress } from "@/perfect-seo-shared-components/services/services";
 import { useEffect, useState } from "react";
 import TypeWriterText from "../TypeWriterText/TypeWriterText";
 import { keyToLabel } from "@/perfect-seo-shared-components/utils/conversion-utilities";
@@ -20,6 +20,7 @@ interface StatusBarProps {
   addLiveUrlHandler?: () => void
   onGeneratePost?: () => void
   indexHandler?: () => void,
+  onGenerateOutline?: () => void,
   type: ContentType,
   index_status?: string
   post_status?: string,
@@ -27,7 +28,7 @@ interface StatusBarProps {
   hero_image_prompt?: string,
   task_id?: string;
   schema_data?: any;
-  hero_image_url?: string
+  hero_image_url?: string,
 }
 
 const StatusBar = ({
@@ -42,6 +43,7 @@ const StatusBar = ({
   live_post_url,
   onGeneratePost,
   indexHandler,
+  onGenerateOutline,
   hero_image_prompt,
   task_id,
   index_status,
@@ -79,6 +81,11 @@ const StatusBar = ({
 
   const supabase = createClient();
   const form = useForm();
+
+  const generateOutlineHandler = (e) => {
+    e.preventDefault();
+    onGenerateOutline();
+  }
 
   const checkWordPressPublish = async () => {
     supabase
@@ -356,6 +363,8 @@ const StatusBar = ({
       setSchemaStatus('Error copying to clipboard')
     })
   }
+
+
   return (
     <div className="status-bar row d-flex align-items-center justify-content-between g-0 ">
       <div className="col-auto d-flex align-items-center">
@@ -372,7 +381,8 @@ const StatusBar = ({
               <>
                 <strong className="text-primary me-2">Outline Status</strong> {keyToLabel(outlineStatus)}
               </>
-              : <strong className="text-primary">Outline</strong>
+              : <a title="Generate Post" className="py-0 my-0 text-success no-underline" onClick={generateOutlineHandler}>Generate Outline</a>
+
         }
       </div>
       {

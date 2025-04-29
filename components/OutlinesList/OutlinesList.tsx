@@ -24,6 +24,11 @@ const OutlinesList = ({ domain_name, active }: OutlinesListProps) => {
   const [modalOpen, setModalOpen] = useState(false)
   const [hasPosts, setHasPosts] = useState(false)
 
+  // "Outline Not Started"
+  // "Outline Generating"
+  // "Outline Completed"
+  // "Post Generating"
+
   const paginator = usePaginator()
 
   const getOutlines = () => {

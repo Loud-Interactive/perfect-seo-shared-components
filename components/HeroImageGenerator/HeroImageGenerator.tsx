@@ -109,7 +109,8 @@ export default function HeroImageGenerator({ task_id, guid, hero_image_url, hero
             <div className="col-auto d-flex align-items-center">
               <input type="submit" onClick={updateImagePrompt} className="btn btn-primary" value="Update Image Prompt" disabled={loading} />
             </div>
-            {!hero_image_url && <div className="col-auto d-flex align-items-center">
+            {/* {!hero_image_url && */}
+            <div className="col-auto d-flex align-items-center">
               <button
                 onClick={generateHeroImage}
                 disabled={loading}
@@ -117,7 +118,8 @@ export default function HeroImageGenerator({ task_id, guid, hero_image_url, hero
               >
                 {loading ? 'Generating...' : hero_image_url ? 'Regenerate Image' : 'Generate Image'}
               </button>
-            </div>}
+            </div>
+            {/* } */}
 
 
             {hero_image_url ?

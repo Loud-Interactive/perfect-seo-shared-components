@@ -101,29 +101,30 @@ const ActionButtonGroup = ({
   }
 
   const getOutlineData = () => {
-    fetchOutlineData(data?.guid)
+    let guid = type === ContentType.OUTLINE ? data?.guid : data?.content_plan_outline_guid
+    if (!guid) return
+    fetchOutlineData(guid)
       .then(res => {
+        console.log(res.data[0])
         setOutlineData(res.data[0])
       })
   }
   useEffect(() => {
     let outlineChannel;
-    if (data?.guid && type === ContentType.OUTLINE) {
 
-      getOutlineData()
-      outlineChannel = supabase.channel(`actionbutton-outline-status-${data?.guid}`)
-        .on(
-          'postgres_changes',
-          { event: '*', schema: 'public', table: 'content_plan_outlines', filter: `guid=eq.${data?.guid}` },
-          (payload) => {
-            if (payload.new) {
-              setOutlineData(payload.new)
-            }
-
+    getOutlineData()
+    outlineChannel = supabase.channel(`actionbutton-outline-status-${data?.guid}`)
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'content_plan_outlines', filter: `guid=eq.${data?.guid}` },
+        (payload) => {
+          if (payload.new) {
+            setOutlineData(payload.new)
           }
-        )
-        .subscribe()
-    }
+
+        }
+      )
+      .subscribe()
     if (outlineChannel) {
       return () => {
         outlineChannel.unsubscribe()
@@ -318,9 +319,9 @@ const ActionButtonGroup = ({
                 <DropdownMenu.Content align="end" className="bg-secondary z-100 card">
                   {(data?.content_plan_outline_guid && outlineData?.outline) &&
                     <DropdownMenu.Item>
-                      <button className="btn btn-transparent" onClick={handleEditOutline}>
+                      <a className="btn btn-transparent" onClick={handleEditOutline}>
                         Edit Outline
-                      </button>
+                      </a>
                     </DropdownMenu.Item>}
                   {data?.content_plan_guid &&
                     <DropdownMenu.Item>

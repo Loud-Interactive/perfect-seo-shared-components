@@ -105,20 +105,19 @@ export default function HeroImageGenerator({ task_id, guid, hero_image_url, hero
             <div className="col-auto d-flex align-items-center">
               <button onClick={copyHeroClickHandler} className="btn btn-primary me-2" type="button"><i className="bi bi-copy me-2" />Copy</button>
             </div>
-            {!hero_image_url && <>
-              <div className="col-auto d-flex align-items-center">
-                <input type="submit" onClick={updateImagePrompt} className="btn btn-primary" value="Update Image Prompt" disabled={loading} />
-              </div>
-              <div className="col-auto d-flex align-items-center">
-                <button
-                  onClick={generateHeroImage}
-                  disabled={loading}
-                  className="btn btn-primary"
-                >
-                  {loading ? 'Generating...' : 'Generate Image'}
-                </button>
-              </div>
-            </>}
+
+            <div className="col-auto d-flex align-items-center">
+              <input type="submit" onClick={updateImagePrompt} className="btn btn-primary" value="Update Image Prompt" disabled={loading} />
+            </div>
+            {!hero_image_url && <div className="col-auto d-flex align-items-center">
+              <button
+                onClick={generateHeroImage}
+                disabled={loading}
+                className="btn btn-primary"
+              >
+                {loading ? 'Generating...' : hero_image_url ? 'Regenerate Image' : 'Generate Image'}
+              </button>
+            </div>}
 
 
             {hero_image_url ?

@@ -125,26 +125,19 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
 
 
   const TabData = useMemo(() => {
-    if (isAdmin) {
-      return [
-        { key: "content-plans", title: "Content Plans" },
-        { key: "outlines", title: "Outlines" },
-        { key: "posts", title: "Posts" },
-        { key: "reports", title: "Stats & Reports" },
-        { key: "bulk-content", title: "Bulk Content Plans" },
-        { key: "bulk-posts", title: "Bulk Posts" },
-      ]
+
+    let tabListStart = [{ key: "content-plans", title: "Content Plans" },
+    { key: "outlines", title: "Outlines" },
+    { key: "posts", title: "Posts" }]
+    let bulkTabs = [
+      { key: "bulk-content", title: "Bulk Content Plans" },
+      { key: "bulk-posts", title: "Bulk Posts" },]
+
+    if (isAdmin && domain) {
+      tabListStart = [...tabListStart, { key: "reports", title: "Reports" }]
     }
-    else {
-      return [
-        { key: "content-plans", title: "Content Plans" },
-        { key: "outlines", title: "Outlines" },
-        { key: "posts", title: "Posts" },
-        { key: "bulk-content", title: "Bulk Content Plans" },
-        { key: "bulk-posts", title: "Bulk Posts" },
-      ]
-    }
-  }, [isAdmin])
+    return [...tabListStart, ...bulkTabs]
+  }, [isAdmin, domain])
 
   const searchDomainChangeHandler = (e) => {
     if (e) {

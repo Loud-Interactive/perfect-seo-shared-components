@@ -380,9 +380,9 @@ const StatusBar = ({
               <strong className="text-primary me-2">Outline Generation Error</strong> {outlineError}
             </>
             : outlineStatus ?
-              <>
+              <p className="mb-0 status">
                 <strong className="text-primary me-2">Outline Status</strong> {keyToLabel(outlineStatus)}
-              </>
+              </p>
               : <a title="Generate Post" className="py-0 my-0 text-success no-underline" onClick={generateOutlineHandler}>Generate Outline</a>
 
         }
@@ -396,9 +396,9 @@ const StatusBar = ({
               <span className="badge rounded-pill ms-1 p-1 bg-success"><i className="bi bi-check-lg text-white"></i></span>
             </>
             :
-            <>
+            <p className="mb-0 status">
               <strong className="text-primary me-2">Post Status</strong> {keyToLabel(postStatus)}
-            </>
+            </p>
           }
         </div>
           :

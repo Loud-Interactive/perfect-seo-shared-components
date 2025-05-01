@@ -472,7 +472,7 @@ const StatusBar = ({
               :
               <div className="col-auto d-flex align-items-center ">
                 <i className="bi bi-chevron-right mx-1" />
-                <a onClick={generateSchemaHandler} className=" my-0 py-0">{generateSchemaLoading ? <TypeWriterText string='Generating' withBlink /> : <span className="text-success">Generate Schema</span>}</a>
+                {generateSchemaLoading ? <TypeWriterText string='Generating' withBlink /> : <a onClick={generateSchemaHandler} className=" my-0 py-0"><span className="text-success">Generate Schema</span></a>}
               </div>}
           {index_status === 'indexed' ?
             <div className="col-auto d-flex align-items-center ">

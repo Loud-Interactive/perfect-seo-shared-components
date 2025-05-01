@@ -29,6 +29,7 @@ interface StatusBarProps {
   task_id?: string;
   schema_data?: any;
   hero_image_url?: string,
+  showEditOutlineHandler: () => void
 }
 
 const StatusBar = ({
@@ -38,12 +39,13 @@ const StatusBar = ({
   content_plan_guid,
   content_plan_factcheck_guid,
   content_plan_social_guid,
-  addLiveUrlHandler,
-  hero_image_url,
-  live_post_url,
   onGeneratePost,
   indexHandler,
   onGenerateOutline,
+  addLiveUrlHandler,
+  showEditOutlineHandler,
+  hero_image_url,
+  live_post_url,
   hero_image_prompt,
   task_id,
   index_status,
@@ -370,7 +372,7 @@ const StatusBar = ({
       <div className="col-auto d-flex align-items-center">
         {(outlineComplete || (postStatus && !outlineStatus)) ?
           <>
-            <strong className="text-primary">Outline</strong>
+            <a title="Generate Post" className="py-0 my-0 text-primary no-underline" onClick={showEditOutlineHandler}>Outline</a>
             <span className="badge rounded-pill  ms-1 p-1 bg-success"><i className="bi bi-check-lg text-white"></i></span>
           </>
           : outlineError ?
@@ -413,7 +415,7 @@ const StatusBar = ({
         {
           hero_image_prompt ? <div className="col-auto d-flex align-items-center ">
             <i className="bi bi-chevron-right mx-1" />
-            {hero_image_url ? <> <strong><a onClick={generateImagePromptHandler} className="text-primary my-0 py-0 no-underline">View Image</a></strong>
+            {hero_image_url ? <> <strong><a onClick={generateImagePromptHandler} className="text-primary my-0 py-0 no-underline">Hero Image</a></strong>
               <span className="badge rounded-pill ms-1 p-1 bg-success"><i className="bi bi-check-lg text-white"></i></span>
             </>
               : <a onClick={generateImagePromptHandler} className=" my-0 py-0 text-success no-underline"><i className="bi bi-plus" />Generate Image</a>}
@@ -441,7 +443,7 @@ const StatusBar = ({
         (type === ContentType.POST && live_post_url && postComplete) &&
         <div className="col-auto d-flex align-items-center">
           <i className="bi bi-chevron-right mx-1" />
-          <strong className="text-primary">Live</strong>
+          <a onClick={addLiveUrlClickHandler} className="my-0 py-0 text-primary no-underline">Live</a>
           <span className="badge rounded-pill ms-1 p-1 bg-success"><i className="bi bi-check-lg text-white"></i></span>
         </div>
       }
@@ -466,7 +468,7 @@ const StatusBar = ({
             schema_data ?
               <div className="col-auto d-flex align-items-center ">
                 < i className="bi bi-chevron-right mx-1" />
-                <strong><a onClick={generateSchemaHandler} className="text-primary my-0 py-0">Schema</a></strong>
+                <strong><a onClick={generateSchemaHandler} className="text-primary my-0 py-0 no-underline">Schema</a></strong>
                 <span className="badge rounded-pill ms-1 p-1 bg-success"><i className="bi bi-check-lg text-white"></i></span>
               </div>
               :
@@ -515,7 +517,6 @@ const StatusBar = ({
       <Modal.Overlay open={viewImagePrompt} onClose={() => { setViewImagePrompt(null) }} closeIcon>
         <HeroImageGenerator hero_image_prompt={hero_image_prompt} hero_image_url={hero_image_url} task_id={task_id} guid={content_plan_outline_guid} />
       </Modal.Overlay>
-
     </div >
   )
 }

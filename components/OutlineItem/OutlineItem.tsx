@@ -78,6 +78,13 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
 
   }, [outline?.client_name, domain_name])
 
+  const handleEditOutline = (e?) => {
+    if (e) {
+      e.preventDefault()
+    }
+    setEditModal(true)
+  }
+
   const generatePostHandler = (receiving_email, writing_language?) => {
     let reqBody: GenerateContentPost = {
       email: email,
@@ -187,7 +194,7 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
         <div className="col-12">
           <div className="row g-2 d-flex justify-content-between align-items-center w-100">
             <div className="col-auto">
-              <StatusBar outline_status={status} type={ContentType.OUTLINE} content_plan_outline_guid={localOutline?.guid} onGeneratePost={() => {
+              <StatusBar showEditOutlineHandler={handleEditOutline} outline_status={status} type={ContentType.OUTLINE} content_plan_outline_guid={localOutline?.guid} onGeneratePost={() => {
                 setShowGenerate(true)
               }} />
             </div>

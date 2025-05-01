@@ -98,7 +98,6 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
           'postgres_changes',
           { event: '*', schema: 'public', table: 'tasks', filter: `task_id=eq.${post.task_id}` },
           (payload) => {
-            console.log(payload)
             if (payload?.new) {
               if (payload?.new && 'status' in payload.new) {
                 setStatus(payload.new?.status)

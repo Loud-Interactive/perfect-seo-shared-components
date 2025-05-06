@@ -534,7 +534,7 @@ const CreateContentModal = ({
         closeIcon
       >
         <Modal.Title title="Generate Your Post" />
-        <RegeneratePostModal submitGoogleDocRegenerateHandler={submitGoogleDocRegenerateHandler} submitHTMLStylingHandler={submitHTMLStylingHandler} submitHandler={submitWithEmail} onClose={() => setCreatingPost(false)} onSuccess={onClose} type={GenerateTypes.GENERATE} />
+        <RegeneratePostModal title={data?.title} submitGoogleDocRegenerateHandler={submitGoogleDocRegenerateHandler} submitHTMLStylingHandler={submitHTMLStylingHandler} submitHandler={submitWithEmail} onClose={() => setCreatingPost(false)} onSuccess={onClose} type={GenerateTypes.GENERATE} />
       </Modal.Overlay >
     </>
   );

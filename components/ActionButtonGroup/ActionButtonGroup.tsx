@@ -105,7 +105,6 @@ const ActionButtonGroup = ({
     if (!guid) return
     fetchOutlineData(guid)
       .then(res => {
-        console.log(res.data[0])
         setOutlineData(res.data[0])
       })
   }
@@ -492,13 +491,13 @@ const ActionButtonGroup = ({
           open={showRegeneratePostModal}
           onClose={() => { setShowRegeneratePostModal(null); refresh() }}
         >
-          <RegeneratePostModal submitHTMLStylingHandler={submitHTMLStylingHandler} submitGoogleDocRegenerateHandler={submitGoogleDocRegenerateHandler} onClose={() => { setShowRegeneratePostModal(null); }} type={GenerateTypes.REGENERATE} submitHandler={regeneratePostHandler} onSuccess={() => { setShowRegeneratePostModal(false); refresh() }} />
+          <RegeneratePostModal title={data?.title || data['Post Title']} submitHTMLStylingHandler={submitHTMLStylingHandler} submitGoogleDocRegenerateHandler={submitGoogleDocRegenerateHandler} onClose={() => { setShowRegeneratePostModal(null); }} type={GenerateTypes.REGENERATE} submitHandler={regeneratePostHandler} onSuccess={() => { setShowRegeneratePostModal(false); refresh() }} />
         </Modal.Overlay >
         <Modal.Overlay
           open={showGeneratePostModal}
           onClose={() => { setShowGeneratePostModal(null); refresh() }}
         >
-          <RegeneratePostModal submitHTMLStylingHandler={submitHTMLStylingHandler} submitGoogleDocRegenerateHandler={submitGoogleDocRegenerateHandler} onClose={() => { setShowGeneratePostModal(null); }} type={GenerateTypes.GENERATE} submitHandler={generatePostHandler} onSuccess={() => { setShowGeneratePostModal(false); refresh() }} />
+          <RegeneratePostModal title={data?.title || data['Post Title']} submitHTMLStylingHandler={submitHTMLStylingHandler} submitGoogleDocRegenerateHandler={submitGoogleDocRegenerateHandler} onClose={() => { setShowGeneratePostModal(null); }} type={GenerateTypes.GENERATE} submitHandler={generatePostHandler} onSuccess={() => { setShowGeneratePostModal(false); refresh() }} />
         </Modal.Overlay >
         <Modal.Overlay closeIcon open={showLiveURLModal} onClose={() => setShowLiveURLModal(false)} className="modal-small">
           <Modal.Title title="Add Live URL" />

@@ -13,8 +13,6 @@ const BrandHeader = ({ synopsis, editable = true }: BrandHeaderProps) => {
   const logoCardClasses = classNames('p-3 h-100 d-flex align-items-center justify-content-center',
     {
       'bg-secondary': !synopsis?.logo_theme,
-      // 'bg-light': synopsis?.logo_theme === 'dark',
-      'bg-primary card': synopsis?.logo_theme === 'light'
     }
   )
 

@@ -26,15 +26,15 @@ interface RegeneratePostModalProps {
   onSuccess: () => void;
   submitHTMLStylingHandler: (email, language?: string) => Promise<any>;
   submitGoogleDocRegenerateHandler: (email, language?: string) => Promise<any>;
+  title: string;
 }
 
-const RegeneratePostModal = ({ onClose, type, submitHandler, onSuccess, submitHTMLStylingHandler, submitGoogleDocRegenerateHandler }: RegeneratePostModalProps) => {
+const RegeneratePostModal = ({ onClose, type, submitHandler, onSuccess, submitHTMLStylingHandler, submitGoogleDocRegenerateHandler, title }: RegeneratePostModalProps) => {
   const points = useSelector(selectPoints)
   const [showConfirm, setShowConfirm] = useState(false)
   const email = useSelector(selectEmail)
   const [receivingEmail, setReceivingEmail] = useState(undefined);
   const [submitted, setSubmitted] = useState(false);
-
   const regenerate = type === GenerateTypes.REGENERATE;
   const languageOptions = [
     "English",
@@ -73,7 +73,6 @@ const RegeneratePostModal = ({ onClose, type, submitHandler, onSuccess, submitHT
     "Urdu",
     "Vietnamese"
   ].map((language) => ({ label: language, value: language }))
-
   const form = useForm();
 
   useEffect(() => {
@@ -87,6 +86,8 @@ const RegeneratePostModal = ({ onClose, type, submitHandler, onSuccess, submitHT
       form.setState({ 'generation-type': 'all' })
     }
   }, [type]);
+
+
 
   useEffect(() => {
     let timeout;
@@ -178,11 +179,11 @@ const RegeneratePostModal = ({ onClose, type, submitHandler, onSuccess, submitHT
     }
   }
 
-
   return (
     <>  <Modal.Title title="Generate Your Post" />
       <div className="p-5 modal-medium pb-0">
-        <h3 className="mb-3">{regenerate ? 'Reg' : 'G'}enerate Your Post</h3>
+        <h3 className="mb-3">{regenerate ? 'Reg' : 'G'}enerate Your Post{title &&
+          <span> for {title}</span>}</h3>
         {regenerate ? <div className="my-4">
           Would you like to regenerate this post?
         </div>
@@ -277,7 +278,7 @@ const RegeneratePostModal = ({ onClose, type, submitHandler, onSuccess, submitHT
       <Modal.Overlay closeIcon open={showConfirm} onClose={onClose}>
         <Modal.Title title="Post Generation" />
         <div className="p-5 d-flex flex-column align-items-center">
-          <h3 className="mb-5">Your post is being generated</h3>
+          <h3 className="mb-5">Your post{title && ` for ${title}`} is being generated</h3>
           <div>
             <button
               className="btn btn-secondary"

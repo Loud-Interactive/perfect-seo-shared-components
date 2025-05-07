@@ -285,10 +285,10 @@ const StatusBar = ({
     };
   }, [factcheckComplete]);
 
-  const checkIfIndexed = async (outlineGuid: string) => {
+  const checkIfIndexed = async (live_post_url: string) => {
     try {
-      const { data, error } = await supabase.functions.invoke('check-indexed-status', {
-        body: { content_plan_outline_guid: outlineGuid },
+      const { data, error } = await supabase.functions.invoke('check-indexation', {
+        body: { url: live_post_url },
       });
 
       if (error) {
@@ -296,8 +296,8 @@ const StatusBar = ({
         return null;
       }
       if (data) {
-
-        if (index_status === 'submitted' && data?.indexed === true) {
+        console.log('Indexed status:', data);
+        if (index_status === 'submitted' && data?.success === true) {
           supabase
             .from('tasks')
             .update({ index_status: 'indexed' })
@@ -316,10 +316,10 @@ const StatusBar = ({
   };
 
   useEffect(() => {
-    if (type === ContentType.POST && content_plan_outline_guid && live_post_url) {
-      checkIfIndexed(content_plan_outline_guid)
+    if (type === ContentType.POST && live_post_url) {
+      checkIfIndexed(live_post_url)
     }
-  }, [content_plan_outline_guid, live_post_url])
+  }, [live_post_url])
 
 
 

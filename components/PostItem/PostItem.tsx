@@ -85,6 +85,7 @@ const PostItem = ({ post, refresh, domain_name }: PostItemProps) => {
     getPost(post?.task_id)
       .then((res) => {
         setStatus(res.data[0]?.status);
+
         setLocalPost(res.data[0])
       })
   }

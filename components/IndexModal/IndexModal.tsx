@@ -20,11 +20,8 @@ const IndexModal = ({ post, onClose, setPost }: IndexModalProps) => {
     e.preventDefault();
     setLoading(true);
     setSuccess(false)
-    let reqObj = { url: post.live_post_url, contentPlanOutlineGuid: post.content_plan_outline_guid, reindex: false }
-    if (post?.index_status === 'submitted' || post?.index_status === 'indexed') {
-      reqObj.reindex = true
-    }
-    axiosInstance.post('/api/index-url', reqObj)
+    let reqObj = { url: post.live_post_url }
+    axiosInstance.post('/api/index/request-index', reqObj)
       .then(res => {
         setPost({ ...post, index_status: 'submitted' })
         setSuccess(true)

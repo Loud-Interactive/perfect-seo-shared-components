@@ -316,7 +316,7 @@ const StatusBar = ({
   };
 
   useEffect(() => {
-    if (type === ContentType.POST && live_post_url) {
+    if (type === ContentType.POST && live_post_url && index_status !== 'indexed') {
       checkIfIndexed(live_post_url)
     }
   }, [live_post_url])

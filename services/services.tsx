@@ -59,7 +59,7 @@ export const getSynopsisInfo = (domain) => {
     .eq('domain', domain)
     .order('last_updated', { ascending: false })
     .then((res) => {
-      const result = res.data.reduce((acc, { key, value }) => {
+      const result: any = res.data.reduce((acc, { key, value }) => {
         if (!acc[key]) {
           acc[key] = value;
         }

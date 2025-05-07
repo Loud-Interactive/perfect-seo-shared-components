@@ -54,13 +54,20 @@ export const generateSynopsis = (domain) => {
 // synopsisPerfect APIS 
 export const getSynopsisInfo = (domain) => {
   return supabase
-    .from('pairs')
-    .select('*')
+    .from('pairs') // Replace with your actual table name
+    .select('key, value, last_updated')
     .eq('domain', domain)
+    .order('last_updated', { ascending: false })
     .then((res) => {
-      let newRes = res;
-      newRes.data = [res.data.reduce((prev, curr) => ({ ...prev, [curr.key]: curr.value }), {})]
-      return newRes
+      const result = res.data.reduce((acc, { key, value }) => {
+        if (!acc[key]) {
+          acc[key] = value;
+        }
+        return acc;
+      }, {});
+
+
+      return { ...res, data: [result] }
     })
 
 };

@@ -86,8 +86,10 @@ const CreateContentModal = ({
     }
   }, [queryParam]);
 
-  const titleChangeHandler = (e) => {
-    e.preventDefault();
+  const titleChangeHandler = (e?) => {
+    if (e) {
+      e.preventDefault();
+    }
     setSaving(true)
     patchOutlineTitle(outlineGUID, titleForm.getState.title)
       .then(res => {
@@ -264,6 +266,7 @@ const CreateContentModal = ({
   const saveHandler = (click?: boolean) => {
     setSaving(true)
     if (!loading) {
+      titleChangeHandler()
       let reqBody: SaveContentPost = {
         post_title: postTitle,
         outline_details: { sections: [...convertToTableData(form.getState)] },

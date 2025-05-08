@@ -12,6 +12,7 @@ import { selectEmail } from '@/perfect-seo-shared-components/lib/features/User';
 import LoadSpinner from '../LoadSpinner/LoadSpinner';
 import ContentPlanForm from '@/perfect-seo-shared-components/components/ContentPlanForm/ContentPlanForm';
 import ContentPlanStatusCell from './ContentPlanStatusCell';
+import ContentPlanStats from './ContentPlanStats';
 
 // Props for the PlansList component
 export interface PlanListProps {
@@ -155,6 +156,11 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
               'dddd, MMMM Do, YYYY h:mma'
             ),
           disableSortBy: false,
+        },
+        {
+          id: 'stats',
+          Header: 'Stats',
+          accessor: obj => <ContentPlanStats guid={obj.guid} />
         },
         {
           id: 'guid',

@@ -84,10 +84,6 @@ const StatusBar = ({
   const supabase = createClient();
   const form = useForm();
 
-  const generateOutlineHandler = (e) => {
-    e.preventDefault();
-    onGenerateOutline();
-  }
 
   const checkWordPressPublish = async () => {
     supabase

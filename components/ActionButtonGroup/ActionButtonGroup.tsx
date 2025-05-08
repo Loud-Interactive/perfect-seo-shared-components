@@ -316,7 +316,7 @@ const ActionButtonGroup = ({
               </DropdownMenu.Trigger>
               <DropdownMenu.Portal>
                 <DropdownMenu.Content align="end" className="bg-secondary z-100 card">
-                  {(data?.content_plan_outline_guid && outlineData?.outline) &&
+                  {(outlineData?.outline) &&
                     <DropdownMenu.Item>
                       <a className="btn btn-transparent" onClick={handleEditOutline}>
                         Edit Outline

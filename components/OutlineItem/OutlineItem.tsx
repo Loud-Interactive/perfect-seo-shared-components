@@ -131,6 +131,7 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
 
   useEffect(() => {
     let contentPlanOutlines;
+    let outlineChannel;
     if (outline?.guid) {
       fetchStatus()
       contentPlanOutlines = supabase.channel(`status-${outline.guid}`)
@@ -142,10 +143,22 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
           }
         )
         .subscribe()
+      outlineChannel = supabase.channel(`outline-item-${outline.guid}`)
+        .on(
+          'postgres_changes',
+          { event: 'UPDATE', schema: 'public', table: 'content_plan_outlines', filter: `guid=eq.${outline.guid}` },
+          (payload) => {
+            setLocalOutline(payload.new as Outline)
+          }
+        )
+        .subscribe()
     }
-    if (contentPlanOutlines) {
-      return () => {
+    return () => {
+      if (contentPlanOutlines) {
         contentPlanOutlines.unsubscribe()
+      }
+      if (outlineChannel) {
+        outlineChannel.unsubscribe()
       }
     }
   }, [outline?.guid])

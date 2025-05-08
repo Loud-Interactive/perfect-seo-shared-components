@@ -383,8 +383,7 @@ const StatusBar = ({
               <p className="mb-0 status">
                 <strong className="text-primary me-2">Outline Status</strong> {keyToLabel(outlineStatus)}
               </p>
-              : <a title="Generate Post" className="py-0 my-0 text-success no-underline" onClick={generateOutlineHandler}>Generate Outline</a>
-
+              : null
         }
       </div>
       {

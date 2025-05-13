@@ -12,14 +12,14 @@ const BrandHeader = ({ synopsis, editable = true }: BrandHeaderProps) => {
 
   const logoCardClasses = classNames('p-3 h-100 d-flex align-items-center justify-content-center',
     {
-      'bg-secondary': !synopsis?.logo_theme,
+      'd-none': !synopsis?.logo_theme,
     }
   )
 
   if (!synopsis || !synopsis?.domain) return null
 
   return (
-    <div className='mb-3 bg-secondary'>
+    <div className='mb-3'>
       <div className='container-xl content-fluid py-3'>
         <div className='row d-flex justify-content-between g-3'>
           {synopsis?.logo_url && <div className='col-12 col-lg-4'>
@@ -33,7 +33,7 @@ const BrandHeader = ({ synopsis, editable = true }: BrandHeaderProps) => {
             </div>
           </div>}
           <div className='col'>
-            <h1 className="text-start mb-1"><TypeWriterText string={`Content for ${synopsis?.brand_name || synopsis?.domain}`} withBlink /></h1>
+            <h1 className="text-start text-white mb-1"><TypeWriterText string={`Content for ${synopsis?.brand_name || synopsis?.domain}`} withBlink /></h1>
             {synopsis?.synopsis && <div className='card p-3'>
               <div className={styles.synopsis}>
                 <div className={styles.synopsisHeader}>

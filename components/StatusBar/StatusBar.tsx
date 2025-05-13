@@ -493,7 +493,7 @@ const StatusBar = ({
         <Modal.Title title="Schema" />
         <Modal.Description className="modal-medium">
           <Form controller={form}>
-            <TextArea fieldName="schema_data" label="Schema" />
+            <TextArea fieldName="schema_data" label="Schema" hint={`Here's the proper markup to put between your opening script tag of <script type="application/ld+json"> and closing script tag of </script>`} />
             <div className="row d-flex justify-content-between align-items-center g-0">
               <div className="col-auto d-flex align-items-center">
                 <button onClick={copyClickHandler} className="btn btn-primary me-2" type="button"><i className="bi bi-copy me-2" />Copy</button>

@@ -369,7 +369,7 @@ const StatusBar = ({
         {(outlineComplete || (postStatus && !outlineStatus)) ?
           <>
             <a title="Generate Post" className="py-0 my-0 text-primary no-underline" onClick={showEditOutlineHandler}>Outline</a>
-            <span className="badge rounded-pill  ms-1 p-1 bg-success"><i className="bi bi-check-lg text-white"></i></span>
+            <span className="badge rounded-pill  ms-1 p-1 bg-success"><i className="bi bi-check-lg text-primary"></i></span>
           </>
           : outlineError ?
             <>
@@ -388,7 +388,7 @@ const StatusBar = ({
           {postComplete ?
             <>
               <strong className="text-primary">Post</strong>
-              <span className="badge rounded-pill ms-1 p-1 bg-success"><i className="bi bi-check-lg text-white"></i></span>
+              <span className="badge rounded-pill ms-1 p-1 bg-success"><i className="bi bi-check-lg text-primary"></i></span>
             </>
             :
             <p className="mb-0 status">
@@ -411,14 +411,14 @@ const StatusBar = ({
           hero_image_prompt ? <div className="col-auto d-flex align-items-center ">
             <i className="bi bi-chevron-right mx-1" />
             {hero_image_url ? <> <strong><a onClick={generateImagePromptHandler} className="text-primary my-0 py-0 no-underline">Hero Image</a></strong>
-              <span className="badge rounded-pill ms-1 p-1 bg-success"><i className="bi bi-check-lg text-white"></i></span>
+              <span className="badge rounded-pill ms-1 p-1 bg-success"><i className="bi bi-check-lg text-primary"></i></span>
             </>
               : <a onClick={generateImagePromptHandler} className=" my-0 py-0 text-success no-underline"><i className="bi bi-plus" />Generate Image</a>}
           </div>
             :
             <div className="col-auto d-flex align-items-center ">
               <i className="bi bi-chevron-right mx-1" />
-              {generateImagePromptLoading ? <span className="text-white"><TypeWriterText string="Generating" withBlink /></span> : <a onClick={generateImagePromptHandler} className=" my-0 py-0"> <span className="text-success">Generate Image Prompt</span></a>}
+              {generateImagePromptLoading ? <span className="text-primary"><TypeWriterText string="Generating" withBlink /></span> : <a onClick={generateImagePromptHandler} className=" my-0 py-0"> <span className="text-success">Generate Image Prompt</span></a>}
             </div>}
         {!live_post_url && <>
           <div className="col-auto d-flex align-items-center">
@@ -439,7 +439,7 @@ const StatusBar = ({
         <div className="col-auto d-flex align-items-center">
           <i className="bi bi-chevron-right mx-1" />
           <a onClick={addLiveUrlClickHandler} className="my-0 py-0 text-primary no-underline">Live</a>
-          <span className="badge rounded-pill ms-1 p-1 bg-success"><i className="bi bi-check-lg text-white"></i></span>
+          <span className="badge rounded-pill ms-1 p-1 bg-success"><i className="bi bi-check-lg text-primary"></i></span>
         </div>
       }
       {
@@ -448,7 +448,7 @@ const StatusBar = ({
           {factcheckComplete ?
             <>
               <strong className="text-primary">Fact Check</strong>
-              <span className="badge rounded-pill ms-1 p-1 bg-success"><i className="bi bi-check-lg text-white"></i></span>
+              <span className="badge rounded-pill ms-1 p-1 bg-success"><i className="bi bi-check-lg text-primary"></i></span>
             </>
             :
             <>
@@ -464,7 +464,7 @@ const StatusBar = ({
               <div className="col-auto d-flex align-items-center ">
                 < i className="bi bi-chevron-right mx-1" />
                 <strong><a onClick={generateSchemaHandler} className="text-primary my-0 py-0 no-underline">Schema</a></strong>
-                <span className="badge rounded-pill ms-1 p-1 bg-success"><i className="bi bi-check-lg text-white"></i></span>
+                <span className="badge rounded-pill ms-1 p-1 bg-success"><i className="bi bi-check-lg text-primary"></i></span>
               </div>
               :
               <div className="col-auto d-flex align-items-center ">
@@ -475,7 +475,7 @@ const StatusBar = ({
             <div className="col-auto d-flex align-items-center ">
               <i className="bi bi-chevron-right mx-1" />
               <strong className="text-primary">Indexed</strong>
-              <span className="badge rounded-pill ms-1 p-1 bg-success"><i className="bi bi-check-lg text-white"></i></span>
+              <span className="badge rounded-pill ms-1 p-1 bg-success"><i className="bi bi-check-lg text-primary"></i></span>
             </div>
             : index_status === 'submitted' ?
               <div className="col-auto d-flex align-items-center ">

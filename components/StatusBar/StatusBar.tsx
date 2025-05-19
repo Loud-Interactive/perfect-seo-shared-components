@@ -370,7 +370,7 @@ const StatusBar = ({
       <div className="col-auto d-flex align-items-center">
         {(outlineComplete || (postStatus && !outlineStatus)) ?
           <>
-            <a title="Generate Post" className="py-0 my-0 text-primary no-underline" onClick={showEditOutlineHandler}>Outline</a>
+            <a title="Generate Post" className="py-0 my-0 text-primary no-underline" onClick={showEditOutlineHandler}><strong>Outline</strong></a>
             <span className="badge rounded-pill  ms-1 p-1 bg-success"><i className="bi bi-check-lg text-white"></i></span>
           </>
           : outlineError ?
@@ -412,7 +412,7 @@ const StatusBar = ({
         {
           hero_image_prompt ? <div className="col-auto d-flex align-items-center ">
             <i className="bi bi-chevron-right mx-1" />
-            {hero_image_url ? <> <strong><a onClick={generateImagePromptHandler} className="text-primary my-0 py-0 no-underline">Hero Image</a></strong>
+            {hero_image_url ? <> <a onClick={generateImagePromptHandler} className="text-primary my-0 py-0 no-underline"><strong>Hero Image</strong></a>
               <span className="badge rounded-pill ms-1 p-1 bg-success"><i className="bi bi-check-lg text-white"></i></span>
             </>
               : <a onClick={generateImagePromptHandler} className=" my-0 py-0 text-success no-underline"><i className="bi bi-plus" />Generate Image</a>}
@@ -440,7 +440,7 @@ const StatusBar = ({
         (type === ContentType.POST && live_post_url && postComplete) &&
         <div className="col-auto d-flex align-items-center">
           <i className="bi bi-chevron-right mx-1" />
-          <a onClick={addLiveUrlClickHandler} className="my-0 py-0 text-primary no-underline">Live</a>
+          <a onClick={addLiveUrlClickHandler} className="my-0 py-0 text-primary no-underline"><strong>Live</strong></a>
           <span className="badge rounded-pill ms-1 p-1 bg-success"><i className="bi bi-check-lg text-white"></i></span>
         </div>
       }
@@ -465,7 +465,7 @@ const StatusBar = ({
             schema_data ?
               <div className="col-auto d-flex align-items-center ">
                 < i className="bi bi-chevron-right mx-1" />
-                <strong><a onClick={generateSchemaHandler} className="text-primary my-0 py-0 no-underline">Schema</a></strong>
+                <a onClick={generateSchemaHandler} className="text-primary my-0 py-0 no-underline"><strong>Schema</strong></a>
                 <span className="badge rounded-pill ms-1 p-1 bg-success"><i className="bi bi-check-lg text-white"></i></span>
               </div>
               :

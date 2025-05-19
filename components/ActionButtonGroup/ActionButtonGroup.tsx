@@ -63,6 +63,8 @@ const ActionButtonGroup = ({
     return regenerateHTMLfromDoc(reqBody)
   };
 
+  console.log(data)
+
   const regenerateHandler = () => {
     setShowEditModal(false);
     refresh();

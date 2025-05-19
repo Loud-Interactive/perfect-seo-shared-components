@@ -500,13 +500,13 @@ export const getOutlinesByContentPlan = async (content_plan_guid: string, pagina
       .select('*', { count: 'exact' })
       .eq("content_plan_guid", content_plan_guid)
       .range(startIndex, endIndex)
-      .order('created_at', { ascending: false })
+      .order('updated_at', { ascending: false })
   }
   else {
     return supabase.from('content_plan_outlines')
       .select('*')
       .eq("content_plan_guid", content_plan_guid)
-      .order('created_at', { ascending: false })
+      .order('updated_at', { ascending: false })
   }
 
 }

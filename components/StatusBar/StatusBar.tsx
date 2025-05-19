@@ -292,11 +292,19 @@ const StatusBar = ({
         return null;
       }
       if (data) {
-        console.log('Indexed status:', data);
-        if (index_status === 'submitted' && data?.success === true) {
+        if (data?.coverageState === 'Submitted and indexed' && data?.success === true) {
           supabase
             .from('tasks')
             .update({ index_status: 'indexed' })
+            .eq('task_id', task_id)
+            .select("*")
+            .then(res => {
+            })
+        }
+        else if (data?.coverageState !== 'Submitted and indexed' && index_status === 'indexed') {
+          supabase
+            .from('tasks')
+            .update({ index_status: 'submitted' })
             .eq('task_id', task_id)
             .select("*")
             .then(res => {
@@ -312,7 +320,10 @@ const StatusBar = ({
   };
 
   useEffect(() => {
-    if (type === ContentType.POST && live_post_url && index_status !== 'indexed') {
+    if (type === ContentType.POST
+      && live_post_url
+      // && index_status !== 'indexed'
+    ) {
       checkIfIndexed(live_post_url)
     }
   }, [live_post_url])

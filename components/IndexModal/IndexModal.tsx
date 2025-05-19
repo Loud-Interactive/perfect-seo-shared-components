@@ -43,7 +43,7 @@ const IndexModal = ({ post, onClose, setPost }: IndexModalProps) => {
       <h3 className="mb-3">Index Modal</h3>
       <div>
         {!success ? <>
-          <p>{post?.index_status === 'indexed' ? 'Post has already been indexed. Would you like to reindex?' : post?.index_status === 'submitted' ? 'Post has been submitted. Would you like to resubmit?' : 'Would you like to index this post?'}
+          <p>{post?.index_status === 'Submitted and indexed' ? 'Post has already been indexed. Would you like to reindex?' : post?.index_status === 'submitted' ? 'Post has been submitted. Would you like to resubmit?' : post?.index_status ? `Status: ${post?.index_status}` : 'Would you like to index this post?'}
           </p>
           <p>
             <strong>URL</strong><br />
@@ -60,7 +60,7 @@ const IndexModal = ({ post, onClose, setPost }: IndexModalProps) => {
             <button className="btn btn-primary" disabled={loading} onClick={onClose}>close</button>
           </div>
           : <div className="mt-3">
-            <button className="btn btn-primary" disabled={loading} onClick={clickHandler}>{loading ? 'Indexing...' : ['indexed', 'submitted'].includes(post?.index_status) ? 'Reindex' : 'Index'}</button>
+            <button className="btn btn-primary" disabled={loading} onClick={clickHandler}>{loading ? 'Indexing...' : post?.index_status ? 'Reindex' : 'Index'}</button>
           </div>}
       </div>
     </div>

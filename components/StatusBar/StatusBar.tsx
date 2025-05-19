@@ -292,19 +292,10 @@ const StatusBar = ({
         return null;
       }
       if (data) {
-        if (data?.coverageState === 'Submitted and indexed' && data?.success === true) {
+        if (data?.coverageState !== index_status) {
           supabase
             .from('tasks')
-            .update({ index_status: 'indexed' })
-            .eq('task_id', task_id)
-            .select("*")
-            .then(res => {
-            })
-        }
-        else if (data?.coverageState !== 'Submitted and indexed' && index_status === 'indexed') {
-          supabase
-            .from('tasks')
-            .update({ index_status: 'submitted' })
+            .update({ index_status: data?.coverageState })
             .eq('task_id', task_id)
             .select("*")
             .then(res => {
@@ -322,7 +313,7 @@ const StatusBar = ({
   useEffect(() => {
     if (type === ContentType.POST
       && live_post_url
-      // && index_status !== 'indexed'
+      && index_status !== 'Submitted and indexed'
     ) {
       checkIfIndexed(live_post_url)
     }
@@ -482,15 +473,15 @@ const StatusBar = ({
                 <i className="bi bi-chevron-right mx-1" />
                 {generateSchemaLoading ? <TypeWriterText string='Generating' withBlink /> : <a onClick={generateSchemaHandler} className=" my-0 py-0"><span className="text-success">Generate Schema</span></a>}
               </div>}
-          {index_status === 'indexed' ?
+          {index_status === 'Submitted and indexed' ?
             <div className="col-auto d-flex align-items-center ">
               <i className="bi bi-chevron-right mx-1" />
-              <strong className="text-primary">Indexed</strong>
+              <strong className="text-primary">{index_status}</strong>
               <span className="badge rounded-pill ms-1 p-1 bg-success"><i className="bi bi-check-lg text-white"></i></span>
             </div>
-            : index_status === 'submitted' ?
+            : index_status ?
               <div className="col-auto d-flex align-items-center ">
-                <i className="bi bi-chevron-right mx-1" /> Submitted
+                <i className="bi bi-chevron-right mx-1" /><span className="text-warning"> {index_status}</span>
                 <a onClick={indexHandler} className=" ms-1 my-0 py-0 text-success no-underline">Re-Index Post</a>
               </div> :
 

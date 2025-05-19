@@ -481,7 +481,7 @@ const StatusBar = ({
             </div>
             : index_status ?
               <div className="col-auto d-flex align-items-center ">
-                <i className="bi bi-chevron-right mx-1" /><span className="text-warning"> {index_status}</span>
+                <i className="bi bi-chevron-right mx-1" /><strong className="text-warning"> {index_status}</strong>
                 <a onClick={indexHandler} className=" ms-1 my-0 py-0 text-success no-underline">Re-Index Post</a>
               </div> :
 

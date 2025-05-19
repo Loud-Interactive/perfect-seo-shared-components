@@ -298,8 +298,6 @@ const StatusBar = ({
             .update({ index_status: data?.coverageState })
             .eq('task_id', task_id)
             .select("*")
-            .then(res => {
-            })
         }
       }
       return data;

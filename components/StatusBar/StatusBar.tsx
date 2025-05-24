@@ -292,12 +292,16 @@ const StatusBar = ({
         return null;
       }
       if (data) {
+        console.log('Indexed status:', data);
         if (data?.coverageState !== index_status) {
           supabase
             .from('tasks')
             .update({ index_status: data?.coverageState })
             .eq('task_id', task_id)
             .select("*")
+            .then(res => {
+              console.log('Updated index status:', res.data);
+            })
         }
       }
       return data;

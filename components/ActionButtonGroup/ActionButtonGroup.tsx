@@ -3,8 +3,8 @@ import * as Modal from '@/perfect-seo-shared-components/components/Modal/Modal'
 import { useDispatch, useSelector } from 'react-redux';
 import { ContentType } from '@/perfect-seo-shared-components/data/types';
 import { addToast, selectEmail, selectIsAdmin } from '@/perfect-seo-shared-components/lib/features/User';
-import { useEffect, useState } from 'react';
-import { createPost, deletePost, deleteOutline, fetchOutlineData, regenerateHTML, regenerateHTMLfromDoc, regenerateOutline, regeneratePost, updateLiveUrl } from '@/perfect-seo-shared-components/services/services';
+import { useEffect, useMemo, useState } from 'react';
+import { createPost, deletePost, deleteOutline, fetchOutlineData, regenerateHTML, regenerateHTMLfromDoc, regenerateOutline, regeneratePost, updateLiveUrl, getPostStatusFromOutline } from '@/perfect-seo-shared-components/services/services';
 import { createClient } from '@/perfect-seo-shared-components/utils/supabase/client';
 import en from '@/assets/en.json'
 import CreateContentModal from '../CreateContentModal/CreateContentModal';
@@ -27,7 +27,7 @@ interface ActionButtonGroupProps {
   data: any
   refresh: () => void
   type: ContentType
-  setData: (data: any) => void
+  setData?: (data: any) => void
 }
 
 
@@ -42,12 +42,39 @@ const ActionButtonGroup = ({
   const dispatch = useDispatch()
   const isAdmin = useSelector(selectIsAdmin)
   const email = useSelector(selectEmail)
+  const [outlineGUID, setOutlineGUID] = useState<string>(null);
+  const [postData, setPostData] = useState(type === ContentType.POST ? data : null)
+
+  useEffect(() => {
+    if (type === ContentType.OUTLINE) {
+      let guid = data?.outline?.guid || data?.guid
+      setOutlineGUID(guid)
+    }
+    else {
+      setOutlineGUID(data?.content_plan_outline_guid)
+    }
+  }, [data])
+
+  const fetchPostData = () => {
+    if (outlineGUID) {
+      getPostStatusFromOutline(outlineGUID)
+        .then(res => {
+          setPostData(res.data[0])
+        })
+    }
+  }
+
+  useEffect(() => {
+    if (type === ContentType.OUTLINE && outlineGUID) {
+      fetchPostData()
+    }
+  }, [outlineGUID])
 
   const submitHTMLStylingHandler = (receivingEmail, language?) => {
     let reqBody: RegeneratePost = {
       email: email,
       receiving_email: receivingEmail,
-      content_plan_outline_guid: data.content_plan_outline_guid
+      content_plan_outline_guid: outlineGUID
     };
 
     return regenerateHTML(reqBody)
@@ -56,12 +83,13 @@ const ActionButtonGroup = ({
     let reqBody: RegeneratePost = {
       email: email,
       receiving_email: receivingEmail,
-      content_plan_outline_guid: data.content_plan_outline_guid,
+      content_plan_outline_guid: outlineGUID,
     };
 
 
     return regenerateHTMLfromDoc(reqBody)
   };
+
 
   const regenerateHandler = () => {
     setShowEditModal(false);
@@ -89,10 +117,10 @@ const ActionButtonGroup = ({
   const liveURLForm = useForm()
 
   useEffect(() => {
-    if (data?.live_post_url) {
-      liveURLForm.setState({ live_url: data?.live_post_url })
+    if (postData?.live_post_url) {
+      liveURLForm.setState({ live_url: postData?.live_post_url })
     }
-  }, [data?.live_post_url])
+  }, [postData?.live_post_url])
 
   // Click handlers and data handlers 
   const deleteClickHandler = (e) => {
@@ -101,29 +129,30 @@ const ActionButtonGroup = ({
   }
 
   const getOutlineData = () => {
-    fetchOutlineData(data?.guid)
+    let guid = outlineGUID
+    if (!guid) return
+    fetchOutlineData(guid)
       .then(res => {
+
         setOutlineData(res.data[0])
       })
   }
   useEffect(() => {
     let outlineChannel;
-    if (data?.guid && type === ContentType.OUTLINE) {
 
-      getOutlineData()
-      outlineChannel = supabase.channel(`actionbutton-outline-status-${data?.guid}`)
-        .on(
-          'postgres_changes',
-          { event: '*', schema: 'public', table: 'content_plan_outlines', filter: `guid=eq.${data?.guid}` },
-          (payload) => {
-            if (payload.new) {
-              setOutlineData(payload.new)
-            }
-
+    getOutlineData()
+    outlineChannel = supabase.channel(`actionbutton-outline-status-${outlineGUID}`)
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'content_plan_outlines', filter: `guid=eq.${outlineGUID}` },
+        (payload) => {
+          if (payload.new) {
+            setOutlineData(payload.new)
           }
-        )
-        .subscribe()
-    }
+
+        }
+      )
+      .subscribe()
     if (outlineChannel) {
       return () => {
         outlineChannel.unsubscribe()
@@ -133,11 +162,11 @@ const ActionButtonGroup = ({
 
   const deleteHandler = () => {
     if (type === ContentType.POST) {
-      if (data?.task_id) {
-        deletePost(data?.task_id)
+      if (postData?.task_id) {
+        deletePost(postData?.task_id)
           .then(res => {
             if (res.data) {
-              let historyItem: any = { guid: data?.content_plan_outline_guid, email }
+              let historyItem: any = { guid: outlineGUID, email }
               if (data?.title) {
                 historyItem.title = data?.title
               }
@@ -158,7 +187,7 @@ const ActionButtonGroup = ({
       }
     }
     else {
-      deleteOutline(data?.guid)
+      deleteOutline(outlineGUID)
         .then(res => {
           refresh();
           setShowDeleteModal(false)
@@ -177,9 +206,8 @@ const ActionButtonGroup = ({
   }
 
   const generatePostHandler = (receiving_email, writing_language?) => {
-    let newOutline = typeof data?.outline === 'string' ? JSON.parse(data?.outline) : data?.outline
     let reqBody: GenerateContentPost = {
-      email: email, content_plan_outline_guid: data.guid,
+      email: email, content_plan_outline_guid: outlineGUID,
       receiving_email: receiving_email,
       writing_language: writing_language || 'English'
     };
@@ -188,8 +216,8 @@ const ActionButtonGroup = ({
 
   const regeneratePostHandler = (receiving_email, writing_language) => {
     setRegenerateError(null)
-    return regeneratePost(data?.content_plan_outline_guid, { receiving_email: receiving_email, email, writing_language }).then(res => {
-      let historyItem: any = { guid: data?.content_plan_outline_guid, email }
+    return regeneratePost(outlineGUID, { receiving_email: receiving_email, email, writing_language }).then(res => {
+      let historyItem: any = { guid: outlineGUID, email }
       if (data?.title) {
         historyItem.title = data?.title
       }
@@ -210,18 +238,22 @@ const ActionButtonGroup = ({
     let url = liveURLForm.getState.live_url
     if (url) {
       if (liveURLForm.validate({ requiredFields: ['live_url'], validatorFields: ['live_url'] })) {
-        updateLiveUrl(data.content_plan_outline_guid, url || '')
+        updateLiveUrl(outlineGUID, url || '')
           .then(res => {
-            setData({ ...data, live_post_url: url })
-            setShowLiveURLModal(false)
+            if (setData) {
+              setData({ ...data, live_post_url: url })
+              setShowLiveURLModal(false)
+            }
           })
       }
 
     }
     else {
-      updateLiveUrl(data.content_plan_outline_guid, '')
+      updateLiveUrl(outlineGUID, '')
         .then(res => {
-          setData({ ...data, live_post_url: 'url' })
+          if (setData) {
+            setData({ ...data, live_post_url: 'url' })
+          }
           setShowLiveURLModal(false)
         })
     }
@@ -230,305 +262,336 @@ const ActionButtonGroup = ({
   const regeneratePostHTMLSubmitHandler = (email) => {
     let reqObj = {
       email: email,
-      content_plan_outline_guid: data?.content_plan_outline_guid
+      content_plan_outline_guid: outlineGUID
     }
     return regenerateHTML(reqObj)
   }
 
   const regenerateOutlineClickHandler = () => {
-    regenerateOutline(data?.guid, { email: email, client_domain: data?.client_domain, client_name: data?.brand_name, post_title: data?.post_title, content_plan_guid: data?.content_plan_guid })
+    regenerateOutline(outlineGUID, { email: email, client_domain: data?.client_domain, client_name: data?.brand_name, post_title: data?.post_title, content_plan_guid: data?.content_plan_guid })
       .then(res => {
         dispatch(addToast({ title: "Regenerating Outline", type: "info", content: `Regenerating outline for ${data?.post_title || data?.client_domain}` }))
       })
   }
 
-  const copyOutlineGuid = () => {
+  const copyoutlineGUID = (e) => {
+    e.preventDefault();
     let copiedGuid;
     if (type === ContentType.POST) {
-      copiedGuid = data?.content_plan_outline_guid
+      copiedGuid = postData?.task_id
     } else if (type === ContentType.OUTLINE) {
-      copiedGuid = data?.guid
+      copiedGuid = outlineGUID
     }
     navigator.clipboard.writeText(copiedGuid)
     dispatch(addToast({ title: "Copied Outline GUID", type: "success", content: `Outline GUID ${copiedGuid} copied to clipboard` }))
   }
-  const copyPostGuid = () => {
-    navigator.clipboard.writeText(data?.task_id)
-    dispatch(addToast({ title: "Copied Post GUID", type: "success", content: `Post GUID ${data?.task_id} copied to clipboard` }))
+  const copyPostGuid = (e) => {
+    e.preventDefault();
+    navigator.clipboard.writeText(postData?.task_id)
+    dispatch(addToast({ title: "Copied Post GUID", type: "success", content: `Post GUID ${postData?.task_id} copied to clipboard` }))
   }
-  const copyImageThinking = () => {
-    navigator.clipboard.writeText(data?.hero_image_thinking)
+  const copyImageThinking = (e) => {
+    e.preventDefault();
+    navigator.clipboard.writeText(postData?.hero_image_thinking)
     dispatch(addToast({ title: "Copied Image Prompt", type: "success", content: `Image Prompt copied to clipboard` }))
   }
-  const copyImagePrompt = () => {
-    navigator.clipboard.writeText(data?.hero_image_prompt)
+  const copyImagePrompt = (e) => {
+    e.preventDefault();
+    navigator.clipboard.writeText(postData?.hero_image_prompt)
     dispatch(addToast({ title: "Copied Image Prompt", type: "success", content: `Image Prompt copied to clipboard` }))
 
   }
-  return (
-    <>
-      <div className='row d-flex justify-content-end'>
-        <div className="input-group d-flex justify-content-end">
-          {(data?.google_doc_link && data?.html_link) &&
-            <>
+
+
+
+  if ((outlineGUID && type === ContentType.POST) || (outlineGUID && type === ContentType.OUTLINE)) {
+    return (
+      <>
+        <div className='row d-flex justify-content-end'>
+          <div className="input-group d-flex justify-content-end">
+            {(postData?.google_doc_link && postData?.html_link) &&
+              <>
+                <a
+                  href={postData.html_link}
+                  className="btn btn-secondary btn-standard"
+                  title="HTML File"
+                  target="_blank"
+                >
+                  <i className="bi bi-filetype-html " />
+                </a>
+                <a
+                  href={postData.google_doc_link}
+                  className="btn btn-secondary btn-standard"
+                  title="Google Docs"
+                  target="_blank"
+                >
+                  <i className="bi bi-filetype-doc " />
+                </a>
+              </>}
+            {(type === ContentType.OUTLINE && data?.outline) &&
               <a
-                href={data.html_link}
-                className="btn btn-warning btn-standard"
-                title="HTML File"
-                target="_blank"
+                title='edit outline'
+                className="btn btn-secondary btn-standard no-truncate"
+                onClick={(e) => { setShowEditModal(true) }}
               >
-                <i className="bi bi-filetype-html " />
+                <i className="bi bi-pencil-fill me-1" /> Edit
               </a>
-              <a
-                href={data.google_doc_link}
-                className="btn btn-warning btn-standard"
-                title="Google Docs"
-                target="_blank"
-              >
-                <i className="bi bi-filetype-doc " />
-              </a>
-            </>}
-          {(type === ContentType.OUTLINE && data?.outline) &&
-            <button
-              title='edit outline'
-              className="btn btn-warning btn-standard no-truncate"
-              onClick={() => { setShowEditModal(true) }}
-            >
-              <i className="bi bi-pencil-fill me-1" /> Edit
-            </button>
-          }
-          <button className='btn btn-primary btn-standard d-flex justify-content-center align-items-center' onClick={deleteClickHandler} title={`View GUID: ${data?.content_plan_outline_guid}`}><i className="bi bi-trash pt-1" /></button>
-          <DropdownMenu.Root>
-            <DropdownMenu.Trigger className="btn btn-warning btn-standard d-flex align-items-center justify-content-center">
-              <i className="bi bi-three-dots-vertical" />
-            </DropdownMenu.Trigger>
-            <DropdownMenu.Portal>
-              <DropdownMenu.Content align="end" className="bg-primary z-100 card">
-                {(data?.content_plan_outline_guid && outlineData?.outline) &&
-                  <DropdownMenu.Item>
-                    <button className="btn btn-transparent w-100" onClick={handleEditOutline}>
-                      Edit Outline
-                    </button>
-                  </DropdownMenu.Item>}
-                {data?.content_plan_guid &&
-                  <DropdownMenu.Item>
-                    <a
-                      href={`/contentplan/${data?.content_plan_guid}`}
-                      target="_blank"
-                      className="btn btn-transparent"
-                    >
-                      View Content Plan
-                    </a>
-                  </DropdownMenu.Item>}
-                {type === ContentType.OUTLINE &&
-                  <>
+            }
+            <button className='btn btn-primary btn-standard d-flex justify-content-center align-items-center' onClick={deleteClickHandler} title={`View GUID: ${outlineGUID}`}><i className="bi bi-trash pt-1" /></button>
+            <DropdownMenu.Root>
+              <DropdownMenu.Trigger className="btn btn-secondary btn-standard d-flex align-items-center justify-content-center">
+                <i className="bi bi-three-dots-vertical" />
+              </DropdownMenu.Trigger>
+              <DropdownMenu.Portal>
+                <DropdownMenu.Content align="end" className="bg-secondary z-100 card">
+                  {(outlineData?.outline) &&
                     <DropdownMenu.Item>
-                      <button
-                        className="btn btn-transparent text-black w-100"
-                        onClick={(e) => {
-                          regenerateOutlineClickHandler();
-                        }}
-                      >
-                        Regenerate Outline
-                      </button>
-                    </DropdownMenu.Item>
-                    <DropdownMenu.Item>
-                      <button
-                        className="btn btn-transparent text-black w-100"
-                        onClick={() => { setShowGeneratePostModal(true) }}
-                      >
-                        Generate Post
-                      </button>
-                    </DropdownMenu.Item>
-                  </>}
-                {type === ContentType.POST &&
-                  <>
-                    {data?.hero_image_prompt && <DropdownMenu.Item>
-                      <button className="btn btn-transparent w-100" onClick={() => { setShowImageGeneratePrompt(true) }}>Show Hero Image Prompt</button>
-                    </DropdownMenu.Item>
-                    }
-                    {(isAdmin && data?.task_id) && <DropdownMenu.Item>
-                      <Link className="btn btn-transparent w-100" href={`/post/${data?.task_id}`} target="_blank">Post Page</Link>
+                      <a className="btn btn-transparent" onClick={handleEditOutline}>
+                        Edit Outline
+                      </a>
                     </DropdownMenu.Item>}
+                  {data?.content_plan_guid &&
                     <DropdownMenu.Item>
-                      <button className="btn btn-transparent w-100" onClick={() => { setShowRegeneratePostModal(true) }}>Regenerate Post</button>
-                    </DropdownMenu.Item>
-                    <DropdownMenu.Item>
-                      <button className="btn btn-transparent w-100" onClick={() => { setShowLiveURLModal(true) }}>{data?.live_post_url ? 'Edit' : 'Add'} Live Post URL</button>
-                    </DropdownMenu.Item>
-                    {data?.live_post_url && <>
-                      {isAdmin && <>
-                        {data?.factcheck_guid ?
-                          <DropdownMenu.Item>
-                            <a
-                              href={`https://factcheckPerfect.ai/fact-checks/${data?.factcheck_guid}`}
-                              target="_blank"
-                              className="btn btn-transparent"
-
-                            >
-                              Fact-Check Results
-                            </a>
-                          </DropdownMenu.Item>
-                          : <DropdownMenu.Item>
-                            <a
-                              href={`https://factcheckPerfect.ai/fact-checks?url=${encodeURI(data?.live_post_url)}&post_guid=${data?.content_plan_outline_guid}`}
-                              target="_blank"
-                              className="btn btn-transparent"
-
-                            >
-                              Fact-Check Post
-                            </a>
-                          </DropdownMenu.Item>
-                        }
-                      </>}
-                      {isAdmin && <DropdownMenu.Item>
-                        <button
-                          onClick={() => { setShowIndexModal(true) }}
-                          className="btn btn-transparent w-100"
+                      <a
+                        href={`/contentplan/${data?.content_plan_guid}`}
+                        target="_blank"
+                        className="btn btn-transparent"
+                      >
+                        View Content Plan
+                      </a>
+                    </DropdownMenu.Item>}
+                  {type === ContentType.OUTLINE &&
+                    <>
+                      {outlineGUID && <DropdownMenu.Item>
+                        <a
+                          className="btn btn-transparent"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            regenerateOutlineClickHandler();
+                          }}
                         >
-                          Index Post
-                        </button>
+                          Regenerate Outline
+                        </a>
+                      </DropdownMenu.Item>}
+                      {postData ?
+                        <DropdownMenu.Item>
+                          <a className="btn btn-transparent" onClick={(e) => {
+                            e.preventDefault();
+                            setShowRegeneratePostModal(true)
+                          }}>Regenerate Post</a>
+                        </DropdownMenu.Item>
+                        : <DropdownMenu.Item>
+                          <a
+                            className="btn btn-transparent text-primary"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              setShowGeneratePostModal(true)
+                            }}
+                          >
+                            Generate Post
+                          </a>
+                        </DropdownMenu.Item>
+                      }
+
+                    </>}
+                  {type === ContentType.POST &&
+                    <>
+                      {postData?.hero_image_prompt && <DropdownMenu.Item>
+                        <a className="btn btn-transparent" onClick={(e) => { e.preventDefault(); setShowImageGeneratePrompt(true) }}>Show Hero Image Prompt</a>
+                      </DropdownMenu.Item>
+                      }
+                      {(isAdmin && postData?.task_id) && <DropdownMenu.Item>
+                        <Link className="btn btn-transparent" href={`/post/${postData?.task_id}`} target="_blank">Post Page</Link>
                       </DropdownMenu.Item>}
                       <DropdownMenu.Item>
-                        <a
-                          href={`https://socialperfect.ai?url=${encodeURI(data?.live_post_url)}`}
-                          target="_blank"
-                          className="btn btn-transparent"
-
-                        >
-                          Generate Social Posts
-                        </a>
+                        <a className="btn btn-transparent" onClick={(e) => {
+                          e.preventDefault();
+                          setShowRegeneratePostModal(true)
+                        }}>Regenerate Post</a>
                       </DropdownMenu.Item>
                       <DropdownMenu.Item>
-                        <a
-                          href={`https://app.ahrefs.com/v2-site-explorer/organic-keywords?columns=CPC%7C%7CKD%7C%7CLastUpdated%7C%7COrganicTraffic%7C%7CPaidTraffic%7C%7CPosition%7C%7CPositionHistory%7C%7CSERP%7C%7CSF%7C%7CURL%7C%7CVolume&compareDate=dontCompare&country=us&currentDate=today&keywordRules=&limit=100&mode=prefix&offset=0&positionChanges=&serpFeatures=&sort=Volume&sortDirection=desc&target=${encodeURI(data?.live_post_url.replace("https://", '').replace("http://", "").replace("www.", ""))}&urlRules=&volume_type=average`}
-                          target="_blank"
-                          className="btn btn-transparent"
-                        >
-                          AHREFs Report
-                        </a>
+                        <a className="btn btn-transparent" onClick={(e) => {
+                          e.preventDefault(); setShowLiveURLModal(true)
+                        }}>{postData?.live_post_url ? 'Edit' : 'Add'} Live Post URL</a>
                       </DropdownMenu.Item>
-                      <DropdownMenu.Item>
-                        <a
-                          href={`https://search.google.com/search-console/performance/search-analytics?resource_id=sc-domain%3A${urlSanitization(data?.live_post_url)}&hl=en&page=*${encodeURI(data?.live_post_url)}`}
-                          target="_blank"
-                          className="btn btn-transparent"
+                      {postData?.live_post_url && <>
+                        {isAdmin && <>
+                          {postData?.factcheck_guid ?
+                            <DropdownMenu.Item>
+                              <a
+                                href={`https://factcheckPerfect.ai/fact-checks/${postData?.factcheck_guid}`}
+                                target="_blank"
+                                className="btn btn-transparent text-primary"
 
-                        >
-                          GSC Report
-                        </a>
-                      </DropdownMenu.Item>
+                              >
+                                Fact-Check Results
+                              </a>
+                            </DropdownMenu.Item>
+                            : <DropdownMenu.Item>
+                              <a
+                                href={`https://factcheckPerfect.ai/fact-checks?url=${encodeURI(postData?.live_post_url)}&post_guid=${outlineGUID}`}
+                                target="_blank"
+                                className="btn btn-transparent text-primary"
+
+                              >
+                                Fact-Check Post
+                              </a>
+                            </DropdownMenu.Item>
+                          }
+                        </>}
+                        {isAdmin && <DropdownMenu.Item>
+                          <a
+                            onClick={(e) => {
+                              e.preventDefault();
+                              setShowIndexModal(true)
+                            }}
+                            className="btn btn-transparent"
+                          >
+                            Index Post
+                          </a>
+                        </DropdownMenu.Item>}
+                        <DropdownMenu.Item>
+                          <a
+                            href={`https://socialperfect.ai?url=${encodeURI(postData?.live_post_url)}`}
+                            target="_blank"
+                            className="btn btn-transparent text-primary"
+
+                          >
+                            Generate Social Posts
+                          </a>
+                        </DropdownMenu.Item>
+                        <DropdownMenu.Item>
+                          <a
+                            href={`https://app.ahrefs.com/v2-site-explorer/organic-keywords?columns=CPC%7C%7CKD%7C%7CLastUpdated%7C%7COrganicTraffic%7C%7CPaidTraffic%7C%7CPosition%7C%7CPositionHistory%7C%7CSERP%7C%7CSF%7C%7CURL%7C%7CVolume&compareDate=dontCompare&country=us&currentDate=today&keywordRules=&limit=100&mode=prefix&offset=0&positionChanges=&serpFeatures=&sort=Volume&sortDirection=desc&target=${encodeURI(postData?.live_post_url.replace("https://", '').replace("http://", "").replace("www.", ""))}&urlRules=&volume_type=average`}
+                            target="_blank"
+                            className="btn btn-transparent text-primary"
+                          >
+                            AHREFs Report
+                          </a>
+                        </DropdownMenu.Item>
+                        <DropdownMenu.Item>
+                          <a
+                            href={`https://search.google.com/search-console/performance/search-analytics?resource_id=sc-domain%3A${urlSanitization(postData?.live_post_url)}&hl=en&page=*${encodeURI(data?.live_post_url)}`}
+                            target="_blank"
+                            className="btn btn-transparent text-primary"
+
+                          >
+                            GSC Report
+                          </a>
+                        </DropdownMenu.Item>
+                      </>}
                     </>}
-                  </>}
-                {isAdmin && <>
-                  {(type === ContentType.OUTLINE && data?.guid) && <DropdownMenu.Item>
-                    <button className="btn btn-transparent w-100" onClick={copyOutlineGuid}>
-                      Copy Outline GUID
-                    </button>
-                  </DropdownMenu.Item>
+                  {isAdmin && <>
+                    {(type === ContentType.OUTLINE && outlineGUID) && <DropdownMenu.Item>
+                      <a className="btn btn-transparent" onClick={copyoutlineGUID}>
+                        Copy Outline GUID
+                      </a>
+                    </DropdownMenu.Item>
+                    }
+                    {(type === ContentType.POST && postData?.task_id) && <DropdownMenu.Item>
+                      <a className="btn btn-transparent" onClick={copyPostGuid}>
+                        Copy Post GUID
+                      </a>
+                    </DropdownMenu.Item>
+                    }
+                    {(type === ContentType.POST && outlineGUID) && <DropdownMenu.Item>
+                      <a className="btn btn-transparent" onClick={copyoutlineGUID}>
+                        Copy Outline GUID
+                      </a>
+                    </DropdownMenu.Item>
+                    }
+                  </>
                   }
-                  {(type === ContentType.POST && data?.task_id) && <DropdownMenu.Item>
-                    <button className="btn btn-transparent w-100" onClick={copyPostGuid}>
-                      Copy Post GUID
-                    </button>
-                  </DropdownMenu.Item>
-                  }
-                  {(type === ContentType.POST && data?.content_plan_outline_guid) && <DropdownMenu.Item>
-                    <button className="btn btn-transparent w-100" onClick={copyOutlineGuid}>
-                      Copy Outline GUID
-                    </button>
-                  </DropdownMenu.Item>
-                  }
-                </>
+                </DropdownMenu.Content>
+              </DropdownMenu.Portal>
+            </DropdownMenu.Root>
+          </div>
+          {regenerateError && <div className='col-12 text-end text-primary mt-2'>
+            <TypeWriterText string={regenerateError} withBlink />
+          </div>}
+        </div>
+        {/* Modals  */}
+        <Modal.Overlay open={showDeleteModal} onClose={() => { setShowDeleteModal(null) }}>
+          <Modal.Title title="Delete Plan" />
+          <Modal.Description>
+            Are you sure you want to delete this post?
+            <div className='d-flex justify-content-between mt-5'>
+              <button onClick={() => { setShowDeleteModal(null) }} className="btn btn-transparent">Cancel</button>
+              <button onClick={(e) => { e.preventDefault(); deleteHandler() }} className="btn btn-primary">Yes</button>
+            </div>
+          </Modal.Description>
+        </Modal.Overlay>
+        <Modal.Overlay open={showEditModal} onClose={() => { setShowEditModal(null) }}>
+          <CreateContentModal regenerateHandler={regenerateHandler} standalone data={data} titleChange={() => { }} onClose={() => { setShowEditModal(false) }} isAuthorized={true} />
+        </Modal.Overlay>
+        <Modal.Overlay
+          open={showRegeneratePostModal}
+          onClose={() => { setShowRegeneratePostModal(null); refresh() }}
+        >
+          <RegeneratePostModal title={data?.title || data['Post Title']} submitHTMLStylingHandler={submitHTMLStylingHandler} submitGoogleDocRegenerateHandler={submitGoogleDocRegenerateHandler} onClose={() => { setShowRegeneratePostModal(null); }} type={GenerateTypes.REGENERATE} submitHandler={regeneratePostHandler} onSuccess={() => { setShowRegeneratePostModal(false); refresh() }} />
+        </Modal.Overlay >
+        <Modal.Overlay
+          open={showGeneratePostModal}
+          onClose={() => { setShowGeneratePostModal(null); refresh() }}
+        >
+          <RegeneratePostModal title={data?.title || data['Post Title']} submitHTMLStylingHandler={submitHTMLStylingHandler} submitGoogleDocRegenerateHandler={submitGoogleDocRegenerateHandler} onClose={() => { setShowGeneratePostModal(null); }} type={GenerateTypes.GENERATE} submitHandler={generatePostHandler} onSuccess={() => { setShowGeneratePostModal(false); refresh() }} />
+        </Modal.Overlay >
+        <Modal.Overlay closeIcon open={showLiveURLModal} onClose={() => setShowLiveURLModal(false)} className="modal-small">
+          <Modal.Title title="Add Live URL" />
+          <div className="card bg-secondary p-3">
+            <Form controller={liveURLForm}>
+              <TextInput fieldName="live_url" label="Live URL" validator={urlValidator} type="url" required
+                button={<button className="btn btn-primary" onClick={saveLiveUrl} type="submit" ><i className="bi bi-floppy-fill" /></button>} />
+            </Form>
+          </div>
+        </Modal.Overlay>
+        <Modal.Overlay closeIcon open={showFactCheckModal} onClose={() => setShowFactCheckModal(false)}>
+          <div className="modal-body">
+            {postData?.factcheck_guid ?
+              <FactCheckResultPage isModal uuid={postData?.factcheck_guid} />
+              :
+              <FactCheckModal onClose={
+                () => {
+                  setShowFactCheckModal(false)
                 }
-              </DropdownMenu.Content>
-            </DropdownMenu.Portal>
-          </DropdownMenu.Root>
-        </div>
-        {regenerateError && <div className='col-12 text-end text-primary mt-2'>
-          <TypeWriterText string={regenerateError} withBlink />
-        </div>}
-      </div>
-      {/* Modals  */}
-      <Modal.Overlay open={showDeleteModal} onClose={() => { setShowDeleteModal(null) }}>
-        <Modal.Title title="Delete Plan" />
-        <Modal.Description>
-          Are you sure you want to delete this post?
-          <div className='d-flex justify-content-between mt-5'>
-            <button onClick={() => { setShowDeleteModal(null) }} className="btn btn-warning">Cancel</button>
-            <button onClick={(e) => { e.preventDefault(); deleteHandler() }} className="btn btn-primary">Yes</button>
+              } post={postData} setLocalPost={setPostData} />
+            }
           </div>
-        </Modal.Description>
-      </Modal.Overlay>
-      <Modal.Overlay open={showEditModal} onClose={() => { setShowEditModal(null) }}>
-        <CreateContentModal regenerateHandler={regenerateHandler} standalone data={data} titleChange={() => { }} onClose={() => { setShowEditModal(false) }} isAuthorized={true} />
-      </Modal.Overlay>
-      <Modal.Overlay
-        open={showRegeneratePostModal}
-        onClose={() => { setShowRegeneratePostModal(null); refresh() }}
-      >
-        <RegeneratePostModal submitHTMLStylingHandler={submitHTMLStylingHandler} submitGoogleDocRegenerateHandler={submitGoogleDocRegenerateHandler} onClose={() => { setShowRegeneratePostModal(null); }} type={GenerateTypes.REGENERATE} submitHandler={regeneratePostHandler} onSuccess={() => { setShowRegeneratePostModal(false); refresh() }} />
-      </Modal.Overlay >
-      <Modal.Overlay
-        open={showGeneratePostModal}
-        onClose={() => { setShowGeneratePostModal(null); refresh() }}
-      >
-        <RegeneratePostModal submitHTMLStylingHandler={submitHTMLStylingHandler} submitGoogleDocRegenerateHandler={submitGoogleDocRegenerateHandler} onClose={() => { setShowGeneratePostModal(null); }} type={GenerateTypes.GENERATE} submitHandler={generatePostHandler} onSuccess={() => { setShowGeneratePostModal(false); refresh() }} />
-      </Modal.Overlay >
-      <Modal.Overlay closeIcon open={showLiveURLModal} onClose={() => setShowLiveURLModal(false)} className="modal-small">
-        <Modal.Title title="Add Live URL" />
-        <div className="card bg-secondary p-3 w-100">
-          <Form controller={liveURLForm}>
-            <TextInput fieldName="live_url" label="Live URL" validator={urlValidator} type="url" required
-              button={<button className="btn btn-primary" onClick={saveLiveUrl} type="submit" ><i className="bi bi-floppy-fill" /></button>} />
-          </Form>
-        </div>
-      </Modal.Overlay>
-      <Modal.Overlay closeIcon open={showFactCheckModal} onClose={() => setShowFactCheckModal(false)}>
-        <div className="modal-body">
-          {data?.factcheck_guid ?
-            <FactCheckResultPage isModal uuid={data?.factcheck_guid} />
-            :
-            <FactCheckModal onClose={
-              () => {
-                setShowFactCheckModal(false)
-              }
-            } post={data} setLocalPost={setData} />
-          }
-        </div>
-      </Modal.Overlay>
-      <Modal.Overlay closeIcon open={showIndexModal} onClose={() => setShowIndexModal(false)}>
-        <div className="modal-body">
-          <IndexModal post={data}
-            setPost={setData}
-            onClose={() => {
-              setShowIndexModal(false);
-              return refresh();
-            }} />
-        </div>
-      </Modal.Overlay>
-      <Modal.Overlay closeIcon open={showRegenerateHTMLModal} onClose={() => setShowRegenerateHTMLModal(false)}>
-        <RegeneratePostHTMLModal onClose={() => setShowRegenerateHTMLModal(false)} submitHandler={regeneratePostHTMLSubmitHandler} onSuccess={() => {
-          setShowRegenerateHTMLModal(false); return refresh()
-        }} />
-      </Modal.Overlay>
-      <Modal.Overlay closeIcon open={showImageGeneratePrompt} onClose={() => setShowImageGeneratePrompt(false)}>
-        <div className="card p-3">
-          {data?.hero_image_prompt && <div className="card-body">
-            <h5 className="card-title">Image Generation Prompt</h5>
-            <pre className="card p-1 bg-secondary">{data?.hero_image_prompt}</pre>
-            <button className="btn btn-primary mt-1" onClick={copyImagePrompt}><i className="bi bi-copy" />Copy</button>
+        </Modal.Overlay>
+        <Modal.Overlay closeIcon open={showIndexModal} onClose={() => setShowIndexModal(false)}>
+          <div className="modal-body">
+            <IndexModal post={postData}
+              setPost={setPostData}
+              onClose={() => {
+                setShowIndexModal(false);
+                return refresh();
+              }} />
           </div>
-          }
-          {data?.hero_image_thinking && <div className="card-body">
-            <h5 className="card-title">Image Generation Prompt</h5>
-            <pre className="card p-1 bg-secondary">{data?.hero_image_thinking}</pre>
-            <button className="btn btn-primary mt-1" onClick={copyImageThinking}><i className="bi bi-copy" />Copy</button>
+        </Modal.Overlay>
+        <Modal.Overlay closeIcon open={showRegenerateHTMLModal} onClose={() => setShowRegenerateHTMLModal(false)}>
+          <RegeneratePostHTMLModal onClose={() => setShowRegenerateHTMLModal(false)} submitHandler={regeneratePostHTMLSubmitHandler} onSuccess={() => {
+            setShowRegenerateHTMLModal(false); return refresh()
+          }} />
+        </Modal.Overlay>
+        <Modal.Overlay closeIcon open={showImageGeneratePrompt} onClose={() => setShowImageGeneratePrompt(false)}>
+          <div className="card p-3">
+            {postData?.hero_image_prompt && <div className="card-body">
+              <h5 className="card-title">Image Generation Prompt</h5>
+              <pre className="card p-1 bg-secondary">{postData?.hero_image_prompt}</pre>
+              <button className="btn btn-primary mt-1" onClick={copyImagePrompt}><i className="bi bi-copy" />Copy</button>
+            </div>
+            }
+            {postData?.hero_image_thinking && <div className="card-body">
+              <h5 className="card-title">Image Generation Prompt</h5>
+              <pre className="card p-1 bg-secondary">{postData?.hero_image_thinking}</pre>
+              <button className="btn btn-primary mt-1" onClick={copyImageThinking}><i className="bi bi-copy" />Copy</button>
+            </div>
+            }
           </div>
-          }
-        </div>
-      </Modal.Overlay>
-    </>
-  )
+        </Modal.Overlay>
+      </>
+    )
+  }
+  else return null
 }
 export default ActionButtonGroup

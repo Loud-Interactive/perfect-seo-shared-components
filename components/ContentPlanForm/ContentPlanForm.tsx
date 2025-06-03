@@ -146,7 +146,7 @@ const ContentPlanForm = ({ buttonLabel, initialData, submitResponse, isModal }: 
     }
   };
 
-  const buttonClasses = classNames("btn btn-warning", {
+  const buttonClasses = classNames("btn btn-primary", {
     "btn-secondary": load,
   });
 
@@ -173,7 +173,8 @@ const ContentPlanForm = ({ buttonLabel, initialData, submitResponse, isModal }: 
         getSynopsisInfo(initialData?.domainName)
           .then((res) => {
             if (res.data) {
-              form.setState({ ...initialData, brandName: res.data[0].brand_name })
+              let data: any = res.data[0]
+              form.setState({ ...initialData, brandName: data?.brand_name })
             }
           })
       }
@@ -226,7 +227,7 @@ const ContentPlanForm = ({ buttonLabel, initialData, submitResponse, isModal }: 
           <div className="form-group col-12 col-md-6">
             <label htmlFor="targetKeyword">
               <div>
-                Keyword <i className="text-warning">*</i>
+                Keyword <i className="text-primary">*</i>
               </div>
               <span className={styles.subLabel}>What’s the topic?</span>
             </label>
@@ -325,7 +326,7 @@ const ContentPlanForm = ({ buttonLabel, initialData, submitResponse, isModal }: 
             </button>
           </div>
           {isModal &&
-            <p className="mt-3 text-warning"><small>*Please note it may take up to 5 minutes for your new plan to appear on you plans list.</small></p>}
+            <p className="mt-3 text-dark"><small>*Please note it may take up to 5 minutes for your new plan to appear on you plans list.</small></p>}
         </div>
       </Form>
     </div>

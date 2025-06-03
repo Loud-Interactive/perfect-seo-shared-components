@@ -54,13 +54,20 @@ export const generateSynopsis = (domain) => {
 // synopsisPerfect APIS 
 export const getSynopsisInfo = (domain) => {
   return supabase
-    .from('pairs')
-    .select('*')
+    .from('pairs') // Replace with your actual table name
+    .select('key, value, last_updated')
     .eq('domain', domain)
+    .order('last_updated', { ascending: false })
     .then((res) => {
-      let newRes = res;
-      newRes.data = [res.data.reduce((prev, curr) => ({ ...prev, [curr.key]: curr.value }), {})]
-      return newRes
+      const result: any = res.data.reduce((acc, { key, value }) => {
+        if (!acc[key]) {
+          acc[key] = value;
+        }
+        return acc;
+      }, {});
+
+
+      return { ...res, data: [result] }
     })
 
 };
@@ -211,7 +218,7 @@ export const getLatestStatusByOutlineGUID = (guid: string) => {
     .from('tasks')
     .select('*')
     .eq('content_plan_outline_guid', guid)
-    .order('created_at', { ascending: false })
+    .order('last_updated_at', { ascending: false })
 }
 
 export const createUserCreditAccount = (email: string) => {
@@ -293,16 +300,16 @@ export const getPostsByDomain = (domain: string, reqObj?: any) => {
         .neq("live_post_url", null)
         .neq("is_deleted", true)
         .range(startIndex, endIndex)
-        .order('created_at', { ascending: false })
+        .order('last_updated_at', { ascending: false })
     }
     else {
       return supabase.from('tasks')
         .select('*', { count: 'exact' })
         .eq("client_domain", domain)
-        .eq("live_post_url", null)
+        .is("live_post_url", null)
         .neq("is_deleted", true)
         .range(startIndex, endIndex)
-        .order('created_at', { ascending: false })
+        .order('last_updated_at', { ascending: false })
     }
   }
   else if (reqObj.status) {
@@ -312,8 +319,9 @@ export const getPostsByDomain = (domain: string, reqObj?: any) => {
         .eq("client_domain", domain)
         .eq("status", "Complete")
         .neq("is_deleted", true)
+        .is("live_post_url", null)
         .range(startIndex, endIndex)
-        .order('created_at', { ascending: false })
+        .order('last_updated_at', { ascending: false })
     }
     else {
       return supabase.from('tasks')
@@ -322,7 +330,7 @@ export const getPostsByDomain = (domain: string, reqObj?: any) => {
         .neq("status", "Complete")
         .neq("is_deleted", true)
         .range(startIndex, endIndex)
-        .order('created_at', { ascending: false })
+        .order('last_updated_at', { ascending: false })
     }
   }
   else {
@@ -331,7 +339,7 @@ export const getPostsByDomain = (domain: string, reqObj?: any) => {
       .eq("client_domain", domain)
       .range(startIndex, endIndex)
       .neq("is_deleted", true)
-      .order('created_at', { ascending: false })
+      .order('last_updated_at', { ascending: false })
   }
 };
 
@@ -346,16 +354,16 @@ export const getPostsByEmail = (email: string, reqObj?: any) => {
         .neq("live_post_url", null)
         .neq("is_deleted", true)
         .range(startIndex, endIndex)
-        .order('created_at', { ascending: false })
+        .order('last_updated_at', { ascending: false })
     }
     else {
       return supabase.from('tasks')
         .select('*', { count: 'exact' })
         .eq("email", email)
-        .eq("live_post_url", null)
+        .is("live_post_url", null)
         .neq("is_deleted", true)
         .range(startIndex, endIndex)
-        .order('created_at', { ascending: false })
+        .order('last_updated_at', { ascending: false })
     }
   }
   else if (reqObj.status) {
@@ -366,7 +374,7 @@ export const getPostsByEmail = (email: string, reqObj?: any) => {
         .eq("status", "Complete")
         .neq("is_deleted", true)
         .range(startIndex, endIndex)
-        .order('created_at', { ascending: false })
+        .order('last_updated_at', { ascending: false })
     }
     else {
       return supabase.from('tasks')
@@ -375,7 +383,7 @@ export const getPostsByEmail = (email: string, reqObj?: any) => {
         .neq("status", "Complete")
         .neq("is_deleted", true)
         .range(startIndex, endIndex)
-        .order('created_at', { ascending: false })
+        .order('last_updated_at', { ascending: false })
     }
   }
   else {
@@ -384,7 +392,7 @@ export const getPostsByEmail = (email: string, reqObj?: any) => {
       .eq("email", email)
       .neq("is_deleted", true)
       .range(startIndex, endIndex)
-      .order('created_at', { ascending: false })
+      .order('last_updated_at', { ascending: false })
   }
 };
 
@@ -492,13 +500,13 @@ export const getOutlinesByContentPlan = async (content_plan_guid: string, pagina
       .select('*', { count: 'exact' })
       .eq("content_plan_guid", content_plan_guid)
       .range(startIndex, endIndex)
-      .order('created_at', { ascending: false })
+      .order('updated_at', { ascending: false })
   }
   else {
     return supabase.from('content_plan_outlines')
       .select('*')
       .eq("content_plan_guid", content_plan_guid)
-      .order('created_at', { ascending: false })
+      .order('updated_at', { ascending: false })
   }
 
 }
@@ -611,4 +619,8 @@ export const getPostStatusFromOutline = (guid: string) => {
 
 export const publishToWordPress = async (guid: string) => {
   return axiosInstance.post('/api/post/wordpress-publish', { content_plan_outline_guid: guid })
+}
+
+export const getContentPlanChildren = async (guid: string) => {
+  return axiosInstance.post(`/api/content-plan/get-child-content`, { content_plan_guid: guid });
 }

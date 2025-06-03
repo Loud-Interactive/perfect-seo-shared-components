@@ -133,7 +133,7 @@ const PostsList = ({ domain_name, active }: PostsListProps) => {
   else
     return (
       <div className={styles.wrap}>
-        <div className='row d-flex justify-content-between align-items-end my-3'>
+        <div className='row d-flex justify-content-between align-items-end mb-3'>
           <div className='col d-flex align-items-end'>
             <h2 className='text-primary mb-0'>
               <TypeWriterText string="Generated Posts" withBlink />
@@ -145,7 +145,7 @@ const PostsList = ({ domain_name, active }: PostsListProps) => {
               <Select bottomSpacing={false} fieldName='filter' onChange={changeFilter} label="Filter by Status" value={filter}>
                 <Option value='all'>All</Option>
                 <Option value='live'>Live</Option>
-                <Option value='completed'>Complete</Option>
+                <Option value='completed'>Finished</Option>
                 <Option value='processing'>Processing</Option>
               </Select>
             </Form>
@@ -166,7 +166,7 @@ const PostsList = ({ domain_name, active }: PostsListProps) => {
           <Modal.Description>
             Are you sure you want to delete this post?
             <div className='d-flex justify-content-between mt-5'>
-              <button onClick={() => { setDeleteModal(null) }} className="btn btn-warning">Cancel</button>
+              <button onClick={() => { setDeleteModal(null) }} className="btn btn-secondary">Cancel</button>
               <button onClick={(e) => { e.preventDefault(); deleteHandler(deleteModal) }} className="btn btn-primary">Yes</button>
             </div>
           </Modal.Description>

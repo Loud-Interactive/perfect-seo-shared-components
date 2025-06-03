@@ -1,4 +1,4 @@
-@use './_contentPerfect.scss';
+// @use './_contentPerfect.scss';
 @use './_bootstrap.scss';
 @use './_home.scss';
 @use './_mixins.scss' as *;
@@ -23,13 +23,22 @@ a {
 }
 
 select {
-  border-color: white !important;
+  border-color: $lightOrange !important;
 }
 
 .comp-font {
   @include font-digital;
   font-size: 1.4em;
 }
+
+h2,
+h3,
+h4,
+h5 {
+  color: $orange;
+  @include font-loud;
+}
+
 
 .vert-divider {
   width: 4px;
@@ -38,8 +47,8 @@ select {
 }
 
 body {
-  background-color: $secondary;
   position: relative;
+  @include font-regular;
 
   .modal-overlay {
     display: none !important;
@@ -98,10 +107,10 @@ label {
 
 
 h1 {
-  color: white;
+  color: $black;
   margin-bottom: 20px;
-  text-shadow: 1px 1px 2px #2e2e2e;
   @include TransitionQuick;
+  @include font-loud;
 
   &:hover {
     color: $primary;
@@ -121,11 +130,23 @@ h1 {
 }
 
 a {
-  color: white;
-  text-shadow: 1px 1px 2px #2e2e2e;
+  &:not(.btn-primary) {
+    color: $primary;
+  }
+
   cursor: pointer;
   padding-bottom: 2rem;
-  text-decoration: none;
+  font-weight: 500;
+
+  &:hover {
+    text-decoration: none;
+    font-style: italic;
+  }
+}
+
+
+a:has(button) {
+  text-decoration: none !important;
 }
 
 a:hover {
@@ -136,56 +157,13 @@ td {
   text-wrap: nowrap;
 }
 
-.btn {
-  border: none;
-  text-wrap: nowrap;
-  display: inline-block;
-  margin: 2px 0;
-  font-weight: 400;
-  line-height: 1;
-  font-family: 'VT323',
-    monospace !important;
-  text-align: center;
-  vertical-align: middle;
-  cursor: pointer;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  min-width: 150px;
-  /* border: 5px solid $primary; */
-
-  font-size: 1.4rem;
-  -webkit-transition: color 0.15s ease-in-out,
-    background-color 0.15s ease-in-out,
-    border-color 0.15s ease-in-out;
-  transition: color 0.15s ease-in-out,
-    background-color 0.15s ease-in-out,
-    border-color 0.15s ease-in-out;
-  -o-transition: color 0.15s ease-in-out,
-    background-color 0.15s ease-in-out,
-    border-color 0.15s ease-in-out,
-    box-shadow 0.15s ease-in-out;
-  transition: color 0.15s ease-in-out,
-    background-color 0.15s ease-in-out,
-    border-color 0.15s ease-in-out,
-    box-shadow 0.15s ease-in-out;
-  transition: color 0.15s ease-in-out,
-    background-color 0.15s ease-in-out,
-    border-color 0.15s ease-in-out,
-    box-shadow 0.15s ease-in-out;
-  border-radius: 12px;
-  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2),
-    0 6px 20px 0 rgba(0, 0, 0, 0.19);
-}
 
 @media (prefers-reduced-motion: reduce) {
   .btn {
     -webkit-transition: none;
     -o-transition: none;
     transition: none;
-    border-radius: 12px;
-    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+
   }
 }
 
@@ -207,8 +185,7 @@ hr {
   background-color: $primary;
   transition: background-color 0.5s ease;
   transition: color 0.5s ease;
-  border-radius: 12px;
-  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+
 }
 
 
@@ -218,7 +195,6 @@ hr {
 
 .contentBox {
   background: #444;
-  box-shadow: rgba(0, 0, 0, 0.25) 7px 7px 1px;
   margin: 40px auto;
 }
 
@@ -3033,12 +3009,14 @@ ul.why-list {
   margin-bottom: 16px;
 
   li {
+    color: $primary;
     font-size: 22px;
     padding: 8px 16px;
     background-color: white;
     border-radius: 8px;
     min-height: 4em;
     display: flex;
+    margin-bottom: .5em;
     align-items: center;
     text-align: center;
     width: 80%;
@@ -3072,7 +3050,7 @@ ul.why-list {
 
 .btn {
   min-width: 45px;
-  padding: 8px;
+  padding: 4px 8px;
 }
 
 
@@ -4807,7 +4785,6 @@ footer {
 }
 
 .btn-transparent {
-  box-shadow: none !important;
   background-color: transparent !important;
 
   &:hover {
@@ -4870,15 +4847,32 @@ a.text-white {
 }
 
 .btn-primary {
+  color: white;
+  border: 1px solid transparent;
+
   svg path {
     fill: white;
+  }
+
+  &:hover {
+    background-color: $lightOrange;
+    color: $orange;
+    border: 1px solid $orange;
+
+    svg path {
+      fill: orange;
+    }
+  }
+
+  &:disabled {
+    color: $black;
   }
 }
 
 .btn-standard {
-  height: 50px;
-  display: flex;
-  align-items: center;
+  // height: 50px;
+  // display: flex;
+  // align-items: center;
 }
 
 .bg-robot {
@@ -5045,7 +5039,7 @@ button.input-group-append {
   justify-content: center;
 
   &.with-background {
-    background-color: rgba(black, .5);
+    background-color: rgba($lightOrange, .5);
   }
 
   z-index: 900;
@@ -5058,6 +5052,33 @@ button.input-group-append {
 
 .b-none {
   border: none !important;
+}
+
+.card {
+  border-color: $orange;
+}
+
+.btn-secondary {
+  color: $orange !important;
+
+  &:not(.no-outline) {
+    border: 1px solid $orange;
+  }
+
+  &:hover {
+    color: white !important;
+  }
+}
+
+.nav-link {
+  border: 1px solid $lightOrange !important;
+  border-bottom: none !important;
+
+  &.active {
+    border-color: $orange !important;
+
+  }
+
 }
 
 .nav-link.bg-primary {
@@ -5076,22 +5097,13 @@ button.input-group-append {
   font-size: 12px !important;
 }
 
-.select-input {
-  border: var(--bs-border-width) solid var(--bs-border-color) !important;
-  border-radius: var(--bs-border-radius);
+
+option {
+  &:hover {
+    background-color: $lightOrange;
+    color: $orange;
+  }
 }
-
-// .toast {
-//   width: 100%;
-//   display: flex;
-//   min-height: 10px;
-//   z-index: 2000;
-//   min-width: 250px;
-
-//   &s {
-//     z-index: 2000;
-//   }
-// }
 
 .toast-viewport {
   @include clear-list-properties;
@@ -5131,7 +5143,7 @@ header {
     max-height: 100px;
   }
 
-  background-color: #333333;
+  background-color: $primary;
 }
 
 
@@ -5160,9 +5172,17 @@ header {
     background-color: $primary !important;
     min-width: unset !important;
     border-radius: 50%;
+    height: 3ch;
+    width: 3ch;
+    overflow: hidden;
     font-size: 14px;
     aspect-ratio: 1;
     padding: .5ch !important;
+
+    &:hover {
+      background-color: $lightOrange !important;
+      color: $orange !important;
+    }
   }
 }
 
@@ -5242,10 +5262,12 @@ a.text-primary {
 .tab-content {
   border-radius: .375rem !important;
   overflow: hidden;
+  // border-top: 1px solid $primary;
 }
 
 .nav-tabs {
-  border-bottom: none;
+  margin-bottom: 0 !important;
+  border-color: $orange !important;
 }
 
 @include PWA {
@@ -5290,4 +5312,48 @@ a.text-primary {
   max-width: 600px;
   width: 100%;
 
+}
+
+.badge.rounded-pill.text-bg-primary {
+  color: white !important;
+}
+
+.btn-transparent.text-primary {
+  &:hover {
+    color: $lightOrange !important;
+
+    i {
+      color: $lightOrange !important;
+    }
+  }
+}
+
+a.btn {
+  text-decoration: none !important;
+}
+
+.bg-secondary .btn-transparent {
+  color: $orange !important;
+
+  &:hover {
+    background-color: $orange !important;
+    color: white !important;
+  }
+}
+
+
+.no-underline {
+  text-decoration: none !important;
+}
+
+.status {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.max-status {
+  max-width: 23ch;
 }

@@ -20,11 +20,8 @@ const IndexModal = ({ post, onClose, setPost }: IndexModalProps) => {
     e.preventDefault();
     setLoading(true);
     setSuccess(false)
-    let reqObj = { url: post.live_post_url, contentPlanOutlineGuid: post.content_plan_outline_guid, reindex: false }
-    if (post?.index_status === 'submitted' || post?.index_status === 'indexed') {
-      reqObj.reindex = true
-    }
-    axiosInstance.post('/api/index-url', reqObj)
+    let reqObj = { url: post.live_post_url }
+    axiosInstance.post('/api/index/request-index', reqObj)
       .then(res => {
         setPost({ ...post, index_status: 'submitted' })
         setSuccess(true)
@@ -46,11 +43,11 @@ const IndexModal = ({ post, onClose, setPost }: IndexModalProps) => {
       <h3 className="mb-3">Index Modal</h3>
       <div>
         {!success ? <>
-          <p>{post?.index_status === 'indexed' ? 'Post has already been indexed. Would you like to reindex?' : post?.index_status === 'submitted' ? 'Post has been submitted. Would you like to resubmit?' : 'Would you like to index this post?'}
+          <p>{post?.index_status === 'Submitted and indexed' ? 'Post has already been indexed. Would you like to reindex?' : post?.index_status === 'submitted' ? 'Post has been submitted. Would you like to resubmit?' : post?.index_status ? `Status: ${post?.index_status}` : 'Would you like to index this post?'}
           </p>
           <p>
             <strong>URL</strong><br />
-            <a href={post.live_post_url} target="_blank">{post.live_post_url}</a>
+            <a href={post.live_post_url} target="_blank" className="text-primary">{post.live_post_url}</a>
           </p>
         </>
           :
@@ -63,7 +60,7 @@ const IndexModal = ({ post, onClose, setPost }: IndexModalProps) => {
             <button className="btn btn-primary" disabled={loading} onClick={onClose}>close</button>
           </div>
           : <div className="mt-3">
-            <button className="btn btn-primary" disabled={loading} onClick={clickHandler}>{loading ? 'Indexing...' : ['indexed', 'submitted'].includes(post?.index_status) ? 'Reindex' : 'Index'}</button>
+            <button className="btn btn-primary" disabled={loading} onClick={clickHandler}>{loading ? 'Indexing...' : post?.index_status ? 'Reindex' : 'Index'}</button>
           </div>}
       </div>
     </div>

@@ -72,6 +72,9 @@ const CreateContentModal = ({
       titleForm.setState({ title: data["Post Title"] || data?.post_title || data?.title });
       setPostTitle(data["Post Title"] || data?.post_title || data?.title);
     }
+    if (data?.outline?.guid) {
+      setOutlineGUID(data.outline.guid)
+    }
   }, [data]);
 
   const postClickHandler = (e) => {
@@ -86,8 +89,10 @@ const CreateContentModal = ({
     }
   }, [queryParam]);
 
-  const titleChangeHandler = (e) => {
-    e.preventDefault();
+  const titleChangeHandler = (e?) => {
+    if (e) {
+      e.preventDefault();
+    }
     setSaving(true)
     patchOutlineTitle(outlineGUID, titleForm.getState.title)
       .then(res => {
@@ -106,7 +111,7 @@ const CreateContentModal = ({
     if (!isAuthorized) return ''
     return (
       <div className="d-flex h-100 align-items-center justify-content-center">
-        <button className="btn btn-transparent d-flex align-items-center justify-content-center" onClick={titleChangeHandler} title="Save Live Url" disabled={saving}>
+        <button className="btn btn-transparent text-primary d-flex align-items-center justify-content-center" onClick={titleChangeHandler} title="Save Live Url" disabled={saving}>
 
           {saving ?
             <div className="spinner-border spinner-border-sm" role="status">
@@ -238,10 +243,11 @@ const CreateContentModal = ({
 
   const pullOutline = (initial?) => {
     setLoading(true);
-    if (data.guid) {
-      setOutlineGUID(data.guid)
+    let guid = data?.outline?.guid || data.guid;
+    if (guid) {
+      setOutlineGUID(guid)
     }
-    let guid = data.content_plan_outline_guid || data.guid;
+
     fetchOutlineData(guid)
       .then(res => {
         if (res.data[0]?.outline) {
@@ -264,6 +270,7 @@ const CreateContentModal = ({
   const saveHandler = (click?: boolean) => {
     setSaving(true)
     if (!loading) {
+      titleChangeHandler()
       let reqBody: SaveContentPost = {
         post_title: postTitle,
         outline_details: { sections: [...convertToTableData(form.getState)] },
@@ -360,13 +367,13 @@ const CreateContentModal = ({
   return (
     <>
       <Modal.Title title={postTitle} className={styles.header}>
-        <h2 className="modal-title" id="outlineEditorModalLabel">
+        <h2 className="modal-title text-white" id="outlineEditorModalLabel">
           Review/Edit Your Outline
         </h2>
         <button
           className={`${styles.closeButton}
         btn
-        btn-warning`}
+        btn-secondary`}
           data-bs-dismiss="modal"
           aria-label="Close"
           onClick={closeHandler}
@@ -455,8 +462,9 @@ const CreateContentModal = ({
                     </button>
                   </div>
                 </div>
+                <hr />
               </div>
-              <hr />
+
               <Form controller={form}>
                 <div className={styles.contentForm}>
                   {tableData?.length > 0 ? (
@@ -495,7 +503,7 @@ const CreateContentModal = ({
         )}
         <div className={styles.footerButtons}>
           <button
-            className={`${styles.closeButton} btn btn-warning bg-warning text-dark`}
+            className={`${styles.closeButton} btn btn-secondary text-light`}
             data-bs-dismiss="modal"
             aria-label="Close"
             onClick={closeHandler}
@@ -533,7 +541,7 @@ const CreateContentModal = ({
         closeIcon
       >
         <Modal.Title title="Generate Your Post" />
-        <RegeneratePostModal submitGoogleDocRegenerateHandler={submitGoogleDocRegenerateHandler} submitHTMLStylingHandler={submitHTMLStylingHandler} submitHandler={submitWithEmail} onClose={() => setCreatingPost(false)} onSuccess={onClose} type={GenerateTypes.GENERATE} />
+        <RegeneratePostModal title={data?.title} submitGoogleDocRegenerateHandler={submitGoogleDocRegenerateHandler} submitHTMLStylingHandler={submitHTMLStylingHandler} submitHandler={submitWithEmail} onClose={() => setCreatingPost(false)} onSuccess={onClose} type={GenerateTypes.GENERATE} />
       </Modal.Overlay >
     </>
   );

@@ -78,6 +78,13 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
 
   }, [outline?.client_name, domain_name])
 
+  const handleEditOutline = (e?) => {
+    if (e) {
+      e.preventDefault()
+    }
+    setEditModal(true)
+  }
+
   const generatePostHandler = (receiving_email, writing_language?) => {
     let reqBody: GenerateContentPost = {
       email: email,
@@ -124,6 +131,7 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
 
   useEffect(() => {
     let contentPlanOutlines;
+    let outlineChannel;
     if (outline?.guid) {
       fetchStatus()
       contentPlanOutlines = supabase.channel(`status-${outline.guid}`)
@@ -135,10 +143,22 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
           }
         )
         .subscribe()
+      outlineChannel = supabase.channel(`outline-item-${outline.guid}`)
+        .on(
+          'postgres_changes',
+          { event: 'UPDATE', schema: 'public', table: 'content_plan_outlines', filter: `guid=eq.${outline.guid}` },
+          (payload) => {
+            setLocalOutline(payload.new as Outline)
+          }
+        )
+        .subscribe()
     }
-    if (contentPlanOutlines) {
-      return () => {
+    return () => {
+      if (contentPlanOutlines) {
         contentPlanOutlines.unsubscribe()
+      }
+      if (outlineChannel) {
+        outlineChannel.unsubscribe()
       }
     }
   }, [outline?.guid])
@@ -170,19 +190,13 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
   }
 
   return (
-    <div className="card bg-secondary p-2" title={outline?.post_title}>
+    <div className="card p-2" title={outline?.post_title}>
       <div className="row d-flex g-0 d-flex align-items-end">
         <div className="col">
           <div className="row g-2">
             <div className="col-12">
-              <strong className="text-primary me-1">Title</strong>  {localOutline?.post_title} {(outline.client_domain !== domain_name) && <span className='badge bg-primary ms-2'>{outline?.brand_name}</span>}
-              <div>
-                {/* {localOutline?.content_plan_keyword && <strong className="text-primary me-2">Topic</strong>}
-                {localOutline.content_plan_keyword}
-                <br />
-                {localOutline?.keyword && <strong className="text-primary me-2">Keyword</strong>}
-                {localOutline.keyword} */}
-              </div>
+              <strong className="text-primary me-1">Title</strong>  {localOutline?.post_title} {(!domain_name || outline.domain !== domain_name) && <span className='badge bg-light-blue text-dark ms-2'>{localOutline?.domain}</span>}
+
               <div>
                 {localOutline?.created_at && <strong className="text-primary me-2">Date</strong>}
                 {moment(localOutline.created_at).format("dddd, MMM Do, YYYY h:mma")}{email !== localOutline.email && <span> by <span className="text-primary">by {localOutline.email}</span></span>}
@@ -193,7 +207,7 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
         <div className="col-12">
           <div className="row g-2 d-flex justify-content-between align-items-center w-100">
             <div className="col-auto">
-              <StatusBar outline_status={status} type={ContentType.OUTLINE} content_plan_outline_guid={localOutline?.guid} onGeneratePost={() => {
+              <StatusBar showEditOutlineHandler={handleEditOutline} outline_status={status} type={ContentType.OUTLINE} content_plan_outline_guid={localOutline?.guid} onGeneratePost={() => {
                 setShowGenerate(true)
               }} />
             </div>
@@ -210,14 +224,14 @@ const OutlineItem = ({ outline, refresh, domain_name, setModalOpen }) => {
         open={showGenerate}
         onClose={() => { setShowGenerate(false); refresh() }}
       >
-        <RegeneratePostModal submitGoogleDocRegenerateHandler={submitGoogleDocRegenerateHandler} submitHTMLStylingHandler={submitHTMLStylingHandler} onClose={() => { setShowGenerate(false); }} type={GenerateTypes.GENERATE} submitHandler={generatePostHandler} onSuccess={() => { setShowGenerate(false); refresh() }} />
+        <RegeneratePostModal title={localOutline?.post_title || outline?.post_title || outline?.title} submitGoogleDocRegenerateHandler={submitGoogleDocRegenerateHandler} submitHTMLStylingHandler={submitHTMLStylingHandler} onClose={() => { setShowGenerate(false); }} type={GenerateTypes.GENERATE} submitHandler={generatePostHandler} onSuccess={() => { setShowGenerate(false); refresh() }} />
       </Modal.Overlay >
       <Modal.Overlay open={deleteModal} onClose={() => { setDeleteModal(null) }}>
         <Modal.Title title="Delete Outline" />
         <Modal.Description>
           Are you sure you want to delete this outline?
           <div className='d-flex justify-content-between mt-5'>
-            <button onClick={() => { setDeleteModal(null) }} className="btn btn-warning">Cancel</button>
+            <button onClick={() => { setDeleteModal(null) }} className="btn btn-secondary">Cancel</button>
             <button onClick={(e) => { e.preventDefault(); deleteHandler() }} className="btn btn-primary">Yes</button>
           </div>
         </Modal.Description>

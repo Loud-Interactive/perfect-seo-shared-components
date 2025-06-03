@@ -1,16 +1,15 @@
 'use client'
-import { ContentType, PostProps } from "@/perfect-seo-shared-components/data/types";
-import { fetchOutlineStatus, generateImagePrompt, generateSchema, getFactCheckStatus, getPost, getPostStatus, getPostStatusFromOutline, publishToWordPress } from "@/perfect-seo-shared-components/services/services";
+import { ContentType } from "@/perfect-seo-shared-components/data/types";
+import { fetchOutlineStatus, generateContentPlanOutline, generateImagePrompt, generateSchema, getFactCheckStatus, getPostStatusFromOutline, publishToWordPress } from "@/perfect-seo-shared-components/services/services";
 import { useEffect, useState } from "react";
 import TypeWriterText from "../TypeWriterText/TypeWriterText";
 import { keyToLabel } from "@/perfect-seo-shared-components/utils/conversion-utilities";
 import { createClient } from "@/perfect-seo-shared-components/utils/supabase/client";
 import * as Modal from "@/perfect-seo-shared-components/components/Modal/Modal";
-import { useSelector } from "react-redux";
-import { selectIsAdmin } from "@/perfect-seo-shared-components/lib/features/User";
 import TextArea from "../Form/TextArea";
 import Form from "../Form/Form";
 import useForm from "@/perfect-seo-shared-components/hooks/useForm";
+import HeroImageGenerator from "../HeroImageGenerator/HeroImageGenerator";
 
 interface StatusBarProps {
   content_plan_outline_guid?: string;
@@ -21,6 +20,7 @@ interface StatusBarProps {
   addLiveUrlHandler?: () => void
   onGeneratePost?: () => void
   indexHandler?: () => void,
+  onGenerateOutline?: () => void,
   type: ContentType,
   index_status?: string
   post_status?: string,
@@ -28,6 +28,8 @@ interface StatusBarProps {
   hero_image_prompt?: string,
   task_id?: string;
   schema_data?: any;
+  hero_image_url?: string,
+  showEditOutlineHandler: () => void
 }
 
 const StatusBar = ({
@@ -37,10 +39,13 @@ const StatusBar = ({
   content_plan_guid,
   content_plan_factcheck_guid,
   content_plan_social_guid,
-  addLiveUrlHandler,
-  live_post_url,
   onGeneratePost,
   indexHandler,
+  onGenerateOutline,
+  addLiveUrlHandler,
+  showEditOutlineHandler,
+  hero_image_url,
+  live_post_url,
   hero_image_prompt,
   task_id,
   index_status,
@@ -51,7 +56,7 @@ const StatusBar = ({
   const [outlineStatus, setOutlineStatus] = useState<string>('');
   const [postStatus, setPostStatus] = useState<string>('');
   const [factcheckStatus, setFactcheckStatus] = useState<string>('');
-  const [generateImageStatus, setGenerateImageStatus] = useState<string>('');
+
 
   const [outlineLoading, setOutlineLoading] = useState<boolean>(false);
   const [postLoading, setPostLoading] = useState<boolean>(false);
@@ -74,9 +79,11 @@ const StatusBar = ({
   const [wordPressPublish, setWordPressPublish] = useState<boolean>(false);
 
   const [viewImagePrompt, setViewImagePrompt] = useState<boolean>(false);
+  const [generateImageModal, setGenerateImageModal] = useState<boolean>(false);
 
   const supabase = createClient();
   const form = useForm();
+
 
   const checkWordPressPublish = async () => {
     supabase
@@ -159,6 +166,7 @@ const StatusBar = ({
       setPostLoading(true);
       getPostStatusFromOutline(content_plan_outline_guid)
         .then(res => {
+          console.log(res.data)
           setPostLoading(false);
           setPostStatus(res.data[0]?.status);
         })
@@ -209,6 +217,7 @@ const StatusBar = ({
         }
       })
   }
+
 
 
   const fetchFactcheckStatusData = () => {
@@ -273,10 +282,10 @@ const StatusBar = ({
     };
   }, [factcheckComplete]);
 
-  const checkIfIndexed = async (outlineGuid: string) => {
+  const checkIfIndexed = async (live_post_url: string) => {
     try {
-      const { data, error } = await supabase.functions.invoke('check-indexed-status', {
-        body: { content_plan_outline_guid: outlineGuid },
+      const { data, error } = await supabase.functions.invoke('check-indexation', {
+        body: { url: live_post_url },
       });
 
       if (error) {
@@ -284,14 +293,15 @@ const StatusBar = ({
         return null;
       }
       if (data) {
-
-        if (index_status === 'submitted' && data?.indexed === true) {
+        console.log('Indexed status:', data);
+        if (data?.coverageState !== index_status) {
           supabase
             .from('tasks')
-            .update({ index_status: 'indexed' })
+            .update({ index_status: data?.coverageState })
             .eq('task_id', task_id)
             .select("*")
             .then(res => {
+              console.log('Updated index status:', res.data);
             })
         }
       }
@@ -304,10 +314,13 @@ const StatusBar = ({
   };
 
   useEffect(() => {
-    if (type === ContentType.POST && content_plan_outline_guid && live_post_url) {
-      checkIfIndexed(content_plan_outline_guid)
+    if (type === ContentType.POST
+      && live_post_url
+      && index_status !== 'Submitted and indexed'
+    ) {
+      checkIfIndexed(live_post_url)
     }
-  }, [content_plan_outline_guid, live_post_url])
+  }, [live_post_url])
 
 
 
@@ -353,20 +366,14 @@ const StatusBar = ({
       setSchemaStatus('Error copying to clipboard')
     })
   }
-  const copyHeroClickHandler = (e) => {
-    e.preventDefault();
-    navigator.clipboard.writeText(form.getState.hero_image_prompt).then(() => {
-      setGenerateImageStatus('Copied to clipboard')
-    }).catch(err => {
-      setGenerateImageStatus('Error copying to clipboard')
-    })
-  }
+
+
   return (
-    <div className="row d-flex align-items-center justify-content-between g-0 ">
+    <div className="status-bar row d-flex align-items-center justify-content-start g-0 ">
       <div className="col-auto d-flex align-items-center">
         {(outlineComplete || (postStatus && !outlineStatus)) ?
           <>
-            <strong className="text-primary">Outline</strong>
+            <a title="Generate Post" className="py-0 my-0 text-primary no-underline" onClick={showEditOutlineHandler}><strong>Outline</strong></a>
             <span className="badge rounded-pill  ms-1 p-1 bg-success"><i className="bi bi-check-lg text-white"></i></span>
           </>
           : outlineError ?
@@ -374,10 +381,10 @@ const StatusBar = ({
               <strong className="text-primary me-2">Outline Generation Error</strong> {outlineError}
             </>
             : outlineStatus ?
-              <>
+              <p className="mb-0 status">
                 <strong className="text-primary me-2">Outline Status</strong> {keyToLabel(outlineStatus)}
-              </>
-              : <strong className="text-primary">Outline</strong>
+              </p>
+              : null
         }
       </div>
       {
@@ -389,9 +396,9 @@ const StatusBar = ({
               <span className="badge rounded-pill ms-1 p-1 bg-success"><i className="bi bi-check-lg text-white"></i></span>
             </>
             :
-            <>
+            <p className="mb-0 status">
               <strong className="text-primary me-2">Post Status</strong> {keyToLabel(postStatus)}
-            </>
+            </p>
           }
         </div>
           :
@@ -399,33 +406,34 @@ const StatusBar = ({
             <div className="col-auto d-flex align-items-center">
               <i className="bi bi-chevron-right mx-1" />
               <div>
-                <a title="Generate Post" className="text-warning my-0" onClick={generatePostClickHandler}>Generate Post</a>
+                <a title="Generate Post" className=" my-0 text-success no-underline" onClick={generatePostClickHandler}>Generate Post</a>
               </div>
             </div>
             : null
       }
       {(type === ContentType.POST && postComplete) && <>
         {
-          hero_image_prompt ?
-            <div className="col-auto d-flex align-items-center ">
-              < i className="bi bi-chevron-right mx-1" />
-              <strong><a onClick={generateImagePromptHandler} className="text-primary my-0 py-0">Image Prompt</a></strong>
+          hero_image_prompt ? <div className="col-auto d-flex align-items-center ">
+            <i className="bi bi-chevron-right mx-1" />
+            {hero_image_url ? <> <a onClick={generateImagePromptHandler} className="text-primary my-0 py-0 no-underline"><strong>Hero Image</strong></a>
               <span className="badge rounded-pill ms-1 p-1 bg-success"><i className="bi bi-check-lg text-white"></i></span>
-            </div>
+            </>
+              : <a onClick={generateImagePromptHandler} className=" my-0 py-0 text-success no-underline"><i className="bi bi-plus" />Generate Image</a>}
+          </div>
             :
             <div className="col-auto d-flex align-items-center ">
               <i className="bi bi-chevron-right mx-1" />
-              <a onClick={generateImagePromptHandler} className="text-warning my-0 py-0">{generateImagePromptLoading ? <TypeWriterText string="Generating" withBlink /> : 'Generate Image Prompt'}</a>
+              {generateImagePromptLoading ? <span className="text-primary"><TypeWriterText string="Generating" withBlink /></span> : <a onClick={generateImagePromptHandler} className=" my-0 py-0"> <span className="text-success">Generate Image Prompt</span></a>}
             </div>}
         {!live_post_url && <>
           <div className="col-auto d-flex align-items-center">
             <i className="bi bi-chevron-right mx-1" />
             {wordPressPublish && <>
-              <a onClick={publishToWordPressClickHandler} className="text-warning my-0 py-0"><i className="bi bi-wordpress" /> Publish</a>
+              <a onClick={publishToWordPressClickHandler} className="text-success my-0 py-0"><i className="bi bi-wordpress" /> Publish</a>
               <span className="px-2">or</span>
             </>
             }
-            <a onClick={addLiveUrlClickHandler} className="text-warning my-0 py-0"><i className="bi bi-plus" />Add Live Url</a>
+            <a onClick={addLiveUrlClickHandler} className="my-0 py-0 text-success no-underline"><i className="bi bi-plus" />Add Live Url</a>
           </div>
         </>}
 
@@ -435,7 +443,7 @@ const StatusBar = ({
         (type === ContentType.POST && live_post_url && postComplete) &&
         <div className="col-auto d-flex align-items-center">
           <i className="bi bi-chevron-right mx-1" />
-          <strong className="text-primary">Live</strong>
+          <a onClick={addLiveUrlClickHandler} className="my-0 py-0 text-primary no-underline"><strong>Live</strong></a>
           <span className="badge rounded-pill ms-1 p-1 bg-success"><i className="bi bi-check-lg text-white"></i></span>
         </div>
       }
@@ -460,29 +468,30 @@ const StatusBar = ({
             schema_data ?
               <div className="col-auto d-flex align-items-center ">
                 < i className="bi bi-chevron-right mx-1" />
-                <strong><a onClick={generateSchemaHandler} className="text-primary my-0 py-0">Schema</a></strong>
+                <a onClick={generateSchemaHandler} className="text-primary my-0 py-0 no-underline"><strong>Schema</strong></a>
                 <span className="badge rounded-pill ms-1 p-1 bg-success"><i className="bi bi-check-lg text-white"></i></span>
               </div>
               :
               <div className="col-auto d-flex align-items-center ">
                 <i className="bi bi-chevron-right mx-1" />
-                <a onClick={generateSchemaHandler} className="text-warning my-0 py-0">{generateSchemaLoading ? <TypeWriterText string='Generating' withBlink /> : 'Generate Schema'}</a>
+                {generateSchemaLoading ? <TypeWriterText string='Generating' withBlink /> : <a onClick={generateSchemaHandler} className=" my-0 py-0"><span className="text-success">Generate Schema</span></a>}
               </div>}
-          {index_status === 'indexed' ?
+          {index_status === 'Submitted and indexed' ?
             <div className="col-auto d-flex align-items-center ">
               <i className="bi bi-chevron-right mx-1" />
-              <strong className="text-primary">Indexed</strong>
+              <strong className="text-primary">{index_status}</strong>
               <span className="badge rounded-pill ms-1 p-1 bg-success"><i className="bi bi-check-lg text-white"></i></span>
             </div>
-            : index_status === 'submitted' ?
+            : index_status ?
               <div className="col-auto d-flex align-items-center ">
-                <i className="bi bi-chevron-right mx-1" /> Submitted
-                <a onClick={indexHandler} className="text-warning ms-1 my-0 py-0">Re-Index Post</a>
+                <i className="bi bi-chevron-right mx-1" /><p className="status mb-0"><strong className="text-warning"> {index_status}</strong>
+                  <a onClick={indexHandler} className=" ms-1 my-0 py-0 text-success no-underline">Re-Index Post</a>
+                </p>
               </div> :
 
               <div className="col-auto d-flex align-items-center ">
                 <i className="bi bi-chevron-right mx-1" />
-                <a onClick={indexHandler} className="text-warning my-0 py-0">Index Post</a>
+                <a onClick={indexHandler} className=" my-0 py-0 text-success no-underline">Index Post</a>
               </div>}
         </>
       }
@@ -490,13 +499,13 @@ const StatusBar = ({
         <Modal.Title title="Schema" />
         <Modal.Description className="modal-medium">
           <Form controller={form}>
-            <TextArea fieldName="schema_data" label="Schema" />
+            <TextArea fieldName="schema_data" label="Schema" hint={`Here's the proper markup to put between your opening script tag of <script type="application/ld+json"> and closing script tag of </script>`} />
             <div className="row d-flex justify-content-between align-items-center g-0">
               <div className="col-auto d-flex align-items-center">
                 <button onClick={copyClickHandler} className="btn btn-primary me-2" type="button"><i className="bi bi-copy me-2" />Copy</button>
               </div>
               {schemaStatus !== '' && <div className="col-auto d-flex align-items-center">
-                <span className="text-warning"><TypeWriterText string={schemaStatus} withBlink /></span>
+                <span className=""><TypeWriterText string={schemaStatus} withBlink /></span>
               </div>}
               <div className="col-auto d-flex align-items-center">
                 <input type="submit" onClick={updateSchema} className="btn btn-primary" value="Update Schema" />
@@ -507,23 +516,7 @@ const StatusBar = ({
         </Modal.Description>
       </Modal.Overlay>
       <Modal.Overlay open={viewImagePrompt} onClose={() => { setViewImagePrompt(null) }} closeIcon>
-        <Modal.Title title="Image Prompt" />
-        <Modal.Description className="modal-medium">
-          <Form controller={form}>
-            <TextArea fieldName="hero_image_prompt" label="Image Prompt" disabled />
-            <div className="row d-flex justify-content-between align-items-center g-0">
-
-              <div className="col-auto d-flex align-items-center">
-                <button onClick={copyHeroClickHandler} className="btn btn-primary me-2" type="button"><i className="bi bi-copy me-2" />Copy</button>
-              </div>
-              {generateImageStatus !== '' && <div className="col-auto d-flex align-items-center">
-                <span className="text-warning"><TypeWriterText string={generateImageStatus} withBlink /></span>
-              </div>}
-
-            </div>
-          </Form>
-
-        </Modal.Description>
+        <HeroImageGenerator hero_image_prompt={hero_image_prompt} hero_image_url={hero_image_url} task_id={task_id} guid={content_plan_outline_guid} />
       </Modal.Overlay>
     </div >
   )

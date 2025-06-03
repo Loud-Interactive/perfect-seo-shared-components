@@ -176,7 +176,7 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
             {(hasLogin && !isLoading) && (
               <div className='col-auto flex-column pe-3 d-flex align-items-end'>
                 {!desktop ? null : isLoggedIn ?
-                  <>
+                  <div className="card p-1 px-3 bg-white">
                     <div>
                       <strong className='me-2 text-primary'>Logged in as</strong>
                       {user?.email}
@@ -186,7 +186,7 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
                         <strong className='text-primary'>Credits</strong> {points.toLocaleString()}
                       </div>
                     ) : null}
-                  </>
+                  </div>
                   :
                   <button className="btn btn-google" onClick={loginWithGoogleHandler}>
                     <img src="/images/google-icon.png" /> Login
@@ -201,25 +201,25 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
             )}
             <DropdownMenu.Root modal defaultOpen open={open} onOpenChange={openChangeHandler}>
               <DropdownMenu.Trigger className={styles.menuButton}>
-                <i className="bi text-primary bi-grid-3x3-gap-fill" />
+                <i className="bi bi-grid-3x3-gap-fill" />
               </DropdownMenu.Trigger>
               <DropdownMenu.Portal>
-                <DropdownMenu.Content align="end" sideOffset={25} className='bg-dark card z-100'>
+                <DropdownMenu.Content align="end" sideOffset={25} className='bg-light card z-100'>
                   <div className={styles.menu}>
                     <div>
                       {(hasLogin && !desktop && !isLoading) && (
-                        <div className='card-header bg-secondary text-white'>
+                        <div className='card-header bg-primary'>
                           <div className='row justify-content-between d-flex'>
                             {isLoggedIn ? (
                               <>
                                 <div className='col-12 text-white'>
-                                  <strong className='me-2 text-primary'>Logged in as</strong>
+                                  <strong className='me-2 text-white'>Logged in as</strong>
                                   {user?.email}
                                 </div>
                                 {
                                   points ? (
                                     <div className='col-12 d-flex justify-content-start'>
-                                      <strong className='me-2 text-primary'>Credits</strong> {points.toLocaleString()}
+                                      <strong className='me-2 text-white'>Credits</strong> {points.toLocaleString()}
                                     </div>
                                   ) : null}
                               </>
@@ -237,8 +237,8 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
                           <>
                             {currentPage !== "/" && (
                               <div className='col-12'>
-                                <Link href="/">
-                                  <i className="bi bi-house-fill me-2 text-white" />Return Home
+                                <Link href="/" className="text-primary">
+                                  <i className="bi bi-house-fill me-2 text-primary" />Return Home
                                 </Link>
                               </div>
                             )}
@@ -246,11 +246,11 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
                               let href = typeof link.href === 'function' ? link.href(user) : link.href;
                               return (
                                 <div className='col-12' key={link.href}>
-                                  <Link href={href} className={currentPage === href ? 'text-white' : 'text-primary'}>
+                                  <Link href={href} className={currentPage === href ? 'text-dark' : 'text-primary'}>
                                     {link?.type === LinkType.ADMIN ? (
-                                      <i className="bi text-white bi-shield-lock-fill me-2" title="Admin Only" />
+                                      <i className="bi text-primary bi-shield-lock-fill me-2" title="Admin Only" />
                                     ) : link?.type === LinkType.PRIVATE ? (
-                                      <i className="bi text-white bi-person-check-fill me-2" title="Logged In Only" />
+                                      <i className="bi text-primary bi-person-check-fill me-2" title="Logged In Only" />
                                     ) : null}
                                     {link.label}
                                   </Link>
@@ -262,7 +262,7 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
                         {hasLogin && isLoggedIn && (
                           <div className='col-12'>
                             <a className="text-primary" onClick={signOutHandler}>
-                              <i className="bi text-white bi-unlock-fill me-2" />Sign Out
+                              <i className="bi text-primary bi-unlock-fill me-2" />Sign Out
                             </a>
                           </div>
                         )}
@@ -270,7 +270,7 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
                     </div>
                     <div className='card-body d-flex align-items-end'>
                       <div className='row g-3 justify-content-start'>
-                        <div className='col-4 text-end d-flex align-items-center justify-content-center'>
+                        <div className='col-4 text-end d-flex align-items-center justify-content-center text-dark'>
                           <span className='fs-2 mb-3'>Our Products</span>
                         </div>
                         {Brands.filter((obj) => obj.status === BrandStatus.LIVE).map((brand, index) => (

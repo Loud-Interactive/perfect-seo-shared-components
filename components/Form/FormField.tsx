@@ -31,7 +31,7 @@ const FormField = ({
   const labelNode = label ? (
     <label className="formField-label" htmlFor={fieldName} key={`${fieldName}-label`}>
       {label}
-      {hint && <p className="formField-hint">{hint}</p>}
+      {hint && <p className="formField-hint text-wrap">{hint}</p>}
     </label>
   ) : null;
 

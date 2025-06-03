@@ -125,26 +125,19 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
 
 
   const TabData = useMemo(() => {
-    if (isAdmin) {
-      return [
-        { key: "content-plans", title: "Generated Content Plans" },
-        { key: "outlines", title: "Generated Outlines" },
-        { key: "posts", title: "Generated Posts" },
-        { key: "reports", title: "Stats & Reports" },
-        { key: "bulk-content", title: "Bulk Content Plans" },
-        { key: "bulk-posts", title: "Bulk Posts" },
-      ]
+
+    let tabListStart = [{ key: "content-plans", title: "Content Plans" },
+    { key: "outlines", title: "Outlines" },
+    { key: "posts", title: "Posts" }]
+    let bulkTabs = [
+      { key: "bulk-content", title: "Bulk Content Plans" },
+      { key: "bulk-posts", title: "Bulk Posts" },]
+
+    if (isAdmin && domain) {
+      tabListStart = [...tabListStart, { key: "reports", title: "Reports" }]
     }
-    else {
-      return [
-        { key: "content-plans", title: "Generated Content Plans" },
-        { key: "outlines", title: "Generated Outlines" },
-        { key: "posts", title: "Generated Posts" },
-        { key: "bulk-content", title: "Bulk Content Plans" },
-        { key: "bulk-posts", title: "Bulk Posts" },
-      ]
-    }
-  }, [isAdmin])
+    return [...tabListStart, ...bulkTabs]
+  }, [isAdmin, domain])
 
   const searchDomainChangeHandler = (e) => {
     if (e) {
@@ -338,7 +331,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
                     value={selected || null}
                     placeholder="Select a Domain"
                     bottomSpacing={false}
-                    className='w-100'
+                    className='w-100 mt-1'
                   />
                 </div>
                 <div className="col-auto">
@@ -355,7 +348,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
       <div className='container-xl content-fluid rc relative'>
         {/* {isLoading && <LoadSpinner />} */}
         <div className={styles.tabWrap}>
-          <ul className="nav nav-tabs mb-0">
+          <ul className="nav nav-tabs mb-0 w-100">
             {TabData.map((tab) => {
 
               const tabClasses = classNames('nav-link',
@@ -368,7 +361,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
               )
             })}
           </ul>
-          <div className="tab-content bg-dark mb-3" id="myTabContent">
+          <div className="tab-content  mb-3" id="myTabContent">
             <div className={`tab-pane fade ${selectedTab === 'outlines' && 'show active'}`} id="outlines" role="tabpanel" aria-labelledby="outlines-tab">
               <div className='tab p-3'>
                 <Suspense fallback={<LoadSpinner />}>

@@ -72,6 +72,9 @@ const CreateContentModal = ({
       titleForm.setState({ title: data["Post Title"] || data?.post_title || data?.title });
       setPostTitle(data["Post Title"] || data?.post_title || data?.title);
     }
+    if (data?.outline?.guid) {
+      setOutlineGUID(data.outline.guid)
+    }
   }, [data]);
 
   const postClickHandler = (e) => {
@@ -244,7 +247,6 @@ const CreateContentModal = ({
     if (guid) {
       setOutlineGUID(guid)
     }
-    console.log(data)
 
     fetchOutlineData(guid)
       .then(res => {

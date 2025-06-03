@@ -42,12 +42,22 @@ const ActionButtonGroup = ({
   const dispatch = useDispatch()
   const isAdmin = useSelector(selectIsAdmin)
   const email = useSelector(selectEmail)
+  const [outlineGUID, setOutlineGUID] = useState<string>(null);
+  useEffect(() => {
+    if (type === ContentType.OUTLINE) {
+      let guid = data?.outline?.guid || data?.guid
+      setOutlineGUID(guid)
+    }
+    else {
+      setOutlineGUID(data?.content_plan_outline_guid)
+    }
+  }, [data])
 
   const submitHTMLStylingHandler = (receivingEmail, language?) => {
     let reqBody: RegeneratePost = {
       email: email,
       receiving_email: receivingEmail,
-      content_plan_outline_guid: data.content_plan_outline_guid
+      content_plan_outline_guid: outlineGUID
     };
 
     return regenerateHTML(reqBody)
@@ -56,7 +66,7 @@ const ActionButtonGroup = ({
     let reqBody: RegeneratePost = {
       email: email,
       receiving_email: receivingEmail,
-      content_plan_outline_guid: data.content_plan_outline_guid,
+      content_plan_outline_guid: outlineGUID,
     };
 
 
@@ -102,10 +112,11 @@ const ActionButtonGroup = ({
   }
 
   const getOutlineData = () => {
-    let guid = type === ContentType.OUTLINE ? data?.guid : data?.content_plan_outline_guid
+    let guid = outlineGUID
     if (!guid) return
     fetchOutlineData(guid)
       .then(res => {
+
         setOutlineData(res.data[0])
       })
   }
@@ -113,10 +124,10 @@ const ActionButtonGroup = ({
     let outlineChannel;
 
     getOutlineData()
-    outlineChannel = supabase.channel(`actionbutton-outline-status-${data?.guid}`)
+    outlineChannel = supabase.channel(`actionbutton-outline-status-${outlineGUID}`)
       .on(
         'postgres_changes',
-        { event: '*', schema: 'public', table: 'content_plan_outlines', filter: `guid=eq.${data?.guid}` },
+        { event: '*', schema: 'public', table: 'content_plan_outlines', filter: `guid=eq.${outlineGUID}` },
         (payload) => {
           if (payload.new) {
             setOutlineData(payload.new)
@@ -138,7 +149,7 @@ const ActionButtonGroup = ({
         deletePost(data?.task_id)
           .then(res => {
             if (res.data) {
-              let historyItem: any = { guid: data?.content_plan_outline_guid, email }
+              let historyItem: any = { guid: outlineGUID, email }
               if (data?.title) {
                 historyItem.title = data?.title
               }
@@ -159,7 +170,7 @@ const ActionButtonGroup = ({
       }
     }
     else {
-      deleteOutline(data?.guid)
+      deleteOutline(outlineGUID)
         .then(res => {
           refresh();
           setShowDeleteModal(false)
@@ -178,9 +189,8 @@ const ActionButtonGroup = ({
   }
 
   const generatePostHandler = (receiving_email, writing_language?) => {
-    let newOutline = typeof data?.outline === 'string' ? JSON.parse(data?.outline) : data?.outline
     let reqBody: GenerateContentPost = {
-      email: email, content_plan_outline_guid: data.guid,
+      email: email, content_plan_outline_guid: outlineGUID,
       receiving_email: receiving_email,
       writing_language: writing_language || 'English'
     };
@@ -189,8 +199,8 @@ const ActionButtonGroup = ({
 
   const regeneratePostHandler = (receiving_email, writing_language) => {
     setRegenerateError(null)
-    return regeneratePost(data?.content_plan_outline_guid, { receiving_email: receiving_email, email, writing_language }).then(res => {
-      let historyItem: any = { guid: data?.content_plan_outline_guid, email }
+    return regeneratePost(outlineGUID, { receiving_email: receiving_email, email, writing_language }).then(res => {
+      let historyItem: any = { guid: outlineGUID, email }
       if (data?.title) {
         historyItem.title = data?.title
       }
@@ -211,7 +221,7 @@ const ActionButtonGroup = ({
     let url = liveURLForm.getState.live_url
     if (url) {
       if (liveURLForm.validate({ requiredFields: ['live_url'], validatorFields: ['live_url'] })) {
-        updateLiveUrl(data.content_plan_outline_guid, url || '')
+        updateLiveUrl(outlineGUID, url || '')
           .then(res => {
             if (setData) {
               setData({ ...data, live_post_url: url })
@@ -222,7 +232,7 @@ const ActionButtonGroup = ({
 
     }
     else {
-      updateLiveUrl(data.content_plan_outline_guid, '')
+      updateLiveUrl(outlineGUID, '')
         .then(res => {
           if (setData) {
             setData({ ...data, live_post_url: 'url' })
@@ -235,25 +245,25 @@ const ActionButtonGroup = ({
   const regeneratePostHTMLSubmitHandler = (email) => {
     let reqObj = {
       email: email,
-      content_plan_outline_guid: data?.content_plan_outline_guid
+      content_plan_outline_guid: outlineGUID
     }
     return regenerateHTML(reqObj)
   }
 
   const regenerateOutlineClickHandler = () => {
-    regenerateOutline(data?.guid, { email: email, client_domain: data?.client_domain, client_name: data?.brand_name, post_title: data?.post_title, content_plan_guid: data?.content_plan_guid })
+    regenerateOutline(outlineGUID, { email: email, client_domain: data?.client_domain, client_name: data?.brand_name, post_title: data?.post_title, content_plan_guid: data?.content_plan_guid })
       .then(res => {
         dispatch(addToast({ title: "Regenerating Outline", type: "info", content: `Regenerating outline for ${data?.post_title || data?.client_domain}` }))
       })
   }
 
-  const copyOutlineGuid = (e) => {
+  const copyoutlineGUID = (e) => {
     e.preventDefault();
     let copiedGuid;
     if (type === ContentType.POST) {
-      copiedGuid = data?.content_plan_outline_guid
+      copiedGuid = outlineGUID
     } else if (type === ContentType.OUTLINE) {
-      copiedGuid = data?.guid
+      copiedGuid = outlineGUID
     }
     navigator.clipboard.writeText(copiedGuid)
     dispatch(addToast({ title: "Copied Outline GUID", type: "success", content: `Outline GUID ${copiedGuid} copied to clipboard` }))
@@ -277,7 +287,7 @@ const ActionButtonGroup = ({
 
 
 
-  if ((data?.content_plan_outline_guid && type === ContentType.POST) || (data?.guid && type === ContentType.OUTLINE)) {
+  if ((outlineGUID && type === ContentType.POST) || (outlineGUID && type === ContentType.OUTLINE)) {
     return (
       <>
         <div className='row d-flex justify-content-end'>
@@ -310,7 +320,7 @@ const ActionButtonGroup = ({
                 <i className="bi bi-pencil-fill me-1" /> Edit
               </a>
             }
-            <button className='btn btn-primary btn-standard d-flex justify-content-center align-items-center' onClick={deleteClickHandler} title={`View GUID: ${data?.content_plan_outline_guid}`}><i className="bi bi-trash pt-1" /></button>
+            <button className='btn btn-primary btn-standard d-flex justify-content-center align-items-center' onClick={deleteClickHandler} title={`View GUID: ${outlineGUID}`}><i className="bi bi-trash pt-1" /></button>
             <DropdownMenu.Root>
               <DropdownMenu.Trigger className="btn btn-secondary btn-standard d-flex align-items-center justify-content-center">
                 <i className="bi bi-three-dots-vertical" />
@@ -335,7 +345,7 @@ const ActionButtonGroup = ({
                     </DropdownMenu.Item>}
                   {type === ContentType.OUTLINE &&
                     <>
-                      {data?.content_plan_outline_guid && <DropdownMenu.Item>
+                      {outlineGUID && <DropdownMenu.Item>
                         <a
                           className="btn btn-transparent"
                           onClick={(e) => {
@@ -393,7 +403,7 @@ const ActionButtonGroup = ({
                             </DropdownMenu.Item>
                             : <DropdownMenu.Item>
                               <a
-                                href={`https://factcheckPerfect.ai/fact-checks?url=${encodeURI(data?.live_post_url)}&post_guid=${data?.content_plan_outline_guid}`}
+                                href={`https://factcheckPerfect.ai/fact-checks?url=${encodeURI(data?.live_post_url)}&post_guid=${outlineGUID}`}
                                 target="_blank"
                                 className="btn btn-transparent text-primary"
 
@@ -446,8 +456,8 @@ const ActionButtonGroup = ({
                       </>}
                     </>}
                   {isAdmin && <>
-                    {(type === ContentType.OUTLINE && data?.guid) && <DropdownMenu.Item>
-                      <a className="btn btn-transparent" onClick={copyOutlineGuid}>
+                    {(type === ContentType.OUTLINE && outlineGUID) && <DropdownMenu.Item>
+                      <a className="btn btn-transparent" onClick={copyoutlineGUID}>
                         Copy Outline GUID
                       </a>
                     </DropdownMenu.Item>
@@ -458,8 +468,8 @@ const ActionButtonGroup = ({
                       </a>
                     </DropdownMenu.Item>
                     }
-                    {(type === ContentType.POST && data?.content_plan_outline_guid) && <DropdownMenu.Item>
-                      <a className="btn btn-transparent" onClick={copyOutlineGuid}>
+                    {(type === ContentType.POST && outlineGUID) && <DropdownMenu.Item>
+                      <a className="btn btn-transparent" onClick={copyoutlineGUID}>
                         Copy Outline GUID
                       </a>
                     </DropdownMenu.Item>

@@ -12,6 +12,8 @@ import Script from 'next/script';
 import { SessionProvider } from "next-auth/react";
 import { Suspense } from 'react';
 import "bootstrap-icons/font/bootstrap-icons.css";
+import { usePathname } from 'next/navigation';
+import AuthWall from '../AuthWall';
 
 
 
@@ -27,6 +29,11 @@ interface DnDLayoutProps extends React.HTMLProps<HTMLDivElement> {
 
 // Main DnDLayout component
 const DnDLayout = ({ children, hideFooter, current, links, hasLogin = true, getCredits = false }: DnDLayoutProps) => {
+
+  const pathname = usePathname().split("/")[1]
+  const authPaths = process.env.NEXT_PUBLIC_AUTH_PATHS?.toString()?.split(",")
+  const authChild = authPaths.includes(pathname) ? <AuthWall>{children}</AuthWall> : children
+
   return (
     <>
       <SessionProvider refetchInterval={5 * 60} refetchOnWindowFocus={false} refetchWhenOffline={false}>
@@ -37,7 +44,7 @@ const DnDLayout = ({ children, hideFooter, current, links, hasLogin = true, getC
               <Header current={current} links={links} hasLogin={hasLogin} getCredits={getCredits} />
             </Suspense>
             <main className={style.wrap}>
-              {children}
+              {authChild}
             </main>
             {!hideFooter && <Footer current={current} />}
           </DndProvider>

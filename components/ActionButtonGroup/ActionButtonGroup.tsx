@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ContentType } from '@/perfect-seo-shared-components/data/types';
 import { addToast, selectEmail, selectIsAdmin } from '@/perfect-seo-shared-components/lib/features/User';
 import { useEffect, useMemo, useState } from 'react';
-import { createPost, deletePost, deleteOutline, fetchOutlineData, regenerateHTML, regenerateHTMLfromDoc, regenerateOutline, regeneratePost, updateLiveUrl } from '@/perfect-seo-shared-components/services/services';
+import { createPost, deletePost, deleteOutline, fetchOutlineData, regenerateHTML, regenerateHTMLfromDoc, regenerateOutline, regeneratePost, updateLiveUrl, getPostStatusFromOutline } from '@/perfect-seo-shared-components/services/services';
 import { createClient } from '@/perfect-seo-shared-components/utils/supabase/client';
 import en from '@/assets/en.json'
 import CreateContentModal from '../CreateContentModal/CreateContentModal';
@@ -43,6 +43,8 @@ const ActionButtonGroup = ({
   const isAdmin = useSelector(selectIsAdmin)
   const email = useSelector(selectEmail)
   const [outlineGUID, setOutlineGUID] = useState<string>(null);
+  const [postData, setPostData] = useState(type === ContentType.POST ? data : null)
+
   useEffect(() => {
     if (type === ContentType.OUTLINE) {
       let guid = data?.outline?.guid || data?.guid
@@ -52,6 +54,21 @@ const ActionButtonGroup = ({
       setOutlineGUID(data?.content_plan_outline_guid)
     }
   }, [data])
+
+  const fetchPostData = () => {
+    if (outlineGUID) {
+      getPostStatusFromOutline(outlineGUID)
+        .then(res => {
+          setPostData(res.data[0])
+        })
+    }
+  }
+
+  useEffect(() => {
+    if (type === ContentType.OUTLINE && outlineGUID) {
+      fetchPostData()
+    }
+  }, [outlineGUID])
 
   const submitHTMLStylingHandler = (receivingEmail, language?) => {
     let reqBody: RegeneratePost = {
@@ -100,10 +117,10 @@ const ActionButtonGroup = ({
   const liveURLForm = useForm()
 
   useEffect(() => {
-    if (data?.live_post_url) {
-      liveURLForm.setState({ live_url: data?.live_post_url })
+    if (postData?.live_post_url) {
+      liveURLForm.setState({ live_url: postData?.live_post_url })
     }
-  }, [data?.live_post_url])
+  }, [postData?.live_post_url])
 
   // Click handlers and data handlers 
   const deleteClickHandler = (e) => {
@@ -145,8 +162,8 @@ const ActionButtonGroup = ({
 
   const deleteHandler = () => {
     if (type === ContentType.POST) {
-      if (data?.task_id) {
-        deletePost(data?.task_id)
+      if (postData?.task_id) {
+        deletePost(postData?.task_id)
           .then(res => {
             if (res.data) {
               let historyItem: any = { guid: outlineGUID, email }
@@ -261,7 +278,7 @@ const ActionButtonGroup = ({
     e.preventDefault();
     let copiedGuid;
     if (type === ContentType.POST) {
-      copiedGuid = outlineGUID
+      copiedGuid = postData?.task_id
     } else if (type === ContentType.OUTLINE) {
       copiedGuid = outlineGUID
     }
@@ -270,17 +287,17 @@ const ActionButtonGroup = ({
   }
   const copyPostGuid = (e) => {
     e.preventDefault();
-    navigator.clipboard.writeText(data?.task_id)
-    dispatch(addToast({ title: "Copied Post GUID", type: "success", content: `Post GUID ${data?.task_id} copied to clipboard` }))
+    navigator.clipboard.writeText(postData?.task_id)
+    dispatch(addToast({ title: "Copied Post GUID", type: "success", content: `Post GUID ${postData?.task_id} copied to clipboard` }))
   }
   const copyImageThinking = (e) => {
     e.preventDefault();
-    navigator.clipboard.writeText(data?.hero_image_thinking)
+    navigator.clipboard.writeText(postData?.hero_image_thinking)
     dispatch(addToast({ title: "Copied Image Prompt", type: "success", content: `Image Prompt copied to clipboard` }))
   }
   const copyImagePrompt = (e) => {
     e.preventDefault();
-    navigator.clipboard.writeText(data?.hero_image_prompt)
+    navigator.clipboard.writeText(postData?.hero_image_prompt)
     dispatch(addToast({ title: "Copied Image Prompt", type: "success", content: `Image Prompt copied to clipboard` }))
 
   }
@@ -292,10 +309,10 @@ const ActionButtonGroup = ({
       <>
         <div className='row d-flex justify-content-end'>
           <div className="input-group d-flex justify-content-end">
-            {(data?.google_doc_link && data?.html_link) &&
+            {(postData?.google_doc_link && postData?.html_link) &&
               <>
                 <a
-                  href={data.html_link}
+                  href={postData.html_link}
                   className="btn btn-secondary btn-standard"
                   title="HTML File"
                   target="_blank"
@@ -303,7 +320,7 @@ const ActionButtonGroup = ({
                   <i className="bi bi-filetype-html " />
                 </a>
                 <a
-                  href={data.google_doc_link}
+                  href={postData.google_doc_link}
                   className="btn btn-secondary btn-standard"
                   title="Google Docs"
                   target="_blank"
@@ -356,26 +373,35 @@ const ActionButtonGroup = ({
                           Regenerate Outline
                         </a>
                       </DropdownMenu.Item>}
-                      <DropdownMenu.Item>
-                        <a
-                          className="btn btn-transparent text-primary"
-                          onClick={(e) => {
+                      {postData ?
+                        <DropdownMenu.Item>
+                          <a className="btn btn-transparent" onClick={(e) => {
                             e.preventDefault();
-                            setShowGeneratePostModal(true)
-                          }}
-                        >
-                          Generate Post
-                        </a>
-                      </DropdownMenu.Item>
+                            setShowRegeneratePostModal(true)
+                          }}>Regenerate Post</a>
+                        </DropdownMenu.Item>
+                        : <DropdownMenu.Item>
+                          <a
+                            className="btn btn-transparent text-primary"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              setShowGeneratePostModal(true)
+                            }}
+                          >
+                            Generate Post
+                          </a>
+                        </DropdownMenu.Item>
+                      }
+
                     </>}
                   {type === ContentType.POST &&
                     <>
-                      {data?.hero_image_prompt && <DropdownMenu.Item>
+                      {postData?.hero_image_prompt && <DropdownMenu.Item>
                         <a className="btn btn-transparent" onClick={(e) => { e.preventDefault(); setShowImageGeneratePrompt(true) }}>Show Hero Image Prompt</a>
                       </DropdownMenu.Item>
                       }
-                      {(isAdmin && data?.task_id) && <DropdownMenu.Item>
-                        <Link className="btn btn-transparent" href={`/post/${data?.task_id}`} target="_blank">Post Page</Link>
+                      {(isAdmin && postData?.task_id) && <DropdownMenu.Item>
+                        <Link className="btn btn-transparent" href={`/post/${postData?.task_id}`} target="_blank">Post Page</Link>
                       </DropdownMenu.Item>}
                       <DropdownMenu.Item>
                         <a className="btn btn-transparent" onClick={(e) => {
@@ -386,14 +412,14 @@ const ActionButtonGroup = ({
                       <DropdownMenu.Item>
                         <a className="btn btn-transparent" onClick={(e) => {
                           e.preventDefault(); setShowLiveURLModal(true)
-                        }}>{data?.live_post_url ? 'Edit' : 'Add'} Live Post URL</a>
+                        }}>{postData?.live_post_url ? 'Edit' : 'Add'} Live Post URL</a>
                       </DropdownMenu.Item>
-                      {data?.live_post_url && <>
+                      {postData?.live_post_url && <>
                         {isAdmin && <>
-                          {data?.factcheck_guid ?
+                          {postData?.factcheck_guid ?
                             <DropdownMenu.Item>
                               <a
-                                href={`https://factcheckPerfect.ai/fact-checks/${data?.factcheck_guid}`}
+                                href={`https://factcheckPerfect.ai/fact-checks/${postData?.factcheck_guid}`}
                                 target="_blank"
                                 className="btn btn-transparent text-primary"
 
@@ -403,7 +429,7 @@ const ActionButtonGroup = ({
                             </DropdownMenu.Item>
                             : <DropdownMenu.Item>
                               <a
-                                href={`https://factcheckPerfect.ai/fact-checks?url=${encodeURI(data?.live_post_url)}&post_guid=${outlineGUID}`}
+                                href={`https://factcheckPerfect.ai/fact-checks?url=${encodeURI(postData?.live_post_url)}&post_guid=${outlineGUID}`}
                                 target="_blank"
                                 className="btn btn-transparent text-primary"
 
@@ -426,7 +452,7 @@ const ActionButtonGroup = ({
                         </DropdownMenu.Item>}
                         <DropdownMenu.Item>
                           <a
-                            href={`https://socialperfect.ai?url=${encodeURI(data?.live_post_url)}`}
+                            href={`https://socialperfect.ai?url=${encodeURI(postData?.live_post_url)}`}
                             target="_blank"
                             className="btn btn-transparent text-primary"
 
@@ -436,7 +462,7 @@ const ActionButtonGroup = ({
                         </DropdownMenu.Item>
                         <DropdownMenu.Item>
                           <a
-                            href={`https://app.ahrefs.com/v2-site-explorer/organic-keywords?columns=CPC%7C%7CKD%7C%7CLastUpdated%7C%7COrganicTraffic%7C%7CPaidTraffic%7C%7CPosition%7C%7CPositionHistory%7C%7CSERP%7C%7CSF%7C%7CURL%7C%7CVolume&compareDate=dontCompare&country=us&currentDate=today&keywordRules=&limit=100&mode=prefix&offset=0&positionChanges=&serpFeatures=&sort=Volume&sortDirection=desc&target=${encodeURI(data?.live_post_url.replace("https://", '').replace("http://", "").replace("www.", ""))}&urlRules=&volume_type=average`}
+                            href={`https://app.ahrefs.com/v2-site-explorer/organic-keywords?columns=CPC%7C%7CKD%7C%7CLastUpdated%7C%7COrganicTraffic%7C%7CPaidTraffic%7C%7CPosition%7C%7CPositionHistory%7C%7CSERP%7C%7CSF%7C%7CURL%7C%7CVolume&compareDate=dontCompare&country=us&currentDate=today&keywordRules=&limit=100&mode=prefix&offset=0&positionChanges=&serpFeatures=&sort=Volume&sortDirection=desc&target=${encodeURI(postData?.live_post_url.replace("https://", '').replace("http://", "").replace("www.", ""))}&urlRules=&volume_type=average`}
                             target="_blank"
                             className="btn btn-transparent text-primary"
                           >
@@ -445,7 +471,7 @@ const ActionButtonGroup = ({
                         </DropdownMenu.Item>
                         <DropdownMenu.Item>
                           <a
-                            href={`https://search.google.com/search-console/performance/search-analytics?resource_id=sc-domain%3A${urlSanitization(data?.live_post_url)}&hl=en&page=*${encodeURI(data?.live_post_url)}`}
+                            href={`https://search.google.com/search-console/performance/search-analytics?resource_id=sc-domain%3A${urlSanitization(postData?.live_post_url)}&hl=en&page=*${encodeURI(data?.live_post_url)}`}
                             target="_blank"
                             className="btn btn-transparent text-primary"
 
@@ -462,7 +488,7 @@ const ActionButtonGroup = ({
                       </a>
                     </DropdownMenu.Item>
                     }
-                    {(type === ContentType.POST && data?.task_id) && <DropdownMenu.Item>
+                    {(type === ContentType.POST && postData?.task_id) && <DropdownMenu.Item>
                       <a className="btn btn-transparent" onClick={copyPostGuid}>
                         Copy Post GUID
                       </a>
@@ -521,21 +547,21 @@ const ActionButtonGroup = ({
         </Modal.Overlay>
         <Modal.Overlay closeIcon open={showFactCheckModal} onClose={() => setShowFactCheckModal(false)}>
           <div className="modal-body">
-            {data?.factcheck_guid ?
-              <FactCheckResultPage isModal uuid={data?.factcheck_guid} />
+            {postData?.factcheck_guid ?
+              <FactCheckResultPage isModal uuid={postData?.factcheck_guid} />
               :
               <FactCheckModal onClose={
                 () => {
                   setShowFactCheckModal(false)
                 }
-              } post={data} setLocalPost={setData} />
+              } post={postData} setLocalPost={setPostData} />
             }
           </div>
         </Modal.Overlay>
         <Modal.Overlay closeIcon open={showIndexModal} onClose={() => setShowIndexModal(false)}>
           <div className="modal-body">
-            <IndexModal post={data}
-              setPost={setData}
+            <IndexModal post={postData}
+              setPost={setPostData}
               onClose={() => {
                 setShowIndexModal(false);
                 return refresh();
@@ -549,15 +575,15 @@ const ActionButtonGroup = ({
         </Modal.Overlay>
         <Modal.Overlay closeIcon open={showImageGeneratePrompt} onClose={() => setShowImageGeneratePrompt(false)}>
           <div className="card p-3">
-            {data?.hero_image_prompt && <div className="card-body">
+            {postData?.hero_image_prompt && <div className="card-body">
               <h5 className="card-title">Image Generation Prompt</h5>
-              <pre className="card p-1 bg-secondary">{data?.hero_image_prompt}</pre>
+              <pre className="card p-1 bg-secondary">{postData?.hero_image_prompt}</pre>
               <button className="btn btn-primary mt-1" onClick={copyImagePrompt}><i className="bi bi-copy" />Copy</button>
             </div>
             }
-            {data?.hero_image_thinking && <div className="card-body">
+            {postData?.hero_image_thinking && <div className="card-body">
               <h5 className="card-title">Image Generation Prompt</h5>
-              <pre className="card p-1 bg-secondary">{data?.hero_image_thinking}</pre>
+              <pre className="card p-1 bg-secondary">{postData?.hero_image_thinking}</pre>
               <button className="btn btn-primary mt-1" onClick={copyImageThinking}><i className="bi bi-copy" />Copy</button>
             </div>
             }

@@ -166,6 +166,7 @@ const StatusBar = ({
       setPostLoading(true);
       getPostStatusFromOutline(content_plan_outline_guid)
         .then(res => {
+          console.log(res.data)
           setPostLoading(false);
           setPostStatus(res.data[0]?.status);
         })

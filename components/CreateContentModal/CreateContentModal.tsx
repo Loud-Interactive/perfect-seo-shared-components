@@ -240,10 +240,12 @@ const CreateContentModal = ({
 
   const pullOutline = (initial?) => {
     setLoading(true);
-    if (data.guid) {
-      setOutlineGUID(data.guid)
+    let guid = data?.outline?.guid || data.guid;
+    if (guid) {
+      setOutlineGUID(guid)
     }
-    let guid = data.content_plan_outline_guid || data.guid;
+    console.log(data)
+
     fetchOutlineData(guid)
       .then(res => {
         if (res.data[0]?.outline) {

@@ -21,8 +21,6 @@ const OutlinesList = ({ domain_name, active }: OutlinesListProps) => {
   const [data, setData] = useState<any[]>()
   const [deleteModal, setDeleteModal] = useState(null)
   const email = useSelector(selectEmail)
-  const [modalOpen, setModalOpen] = useState(false)
-  const [hasPosts, setHasPosts] = useState(false)
 
   // "Outline Not Started"
   // "Outline Generating"
@@ -83,15 +81,14 @@ const OutlinesList = ({ domain_name, active }: OutlinesListProps) => {
 
   useEffect(() => {
     let interval;
-    if (active && !modalOpen) {
+    if (active) {
       getOutlines();
-      // interval = setInterval(getOutlines, 300000)
     }
 
     return () => {
       clearInterval(interval);
     }
-  }, [active, paginator.currentPage, paginator.limit, modalOpen, domain_name])
+  }, [active, paginator.currentPage, paginator.limit, domain_name])
 
 
   if (!active) return null
@@ -110,7 +107,7 @@ const OutlinesList = ({ domain_name, active }: OutlinesListProps) => {
         : (data?.length > 0 || paginator.itemCount > 0) ?
           <div className='row d-flex justify-content-center g-1'>
             {data.map((obj, i) => {
-              return <OutlineItem setModalOpen={setModalOpen} domain_name={domain_name} outline={obj} key={obj.guid} refresh={getOutlines} />
+              return <OutlineItem domain_name={domain_name} outline={obj} key={obj.guid} refresh={getOutlines} />
             })}
             <div className='col-auto d-flex justify-content-center'>
               {paginator.renderComponent()}

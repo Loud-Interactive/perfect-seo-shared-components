@@ -712,7 +712,10 @@ export interface PostProps {
   factcheck_status: string
   index_guid: string
   index_status: string
-  schema_data?: any
+  schema_data?: any,
+  hero_image_prompt?: string,
+  hero_image_url?: string;
+  hero_image_thinking?: string;
 }
 
 export interface Synopsis {

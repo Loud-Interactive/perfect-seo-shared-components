@@ -338,6 +338,7 @@ const StatusBar = ({
         })
     }
   }
+
   const generateImagePromptHandler = (e) => {
     e.preventDefault();
     if (hero_image_prompt) {

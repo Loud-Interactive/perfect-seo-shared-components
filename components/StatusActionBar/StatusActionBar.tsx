@@ -442,15 +442,17 @@ const StatusActionBar = ({
           }
         )
         .subscribe()
-      outlineChannel = supabase.channel(`statusbar-outline-status-${content_plan_outline_guid}`)
-        .on(
-          'postgres_changes',
-          { event: 'UPDATE', schema: 'public', table: 'content_plan_outlines', filter: `guid=eq.${content_plan_outline_guid}` },
-          (payload) => {
-            setLocalOutline(payload.new as Outline)
-          }
-        )
-        .subscribe()
+      if (!outline) {
+        outlineChannel = supabase.channel(`statusbar-outline-status-${content_plan_outline_guid}`)
+          .on(
+            'postgres_changes',
+            { event: 'UPDATE', schema: 'public', table: 'content_plan_outlines', filter: `guid=eq.${content_plan_outline_guid}` },
+            (payload) => {
+              setLocalOutline(payload.new as Outline)
+            }
+          )
+          .subscribe()
+      }
     }
 
     return () => {
@@ -477,7 +479,7 @@ const StatusActionBar = ({
 
   useEffect(() => {
     let postChannel;
-    if (localPost?.task_id) {
+    if (localPost?.task_id && !post) {
       postChannel = supabase.channel(`statusbar-post-status-${localPost?.task_id}`)
         .on(
           'postgres_changes',
@@ -493,7 +495,7 @@ const StatusActionBar = ({
         postChannel.unsubscribe()
       }
     }
-  }, [localPost?.task_id])
+  }, [localPost?.task_id, post])
 
 
   useEffect(() => {
@@ -713,7 +715,7 @@ const StatusActionBar = ({
                 }
               </div>
                 :
-                (statusState?.outline?.complete) ?
+                (statusState?.outline?.complete && !localPost) ?
                   <div className="col-auto d-flex align-items-center">
                     <i className="bi bi-chevron-right mx-1" />
                     <div>

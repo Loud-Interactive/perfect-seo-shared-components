@@ -5361,3 +5361,63 @@ a.btn {
 .h-inherit {
   height: inherit;
 }
+
+@media (max-width: 600px) {
+
+  table,
+  tbody,
+  th,
+  td,
+  tr {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  tr {
+    display: flex !important;
+    flex-direction: column;
+    border: 1px solid $orange;
+    overflow: hidden;
+  }
+
+  thead {
+    display: none !important;
+    /* hide table headers on mobile */
+  }
+
+  td {
+    position: relative;
+    white-space: normal;
+    word-break: break-word;
+    padding: 3em 0 0 !important;
+    overflow: hidden;
+
+    &>div:only-of-type {
+      width: 100%;
+      padding: .5rem;
+    }
+  }
+
+  .table {
+    overflow: hidden !important;
+    border: 1px solid $orange;
+    border-radius: 0 !important;
+  }
+
+  td::before {
+    content: attr(data-label);
+    position: absolute;
+    top: 0;
+    width: 100%;
+    padding: 0.5em;
+    border-bottom: 1px solid $orange;
+    border-color: $orange;
+    background-color: $lightOrange;
+    color: $orange;
+    overflow: hidden;
+    font-weight: bold;
+    white-space: nowrap;
+  }
+}

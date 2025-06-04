@@ -81,7 +81,7 @@ const ContentPlanStatusCell = ({ plan, setDeleteModal, setDuplicateInfo, setNewM
 
   return (
 
-    <div className='d-flex justify-content-end align-items-center'>
+    <div className='d-flex justify-content-md-end align-items-center'>
       {/* {isAdmin && <div className='me-2'>{obj?.guid}</div>} */}
       {(completeStatuses.includes(status) === false && status) &&
         <span className='text-primary'>

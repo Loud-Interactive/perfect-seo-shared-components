@@ -264,7 +264,7 @@ const Table = ({ isLoading,
                       };
 
                       return (
-                        <td className={cellClasses} key={cell.id} onClick={onClick}>
+                        <td className={cellClasses} key={cell.id} onClick={onClick} data-label={cell.column.columnDef.header}>
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </td>);
                     })}
@@ -313,7 +313,7 @@ const Table = ({ isLoading,
                       };
 
                       return (
-                        <td className={cellClasses} key={cell.id} onClick={onClick}>
+                        <td className={cellClasses} key={cell.id} onClick={onClick} data-label={cell.column.columnDef.header}>
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </td>);
                     })}

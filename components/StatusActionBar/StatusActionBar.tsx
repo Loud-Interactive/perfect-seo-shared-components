@@ -469,7 +469,7 @@ const StatusActionBar = ({
   useEffect(() => {
     if (content_plan_post_id) {
       if (post) {
-        setLocalPost(post);
+        updatePost(post);
       }
       else {
         fetchPost();

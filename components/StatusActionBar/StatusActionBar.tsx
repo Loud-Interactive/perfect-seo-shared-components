@@ -456,6 +456,9 @@ const StatusActionBar = ({
           .subscribe()
       }
     }
+    else {
+      setLoading('outline', false)
+    }
 
     return () => {
       if (outlineStatusesChannel) {

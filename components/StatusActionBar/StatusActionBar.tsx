@@ -668,7 +668,7 @@ const StatusActionBar = ({
     generateOutline()
     setLoading('outline', true);
   }
-  if (!content_plan_outline_guid) {
+  if (!content_plan_outline_guid || (!statusState?.outline?.status && type === ContentType.PLAN)) {
     if (generateOutline) {
       return (
         <div className="d-flex justify-content-end">

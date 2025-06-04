@@ -123,7 +123,7 @@ const StatusActionBar = ({
       complete: false,
       error: undefined,
       status: undefined,
-      loading: false,
+      loading: true,
     },
     post: {
       complete: false,
@@ -246,6 +246,7 @@ const StatusActionBar = ({
     fetchOutlineData(content_plan_outline_guid)
       .then(res => {
         setLocalOutline(res.data[0])
+        setLoading('outline', false)
       })
   }
 
@@ -426,6 +427,7 @@ const StatusActionBar = ({
       fetchOutlineStatusData();
       if (outline) {
         setLocalOutline(outline)
+        setLoading('outline', false)
       }
       else {
         fetchOutline();
@@ -668,16 +670,7 @@ const StatusActionBar = ({
     generateOutline()
     setLoading('outline', true);
   }
-  if (!content_plan_outline_guid || (!statusState?.outline?.status && type === ContentType.PLAN)) {
-    if (generateOutline) {
-      return (
-        <div className="d-flex justify-content-end">
-          <button className="btn btn-primary" onClick={generateOutlineHandler}>{statusState?.outline?.loading ? 'Generating...' : 'Generate Outline'}</button>
-        </div>
-      )
-    }
-    else return null
-  }
+
   return (
     <>
       <div className="row d-flex g-3 w-100 justify-content-between align-items-center">
@@ -810,211 +803,215 @@ const StatusActionBar = ({
             }
           </div>
         </div>
-        <div className="col-auto">
-          <div className='row d-flex justify-content-end'>
-            <div className="input-group d-flex justify-content-end">
-              {(localPost?.google_doc_link && localPost?.html_link) &&
-                <>
+        {statusState?.outline?.complete ?
+          <div className="col-auto">
+            <div className='row d-flex justify-content-end'>
+              <div className="input-group d-flex justify-content-end">
+                {(localPost?.google_doc_link && localPost?.html_link) &&
+                  <>
+                    <a
+                      href={localPost.html_link}
+                      className="btn btn-secondary btn-standard"
+                      title="HTML File"
+                      target="_blank"
+                    >
+                      <i className="bi bi-filetype-html " />
+                    </a>
+                    <a
+                      href={localPost.google_doc_link}
+                      className="btn btn-secondary btn-standard"
+                      title="Google Docs"
+                      target="_blank"
+                    >
+                      <i className="bi bi-filetype-doc " />
+                    </a>
+                  </>}
+                {(type !== ContentType.POST && localOutline) &&
                   <a
-                    href={localPost.html_link}
-                    className="btn btn-secondary btn-standard"
-                    title="HTML File"
-                    target="_blank"
+                    title='edit outline'
+                    className="btn btn-secondary btn-standard no-truncate"
+                    onClick={(e) => { e.preventDefault(); setModal('viewEdit', true) }}
                   >
-                    <i className="bi bi-filetype-html " />
+                    <i className="bi bi-pencil-fill me-1" /> Edit
                   </a>
-                  <a
-                    href={localPost.google_doc_link}
-                    className="btn btn-secondary btn-standard"
-                    title="Google Docs"
-                    target="_blank"
-                  >
-                    <i className="bi bi-filetype-doc " />
-                  </a>
-                </>}
-              {(type !== ContentType.POST && localOutline) &&
-                <a
-                  title='edit outline'
-                  className="btn btn-secondary btn-standard no-truncate"
-                  onClick={(e) => { e.preventDefault(); setModal('viewEdit', true) }}
-                >
-                  <i className="bi bi-pencil-fill me-1" /> Edit
-                </a>
-              }
-              <button className='btn btn-primary btn-standard d-flex justify-content-center align-items-center' onClick={deleteClickHandler} title={`View GUID: ${content_plan_outline_guid}`}><i className="bi bi-trash pt-1" /></button>
-              <DropdownMenu.Root>
-                <DropdownMenu.Trigger className="btn btn-secondary btn-standard d-flex align-items-center justify-content-center">
-                  <i className="bi bi-three-dots-vertical" />
-                </DropdownMenu.Trigger>
-                <DropdownMenu.Portal>
-                  <DropdownMenu.Content align="end" className="bg-secondary z-100 card">
-                    {localOutline?.content_plan_guid &&
-                      <DropdownMenu.Item>
-                        <a
-                          href={`/contentplan/${localOutline?.content_plan_guid}`}
-                          target="_blank"
-                          className="btn btn-transparent"
-                        >
-                          View Content Plan
-                        </a>
-                      </DropdownMenu.Item>}
-                    {(localOutline) &&
-                      <DropdownMenu.Item>
-                        <a className="btn btn-transparent" onClick={showEditOutlineHandler}>
-                          Edit Outline
-                        </a>
-                      </DropdownMenu.Item>}
-
-                    {type !== ContentType.POST &&
-                      <>
-                        {content_plan_outline_guid && <DropdownMenu.Item>
+                }
+                <button className='btn btn-primary btn-standard d-flex justify-content-center align-items-center' onClick={deleteClickHandler} title={`View GUID: ${content_plan_outline_guid}`}><i className="bi bi-trash pt-1" /></button>
+                <DropdownMenu.Root>
+                  <DropdownMenu.Trigger className="btn btn-secondary btn-standard d-flex align-items-center justify-content-center">
+                    <i className="bi bi-three-dots-vertical" />
+                  </DropdownMenu.Trigger>
+                  <DropdownMenu.Portal>
+                    <DropdownMenu.Content align="end" className="bg-secondary z-100 card">
+                      {localOutline?.content_plan_guid &&
+                        <DropdownMenu.Item>
                           <a
+                            href={`/contentplan/${localOutline?.content_plan_guid}`}
+                            target="_blank"
                             className="btn btn-transparent"
-                            onClick={regenerateOutlineClickHandler}
                           >
-                            Regenerate Outline
+                            View Content Plan
                           </a>
                         </DropdownMenu.Item>}
-                        {localPost ?
+                      {(localOutline) &&
+                        <DropdownMenu.Item>
+                          <a className="btn btn-transparent" onClick={showEditOutlineHandler}>
+                            Edit Outline
+                          </a>
+                        </DropdownMenu.Item>}
+
+                      {type !== ContentType.POST &&
+                        <>
+                          {content_plan_outline_guid && <DropdownMenu.Item>
+                            <a
+                              className="btn btn-transparent"
+                              onClick={regenerateOutlineClickHandler}
+                            >
+                              Regenerate Outline
+                            </a>
+                          </DropdownMenu.Item>}
+                          {localPost ?
+                            <DropdownMenu.Item>
+                              <a className="btn btn-transparent" onClick={(e) => {
+                                e.preventDefault();
+                                setModal('viewGeneratePost', GenerateTypes.REGENERATE)
+                              }}>Regenerate Post</a>
+                            </DropdownMenu.Item>
+                            : <DropdownMenu.Item>
+                              <a
+                                className="btn btn-transparent text-primary"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  setModal('viewGeneratePost', GenerateTypes.GENERATE)
+                                }}
+                              >
+                                Generate Post
+                              </a>
+                            </DropdownMenu.Item>
+                          }
+
+                        </>}
+                      {type === ContentType.POST &&
+                        <>
+                          {localPost?.hero_image_prompt && <DropdownMenu.Item>
+                            <a className="btn btn-transparent" onClick={(e) => { e.preventDefault(); setModal('viewImagePrompt', true) }}>Show Hero Image Prompt</a>
+                          </DropdownMenu.Item>
+                          }
+                          {(isAdmin && localPost?.task_id) && <DropdownMenu.Item>
+                            <Link className="btn btn-transparent" href={`/post/${localPost?.task_id}`} target="_blank">Post Page</Link>
+                          </DropdownMenu.Item>}
                           <DropdownMenu.Item>
                             <a className="btn btn-transparent" onClick={(e) => {
                               e.preventDefault();
                               setModal('viewGeneratePost', GenerateTypes.REGENERATE)
                             }}>Regenerate Post</a>
                           </DropdownMenu.Item>
-                          : <DropdownMenu.Item>
-                            <a
-                              className="btn btn-transparent text-primary"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                setModal('viewGeneratePost', GenerateTypes.GENERATE)
-                              }}
-                            >
-                              Generate Post
-                            </a>
+                          <DropdownMenu.Item>
+                            <a className="btn btn-transparent" onClick={(e) => {
+                              e.preventDefault(); setModal('viewEditLiveUrl', true)
+                            }}>{localPost?.live_post_url ? 'Edit' : 'Add'} Live Post URL</a>
                           </DropdownMenu.Item>
-                        }
+                          {localPost?.live_post_url && <>
+                            {isAdmin && <>
+                              {localPost?.factcheck_guid ?
+                                <DropdownMenu.Item>
+                                  <a
+                                    href={`https://factcheckPerfect.ai/fact-checks/${localPost?.factcheck_guid}`}
+                                    target="_blank"
+                                    className="btn btn-transparent text-primary"
 
-                      </>}
-                    {type === ContentType.POST &&
-                      <>
-                        {localPost?.hero_image_prompt && <DropdownMenu.Item>
-                          <a className="btn btn-transparent" onClick={(e) => { e.preventDefault(); setModal('viewImagePrompt', true) }}>Show Hero Image Prompt</a>
-                        </DropdownMenu.Item>
-                        }
-                        {(isAdmin && localPost?.task_id) && <DropdownMenu.Item>
-                          <Link className="btn btn-transparent" href={`/post/${localPost?.task_id}`} target="_blank">Post Page</Link>
-                        </DropdownMenu.Item>}
-                        <DropdownMenu.Item>
-                          <a className="btn btn-transparent" onClick={(e) => {
-                            e.preventDefault();
-                            setModal('viewGeneratePost', GenerateTypes.REGENERATE)
-                          }}>Regenerate Post</a>
-                        </DropdownMenu.Item>
-                        <DropdownMenu.Item>
-                          <a className="btn btn-transparent" onClick={(e) => {
-                            e.preventDefault(); setModal('viewEditLiveUrl', true)
-                          }}>{localPost?.live_post_url ? 'Edit' : 'Add'} Live Post URL</a>
-                        </DropdownMenu.Item>
-                        {localPost?.live_post_url && <>
-                          {isAdmin && <>
-                            {localPost?.factcheck_guid ?
-                              <DropdownMenu.Item>
-                                <a
-                                  href={`https://factcheckPerfect.ai/fact-checks/${localPost?.factcheck_guid}`}
-                                  target="_blank"
-                                  className="btn btn-transparent text-primary"
+                                  >
+                                    Fact-Check Results
+                                  </a>
+                                </DropdownMenu.Item>
+                                : <DropdownMenu.Item>
+                                  <a
+                                    href={`https://factcheckPerfect.ai/fact-checks?url=${encodeURI(localPost?.live_post_url)}&post_guid=${content_plan_outline_guid}`}
+                                    target="_blank"
+                                    className="btn btn-transparent text-primary"
 
-                                >
-                                  Fact-Check Results
-                                </a>
-                              </DropdownMenu.Item>
-                              : <DropdownMenu.Item>
-                                <a
-                                  href={`https://factcheckPerfect.ai/fact-checks?url=${encodeURI(localPost?.live_post_url)}&post_guid=${content_plan_outline_guid}`}
-                                  target="_blank"
-                                  className="btn btn-transparent text-primary"
+                                  >
+                                    Fact-Check Post
+                                  </a>
+                                </DropdownMenu.Item>
+                              }
+                            </>}
+                            {isAdmin && <DropdownMenu.Item>
+                              <a
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  setModal('viewIndex', true)
+                                }}
+                                className="btn btn-transparent"
+                              >
+                                Index Post
+                              </a>
+                            </DropdownMenu.Item>}
+                            <DropdownMenu.Item>
+                              <a
+                                href={`https://socialperfect.ai?url=${encodeURI(localPost?.live_post_url)}`}
+                                target="_blank"
+                                className="btn btn-transparent text-primary"
 
-                                >
-                                  Fact-Check Post
-                                </a>
-                              </DropdownMenu.Item>
-                            }
+                              >
+                                Generate Social Posts
+                              </a>
+                            </DropdownMenu.Item>
+                            <DropdownMenu.Item>
+                              <a
+                                href={`https://app.ahrefs.com/v2-site-explorer/organic-keywords?columns=CPC%7C%7CKD%7C%7CLastUpdated%7C%7COrganicTraffic%7C%7CPaidTraffic%7C%7CPosition%7C%7CPositionHistory%7C%7CSERP%7C%7CSF%7C%7CURL%7C%7CVolume&compareDate=dontCompare&country=us&currentDate=today&keywordRules=&limit=100&mode=prefix&offset=0&positionChanges=&serpFeatures=&sort=Volume&sortDirection=desc&target=${encodeURI(localPost?.live_post_url.replace("https://", '').replace("http://", "").replace("www.", ""))}&urlRules=&volume_type=average`}
+                                target="_blank"
+                                className="btn btn-transparent text-primary"
+                              >
+                                AHREFs Report
+                              </a>
+                            </DropdownMenu.Item>
+                            <DropdownMenu.Item>
+                              <a
+                                href={`https://search.google.com/search-console/performance/search-analytics?resource_id=sc-domain%3A${urlSanitization(localPost?.live_post_url)}&hl=en&page=*${encodeURI(localPost?.live_post_url)}`}
+                                target="_blank"
+                                className="btn btn-transparent text-primary"
+
+                              >
+                                GSC Report
+                              </a>
+                            </DropdownMenu.Item>
                           </>}
-                          {isAdmin && <DropdownMenu.Item>
-                            <a
-                              onClick={(e) => {
-                                e.preventDefault();
-                                setModal('viewIndex', true)
-                              }}
-                              className="btn btn-transparent"
-                            >
-                              Index Post
-                            </a>
-                          </DropdownMenu.Item>}
-                          <DropdownMenu.Item>
-                            <a
-                              href={`https://socialperfect.ai?url=${encodeURI(localPost?.live_post_url)}`}
-                              target="_blank"
-                              className="btn btn-transparent text-primary"
-
-                            >
-                              Generate Social Posts
-                            </a>
-                          </DropdownMenu.Item>
-                          <DropdownMenu.Item>
-                            <a
-                              href={`https://app.ahrefs.com/v2-site-explorer/organic-keywords?columns=CPC%7C%7CKD%7C%7CLastUpdated%7C%7COrganicTraffic%7C%7CPaidTraffic%7C%7CPosition%7C%7CPositionHistory%7C%7CSERP%7C%7CSF%7C%7CURL%7C%7CVolume&compareDate=dontCompare&country=us&currentDate=today&keywordRules=&limit=100&mode=prefix&offset=0&positionChanges=&serpFeatures=&sort=Volume&sortDirection=desc&target=${encodeURI(localPost?.live_post_url.replace("https://", '').replace("http://", "").replace("www.", ""))}&urlRules=&volume_type=average`}
-                              target="_blank"
-                              className="btn btn-transparent text-primary"
-                            >
-                              AHREFs Report
-                            </a>
-                          </DropdownMenu.Item>
-                          <DropdownMenu.Item>
-                            <a
-                              href={`https://search.google.com/search-console/performance/search-analytics?resource_id=sc-domain%3A${urlSanitization(localPost?.live_post_url)}&hl=en&page=*${encodeURI(localPost?.live_post_url)}`}
-                              target="_blank"
-                              className="btn btn-transparent text-primary"
-
-                            >
-                              GSC Report
-                            </a>
-                          </DropdownMenu.Item>
                         </>}
-                      </>}
-                    {isAdmin && <>
-                      {(type !== ContentType.POST && content_plan_outline_guid) && <DropdownMenu.Item>
-                        <a className="btn btn-transparent" onClick={copyOutlineClickHandler}>
-                          Copy Outline GUID
-                        </a>
-                      </DropdownMenu.Item>
+                      {isAdmin && <>
+                        {(type !== ContentType.POST && content_plan_outline_guid) && <DropdownMenu.Item>
+                          <a className="btn btn-transparent" onClick={copyOutlineClickHandler}>
+                            Copy Outline GUID
+                          </a>
+                        </DropdownMenu.Item>
+                        }
+                        {(type === ContentType.POST && localPost?.task_id) && <DropdownMenu.Item>
+                          <a className="btn btn-transparent" onClick={e => {
+                            e.preventDefault(); copyClickHandler('task_id')
+                          }}>
+                            Copy Post GUID
+                          </a>
+                        </DropdownMenu.Item>
+                        }
+                        {(type === ContentType.POST && content_plan_outline_guid) && <DropdownMenu.Item>
+                          <a className="btn btn-transparent" onClick={copyOutlineClickHandler}>
+                            Copy Outline GUID
+                          </a>
+                        </DropdownMenu.Item>
+                        }
+                      </>
                       }
-                      {(type === ContentType.POST && localPost?.task_id) && <DropdownMenu.Item>
-                        <a className="btn btn-transparent" onClick={e => {
-                          e.preventDefault(); copyClickHandler('task_id')
-                        }}>
-                          Copy Post GUID
-                        </a>
-                      </DropdownMenu.Item>
-                      }
-                      {(type === ContentType.POST && content_plan_outline_guid) && <DropdownMenu.Item>
-                        <a className="btn btn-transparent" onClick={copyOutlineClickHandler}>
-                          Copy Outline GUID
-                        </a>
-                      </DropdownMenu.Item>
-                      }
-                    </>
-                    }
-                  </DropdownMenu.Content>
-                </DropdownMenu.Portal>
-              </DropdownMenu.Root>
+                    </DropdownMenu.Content>
+                  </DropdownMenu.Portal>
+                </DropdownMenu.Root>
+              </div>
+              {statusState?.regenerate?.error && <div className='col-12 text-end text-primary mt-2'>
+                <TypeWriterText string={statusState?.regenerate?.error} withBlink />
+              </div>}
             </div>
-            {statusState?.regenerate?.error && <div className='col-12 text-end text-primary mt-2'>
-              <TypeWriterText string={statusState?.regenerate?.error} withBlink />
-            </div>}
-          </div>
-        </div>
+          </div> : (generateOutline && type === ContentType.PLAN && !statusState?.outline?.loading) ?
+            <div className="col-auto">
+              <button className="btn btn-primary" onClick={generateOutlineHandler}>{statusState?.outline?.loading || (statusState?.outline?.status && !statusState?.outline?.complete) ? 'Generating...' : 'Generate Outline'}</button>
+            </div> : null}
       </div >
       {/* Modals  */}
       < Form controller={form} >

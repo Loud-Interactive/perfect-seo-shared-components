@@ -5380,6 +5380,7 @@ a.btn {
     flex-direction: column;
     border: 1px solid $orange;
     overflow: hidden;
+    margin-bottom: .5em !important;
   }
 
   thead {
@@ -5394,7 +5395,7 @@ a.btn {
     padding: 3em 0 0 !important;
     overflow: hidden;
 
-    &>div:only-of-type {
+    &>div {
       width: 100%;
       padding: .5rem;
     }
@@ -5402,7 +5403,6 @@ a.btn {
 
   .table {
     overflow: hidden !important;
-    border: 1px solid $orange;
     border-radius: 0 !important;
   }
 

@@ -671,7 +671,7 @@ const StatusActionBar = ({
   const generateOutlineHandler = (e) => {
     e.preventDefault();
     generateOutline()
-    setLoading('outline', true);
+    setStatus('outline', 'Generating Outline...')
   }
 
   return (

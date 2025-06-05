@@ -102,6 +102,12 @@ export const Overlay = (
     setModalOpen(open);
   }, [open]);
 
+  useEffect(() => {
+    if (modalOpen) {
+      dispatch(setModalsOpen(true))
+    }
+  }, [modalOpen])
+
   const contentClasses = classNames('modal-content', {
     [`${className}`]: className,
     [`${componentClassNames?.modal}`]: componentClassNames?.modal,

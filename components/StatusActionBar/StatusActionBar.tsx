@@ -56,6 +56,8 @@ const StatusActionBar = ({
 
   const form = useForm()
 
+
+
   const copyClickHandler = (key) => {
     switch (key) {
       case 'schema_data':
@@ -222,6 +224,9 @@ const StatusActionBar = ({
   };
 
   const [modals, setModals] = useState<{ viewSchema: boolean; viewGenerateImage: boolean, viewEdit: boolean, viewGeneratePost: GenerateTypes, viewImagePrompt: boolean, viewEditLiveUrl: boolean, viewIndex: boolean, viewDeleteOutline: boolean, viewDeletePost: boolean; }>(modalInitialState);
+
+
+  const modalsOpen = Object.values(modals).some(value => !!value);
 
   //Update modals for specific key
   const setModal = (key: keyof typeof modals, value?: any) => {
@@ -424,14 +429,12 @@ const StatusActionBar = ({
     let outlineStatusesChannel;
     let outlineChannel;
     if (content_plan_outline_guid) {
+      if (modalsOpen) {
+        return
+      }
       fetchOutlineStatusData();
-      if (outline) {
-        setLocalOutline(outline)
-        setLoading('outline', false)
-      }
-      else {
-        fetchOutline();
-      }
+
+      fetchOutline();
       if (!content_plan_post_id && !post) {
         fetchPostFromOutline();
       }
@@ -468,7 +471,7 @@ const StatusActionBar = ({
         outlineChannel.unsubscribe()
       }
     }
-  }, [content_plan_outline_guid, outline])
+  }, [content_plan_outline_guid, modalsOpen])
 
   // updates post if post or content_plan_post_id changes
   useEffect(() => {

@@ -1,11 +1,16 @@
+import { selectModalsOpen } from "@/perfect-seo-shared-components/lib/features/User"
 import { getContentPlanChildren } from "@/perfect-seo-shared-components/services/services"
 import { createClient } from "@/perfect-seo-shared-components/utils/supabase/client"
 import { useEffect, useMemo, useState } from "react"
+import { useSelector } from "react-redux"
 
 const ContentPlanStats = ({ guid }) => {
   const [stats, setStats] = useState<any>(null)
   const supabase = createClient()
 
+  useEffect(() => {
+    console.log("ContentPlanStats mounted")
+  }, [])
   const completedStats = useMemo(() => {
     let completed = { 'outlines': [], 'tasks': [] }
     if (stats?.outlines?.length > 0) {
@@ -18,6 +23,14 @@ const ContentPlanStats = ({ guid }) => {
   }, [stats])
 
   const pullStats = () => {
+
+    if (modalsOpen) {
+      console.log("blocked pulling stats")
+      return
+    }
+    else {
+      console.log("pull stats")
+    }
     getContentPlanChildren(guid)
       .then(res => {
         const newOutlines = res.data.outlines.reduce((acc, curr) => {
@@ -40,10 +53,16 @@ const ContentPlanStats = ({ guid }) => {
         setStats({ tasks: newTasks, outlines: newOutlines })
       })
   }
+
+  const modalsOpen = useSelector(selectModalsOpen)
   useEffect(() => {
     let postChannel;
     let outlinesChannel;
     if (guid) {
+      if (modalsOpen) {
+        console.log("blocked pulling stats")
+        return
+      }
       pullStats()
       postChannel = supabase.channel(`post-channel-${guid}`)
         .on(
@@ -73,7 +92,7 @@ const ContentPlanStats = ({ guid }) => {
         outlinesChannel.unsubscribe()
       }
     }
-  }, [guid])
+  }, [guid, modalsOpen])
 
 
   return (

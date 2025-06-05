@@ -1,6 +1,9 @@
+'use client'
 import React, { useEffect, useState } from 'react';
 import classNames from 'classnames';
 import * as Dialog from '@radix-ui/react-dialog';
+import { useDispatch } from 'react-redux';
+import { setModalsOpen } from '@/perfect-seo-shared-components/lib/features/User';
 
 export interface ModalProps {
   children: React.ReactNode;
@@ -53,8 +56,10 @@ export const Overlay = (
 
   const [modalOpen, setModalOpen] = useState(false);
   const [closing, setClosing] = useState(false);
+  const dispatch = useDispatch();
 
   const closeModal = () => {
+    dispatch(setModalsOpen(false))
     if (animateClose) {
       setClosing(true);
       if (onCloseTrigger) {
@@ -71,6 +76,7 @@ export const Overlay = (
       document.body.removeAttribute('style');
       return onClose();
     }
+
   };
 
   const clickout = (e) => {
@@ -90,6 +96,9 @@ export const Overlay = (
   };
 
   useEffect(() => {
+    if (open) {
+      dispatch(setModalsOpen(true))
+    }
     setModalOpen(open);
   }, [open]);
 
@@ -108,7 +117,9 @@ export const Overlay = (
   });
 
   const openChange = (bool) => {
+    console.log(bool)
     if (bool) {
+      dispatch(setModalsOpen(true))
       setModalOpen(true);
     } else {
       closeModal();

@@ -60,9 +60,10 @@ const CreateContentModal = ({
   const pathname = usePathname()
   const supabase = createClient();
 
-
-
-  const closeHandler = () => {
+  const closeHandler = (e?) => {
+    if (e) {
+      e.preventDefault();
+    }
     form.setState({});
     onClose();
   }

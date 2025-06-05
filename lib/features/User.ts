@@ -17,6 +17,7 @@ export type RootState = {
   loading: LoadingStates[],
   toasts: ToastProps[]
   schema: Schema[]
+  modalsOpen: boolean;
 };
 
 export type LoadingStates = {
@@ -38,7 +39,8 @@ const initialState: RootState = {
     { loading: false, key: 'user' },
   ],
   toasts: [],
-  schema: []
+  schema: [],
+  modalsOpen: false
 };
 
 export const UserSlice = createSlice({
@@ -100,6 +102,13 @@ export const UserSlice = createSlice({
       return {
         ...state,
         domainInfo: action.payload
+      }
+    },
+    setModalsOpen: (state, action: PayloadAction<boolean>) => {
+      console.log("Setting modals open to", action.payload);
+      return {
+        ...state,
+        modalsOpen: action.payload
       }
     },
     updateDomainInfo: (state, action: PayloadAction<Partial<PreferencesProps>>) => {
@@ -183,7 +192,7 @@ export const UserSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { setUser, setProfile, updatePoints, setLoggedIn, setLoading, setAdmin, setDomainInfo, setDomainAccess, reset, setUserSettings, updateDomainInfo, setLoader, removeToast, addToast, clearToasts, setSchema } = UserSlice.actions;
+export const { setUser, setProfile, updatePoints, setLoggedIn, setLoading, setAdmin, setDomainInfo, setDomainAccess, reset, setUserSettings, updateDomainInfo, setLoader, removeToast, addToast, clearToasts, setSchema, setModalsOpen } = UserSlice.actions;
 
 // Selectors
 export const selectUser = (state: RootState) => state?.user;
@@ -200,5 +209,6 @@ export const selectLoader = (state: RootState) => state?.loading;
 export const selectDomainInfo = (key: string) => (state: RootState) => state?.domainInfo?.find((domain) => domain.domain_name === key || domain.domain === key);
 export const selectToasts = (state: RootState) => state?.toasts;
 export const selectSchema = (state: RootState) => state?.schema;
+export const selectModalsOpen = (state: RootState) => state.modalsOpen;
 
 export default UserSlice.reducer;

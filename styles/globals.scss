@@ -5352,10 +5352,12 @@ a.btn {
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: normal;
+  max-width: 35em !important;
 }
 
 .max-status {
-  max-width: 23ch;
+  max-width: 23em;
 }
 
 .h-inherit {

@@ -80,6 +80,7 @@ export const Overlay = (
   };
 
   const clickout = (e) => {
+    { process.env.NODE_ENV === 'development' && console.log('Clickout pressed') }
     e.preventDefault();
     if (noClickout === true) {
       return;
@@ -88,6 +89,7 @@ export const Overlay = (
   };
 
   const escapeClick = (e) => {
+    { process.env.NODE_ENV === 'development' && console.log('Escape key pressed') }
     e.preventDefault();
     if (noKeyEscape) {
       return;
@@ -136,7 +138,7 @@ export const Overlay = (
     <Dialog.Root open={modalOpen} onOpenChange={openChange} modal>
       <Dialog.Portal>
         <Dialog.Overlay className={overlayClasses} onClick={onClick}>
-          <Dialog.Content aria-describedby={id || undefined} className={contentClasses} onInteractOutside={clickout} onPointerDownOutside={clickout} onEscapeKeyDown={escapeClick} id={id} title={id}>
+          <Dialog.Content aria-describedby={id || undefined} className={contentClasses} onPointerDownOutside={clickout} onEscapeKeyDown={escapeClick} id={id} title={id}>
             {closeIcon &&
               <button
                 aria-label="close modal"

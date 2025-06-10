@@ -1041,7 +1041,7 @@ const StatusActionBar = ({
                 >
                   View Content Plan
                 </a>
-                <button className="btn btn-primary" onClick={regenerateOutlineHandler}>{statusState?.outline?.loading || (statusState?.outline?.status && !statusState?.outline?.complete) ? 'Regenerating...' : 'Regenerate Outline'}</button>
+                <button className="btn btn-primary" onClick={regenerateOutlineHandler}>{statusState?.outline?.loading || (statusState?.outline?.status && !statusState?.outline?.complete) ? 'generating...' : 'Regenerate Outline'}</button>
               </div>
               : null}
       </div >

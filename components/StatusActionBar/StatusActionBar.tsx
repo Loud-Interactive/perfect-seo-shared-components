@@ -677,6 +677,21 @@ const StatusActionBar = ({
     setStatus('outline', 'Generating Outline...')
   }
 
+  const regenerateOutlineHandler = (e) => {
+    e.preventDefault();
+    let regenerateOther = {
+      email,
+      "post_title": outline?.post_title,
+      "content_plan_guid": outline?.content_plan_guid
+    }
+    regenerateOutline(content_plan_outline_guid, regenerateOther)
+      .then(res => {
+        setStatus('outline', 'Regenerating Outline...')
+      })
+      .catch(err => {
+        setError('outline', err?.response?.data?.message || err?.message || 'An error occurred')
+      })
+  }
   return (
     <>
       <div className="row d-flex g-3 w-100 justify-content-between align-items-center">
@@ -1017,7 +1032,18 @@ const StatusActionBar = ({
           </div> : (generateOutline && type === ContentType.PLAN && !statusState?.outline?.loading) ?
             <div className="col-auto">
               <button className="btn btn-primary" onClick={generateOutlineHandler}>{statusState?.outline?.loading || (statusState?.outline?.status && !statusState?.outline?.complete) ? 'Generating...' : 'Generate Outline'}</button>
-            </div> : null}
+            </div> : !statusState?.outline?.loading ?
+              <div className="input-group">
+                <a
+                  href={`/contentplan/${localOutline?.content_plan_guid}`}
+                  target="_blank"
+                  className="btn btn-secondary"
+                >
+                  View Content Plan
+                </a>
+                <button className="btn btn-primary" onClick={regenerateOutlineHandler}>{statusState?.outline?.loading || (statusState?.outline?.status && !statusState?.outline?.complete) ? 'Regenerating...' : 'Regenerate Outline'}</button>
+              </div>
+              : null}
       </div >
       {/* Modals  */}
       < Form controller={form} >

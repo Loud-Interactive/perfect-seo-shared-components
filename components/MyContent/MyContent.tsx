@@ -311,7 +311,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
   return (
     <>
       {hideTitle ? null :
-        <div className='container-fluid container-xl'>
+        <div className='container-fluid bg-secondary container-xl'>
           <div className='row g-3 align-items-center justify-content-between'>
             {(synopsis && ['bulk-content', 'bulk-posts'].includes(selectedTab) === false) ?
               <>

@@ -72,9 +72,7 @@ const OutlinesList = ({ domain_name, active }: OutlinesListProps) => {
         getOutlines()
         setDeleteModal(null)
       })
-      .catch(err => {
-        console.log(err)
-      })
+
   }
 
 

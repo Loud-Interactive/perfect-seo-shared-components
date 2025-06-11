@@ -97,9 +97,6 @@ const PostsList = ({ domain_name, active }: PostsListProps) => {
         getPosts()
         setDeleteModal(null)
       })
-      .catch(err => {
-        console.log(err)
-      })
   }
 
   const createQueryString = useCallback(

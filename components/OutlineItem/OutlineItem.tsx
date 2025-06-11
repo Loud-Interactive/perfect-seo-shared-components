@@ -83,7 +83,7 @@ const OutlineItem = ({ outline, refresh, domain_name }) => {
           </div>
         </div>
         <div className="col-12">
-          <StatusActionBar content_plan_outline_guid={localOutline?.guid} outline={outline} type={ContentType?.OUTLINE} />
+          <StatusActionBar content_plan_outline_guid={localOutline?.guid} outline={outline} refresh={refresh} type={ContentType?.OUTLINE} />
         </div>
       </div>
     </div>

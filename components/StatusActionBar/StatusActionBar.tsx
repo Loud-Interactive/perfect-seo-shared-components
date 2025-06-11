@@ -403,6 +403,7 @@ const StatusActionBar = ({
           .then(res => {
             if (res.data) {
               closeModals();
+              refresh();
             }
           })
 
@@ -417,9 +418,6 @@ const StatusActionBar = ({
         .then(res => {
           refresh();
           closeModals();
-        })
-        .catch(err => {
-          console.log(err)
         })
     }
     if (deleteHandler) {
@@ -1091,6 +1089,16 @@ const StatusActionBar = ({
       </Form >
       {/* Modals  */}
       <Modal.Overlay open={modals?.viewDeletePost} onClose={closeModals}>
+        <Modal.Title title="Delete Post" />
+        <Modal.Description>
+          Are you sure you want to delete this post?
+          <div className='d-flex justify-content-between mt-5'>
+            <button onClick={closeModals} className="btn btn-transparent">Cancel</button>
+            <button onClick={(e) => { e.preventDefault(); deletePostHandler() }} className="btn btn-primary">Yes</button>
+          </div>
+        </Modal.Description>
+      </Modal.Overlay>
+      <Modal.Overlay open={modals?.viewDeleteOutline} onClose={closeModals}>
         <Modal.Title title="Delete Post" />
         <Modal.Description>
           Are you sure you want to delete this post?

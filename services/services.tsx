@@ -290,109 +290,60 @@ export const getBatchStatus = (guids: string[]) => {
 
 
 export const getPostsByDomain = (domain: string, reqObj?: any) => {
-  let startIndex = reqObj?.page === 1 ? 0 : (reqObj.page - 1) * reqObj.page_size;
-  let endIndex = startIndex + reqObj.page_size - 1
-  if (!!reqObj?.has_live_post_url) {
-    if (reqObj?.has_live_post_url === true) {
-      return supabase.from('tasks')
-        .select('*', { count: 'exact' })
-        .eq("client_domain", domain)
-        .neq("live_post_url", null)
-        .neq("is_deleted", true)
-        .range(startIndex, endIndex)
-        .order('last_updated_at', { ascending: false })
+  const startIndex = reqObj?.page === 1 ? 0 : (reqObj.page - 1) * reqObj.page_size;
+  const endIndex = startIndex + reqObj.page_size - 1;
+
+  const baseQuery = supabase
+    .from('tasks')
+    .select('*', { count: 'exact' })
+    .eq("client_domain", domain)
+    .neq("is_deleted", true)
+    .range(startIndex, endIndex)
+    .order('last_updated_at', { ascending: false });
+
+  if (reqObj?.has_live_post_url !== undefined) {
+    if (reqObj.has_live_post_url === true) {
+      return baseQuery.neq("live_post_url", null);
+    } else {
+      return baseQuery.is("live_post_url", null);
     }
-    else {
-      return supabase.from('tasks')
-        .select('*', { count: 'exact' })
-        .eq("client_domain", domain)
-        .is("live_post_url", null)
-        .neq("is_deleted", true)
-        .range(startIndex, endIndex)
-        .order('last_updated_at', { ascending: false })
+  } else if (reqObj?.status) {
+    if (reqObj.status === 'completed') {
+      return baseQuery.eq("status", "Complete").is("live_post_url", null);
+    } else {
+      return baseQuery.neq("status", "Complete");
     }
-  }
-  else if (reqObj.status) {
-    if (reqObj?.status === 'completed') {
-      return supabase.from('tasks')
-        .select('*', { count: 'exact' })
-        .eq("client_domain", domain)
-        .eq("status", "Complete")
-        .neq("is_deleted", true)
-        .is("live_post_url", null)
-        .range(startIndex, endIndex)
-        .order('last_updated_at', { ascending: false })
-    }
-    else {
-      return supabase.from('tasks')
-        .select('*', { count: 'exact' })
-        .eq("client_domain", domain)
-        .neq("status", "Complete")
-        .neq("is_deleted", true)
-        .range(startIndex, endIndex)
-        .order('last_updated_at', { ascending: false })
-    }
-  }
-  else {
-    return supabase.from('tasks')
-      .select('*', { count: 'exact' })
-      .eq("client_domain", domain)
-      .range(startIndex, endIndex)
-      .neq("is_deleted", true)
-      .order('last_updated_at', { ascending: false })
+  } else {
+    return baseQuery;
   }
 };
 
 export const getPostsByEmail = (email: string, reqObj?: any) => {
-  let startIndex = reqObj?.page === 1 ? 0 : (reqObj.page - 1) * reqObj.page_size;
-  let endIndex = startIndex + reqObj.page_size - 1
-  if (!!reqObj?.has_live_post_url) {
-    if (reqObj?.has_live_post_url === true) {
-      return supabase.from('tasks')
-        .select('*', { count: 'exact' })
-        .eq("email", email)
-        .neq("live_post_url", null)
-        .neq("is_deleted", true)
-        .range(startIndex, endIndex)
-        .order('last_updated_at', { ascending: false })
+  const startIndex = reqObj?.page === 1 ? 0 : (reqObj.page - 1) * reqObj.page_size;
+  const endIndex = startIndex + reqObj.page_size - 1;
+
+  const baseQuery = supabase
+    .from('tasks')
+    .select('*', { count: 'exact' })
+    .eq("email", email)
+    .neq("is_deleted", true)
+    .range(startIndex, endIndex)
+    .order('last_updated_at', { ascending: false });
+
+  if (reqObj?.has_live_post_url !== undefined) {
+    if (reqObj.has_live_post_url === true) {
+      return baseQuery.neq("live_post_url", null);
+    } else {
+      return baseQuery.is("live_post_url", null);
     }
-    else {
-      return supabase.from('tasks')
-        .select('*', { count: 'exact' })
-        .eq("email", email)
-        .is("live_post_url", null)
-        .neq("is_deleted", true)
-        .range(startIndex, endIndex)
-        .order('last_updated_at', { ascending: false })
+  } else if (reqObj?.status) {
+    if (reqObj.status === 'completed') {
+      return baseQuery.eq("status", "Complete");
+    } else {
+      return baseQuery.neq("status", "Complete");
     }
-  }
-  else if (reqObj.status) {
-    if (reqObj?.status === 'completed') {
-      return supabase.from('tasks')
-        .select('*', { count: 'exact' })
-        .eq("email", email)
-        .eq("status", "Complete")
-        .neq("is_deleted", true)
-        .range(startIndex, endIndex)
-        .order('last_updated_at', { ascending: false })
-    }
-    else {
-      return supabase.from('tasks')
-        .select('*', { count: 'exact' })
-        .eq("email", email)
-        .neq("status", "Complete")
-        .neq("is_deleted", true)
-        .range(startIndex, endIndex)
-        .order('last_updated_at', { ascending: false })
-    }
-  }
-  else {
-    return supabase.from('tasks')
-      .select('*', { count: 'exact' })
-      .eq("email", email)
-      .neq("is_deleted", true)
-      .range(startIndex, endIndex)
-      .order('last_updated_at', { ascending: false })
+  } else {
+    return baseQuery;
   }
 };
 
@@ -401,6 +352,10 @@ export const deleteContentPlan = (guid: string) => {
 }
 
 export const deletePost = (task_guid: string) => {
+  return supabase.from('tasks')
+    .update({ is_deleted: true })
+    .eq("task_id", task_guid)
+    .select('*')
   return axiosInstance.delete(`${NEW_CONTENT_API_URL}/content/delete/${task_guid}`, { headers: newContentAPIHeader });
 }
 
@@ -561,6 +516,11 @@ export const getContentPlansByDomain = (domain: string, paginator: PaginationReq
 
 
 export const deleteOutline = (guid: string) => {
+  return supabase.from('content_plan_outlines')
+    .update({ is_deleted: true })
+    .eq("guid", guid)
+    .select('*')
+
   return axiosInstance.delete(`https://planperfectapi.replit.app/delete_outline/${guid}`);
 }
 

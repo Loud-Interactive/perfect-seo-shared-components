@@ -19,7 +19,7 @@ interface PostItemProps {
   domain_name?: string
 }
 
-const PostItem = ({ post, domain_name }: PostItemProps) => {
+const PostItem = ({ post, domain_name, refresh }: PostItemProps) => {
   const email = useSelector(selectEmail)
   const [liveUrl, setLiveUrl] = useState(post?.live_post_url)
   const [localPost, setLocalPost] = useState(post)
@@ -119,7 +119,7 @@ const PostItem = ({ post, domain_name }: PostItemProps) => {
           </div>
         </div>
         <div className="col-12">
-          <StatusActionBar content_plan_outline_guid={localPost?.content_plan_outline_guid} type={ContentType?.POST} post={localPost} content_plan_post_id={localPost?.task_id} />
+          <StatusActionBar content_plan_outline_guid={localPost?.content_plan_outline_guid} type={ContentType?.POST} post={localPost} content_plan_post_id={localPost?.task_id} refresh={refresh} />
         </div>
       </div>
       <Modal.Overlay closeIcon open={showLivePost} onClose={() => setShowLivePost(false)} className="modal-small">

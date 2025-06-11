@@ -61,6 +61,7 @@ const PostItem = ({ post, domain_name }: PostItemProps) => {
   const supabase = createClient()
 
   useEffect(() => {
+    console.log('useEffect: PostItem post?.task_id subscription');
     let contentPlanOutlines;
     if (post) {
       setLocalPost(post)

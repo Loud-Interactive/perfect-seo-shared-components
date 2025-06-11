@@ -225,7 +225,6 @@ const StatusActionBar = ({
 
   const [modals, setModals] = useState<{ viewSchema: boolean; viewGenerateImage: boolean, viewEdit: boolean, viewGeneratePost: GenerateTypes, viewImagePrompt: boolean, viewEditLiveUrl: boolean, viewIndex: boolean, viewDeleteOutline: boolean, viewDeletePost: boolean; }>(modalInitialState);
 
-
   const modalsOpen = Object.values(modals).some(value => !!value);
 
   //Update modals for specific key
@@ -248,19 +247,25 @@ const StatusActionBar = ({
 
   //Fetch data
   const fetchOutline = () => {
+    console.log("Fetching outline data for guid:", content_plan_outline_guid);
     fetchOutlineData(content_plan_outline_guid)
       .then(res => {
+        console.log("Outline data fetched:", res.data[0]);
+        setStatus('outline', res.data[0].status)
         setLocalOutline(res.data[0])
         setLoading('outline', false)
       })
   }
 
-  const fetchOutlineStatusData = () => {
-    fetchOutlineStatus(content_plan_outline_guid)
-      .then(res => {
-        setStatus('outline', res?.data[0] ? res.data[0]?.status : '');
-      })
-  };
+  // const fetchOutlineStatusData = () => {
+  //   fetchOutlineStatus(content_plan_outline_guid)
+  //     .then(res => {
+  //       console.log(res?.data[0])
+  //       if (res.data[0]?.status) {
+  //         setStatus('outline', res.data[0]?.status);
+  //       }
+  //     })
+  // };
 
   const updatePost = (post: PostProps) => {
     setLocalPost(post);
@@ -426,55 +431,59 @@ const StatusActionBar = ({
 
   // updates outline and outline statuses 
   useEffect(() => {
+    console.log('useEffect: updates outline and outline statuses');
     let outlineStatusesChannel;
     let outlineChannel;
     if (content_plan_outline_guid) {
-      if (modalsOpen) {
-        return
-      }
-      fetchOutlineStatusData();
+      if (!modalsOpen) {
 
-      fetchOutline();
-      if (!content_plan_post_id && !post) {
-        fetchPostFromOutline();
-      }
-      outlineStatusesChannel = supabase.channel(`statusbar-outline-status-${content_plan_outline_guid}`)
-        .on(
-          'postgres_changes',
-          { event: 'INSERT', schema: 'public', table: 'content_plan_outline_statuses', filter: `outline_guid=eq.${content_plan_outline_guid}` },
-          (payload) => {
-            setStatus('outline', payload.new.status)
-          }
-        )
-        .subscribe()
-      if (!outline) {
-        outlineChannel = supabase.channel(`statusbar-outline-status-${content_plan_outline_guid}`)
-          .on(
-            'postgres_changes',
-            { event: 'UPDATE', schema: 'public', table: 'content_plan_outlines', filter: `guid=eq.${content_plan_outline_guid}` },
-            (payload) => {
-              setLocalOutline(payload.new as Outline)
-            }
-          )
-          .subscribe()
+
+        // fetchOutlineStatusData();
+
+        fetchOutline();
+        if (!content_plan_post_id && !post) {
+          fetchPostFromOutline();
+        }
+        // outlineStatusesChannel = supabase.channel(`statusbar-outline-status-${content_plan_outline_guid}`)
+        //   .on(
+        //     'postgres_changes',
+        //     { event: 'INSERT', schema: 'public', table: 'content_plan_outline_statuses', filter: `outline_guid=eq.${content_plan_outline_guid}` },
+        //     (payload) => {
+        //       setStatus('outline', payload.new.status)
+        //     }
+        //   )
+        //   .subscribe()
+        if (!outline) {
+          outlineChannel = supabase.channel(`statusbar-outline-status-${content_plan_outline_guid}`)
+            .on(
+              'postgres_changes',
+              { event: 'UPDATE', schema: 'public', table: 'content_plan_outlines', filter: `guid=eq.${content_plan_outline_guid}` },
+              (payload) => {
+                setLocalOutline(payload.new as Outline)
+              }
+            )
+            .subscribe()
+        }
       }
     }
     else {
       setLoading('outline', false)
     }
-
-    return () => {
-      if (outlineStatusesChannel) {
-        outlineStatusesChannel.unsubscribe()
-      }
-      if (outlineChannel) {
-        outlineChannel.unsubscribe()
+    if (!modalsOpen) {
+      return () => {
+        if (outlineStatusesChannel) {
+          outlineStatusesChannel.unsubscribe()
+        }
+        if (outlineChannel) {
+          outlineChannel.unsubscribe()
+        }
       }
     }
-  }, [content_plan_outline_guid, modalsOpen])
+  }, [content_plan_outline_guid])
 
   // updates post if post or content_plan_post_id changes
   useEffect(() => {
+    console.log('useEffect: updates post if post or content_plan_post_id changes');
     if (content_plan_post_id) {
       if (post) {
         updatePost(post);
@@ -486,6 +495,7 @@ const StatusActionBar = ({
   }, [content_plan_post_id, post])
 
   useEffect(() => {
+    console.log('useEffect: postChannel for localPost?.task_id and post');
     let postChannel;
     if (localPost?.task_id && !post) {
       postChannel = supabase.channel(`statusbar-post-status-${localPost?.task_id}`)
@@ -507,6 +517,7 @@ const StatusActionBar = ({
 
 
   useEffect(() => {
+    console.log('useEffect: factcheckInterval for statusState?.factcheck?.complete and localPost?.factcheck_guid');
     let factcheckInterval;
     if (!statusState?.factcheck?.complete) {
       fetchFactcheckStatusData();
@@ -522,13 +533,14 @@ const StatusActionBar = ({
   }, [statusState?.factcheck?.complete, localPost?.factcheck_guid]);
 
   useEffect(() => {
+    console.log('useEffect: checkWordPressPublish when statusState?.post?.complete changes');
     if (statusState?.post?.complete) {
       checkWordPressPublish()
     }
   }, [statusState?.post?.complete])
 
-
   useEffect(() => {
+    console.log('useEffect: checkIfIndexed when localPost?.live_post_url changes');
     if (localPost?.live_post_url
       && localPost?.index_status !== 'Submitted and indexed'
     ) {
@@ -537,6 +549,7 @@ const StatusActionBar = ({
   }, [localPost?.live_post_url])
 
   useEffect(() => {
+    console.log('useEffect: setCompletion and setError for outline/post status changes');
     setCompletion('outline', statusState?.outline?.status === 'completed');
     setCompletion('post', statusState?.post?.status === 'Complete');
     if (statusState?.outline?.status === "reset_completed") {
@@ -693,7 +706,7 @@ const StatusActionBar = ({
       })
   }
   return (
-    <>
+    <DropdownMenu.Root>
       <div className="row d-flex g-3 w-100 justify-content-between align-items-center">
         <div className="col">
           <div className="status-bar row d-flex align-items-center justify-content-start g-0 ">
@@ -857,173 +870,172 @@ const StatusActionBar = ({
                   </a>
                 }
                 <button className='btn btn-primary btn-standard d-flex justify-content-center align-items-center' onClick={deleteClickHandler} title={`View GUID: ${content_plan_outline_guid}`}><i className="bi bi-trash pt-1" /></button>
-                <DropdownMenu.Root>
-                  <DropdownMenu.Trigger className="btn btn-secondary btn-standard d-flex align-items-center justify-content-center">
-                    <i className="bi bi-three-dots-vertical" />
-                  </DropdownMenu.Trigger>
-                  <DropdownMenu.Portal>
-                    <DropdownMenu.Content align="end" className="bg-secondary z-100 card">
-                      {localOutline?.content_plan_guid &&
-                        <DropdownMenu.Item>
-                          <a
-                            href={`/contentplan/${localOutline?.content_plan_guid}`}
-                            target="_blank"
-                            className="btn btn-transparent"
-                          >
-                            View Content Plan
-                          </a>
-                        </DropdownMenu.Item>}
-                      {(localOutline) &&
-                        <DropdownMenu.Item>
-                          <a className="btn btn-transparent" onClick={showEditOutlineHandler}>
-                            Edit Outline
-                          </a>
-                        </DropdownMenu.Item>}
 
-                      {type !== ContentType.POST &&
-                        <>
-                          {content_plan_outline_guid && <DropdownMenu.Item>
+                <DropdownMenu.Trigger className="btn btn-secondary btn-standard d-flex align-items-center justify-content-center">
+                  <i className="bi bi-three-dots-vertical" />
+                </DropdownMenu.Trigger>
+                <DropdownMenu.Portal>
+                  <DropdownMenu.Content align="end" className="bg-secondary z-100 card">
+                    {localOutline?.content_plan_guid &&
+                      <DropdownMenu.Item>
+                        <a
+                          href={`/contentplan/${localOutline?.content_plan_guid}`}
+                          target="_blank"
+                          className="btn btn-transparent"
+                        >
+                          View Content Plan
+                        </a>
+                      </DropdownMenu.Item>}
+                    {(localOutline) &&
+                      <DropdownMenu.Item>
+                        <a className="btn btn-transparent" onClick={showEditOutlineHandler}>
+                          Edit Outline
+                        </a>
+                      </DropdownMenu.Item>}
+
+
+                    {type === ContentType.POST ?
+                      <>
+                        {localPost?.hero_image_prompt && <DropdownMenu.Item>
+                          <a className="btn btn-transparent" onClick={(e) => { e.preventDefault(); setModal('viewImagePrompt', true) }}>Show Hero Image Prompt</a>
+                        </DropdownMenu.Item>
+                        }
+                        {(isAdmin && localPost?.task_id) && <DropdownMenu.Item>
+                          <Link className="btn btn-transparent" href={`/post/${localPost?.task_id}`} target="_blank">Post Page</Link>
+                        </DropdownMenu.Item>}
+                        <DropdownMenu.Item>
+                          <a className="btn btn-transparent" onClick={(e) => {
+                            e.preventDefault();
+                            setModal('viewGeneratePost', GenerateTypes.REGENERATE)
+                          }}>Regenerate Post</a>
+                        </DropdownMenu.Item>
+                        <DropdownMenu.Item>
+                          <a className="btn btn-transparent" onClick={(e) => {
+                            e.preventDefault(); setModal('viewEditLiveUrl', true)
+                          }}>{localPost?.live_post_url ? 'Edit' : 'Add'} Live Post URL</a>
+                        </DropdownMenu.Item>
+                        {localPost?.live_post_url && <>
+                          {isAdmin && <>
+                            {localPost?.factcheck_guid ?
+                              <DropdownMenu.Item>
+                                <a
+                                  href={`https://factcheckPerfect.ai/fact-checks/${localPost?.factcheck_guid}`}
+                                  target="_blank"
+                                  className="btn btn-transparent text-primary"
+
+                                >
+                                  Fact-Check Results
+                                </a>
+                              </DropdownMenu.Item>
+                              : <DropdownMenu.Item>
+                                <a
+                                  href={`https://factcheckPerfect.ai/fact-checks?url=${encodeURI(localPost?.live_post_url)}&post_guid=${content_plan_outline_guid}`}
+                                  target="_blank"
+                                  className="btn btn-transparent text-primary"
+
+                                >
+                                  Fact-Check Post
+                                </a>
+                              </DropdownMenu.Item>
+                            }
+                          </>}
+                          {isAdmin && <DropdownMenu.Item>
                             <a
+                              onClick={(e) => {
+                                e.preventDefault();
+                                setModal('viewIndex', true)
+                              }}
                               className="btn btn-transparent"
-                              onClick={regenerateOutlineClickHandler}
                             >
-                              Regenerate Outline
+                              Index Post
                             </a>
                           </DropdownMenu.Item>}
-                          {localPost ?
-                            <DropdownMenu.Item>
-                              <a className="btn btn-transparent" onClick={(e) => {
-                                e.preventDefault();
-                                setModal('viewGeneratePost', GenerateTypes.REGENERATE)
-                              }}>Regenerate Post</a>
-                            </DropdownMenu.Item>
-                            : <DropdownMenu.Item>
-                              <a
-                                className="btn btn-transparent text-primary"
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  setModal('viewGeneratePost', GenerateTypes.GENERATE)
-                                }}
-                              >
-                                Generate Post
-                              </a>
-                            </DropdownMenu.Item>
-                          }
+                          <DropdownMenu.Item>
+                            <a
+                              href={`https://socialperfect.ai?url=${encodeURI(localPost?.live_post_url)}`}
+                              target="_blank"
+                              className="btn btn-transparent text-primary"
 
-                        </>}
-                      {type === ContentType.POST &&
-                        <>
-                          {localPost?.hero_image_prompt && <DropdownMenu.Item>
-                            <a className="btn btn-transparent" onClick={(e) => { e.preventDefault(); setModal('viewImagePrompt', true) }}>Show Hero Image Prompt</a>
+                            >
+                              Generate Social Posts
+                            </a>
                           </DropdownMenu.Item>
-                          }
-                          {(isAdmin && localPost?.task_id) && <DropdownMenu.Item>
-                            <Link className="btn btn-transparent" href={`/post/${localPost?.task_id}`} target="_blank">Post Page</Link>
-                          </DropdownMenu.Item>}
+                          <DropdownMenu.Item>
+                            <a
+                              href={`https://app.ahrefs.com/v2-site-explorer/organic-keywords?columns=CPC%7C%7CKD%7C%7CLastUpdated%7C%7COrganicTraffic%7C%7CPaidTraffic%7C%7CPosition%7C%7CPositionHistory%7C%7CSERP%7C%7CSF%7C%7CURL%7C%7CVolume&compareDate=dontCompare&country=us&currentDate=today&keywordRules=&limit=100&mode=prefix&offset=0&positionChanges=&serpFeatures=&sort=Volume&sortDirection=desc&target=${encodeURI(localPost?.live_post_url.replace("https://", '').replace("http://", "").replace("www.", ""))}&urlRules=&volume_type=average`}
+                              target="_blank"
+                              className="btn btn-transparent text-primary"
+                            >
+                              AHREFs Report
+                            </a>
+                          </DropdownMenu.Item>
+                          <DropdownMenu.Item>
+                            <a
+                              href={`https://search.google.com/search-console/performance/search-analytics?resource_id=sc-domain%3A${urlSanitization(localPost?.live_post_url)}&hl=en&page=*${encodeURI(localPost?.live_post_url)}`}
+                              target="_blank"
+                              className="btn btn-transparent text-primary"
+
+                            >
+                              GSC Report
+                            </a>
+                          </DropdownMenu.Item>
+                        </>}
+                      </> :
+                      <>
+                        {content_plan_outline_guid && <DropdownMenu.Item>
+                          <a
+                            className="btn btn-transparent"
+                            onClick={regenerateOutlineClickHandler}
+                          >
+                            Regenerate Outline
+                          </a>
+                        </DropdownMenu.Item>}
+                        {localPost ?
                           <DropdownMenu.Item>
                             <a className="btn btn-transparent" onClick={(e) => {
                               e.preventDefault();
                               setModal('viewGeneratePost', GenerateTypes.REGENERATE)
                             }}>Regenerate Post</a>
                           </DropdownMenu.Item>
-                          <DropdownMenu.Item>
-                            <a className="btn btn-transparent" onClick={(e) => {
-                              e.preventDefault(); setModal('viewEditLiveUrl', true)
-                            }}>{localPost?.live_post_url ? 'Edit' : 'Add'} Live Post URL</a>
+                          : <DropdownMenu.Item>
+                            <a
+                              className="btn btn-transparent text-primary"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                setModal('viewGeneratePost', GenerateTypes.GENERATE)
+                              }}
+                            >
+                              Generate Post
+                            </a>
                           </DropdownMenu.Item>
-                          {localPost?.live_post_url && <>
-                            {isAdmin && <>
-                              {localPost?.factcheck_guid ?
-                                <DropdownMenu.Item>
-                                  <a
-                                    href={`https://factcheckPerfect.ai/fact-checks/${localPost?.factcheck_guid}`}
-                                    target="_blank"
-                                    className="btn btn-transparent text-primary"
-
-                                  >
-                                    Fact-Check Results
-                                  </a>
-                                </DropdownMenu.Item>
-                                : <DropdownMenu.Item>
-                                  <a
-                                    href={`https://factcheckPerfect.ai/fact-checks?url=${encodeURI(localPost?.live_post_url)}&post_guid=${content_plan_outline_guid}`}
-                                    target="_blank"
-                                    className="btn btn-transparent text-primary"
-
-                                  >
-                                    Fact-Check Post
-                                  </a>
-                                </DropdownMenu.Item>
-                              }
-                            </>}
-                            {isAdmin && <DropdownMenu.Item>
-                              <a
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  setModal('viewIndex', true)
-                                }}
-                                className="btn btn-transparent"
-                              >
-                                Index Post
-                              </a>
-                            </DropdownMenu.Item>}
-                            <DropdownMenu.Item>
-                              <a
-                                href={`https://socialperfect.ai?url=${encodeURI(localPost?.live_post_url)}`}
-                                target="_blank"
-                                className="btn btn-transparent text-primary"
-
-                              >
-                                Generate Social Posts
-                              </a>
-                            </DropdownMenu.Item>
-                            <DropdownMenu.Item>
-                              <a
-                                href={`https://app.ahrefs.com/v2-site-explorer/organic-keywords?columns=CPC%7C%7CKD%7C%7CLastUpdated%7C%7COrganicTraffic%7C%7CPaidTraffic%7C%7CPosition%7C%7CPositionHistory%7C%7CSERP%7C%7CSF%7C%7CURL%7C%7CVolume&compareDate=dontCompare&country=us&currentDate=today&keywordRules=&limit=100&mode=prefix&offset=0&positionChanges=&serpFeatures=&sort=Volume&sortDirection=desc&target=${encodeURI(localPost?.live_post_url.replace("https://", '').replace("http://", "").replace("www.", ""))}&urlRules=&volume_type=average`}
-                                target="_blank"
-                                className="btn btn-transparent text-primary"
-                              >
-                                AHREFs Report
-                              </a>
-                            </DropdownMenu.Item>
-                            <DropdownMenu.Item>
-                              <a
-                                href={`https://search.google.com/search-console/performance/search-analytics?resource_id=sc-domain%3A${urlSanitization(localPost?.live_post_url)}&hl=en&page=*${encodeURI(localPost?.live_post_url)}`}
-                                target="_blank"
-                                className="btn btn-transparent text-primary"
-
-                              >
-                                GSC Report
-                              </a>
-                            </DropdownMenu.Item>
-                          </>}
-                        </>}
-                      {isAdmin && <>
-                        {(type !== ContentType.POST && content_plan_outline_guid) && <DropdownMenu.Item>
-                          <a className="btn btn-transparent" onClick={copyOutlineClickHandler}>
-                            Copy Outline GUID
-                          </a>
-                        </DropdownMenu.Item>
                         }
-                        {(type === ContentType.POST && localPost?.task_id) && <DropdownMenu.Item>
-                          <a className="btn btn-transparent" onClick={e => {
-                            e.preventDefault(); copyClickHandler('task_id')
-                          }}>
-                            Copy Post GUID
-                          </a>
-                        </DropdownMenu.Item>
-                        }
-                        {(type === ContentType.POST && content_plan_outline_guid) && <DropdownMenu.Item>
-                          <a className="btn btn-transparent" onClick={copyOutlineClickHandler}>
-                            Copy Outline GUID
-                          </a>
-                        </DropdownMenu.Item>
-                        }
-                      </>
+
+                      </>}
+                    {isAdmin && <>
+                      {(type !== ContentType.POST && content_plan_outline_guid) && <DropdownMenu.Item>
+                        <a className="btn btn-transparent" onClick={copyOutlineClickHandler}>
+                          Copy Outline GUID
+                        </a>
+                      </DropdownMenu.Item>
                       }
-                    </DropdownMenu.Content>
-                  </DropdownMenu.Portal>
-                </DropdownMenu.Root>
+                      {(type === ContentType.POST && localPost?.task_id) && <DropdownMenu.Item>
+                        <a className="btn btn-transparent" onClick={e => {
+                          e.preventDefault(); copyClickHandler('task_id')
+                        }}>
+                          Copy Post GUID
+                        </a>
+                      </DropdownMenu.Item>
+                      }
+                      {(type === ContentType.POST && content_plan_outline_guid) && <DropdownMenu.Item>
+                        <a className="btn btn-transparent" onClick={copyOutlineClickHandler}>
+                          Copy Outline GUID
+                        </a>
+                      </DropdownMenu.Item>
+                      }
+                    </>
+                    }
+                  </DropdownMenu.Content>
+                </DropdownMenu.Portal>
               </div>
               {statusState?.regenerate?.error && <div className='col-12 text-end text-primary mt-2'>
                 <TypeWriterText string={statusState?.regenerate?.error} withBlink />
@@ -1092,8 +1104,11 @@ const StatusActionBar = ({
         open={modals.viewGeneratePost !== null}
         onClose={closeModals}
       >
-        <RegeneratePostModal title={localPost?.title || localOutline?.post_title} submitHTMLStylingHandler={submitHTMLStylingHandler}
-          submitGoogleDocRegenerateHandler={submitGoogleDocRegenerateHandler} onClose={closeModals} type={modals?.viewGeneratePost} submitHandler={generateModalClickHandler} onSuccess={closeModals} />
+        <Modal.Description>
+
+          <RegeneratePostModal title={localPost?.title || localOutline?.post_title} submitHTMLStylingHandler={submitHTMLStylingHandler}
+            submitGoogleDocRegenerateHandler={submitGoogleDocRegenerateHandler} onClose={closeModals} type={modals?.viewGeneratePost} submitHandler={generateModalClickHandler} onSuccess={closeModals} />
+        </Modal.Description>
       </Modal.Overlay>
       {/* <Modal.Overlay closeIcon open={modals?.viewFactcheck} onClose={closeModals}>
             <div className="modal-body">
@@ -1142,7 +1157,7 @@ const StatusActionBar = ({
         <CreateContentModal regenerateHandler={closeModals} standalone data={localOutline} titleChange={() => { }} onClose={closeModals} isAuthorized={true} />
       </Modal.Overlay>
 
-    </>
+    </DropdownMenu.Root>
   )
 
 }

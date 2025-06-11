@@ -1,9 +1,6 @@
-'use client'
 import React, { useEffect, useState } from 'react';
 import classNames from 'classnames';
 import * as Dialog from '@radix-ui/react-dialog';
-import { useDispatch } from 'react-redux';
-import { setModalsOpen } from '@/perfect-seo-shared-components/lib/features/User';
 
 export interface ModalProps {
   children: React.ReactNode;
@@ -56,10 +53,8 @@ export const Overlay = (
 
   const [modalOpen, setModalOpen] = useState(false);
   const [closing, setClosing] = useState(false);
-  const dispatch = useDispatch();
 
   const closeModal = () => {
-    dispatch(setModalsOpen(false))
     if (animateClose) {
       setClosing(true);
       if (onCloseTrigger) {
@@ -76,20 +71,19 @@ export const Overlay = (
       document.body.removeAttribute('style');
       return onClose();
     }
-
   };
 
   const clickout = (e) => {
-    { process.env.NODE_ENV === 'development' && console.log('Clickout pressed') }
     e.preventDefault();
     if (noClickout === true) {
       return;
     }
     closeModal();
+    document.body.removeAttribute('style');
   };
 
+
   const escapeClick = (e) => {
-    { process.env.NODE_ENV === 'development' && console.log('Escape key pressed') }
     e.preventDefault();
     if (noKeyEscape) {
       return;
@@ -98,17 +92,11 @@ export const Overlay = (
   };
 
   useEffect(() => {
-    if (open) {
-      dispatch(setModalsOpen(true))
-    }
     setModalOpen(open);
-  }, [open]);
-
-  useEffect(() => {
-    if (modalOpen) {
-      dispatch(setModalsOpen(true))
+    if (open === false || open === null || !open) {
+      document.body.removeAttribute('style');
     }
-  }, [modalOpen])
+  }, [open]);
 
   const contentClasses = classNames('modal-content', {
     [`${className}`]: className,
@@ -125,9 +113,7 @@ export const Overlay = (
   });
 
   const openChange = (bool) => {
-    console.log(bool)
     if (bool) {
-      dispatch(setModalsOpen(true))
       setModalOpen(true);
     } else {
       closeModal();
@@ -138,7 +124,7 @@ export const Overlay = (
     <Dialog.Root open={modalOpen} onOpenChange={openChange} modal>
       <Dialog.Portal>
         <Dialog.Overlay className={overlayClasses} onClick={onClick}>
-          <Dialog.Content aria-describedby={id || undefined} className={contentClasses} onPointerDownOutside={clickout} onEscapeKeyDown={escapeClick} id={id} title={id}>
+          <Dialog.Content aria-describedby={id || undefined} className={contentClasses} onInteractOutside={clickout} onPointerDownOutside={clickout} onEscapeKeyDown={escapeClick} id={id} title={id}>
             {closeIcon &&
               <button
                 aria-label="close modal"

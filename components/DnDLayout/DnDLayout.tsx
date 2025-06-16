@@ -30,7 +30,6 @@ interface DnDLayoutProps extends React.HTMLProps<HTMLDivElement> {
 const DnDLayout = ({ children, hideFooter, current, links, hasLogin = true, getCredits = false }: DnDLayoutProps) => {
   const { data: session }: any = useSession()
   useEffect(() => {
-    let googleToken;
     if (session?.token) {
       const token = typeof session?.token === 'string' ? JSON.parse(session.token) : session?.token;
       populateBulkGSC(token)

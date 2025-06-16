@@ -351,7 +351,7 @@ export const getPostsByEmail = (email: string, reqObj?: any) => {
     }
   } else if (reqObj?.status) {
     if (reqObj.status === 'completed') {
-      return baseQuery.eq("status", "Complete");
+      return baseQuery.eq("status", "Complete").is("live_post_url", null);
     } else {
       return baseQuery.neq("status", "Complete");
     }

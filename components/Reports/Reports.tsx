@@ -68,7 +68,7 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
     //   rating = (rating / ahrefsGlobalData?.data?.data.length).toFixed(1)
     // }
     // else rating = null
-
+    // Submitted and indexed
     try {
       const postResults = await getPostsByDomain(domain_name, { ...paginator.paginationObj, page: paginator.currentPage, has_live_post_url: true })
       paginator.setItemCount(postResults.count)
@@ -104,6 +104,9 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
   const retrievePostsGscInfo = async (data) => {
     let newGSCData = await Promise.all(data.map(async (obj, i) => {
       if (i === 0) return obj
+      if (obj?.index_status !== 'Submitted and indexed') {
+        return obj
+      }
       let reqObj = {
         start_date: startDate,
         end_date: endDate,

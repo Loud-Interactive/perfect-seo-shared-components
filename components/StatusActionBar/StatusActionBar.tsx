@@ -712,7 +712,7 @@ const StatusActionBar = ({
               {(statusState?.outline?.complete || (statusState?.post?.status && !statusState?.outline?.status)) ?
                 <>
                   <a title="Edit Outline" className="py-0 my-0 text-primary no-underline" onClick={showEditOutlineHandler}><strong>Outline</strong></a>
-                  <span className="badge rounded-pill  ms-1 p-1 bg-success"><i className="bi bi-check-lg text-white"></i></span>
+                  <span className="badge rounded-pill ms-1 p-1 bg-success"><i className="bi bi-check-lg text-white"></i></span>
                 </>
                 : statusState?.outline?.error ?
                   <>

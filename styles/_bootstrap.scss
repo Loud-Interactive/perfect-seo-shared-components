@@ -1,4 +1,5 @@
 @use 'common' as *;
+@import '~bootstrap/scss/bootstrap';
 
 $theme-colors: (
   'primary': $primary,
@@ -8,5 +9,3 @@ $theme-colors: (
 .contentBox {
   background-color: $secondary !important;
 }
-
-@import "../../../node_modules/bootstrap/scss/bootstrap";

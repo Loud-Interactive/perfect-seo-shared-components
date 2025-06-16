@@ -192,6 +192,19 @@ export const regenerateOutline = (
   );
 };
 
+export const regenerateOutlineByGuid = (
+  content_plan_outline_guid,
+) => {
+  let reqObj: any = {
+    content_plan_outline_guid,
+  }
+
+  return axiosInstance.post(
+    `/api/outlines/regenerate`,
+    reqObj
+  );
+};
+
 export const regeneratePost = (
   guid, other?
 ) => {

@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ContentType } from '@/perfect-seo-shared-components/data/types';
 import { addToast, selectEmail, selectIsAdmin } from '@/perfect-seo-shared-components/lib/features/User';
 import { useEffect, useMemo, useState } from 'react';
-import { createPost, deletePost, deleteOutline, fetchOutlineData, regenerateHTML, regenerateHTMLfromDoc, regenerateOutline, regeneratePost, updateLiveUrl, getPostStatusFromOutline } from '@/perfect-seo-shared-components/services/services';
+import { createPost, deletePost, deleteOutline, fetchOutlineData, regenerateHTML, regenerateHTMLfromDoc, regenerateOutline, regeneratePost, updateLiveUrl, getPostStatusFromOutline, regenerateOutlineByGuid } from '@/perfect-seo-shared-components/services/services';
 import { createClient } from '@/perfect-seo-shared-components/utils/supabase/client';
 import en from '@/assets/en.json'
 import CreateContentModal from '../CreateContentModal/CreateContentModal';
@@ -268,10 +268,18 @@ const ActionButtonGroup = ({
   }
 
   const regenerateOutlineClickHandler = () => {
-    regenerateOutline(outlineGUID, { email: email, client_domain: data?.client_domain, client_name: data?.brand_name, post_title: data?.post_title, content_plan_guid: data?.content_plan_guid })
-      .then(res => {
-        dispatch(addToast({ title: "Regenerating Outline", type: "info", content: `Regenerating outline for ${data?.post_title || data?.client_domain}` }))
-      })
+    if (outlineGUID) {
+      regenerateOutlineByGuid(outlineGUID)
+        .then(res => {
+          dispatch(addToast({ title: "Regenerating Outline", type: "info", content: `Regenerating outline for ${data?.post_title || data?.client_domain}` }))
+        })
+    }
+    else {
+      regenerateOutline(outlineGUID, { email: email, client_domain: data?.client_domain, client_name: data?.brand_name, post_title: data?.post_title, content_plan_guid: data?.content_plan_guid })
+        .then(res => {
+          dispatch(addToast({ title: "Regenerating Outline", type: "info", content: `Regenerating outline for ${data?.post_title || data?.client_domain}` }))
+        })
+    }
   }
 
   const copyoutlineGUID = (e) => {

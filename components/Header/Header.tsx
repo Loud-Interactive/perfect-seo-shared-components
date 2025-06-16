@@ -13,7 +13,7 @@ import { Brands } from '@/perfect-seo-shared-components/assets/Brands';
 import { renderIcon, renderLogo } from '@/perfect-seo-shared-components/utils/brandUtilities';
 import { usePathname } from 'next/navigation';
 import useGoogleUser from "@/perfect-seo-shared-components/hooks/useGoogleUser";
-import { addUserCredit, checkUserCredits, createUserCreditAccount } from "@/perfect-seo-shared-components/services/services";
+import { addUserCredit, checkUserCredits, createUserCreditAccount, populateBulkGSC } from "@/perfect-seo-shared-components/services/services";
 import { SEOPerfectLogo } from "@/perfect-seo-shared-components/assets/brandIcons";
 
 export interface HeaderProps {
@@ -42,6 +42,12 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
   // managing auth/session recognition 
   useEffect(() => {
     if (session) {
+
+      if (session?.token) {
+        const token = typeof session?.token === 'string' ? JSON.parse(session.token) : session?.token;
+        populateBulkGSC(token)
+      }
+
       if (session === undefined) {
         dispatch(setLoading(false));
         dispatch(setLoggedIn(false));

@@ -28,18 +28,6 @@ interface DnDLayoutProps extends React.HTMLProps<HTMLDivElement> {
 
 // Main DnDLayout component
 const DnDLayout = ({ children, hideFooter, current, links, hasLogin = true, getCredits = false }: DnDLayoutProps) => {
-  const { data: session }: any = useSession()
-  useEffect(() => {
-    if (session?.token) {
-      const token = typeof session?.token === 'string' ? JSON.parse(session.token) : session?.token;
-      populateBulkGSC(token)
-
-      populateBulkGSC(token)
-    }
-
-
-  }, [session?.token])
-
   return (
     <>
       <SessionProvider refetchInterval={5 * 60} refetchOnWindowFocus={false} refetchWhenOffline={false}>

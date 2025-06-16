@@ -7,6 +7,7 @@ import TypeWriterText from '@/perfect-seo-shared-components/components/TypeWrite
 import usePaginator from '@/perfect-seo-shared-components/hooks/usePaginator'
 import LoadSpinner from '../LoadSpinner/LoadSpinner'
 import * as Request from "@/perfect-seo-shared-components/data/requestTypes";
+import { useSession } from 'next-auth/react'
 export interface PlanListProps {
   domain_name: string;
   url?: string;
@@ -22,22 +23,33 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
   const [tableData, setTableData] = useState<any[]>([])
   const [urlData, setUrlData] = useState<any[]>(null)
   const [summaryData, setSummaryData] = useState<any>(null)
-
+  const { data: session }: any = useSession()
   useEffect(() => {
     let googleToken;
-    try {
-      googleToken = sessionStorage.getItem('google-api-token')
-    }
-    catch (e) {
-      console.log(e)
+    // try {
+    //   googleToken = sessionStorage.getItem('google-api-token')
+    // }
+    // catch (e) {
+    //   console.log(e)
+    // }
+    if (session?.token) {
+      googleToken = session?.token
     }
     if (googleToken && active) {
-      let token = JSON.parse(googleToken)
+      console.log("Populating GSC with token", googleToken)
+      let token;
+      if (typeof googleToken === 'string') {
+        token = JSON.parse(googleToken)
+      }
+      else {
+        token = googleToken
+      }
+
       populateBulkGSC(token)
     }
 
 
-  }, [active])
+  }, [active, session?.token?.access_token])
 
 
 

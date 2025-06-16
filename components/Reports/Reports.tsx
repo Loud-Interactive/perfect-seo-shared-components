@@ -131,6 +131,7 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
       //   return { ...newData, ahref_rating }
       // }
       // else 
+      console.log("ahref rating for", obj.title, data)
       return newData
     }))
     setUrlData(newGSCData)

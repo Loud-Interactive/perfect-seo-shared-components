@@ -192,9 +192,6 @@ const ActionButtonGroup = ({
           refresh();
           setShowDeleteModal(false)
         })
-        .catch(err => {
-          console.log(err)
-        })
     }
   }
 

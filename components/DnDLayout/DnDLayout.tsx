@@ -9,9 +9,10 @@ import Footer from '../Footer/Footer';
 import Header from '../Header/Header';
 import style from '../Layout/Layout.module.scss'
 import Script from 'next/script';
-import { SessionProvider } from "next-auth/react";
-import { Suspense } from 'react';
+import { SessionProvider, useSession } from "next-auth/react";
+import { Suspense, useEffect } from 'react';
 import "bootstrap-icons/font/bootstrap-icons.css";
+import { populateBulkGSC } from '@/perfect-seo-shared-components/services/services';
 
 
 
@@ -27,6 +28,19 @@ interface DnDLayoutProps extends React.HTMLProps<HTMLDivElement> {
 
 // Main DnDLayout component
 const DnDLayout = ({ children, hideFooter, current, links, hasLogin = true, getCredits = false }: DnDLayoutProps) => {
+  const { data: session }: any = useSession()
+  useEffect(() => {
+    let googleToken;
+    if (session?.token) {
+      const token = typeof session?.token === 'string' ? JSON.parse(session.token) : session?.token;
+      populateBulkGSC(token)
+
+      populateBulkGSC(token)
+    }
+
+
+  }, [session?.token])
+
   return (
     <>
       <SessionProvider refetchInterval={5 * 60} refetchOnWindowFocus={false} refetchWhenOffline={false}>

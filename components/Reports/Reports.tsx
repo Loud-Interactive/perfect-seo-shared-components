@@ -25,31 +25,12 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
   const [summaryData, setSummaryData] = useState<any>(null)
   const { data: session }: any = useSession()
   useEffect(() => {
-    let googleToken;
-    // try {
-    //   googleToken = sessionStorage.getItem('google-api-token')
-    // }
-    // catch (e) {
-    //   console.log(e)
-    // }
     if (session?.token) {
-      googleToken = session?.token
-    }
-    if (googleToken && active) {
-      console.log("Populating GSC with token", googleToken)
-      let token;
-      if (typeof googleToken === 'string') {
-        token = JSON.parse(googleToken)
-      }
-      else {
-        token = googleToken
-      }
-
+      const token = typeof session?.token === 'string' ? JSON.parse(session.token) : session?.token;
       populateBulkGSC(token)
     }
 
-
-  }, [active, session?.token?.access_token])
+  }, [active, session?.token])
 
 
 

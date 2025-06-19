@@ -94,13 +94,12 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
       .replace('http://', '')
       .replace('www.', '')
       .replaceAll('/', '');
-
     return (
       <div>
         <p className="mb-0">
           {obj.keyword}{' '}
           {domain !== domain_name && (
-            <span className="badge bg-primary ms-2">{obj.brand_name}</span>
+            <span className="badge bg-primary ms-2">{obj.domain_name}</span>
           )}
           {obj?.email && email !== obj?.email && (
             <span>

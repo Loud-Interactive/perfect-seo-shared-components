@@ -1,16 +1,19 @@
 'use client'
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import styles from './OutlinesList.module.scss'
 import { deleteOutline, getContentPlanOutlinesByDomain, getContentPlanOutlinesByEmail } from '@/perfect-seo-shared-components/services/services'
 import * as Modal from '@/perfect-seo-shared-components/components/Modal/Modal'
 import Loader from '../Loader/Loader'
 import TypeWriterText from '@/perfect-seo-shared-components/components/TypeWriterText/TypeWriterText'
-import PostItem from '../PostItem/PostItem'
 import { useSelector } from 'react-redux'
-import { RootState } from '@/perfect-seo-shared-components/lib/store'
 import OutlineItem from '../OutlineItem/OutlineItem'
 import usePaginator from '@/perfect-seo-shared-components/hooks/usePaginator'
-import { selectEmail, selectIsAdmin } from '@/perfect-seo-shared-components/lib/features/User'
+import { selectEmail } from '@/perfect-seo-shared-components/lib/features/User'
+import { Option, Select } from '../Form/Select'
+import Form from '../Form/Form'
+import useForm from '@/perfect-seo-shared-components/hooks/useForm'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { stat } from 'fs'
 
 export interface OutlinesListProps {
   domain_name: string;
@@ -21,6 +24,22 @@ const OutlinesList = ({ domain_name, active }: OutlinesListProps) => {
   const [data, setData] = useState<any[]>()
   const [deleteModal, setDeleteModal] = useState(null)
   const email = useSelector(selectEmail)
+  const [filter, setFilter] = useState('all')
+  const router = useRouter()
+  const form = useForm()
+  const searchParams = useSearchParams();
+  const queryParam = searchParams.get('filter');
+  const pathname = usePathname()
+
+  useEffect(() => {
+    if (queryParam) {
+      form.setInitialState({ filter: queryParam.toString() })
+      setFilter(queryParam.toString())
+    }
+    else {
+      form.setInitialState({ filter: 'all' })
+    }
+  }, [queryParam])
 
   // "Outline Not Started"
   // "Outline Generating"
@@ -35,8 +54,12 @@ const OutlinesList = ({ domain_name, active }: OutlinesListProps) => {
       paginator.setItemCount(0)
       setLoading(true);
       setData(null)
+      let status = filter;
+      if (status === 'all') {
+        status = null;
+      }
       if (domain_name) {
-        getContentPlanOutlinesByDomain(domain_name, paginator.paginationObj)
+        getContentPlanOutlinesByDomain(domain_name, paginator.paginationObj, status)
           .then(res => {
             if (res.data) {
               paginator.setItemCount(res.count)
@@ -50,7 +73,7 @@ const OutlinesList = ({ domain_name, active }: OutlinesListProps) => {
           })
       }
       else {
-        getContentPlanOutlinesByEmail(email, paginator.paginationObj)
+        getContentPlanOutlinesByEmail(email, paginator.paginationObj, status)
           .then(res => {
             if (res.data) {
               paginator.setItemCount(res.count)
@@ -86,19 +109,43 @@ const OutlinesList = ({ domain_name, active }: OutlinesListProps) => {
     return () => {
       clearInterval(interval);
     }
-  }, [active, paginator.currentPage, paginator.limit, domain_name])
+  }, [active, paginator.currentPage, paginator.limit, domain_name, filter])
 
+  const createQueryString = useCallback(
+    (name: string, value: string) => {
+      const params = new URLSearchParams(searchParams.toString())
+      params.set(name, value)
+
+      return params.toString()
+    },
+    [searchParams]
+  )
+
+  const changeFilter = (e) => {
+    router.replace(pathname + '?' + createQueryString('filter', e.target.value.toString()))
+    setFilter(e.target.value.toString())
+  }
 
   if (!active) return null
 
   return (
     <div className={styles.wrap}>
       <div className='row d-flex justify-content-between align-items-end mb-3'>
-        <div className='col-12 col-md-auto d-flex align-items-end'>
+        <div className='col d-flex align-items-end'>
           <h2 className='text-primary mb-0'>
-            <TypeWriterText string="Generated Outlines" withBlink />
+            <TypeWriterText string="Outlines" withBlink />
           </h2>
-          {paginator?.itemCount > 0 && <p className='badge rounded-pill text-white text-bg-primary ms-3 d-flex align-items-center mb-1'>{paginator?.itemCount}</p>}
+          {paginator.itemCount > 0 && <p className='badge rounded-pill text-bg-primary ms-3 d-flex align-items-center mb-1'>{paginator.itemCount}</p>}
+        </div>
+        <div className='col-auto'>
+          <Form controller={form}>
+            <Select bottomSpacing={false} fieldName='filter' onChange={changeFilter} label="Filter by Status" value={filter}>
+              <Option value='all'>All</Option>
+              <Option value='completed'>Finished</Option>
+              <Option value='in-progress'>Processing</Option>
+              <Option value='failed'>Failed</Option>
+            </Select>
+          </Form>
         </div>
       </div>
       {loading ? <Loader />

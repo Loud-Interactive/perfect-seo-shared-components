@@ -133,7 +133,7 @@ const PostsList = ({ domain_name, active }: PostsListProps) => {
         <div className='row d-flex justify-content-between align-items-end mb-3'>
           <div className='col d-flex align-items-end'>
             <h2 className='text-primary mb-0'>
-              <TypeWriterText string="Generated Posts" withBlink />
+              <TypeWriterText string="Posts" withBlink />
             </h2>
             {paginator.itemCount > 0 && <p className='badge rounded-pill text-bg-primary ms-3 d-flex align-items-center mb-1'>{paginator.itemCount}</p>}
           </div>

@@ -257,15 +257,15 @@ const StatusActionBar = ({
       })
   }
 
-  // const fetchOutlineStatusData = () => {
-  //   fetchOutlineStatus(content_plan_outline_guid)
-  //     .then(res => {
-  //       console.log(res?.data[0])
-  //       if (res.data[0]?.status) {
-  //         setStatus('outline', res.data[0]?.status);
-  //       }
-  //     })
-  // };
+  const fetchOutlineStatusData = () => {
+    fetchOutlineStatus(content_plan_outline_guid)
+      .then(res => {
+        console.log(res?.data[0])
+        if (res.data[0]?.status) {
+          setStatus('outline', res.data[0]?.status);
+        }
+      })
+  };
 
   const updatePost = (post: PostProps) => {
     setLocalPost(post);
@@ -436,21 +436,21 @@ const StatusActionBar = ({
       if (!modalsOpen) {
 
 
-        // fetchOutlineStatusData();
+        fetchOutlineStatusData();
 
         fetchOutline();
         if (!content_plan_post_id && !post) {
           fetchPostFromOutline();
         }
-        // outlineStatusesChannel = supabase.channel(`statusbar-outline-status-${content_plan_outline_guid}`)
-        //   .on(
-        //     'postgres_changes',
-        //     { event: 'INSERT', schema: 'public', table: 'content_plan_outline_statuses', filter: `outline_guid=eq.${content_plan_outline_guid}` },
-        //     (payload) => {
-        //       setStatus('outline', payload.new.status)
-        //     }
-        //   )
-        //   .subscribe()
+        outlineStatusesChannel = supabase.channel(`statusbar-outline-status-${content_plan_outline_guid}`)
+          .on(
+            'postgres_changes',
+            { event: 'INSERT', schema: 'public', table: 'content_plan_outline_statuses', filter: `outline_guid=eq.${content_plan_outline_guid}` },
+            (payload) => {
+              setStatus('outline', payload.new.status)
+            }
+          )
+          .subscribe()
         if (!outline) {
           outlineChannel = supabase.channel(`statusbar-outline-status-${content_plan_outline_guid}`)
             .on(

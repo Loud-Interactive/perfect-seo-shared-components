@@ -4,6 +4,7 @@ import { urlSanitization } from "@/perfect-seo-shared-components/utils/conversio
 import axios from "axios";
 import { PaginationRequest } from "@/perfect-seo-shared-components/data/types";
 import { createClient } from "../utils/supabase/client";
+import { stat } from "fs";
 export interface PlanItemProps {
   brand_name: string;
   domain_name: string;
@@ -478,26 +479,55 @@ export const getOutlinesByContentPlan = async (content_plan_guid: string, pagina
   }
 
 }
-
-export const getContentPlanOutlinesByDomain = (domain: string, paginator: PaginationRequest) => {
+// completed
+export const getContentPlanOutlinesByDomain = (domain: string, paginator: PaginationRequest, status?: string) => {
   let startIndex = paginator?.page === 1 ? 0 : (paginator.page - 1) * paginator.page_size;
   let endIndex = startIndex + paginator.page_size - 1
-  return supabase.from('content_plan_outlines')
+  const baseQuery = supabase.from('content_plan_outlines')
     .select('*', { count: 'exact' })
     .eq("domain", domain)
     .range(startIndex, endIndex)
     .order('created_at', { ascending: false })
 
+  if (!!status) {
+    switch (status) {
+      case 'completed':
+        return baseQuery.eq("status", "completed")
+      case 'in-progress':
+        return baseQuery.neq("status", "completed")
+      case 'error':
+        return baseQuery.like('status', '%err%')
+      default:
+        return baseQuery.eq("status", status)
+    }
+  }
+  else return baseQuery
 }
 
-export const getContentPlanOutlinesByEmail = (email: string, paginator: PaginationRequest) => {
+export const getContentPlanOutlinesByEmail = (email: string, paginator: PaginationRequest, status?: string) => {
   let startIndex = paginator?.page === 1 ? 0 : (paginator.page - 1) * paginator.page_size;
   let endIndex = startIndex + paginator.page_size - 1
-  return supabase.from('content_plan_outlines')
+  if (status) {
+    console.log("Status provided:", status);
+  }
+  const baseQuery = supabase.from('content_plan_outlines')
     .select('*', { count: 'exact' })
     .eq("email", email)
     .range(startIndex, endIndex)
     .order('created_at', { ascending: false })
+  if (status) {
+    switch (status) {
+      case 'completed':
+        return baseQuery.eq("status", "completed")
+      case 'in-progress':
+        return baseQuery.neq("status", "completed")
+      case 'failed':
+        return baseQuery.like('status', '%fail%')
+      default:
+        return baseQuery.eq("status", status)
+    }
+  }
+  else return baseQuery
 }
 
 export const getContentPlanOutlinesByDomainWithoutPosts = (domain: string, paginator: PaginationRequest) => {

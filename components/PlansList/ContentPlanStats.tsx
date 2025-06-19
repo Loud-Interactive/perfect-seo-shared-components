@@ -1,16 +1,15 @@
+'use client'
 import { selectModalsOpen } from "@/perfect-seo-shared-components/lib/features/User"
 import { getContentPlanChildren } from "@/perfect-seo-shared-components/services/services"
 import { createClient } from "@/perfect-seo-shared-components/utils/supabase/client"
 import { useEffect, useMemo, useState } from "react"
 import { useSelector } from "react-redux"
 
-const ContentPlanStats = ({ guid }) => {
+const ContentPlanStats = ({ guid, postCountClickHandler, outlineCountClickHandler }) => {
   const [stats, setStats] = useState<any>(null)
   const supabase = createClient()
 
-  useEffect(() => {
-    console.log("ContentPlanStats mounted")
-  }, [])
+
   const completedStats = useMemo(() => {
     let completed = { 'outlines': [], 'tasks': [] }
     if (stats?.outlines?.length > 0) {
@@ -96,11 +95,19 @@ const ContentPlanStats = ({ guid }) => {
 
 
   return (
-    <div className="d-flex justify-content-end">{stats && <div className="input-group">
-      <span className='pill badge bg-primary'>Outlines</span>
-      <span className='pill badge bg-secondary text-primary'>{completedStats?.outlines?.length > 0 && <span>{completedStats?.outlines?.length} / </span>} {stats?.outlines?.length}</span>
-      <span className='pill badge bg-primary'>Posts</span>
-      <span className='pill badge bg-secondary text-primary'>{completedStats?.tasks?.length > 0 && <span>{completedStats?.tasks?.length} / </span>}{stats?.tasks?.length}</span>
+    <div className="d-flex justify-content-end">{stats && <div className="d-flex">
+      <button onClick={outlineCountClickHandler} className='btn btn-transparent p-0'>
+        <div className="input-group">
+          <span className='pill badge bg-primary'>Outlines</span>
+          <span className='pill badge bg-secondary text-primary'>{completedStats?.outlines?.length > 0 && <span>{completedStats?.outlines?.length} / </span>} {stats?.outlines?.length}</span>
+        </div>
+      </button>
+      <button onClick={postCountClickHandler} className='btn btn-transparent p-0'>
+        <div className="input-group">
+          <span className='pill badge bg-primary'>Posts</span>
+          <span className='pill badge bg-secondary text-primary'>{completedStats?.tasks?.length > 0 && <span>{completedStats?.tasks?.length} / </span>}{stats?.tasks?.length}</span>
+        </div>
+      </button>
     </div>
     }</div>
   )

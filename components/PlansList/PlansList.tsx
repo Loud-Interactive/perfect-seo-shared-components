@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import styles from './PlansList.module.scss';
 import Table, { TableColumnArrayProps } from '@/perfect-seo-shared-components/components/Table/Table';
 import { deleteContentPlan, getContentPlansByDomain, getContentPlansByEmail } from '@/perfect-seo-shared-components/services/services';
@@ -13,6 +13,7 @@ import LoadSpinner from '../LoadSpinner/LoadSpinner';
 import ContentPlanForm from '@/perfect-seo-shared-components/components/ContentPlanForm/ContentPlanForm';
 import ContentPlanStatusCell from './ContentPlanStatusCell';
 import ContentPlanStats from './ContentPlanStats';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 // Props for the PlansList component
 export interface PlanListProps {
@@ -27,11 +28,33 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
   const [deleteModal, setDeleteModal] = useState(null);
   const [newModal, setNewModal] = useState(false);
   const [duplicateInfo, setDuplicateInfo] = useState(null);
-
+  const router = useRouter();
   // Hooks
   const { tablet, phone } = useViewport();
   const paginator = usePaginator();
   const email = useSelector(selectEmail);
+  const searchParams = useSearchParams();
+  const pathname = usePathname()
+
+  const createQueryString = useCallback(
+    (name: string, value: string) => {
+      const params = new URLSearchParams(searchParams.toString())
+      params.set(name, value)
+
+      return params.toString()
+    },
+    [searchParams]
+  )
+
+  const outlineCountClickHandler = (e) => {
+    e.preventDefault()
+    router.replace(pathname + '?' + createQueryString('tab', 'outlines'))
+  }
+  const postCountClickHandler = (e) => {
+    e.preventDefault()
+    router.replace(pathname + '?' + createQueryString('tab', 'posts'))
+  }
+
 
   /**
    * Fetch content plans based on the domain or email.
@@ -159,7 +182,7 @@ const PlansList = ({ domain_name, active }: PlanListProps) => {
         {
           id: 'stats',
           Header: 'Stats',
-          accessor: obj => <ContentPlanStats guid={obj.guid} />
+          accessor: obj => <ContentPlanStats postCountClickHandler={postCountClickHandler} outlineCountClickHandler={outlineCountClickHandler} guid={obj.guid} />
         },
         {
           id: 'guid',

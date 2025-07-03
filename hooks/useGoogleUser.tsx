@@ -1,10 +1,6 @@
 'use client'
 import { useDispatch, useSelector } from "react-redux";
-<<<<<<< HEAD
 import { useEffect } from 'react'
-=======
-import { useEffect, } from 'react'
->>>>>>> d58d79363d8b06b1a4733b7ba9b8839a493fbe21
 import { selectEmail, selectIsLoggedIn, selectProfile, selectUser, setAdmin, setLoading, setProfile, setUserSettings } from '@/perfect-seo-shared-components/lib/features/User'
 import { createClient } from '@/perfect-seo-shared-components/utils/supabase/client'
 import { jwtDecode } from 'jwt-decode';

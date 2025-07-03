@@ -54,11 +54,6 @@ const useGoogleUser = (appKey) => {
     if (email && isLoggedIn) {
       // retrieve settings
       getSettings()
-      supabase
-        .from('user_history')
-        .insert({ email: email, transaction_data: session, product: en.product, type: "New Session", action: "INFO" })
-        .select('*')
-        .then(res => { })
       settingsChannel = supabase.channel('settings-channel')
         .on(
           'postgres_changes',

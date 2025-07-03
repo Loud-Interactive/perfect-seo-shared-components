@@ -15,6 +15,8 @@ import { usePathname } from 'next/navigation';
 import useGoogleUser from "@/perfect-seo-shared-components/hooks/useGoogleUser";
 import { addUserCredit, checkUserCredits, createUserCreditAccount, populateBulkGSC } from "@/perfect-seo-shared-components/services/services";
 import { SEOPerfectLogo } from "@/perfect-seo-shared-components/assets/brandIcons";
+import { createClient } from "@/perfect-seo-shared-components/utils/supabase/client";
+import en from '@/assets/en.json';
 
 export interface HeaderProps {
   links?: Links[];
@@ -117,14 +119,21 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
     updateRoute(pathname);
   }, [pathname]);
 
+  const supabase = createClient()
+
   // Handler for Google login
   const loginWithGoogleHandler = (e) => {
     e?.preventDefault();
     let url = `${window.location.origin}`;
-    // if (['preferencesPerfect'].includes(en.product)) {
-    //   url = `${window.location.origin}/content`;
-    // }
+    supabase
+      .from('user_history')
+      .insert({ email: email, transaction_data: session, product: en.product, type: "New Session", action: "INFO" })
+      .select('*')
+      .then(res => { })
+
     signIn('google', { callbackUrl: url });
+
+
   };
 
   // Handler for sign out

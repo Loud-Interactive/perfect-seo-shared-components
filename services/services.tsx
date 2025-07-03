@@ -4,7 +4,7 @@ import { urlSanitization } from "@/perfect-seo-shared-components/utils/conversio
 import axios from "axios";
 import { PaginationRequest } from "@/perfect-seo-shared-components/data/types";
 import { createClient } from "../utils/supabase/client";
-import { stat } from "fs";
+import en from "@/assets/en.json";
 export interface PlanItemProps {
   brand_name: string;
   domain_name: string;
@@ -20,7 +20,32 @@ export interface PlanItemProps {
 }
 
 const supabase = createClient();
+axiosInstance.interceptors.response.use(
+  response => response,
+  async error => {
+    await logAxiosErrorToSupabase(error);
+    return Promise.reject(error);
+  }
+);
 
+async function logAxiosErrorToSupabase(error: any) {
+  const supabase = createClient();
+  let email = typeof window !== "undefined" ? localStorage.getItem("email") : null;
+  const errorData = {
+    message: error.message,
+    stack: error.stack,
+    config: error.config,
+    response: error.response ? {
+      status: error.response.status,
+      data: error.response.data
+    } : null
+  };
+
+  await supabase
+    .from('user_history')
+    .insert({ email: email, transaction_data: errorData, product: en.product, type: "INFO", action: "Login" })
+    .select('*')
+}
 const API_URL = "https://planperfectapi.replit.app";
 
 const NEW_CONTENT_API_URL = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/api`

@@ -60,6 +60,10 @@ export const getSynopsisInfo = (domain) => {
     .eq('domain', domain)
     .order('last_updated', { ascending: false })
     .then((res) => {
+      if (res?.data.length === 0) {
+        // Handle case where no data is found
+        return { data: [], error: { message: 'No data found for the provided domain' } };
+      }
       const result: any = res.data.reduce((acc, { key, value }) => {
         if (!acc[key]) {
           acc[key] = value;

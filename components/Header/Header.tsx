@@ -41,7 +41,7 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
 
   // managing auth/session recognition 
   useEffect(() => {
-    if (session) {
+    if (session && hasLogin) {
 
       if (session?.token) {
         const token = typeof session?.token === 'string' ? JSON.parse(session.token) : session?.token;

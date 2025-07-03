@@ -127,7 +127,7 @@ const Header = ({ links, menuHeader, current, hasLogin, getCredits }: HeaderProp
     let url = `${window.location.origin}`;
     supabase
       .from('user_history')
-      .insert({ email: email, transaction_data: session, product: en.product, type: "New Session", action: "INFO" })
+      .insert({ email: email, transaction_data: session, product: en.product, type: "INDO", action: "Login" })
       .select('*')
       .then(res => { })
 

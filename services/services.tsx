@@ -20,32 +20,7 @@ export interface PlanItemProps {
 }
 
 const supabase = createClient();
-axiosInstance.interceptors.response.use(
-  response => response,
-  async error => {
-    await logAxiosErrorToSupabase(error);
-    return Promise.reject(error);
-  }
-);
 
-async function logAxiosErrorToSupabase(error: any) {
-  const supabase = createClient();
-  let email = typeof window !== "undefined" ? localStorage.getItem("email") : null;
-  const errorData = {
-    message: error.message,
-    stack: error.stack,
-    config: error.config,
-    response: error.response ? {
-      status: error.response.status,
-      data: error.response.data
-    } : null
-  };
-
-  await supabase
-    .from('user_history')
-    .insert({ email: email, transaction_data: errorData, product: en.product, type: "INFO", action: "Login" })
-    .select('*')
-}
 const API_URL = "https://planperfectapi.replit.app";
 
 const NEW_CONTENT_API_URL = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/api`

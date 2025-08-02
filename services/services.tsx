@@ -4,7 +4,7 @@ import { urlSanitization } from "@/perfect-seo-shared-components/utils/conversio
 import axios from "axios";
 import { PaginationRequest } from "@/perfect-seo-shared-components/data/types";
 import { createClient } from "../utils/supabase/client";
-import { stat } from "fs";
+import en from "@/assets/en.json";
 export interface PlanItemProps {
   brand_name: string;
   domain_name: string;
@@ -60,6 +60,10 @@ export const getSynopsisInfo = (domain) => {
     .eq('domain', domain)
     .order('last_updated', { ascending: false })
     .then((res) => {
+      if (res?.data.length === 0) {
+        // Handle case where no data is found
+        return { data: [], error: { message: 'No data found for the provided domain' } };
+      }
       const result: any = res.data.reduce((acc, { key, value }) => {
         if (!acc[key]) {
           acc[key] = value;

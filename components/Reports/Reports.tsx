@@ -56,7 +56,7 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
       const postData = postResults.data
       setTableData(postData)
     } catch (error) {
-      console.error('Error fetching post results:', error)
+      // Handle error silently
     } finally {
       setLoading(false)
     }
@@ -115,7 +115,6 @@ const Reports = ({ domain_name, active }: PlanListProps) => {
       //   return { ...newData, ahref_rating }
       // }
       // else 
-      console.log("ahref rating for", obj.title, data)
       return newData
     }))
     setUrlData(newGSCData)

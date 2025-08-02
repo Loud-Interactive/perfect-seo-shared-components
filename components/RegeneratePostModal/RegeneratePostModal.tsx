@@ -7,6 +7,8 @@ import SearchSelect from "../SearchSelect/SearchSelect";
 import { Option, Select } from "../Form/Select";
 import useForm from "@/perfect-seo-shared-components/hooks/useForm";
 import Form from "../Form/Form";
+import { createClient } from "@/perfect-seo-shared-components/utils/supabase/client";
+import en from "@/assets/en.json";
 
 export enum GenerateTypes {
   REGENERATE,
@@ -14,7 +16,7 @@ export enum GenerateTypes {
 }
 
 export enum GenerationTypes {
-  REGNERATE_ALL,
+  REGENERATE_ALL,
   REGENERATE_STYLE,
   REGENERATE_CONTENT
 }
@@ -102,6 +104,8 @@ const RegeneratePostModal = ({ onClose, type, submitHandler, onSuccess, submitHT
     }
   }, [submitted])
 
+  const supabase = createClient();
+
   const generatePostHandler = () => {
     setSubmitError(null)
     setSubmitted(true)
@@ -114,6 +118,11 @@ const RegeneratePostModal = ({ onClose, type, submitHandler, onSuccess, submitHT
             setSubmitted(false)
           })
           .catch((err) => {
+            supabase
+              .from('user_history')
+              .insert({ email: email, transaction_data: err, product: en.product, type: "ERROR", action: "Regenerate All Error" })
+              .select('*')
+              .then(res => { })
             console.log(err);
             setSubmitError(err.response?.data?.detail || "There was an error submitting your post. Please try again.")
             setSubmitted(false)

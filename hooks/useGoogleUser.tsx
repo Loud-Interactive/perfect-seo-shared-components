@@ -1,12 +1,12 @@
 'use client'
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect, useState } from 'react'
-import { reset, selectDomainsInfo, selectEmail, selectIsLoggedIn, selectProfile, selectUser, setAdmin, setDomainInfo, setLoading, setLoggedIn, setProfile, setUser, setUserSettings } from '@/perfect-seo-shared-components/lib/features/User'
+import { useEffect } from 'react'
+import { selectEmail, selectIsLoggedIn, selectProfile, selectUser, setAdmin, setLoading, setProfile, setUserSettings } from '@/perfect-seo-shared-components/lib/features/User'
 import { createClient } from '@/perfect-seo-shared-components/utils/supabase/client'
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 import { urlSanitization } from '../utils/conversion-utilities';
-import { signIn, useSession } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import { SettingsProps } from '../data/types';
 import en from '@/assets/en.json'
 const useGoogleUser = (appKey) => {
@@ -54,11 +54,6 @@ const useGoogleUser = (appKey) => {
     if (email && isLoggedIn) {
       // retrieve settings
       getSettings()
-      supabase
-        .from('user_history')
-        .insert({ email: email, transaction_data: session, product: en.product, type: "New Session", action: "INFO" })
-        .select('*')
-        .then(res => { })
       settingsChannel = supabase.channel('settings-channel')
         .on(
           'postgres_changes',

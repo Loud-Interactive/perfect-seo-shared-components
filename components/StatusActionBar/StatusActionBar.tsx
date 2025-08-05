@@ -284,7 +284,7 @@ const StatusActionBar = ({
   const fetchPost = () => {
     getPost(content_plan_post_id)
       .then((res) => {
-        updatePost(res.data[0]);
+        updatePost(res.data);
 
       })
   }

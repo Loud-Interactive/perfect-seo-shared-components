@@ -616,7 +616,7 @@ export const regenerateHTMLfromDoc = (reqObj: Request.RegeneratePost) => {
 
 export const getPost = (guid: string) => {
   return supabase.from('tasks')
-    .select('*').eq('task_id', guid).neq("is_deleted", true).order('created_at', { ascending: false })
+    .select('*').eq('task_id', guid).neq("is_deleted", true).order('created_at', { ascending: false }).single()
 }
 
 export const getPostStatusFromOutline = (guid: string) => {

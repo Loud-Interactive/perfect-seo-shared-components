@@ -10,6 +10,11 @@ import TextArea from "../Form/TextArea";
 import Form from "../Form/Form";
 import useForm from "@/perfect-seo-shared-components/hooks/useForm";
 import HeroImageGenerator from "../HeroImageGenerator/HeroImageGenerator";
+import RegeneratePostModal, { GenerateTypes } from "../RegeneratePostModal/RegeneratePostModal";
+import { regeneratePost, createPost } from "@/perfect-seo-shared-components/services/services";
+import { GenerateContentPost, RegeneratePost } from "@/perfect-seo-shared-components/data/requestTypes";
+import { useSelector } from "react-redux";
+import { selectEmail, selectIsAdmin } from "@/perfect-seo-shared-components/lib/features/User";
 
 interface StatusBarProps {
   content_plan_outline_guid?: string;
@@ -79,10 +84,12 @@ const StatusBar = ({
   const [wordPressPublish, setWordPressPublish] = useState<boolean>(false);
 
   const [viewImagePrompt, setViewImagePrompt] = useState<boolean>(false);
-  const [generateImageModal, setGenerateImageModal] = useState<boolean>(false);
+  const [showRegenerateModal, setShowRegenerateModal] = useState<boolean>(false);
 
   const supabase = createClient();
   const form = useForm();
+  const email = useSelector(selectEmail);
+  const isAdmin = useSelector(selectIsAdmin);
 
 
   const checkWordPressPublish = async () => {
@@ -367,6 +374,25 @@ const StatusBar = ({
       setSchemaStatus('Error copying to clipboard')
     })
   }
+
+  const regeneratePostHandler = (receiving_email: string, writing_language?: string) => {
+    const reqBody: RegeneratePost = {
+      email: email,
+      receiving_email: receiving_email,
+      content_plan_outline_guid: content_plan_outline_guid
+    };
+    return regeneratePost(content_plan_outline_guid, reqBody);
+  };
+
+  const generatePostHandler = (receiving_email: string, writing_language?: string) => {
+    const reqBody: GenerateContentPost = {
+      email: email,
+      content_plan_outline_guid: content_plan_outline_guid,
+      receiving_email: receiving_email,
+      writing_language: writing_language || 'English'
+    };
+    return createPost(reqBody);
+  };
 
 
   return (

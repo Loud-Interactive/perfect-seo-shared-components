@@ -59,6 +59,11 @@ body {
   }
 }
 
+.max-650 {
+  max-width: 650px !important;
+  overflow-x: hidden !important;
+}
+
 
 .svg-white {
   svg path {
@@ -5422,9 +5427,4 @@ a.btn {
     font-weight: bold;
     white-space: nowrap;
   }
-}
-
-.max-650 {
-  max-width: 650px !important;
-  overflow-x: hidden !important;
 }

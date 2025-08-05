@@ -898,7 +898,7 @@ const StatusActionBar = ({
                           <a className="btn btn-transparent" onClick={(e) => { e.preventDefault(); setModal('viewImagePrompt', true) }}>Show Hero Image Prompt</a>
                         </DropdownMenu.Item>
                         }
-                        {(isAdmin && localPost?.task_id) && <DropdownMenu.Item>
+                        {localPost?.task_id && <DropdownMenu.Item>
                           <Link className="btn btn-transparent" href={`/post/${localPost?.task_id}`} target="_blank">Post Page</Link>
                         </DropdownMenu.Item>}
                         <DropdownMenu.Item>

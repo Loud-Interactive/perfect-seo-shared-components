@@ -185,10 +185,6 @@ const useGoogleUser = (appKey) => {
   // checks domain to add to loud list 
   const checkDomain = (domain) => {
     if (isDev) console.log('🌐 useGoogleUser: checkDomain called', domain);
-    let requestedDomain = urlSanitization(domain);
-    // if (requestedDomain.split(".").length > 2) {
-    //   return
-    // }
 
     supabase
       .from('domains')

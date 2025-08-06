@@ -12,11 +12,19 @@ const persistedReducer = persistReducer(persistConfig, User);
 
 export const makeStore = () => {
   return configureStore({
-    reducer: persistedReducer
+    reducer: persistedReducer,
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware({
+        serializableCheck: {
+          ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE'],
+        },
+      }),
   })
 };
 
-export const persistor = persistStore(makeStore());
+// Create a single store instance
+export const store = makeStore();
+export const persistor = persistStore(store);
 
 // Infer the type of makeStore
 export type AppStore = ReturnType<typeof makeStore>

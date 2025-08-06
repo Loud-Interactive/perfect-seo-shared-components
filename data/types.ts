@@ -716,6 +716,9 @@ export interface PostProps {
   hero_image_prompt?: string,
   hero_image_url?: string;
   hero_image_thinking?: string;
+  writing_language?: string
+  last_updated_at?: string;
+  image_url?: string;
 }
 
 export interface Synopsis {

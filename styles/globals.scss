@@ -59,6 +59,11 @@ body {
   }
 }
 
+.max-650 {
+  max-width: 650px !important;
+  overflow-x: hidden !important;
+}
+
 
 .svg-white {
   svg path {

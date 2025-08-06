@@ -16,7 +16,6 @@ const ReportLine = ({ post, startDate, endDate, domain_name }) => {
       acc.keywords += 1
       acc.ctr += obj.avg_ctr
       acc.position += obj.avg_position
-      console.log(acc)
       return acc
     }, { clicks: 0, impressions: 0, keywords: 0, ctr: 0, position: 0 })
 

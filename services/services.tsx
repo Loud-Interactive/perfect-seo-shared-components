@@ -491,6 +491,7 @@ export const getContentPlanOutlinesByDomain = (domain: string, paginator: Pagina
     .select('*', { count: 'exact' })
     .eq("domain", domain)
     .range(startIndex, endIndex)
+    .neq("is_deleted", true)
     .order('created_at', { ascending: false })
 
   if (!!status) {
@@ -517,6 +518,7 @@ export const getContentPlanOutlinesByEmail = (email: string, paginator: Paginati
   const baseQuery = supabase.from('content_plan_outlines')
     .select('*', { count: 'exact' })
     .eq("email", email)
+    .neq("is_deleted", true)
     .range(startIndex, endIndex)
     .order('created_at', { ascending: false })
   if (status) {
@@ -616,7 +618,7 @@ export const regenerateHTMLfromDoc = (reqObj: Request.RegeneratePost) => {
 
 export const getPost = (guid: string) => {
   return supabase.from('tasks')
-    .select('*').eq('task_id', guid).neq("is_deleted", true).order('created_at', { ascending: false })
+    .select('*').eq('task_id', guid).neq("is_deleted", true).order('created_at', { ascending: false }).single()
 }
 
 export const getPostStatusFromOutline = (guid: string) => {

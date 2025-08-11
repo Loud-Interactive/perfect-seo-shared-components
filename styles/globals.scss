@@ -4912,17 +4912,20 @@ a.text-white {
   transform: scaleY(-1);
 }
 
+
 .btn-tab {
   height: 38px !important;
 
+  @extend .btn-secondary;
+
   &[data-state="active"] {
     background-color: $primary;
-    color: white;
+    color: white !important;
     border-color: $primary;
 
     &:hover {
       background-color: rgba($primary, .5);
-      color: white;
+      color: white !important;
       border-color: $primary;
     }
   }
@@ -5063,17 +5066,6 @@ button.input-group-append {
   border-color: $orange;
 }
 
-.btn-secondary {
-  color: $orange !important;
-
-  &:not(.no-outline) {
-    border: 1px solid $orange;
-  }
-
-  &:hover {
-    color: white !important;
-  }
-}
 
 .nav-link {
   border: 1px solid $lightOrange !important;

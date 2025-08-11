@@ -841,3 +841,11 @@ export interface Schema {
   processing_started_at: string | null;
   processing_heartbeat_at: string | null;
 }
+
+export interface URLProps {
+  url: string;
+  lastSubmitted: string | null;
+  indexCheckedDate: string | null;
+  isIndexed: boolean;
+  submissionHistory: string[];
+}

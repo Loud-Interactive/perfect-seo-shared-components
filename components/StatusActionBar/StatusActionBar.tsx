@@ -225,7 +225,7 @@ const StatusActionBar = ({
 
   const [modals, setModals] = useState<{ viewSchema: boolean; viewGenerateImage: boolean, viewEdit: boolean, viewGeneratePost: GenerateTypes, viewImagePrompt: boolean, viewEditLiveUrl: boolean, viewIndex: boolean, viewDeleteOutline: boolean, viewDeletePost: boolean; }>(modalInitialState);
 
-  const modalsOpen = Object.values(modals).some(value => !!value);
+  const modalsOpen = Object.values(modals).some(value => value !== null && value !== false);
 
   //Update modals for specific key
   const setModal = (key: keyof typeof modals, value?: any) => {
@@ -432,7 +432,9 @@ const StatusActionBar = ({
     console.log('useEffect: updates outline and outline statuses');
     let outlineStatusesChannel;
     let outlineChannel;
+    console.log('content_plan_outline_guid', content_plan_outline_guid);
     if (content_plan_outline_guid) {
+      console.log(modalsOpen, 'modals');
       if (!modalsOpen) {
         fetchOutlineStatusData();
 
@@ -443,9 +445,13 @@ const StatusActionBar = ({
         outlineStatusesChannel = supabase.channel(`statusbar-outline-status-${content_plan_outline_guid}`)
           .on(
             'postgres_changes',
-            { event: 'INSERT', schema: 'public', table: 'content_plan_outline_statuses', filter: `outline_guid=eq.${content_plan_outline_guid}` },
+            { event: '*', schema: 'public', table: 'content_plan_outline_statuses', filter: `outline_guid=eq.${content_plan_outline_guid}` },
             (payload) => {
-              setStatus('outline', payload.new.status)
+              console.log('New outline status:', payload);
+              if (payload.new && typeof payload.new === 'object' && 'status' in payload.new) {
+                console.log('New outline status:', payload.new.status);
+                setStatus('outline', payload.new.status);
+              }
             }
           )
           .subscribe()

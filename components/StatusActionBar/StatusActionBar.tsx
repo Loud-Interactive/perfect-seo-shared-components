@@ -434,8 +434,6 @@ const StatusActionBar = ({
     let outlineChannel;
     if (content_plan_outline_guid) {
       if (!modalsOpen) {
-
-
         fetchOutlineStatusData();
 
         fetchOutline();
@@ -467,17 +465,16 @@ const StatusActionBar = ({
     else {
       setLoading('outline', false)
     }
-    if (!modalsOpen) {
-      return () => {
-        if (outlineStatusesChannel) {
-          outlineStatusesChannel.unsubscribe()
-        }
-        if (outlineChannel) {
-          outlineChannel.unsubscribe()
-        }
+
+    return () => {
+      if (outlineStatusesChannel) {
+        outlineStatusesChannel.unsubscribe()
+      }
+      if (outlineChannel) {
+        outlineChannel.unsubscribe()
       }
     }
-  }, [content_plan_outline_guid])
+  }, [content_plan_outline_guid, modalsOpen])
 
   // updates post if post or content_plan_post_id changes
   useEffect(() => {

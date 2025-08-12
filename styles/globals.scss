@@ -4913,23 +4913,7 @@ a.text-white {
 }
 
 
-.btn-tab {
-  height: 38px !important;
 
-  @extend .btn-secondary;
-
-  &[data-state="active"] {
-    background-color: $primary;
-    color: white !important;
-    border-color: $primary;
-
-    &:hover {
-      background-color: rgba($primary, .5);
-      color: white !important;
-      border-color: $primary;
-    }
-  }
-}
 
 .fixed {
   position: fixed;

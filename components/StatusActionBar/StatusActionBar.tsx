@@ -251,7 +251,6 @@ const StatusActionBar = ({
     fetchOutlineData(content_plan_outline_guid)
       .then(res => {
         console.log("Outline data fetched:", res.data[0]);
-        setStatus('outline', res.data[0].status)
         setLocalOutline(res.data[0])
         setLoading('outline', false)
       })

@@ -203,6 +203,10 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
       });
     }
     if (list?.length > 0) {
+      if (!isAdmin) {
+        setDomain(list[0].value);
+        setSelected(list[0]);
+      }
       list = list.reduce((acc, current) => {
         if (!acc.find(item => item.value === current.value)) {
           return [...acc, current]
@@ -311,37 +315,45 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
   return (
     <>
       {hideTitle ? null :
-        <div className='container-fluid bg-secondary container-xl'>
-          <div className='row g-3 align-items-center justify-content-between'>
-            {(synopsis && ['bulk-content', 'bulk-posts'].includes(selectedTab) === false) ?
-              <>
-                <BrandHeader synopsis={synopsis} />
-              </> :
-              <div className='col'>
-                <h1 className="text-start mb-5"><TypeWriterText string={selectedTab.includes("bulk") ? 'Upload for all domains' : selected ? `Content for ${domain}` : 'Your Content'} withBlink /></h1>
-              </div>
-            }
-            {(domainsList?.length > 0 && ['bulk-content', 'bulk-posts'].includes(selectedTab) === false && !currentDomain) && <div className='col-12 mb-5 d-flex align-items-center'>
-              <div className='row d-flex align-items-center g-2 min-350'>
+        <div className='container-fluid container-xl'>
+          <div className='card p-3 bg-secondary my-3'>
+            <div className='row g-3 align-items-center justify-content-between'>
+              {(synopsis && ['bulk-content', 'bulk-posts'].includes(selectedTab) === false) ?
+                <>
+                  <BrandHeader synopsis={synopsis} />
+                </> :
                 <div className='col'>
-                  <SearchSelect
-                    onChange={searchDomainChangeHandler}
-                    options={domainsList}
-                    isLoading={!domainsList}
-                    value={selected || null}
-                    placeholder="Select a Domain"
-                    bottomSpacing={false}
-                    className='w-100 mt-1'
-                  />
+                  <h1 className="text-start mb-0 text-primary"><TypeWriterText string={selectedTab.includes("bulk") ? 'Upload for all domains' : selected ? `Content for ${domain}` : 'Your Content'} withBlink /></h1>
                 </div>
-                <div className="col-auto">
-                  <Tooltip>
-                    Clear search field to see all content by email
-                  </Tooltip>
+              }
+              {(domainsList?.length > 0 && ['bulk-content', 'bulk-posts'].includes(selectedTab) === false && !currentDomain) &&
+                <div className='col-12 d-flex align-items-center'>
+                  <div className='bg-primary card p-3'>
+                    <div className='row d-flex align-items-end g-2 min-350'>
+                      <div className='col'>
+                        <div className='formField'>
+                          <label className='formField-label text-white'>Select a Domain or clear for content by email</label>
+                          <SearchSelect
+                            onChange={searchDomainChangeHandler}
+                            options={domainsList}
+                            isLoading={!domainsList}
+                            value={selected || null}
+                            placeholder="Select a Domain"
+                            bottomSpacing={false}
+                            className='w-100'
+                          />
+                        </div>
+                      </div>
+                      <div className="col-auto mb-2">
+                        <Tooltip>
+                          Clear search field to see all content by email
+                        </Tooltip>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              }
             </div>
-            }
           </div>
         </div>
       }

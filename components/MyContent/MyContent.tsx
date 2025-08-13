@@ -59,14 +59,14 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
     if ((currentDomain || domain) && domainsInfo) {
       let checkDomain = currentDomain || domain
       data = domainsInfo.find(obj => obj?.domain === checkDomain)
-      if (!data) {
+      if (data !== null) {
         getSynopsisInfo(checkDomain)
           .then(res => {
+            console.log(res)
             if (res.data) {
               setSynopsis(res?.data[0])
             }
             else {
-
               setSynopsis(null)
 
             }
@@ -74,6 +74,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
       }
     }
     else {
+      console.log(data)
       setSynopsis(data)
     }
 

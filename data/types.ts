@@ -235,6 +235,7 @@ export interface Outline {
   post_title: string;
   status: string;
   client_name?: string
+  keyword?: string;
 }
 
 export interface PostUploadItem {

@@ -5404,3 +5404,11 @@ a.btn {
     white-space: nowrap;
   }
 }
+
+.w-auto {
+  width: auto !important;
+}
+
+.w-min {
+  max-width: min-content !important;
+}

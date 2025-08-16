@@ -333,7 +333,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
                     <div className='row d-flex align-items-end g-2 min-350'>
                       <div className='col'>
                         <div className='formField'>
-                          <label className='formField-label text-white'>Select a Domain or clear for content by email</label>
+                          <label className='formField-label text-white'>Select a Domain or clear input for content by email address</label>
                           <SearchSelect
                             onChange={searchDomainChangeHandler}
                             options={domainsList}

@@ -242,22 +242,25 @@ const DomainsList = () => {
               Restore
             </button>
           )}
-          {!row.blocked && (
-            <button
-              className="btn btn-sm btn-outline-danger"
-              onClick={() => handleBlockDomain(row.domain)}
-            >
-              Block Domain
-            </button>
-          )}
-          {row.blocked && (
-            <button
-              className="btn btn-sm btn-outline-info"
-              onClick={() => handleUnblockDomain(row.domain)}
-            >
-              Unblock
-            </button>
-          )}
+          {isAdmin && <>
+            {!row.blocked && (
+              <button
+                className="btn btn-sm btn-outline-danger"
+                onClick={() => handleBlockDomain(row.domain)}
+              >
+                Block Domain
+              </button>
+            )}
+            {row.blocked && (
+              <button
+                className="btn btn-sm btn-outline-info"
+                onClick={() => handleUnblockDomain(row.domain)}
+              >
+                Unblock
+              </button>
+            )}
+          </>
+          }
         </div>
       )
     }

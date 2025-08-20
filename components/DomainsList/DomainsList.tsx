@@ -2,11 +2,11 @@
 
 import { selectDomains, selectIsAdmin } from "@/perfect-seo-shared-components/lib/features/User"
 import { createClient } from "@/perfect-seo-shared-components/utils/supabase/client"
-import { useEffect, useState, useCallback } from "react"
+import { useEffect, useState, useCallback, Suspense } from "react"
 import { useSelector } from "react-redux"
 import Table from "@/perfect-seo-shared-components/components/Table/Table"
 import usePaginator from "@/perfect-seo-shared-components/hooks/usePaginator"
-import { getDomains } from "@/perfect-seo-shared-components/services/services"
+import LoadSpinner from "../LoadSpinner/LoadSpinner"
 
 const DomainsList = () => {
   const domain_access = useSelector(selectDomains)
@@ -192,55 +192,57 @@ const DomainsList = () => {
       <p className="text-muted mb-3">
         Manage your accessible domains. You can hide/show domains using the hidden flag.
       </p>
-
-      {/* Search Input */}
-      <div className="mb-3">
-        <div className="row">
-          <div className="col-md-6">
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Search domains..."
-              value={searchTerm}
-              onChange={handleSearchChange}
-            />
+      <Suspense fallback={<LoadSpinner />}>
+        {/* Search Input */}
+        <div className="mb-3">
+          <div className="row">
+            <div className="col-md-6">
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Search domains..."
+                value={searchTerm}
+                onChange={handleSearchChange}
+              />
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Filter Controls */}
-      <div className="mb-3">
-        <div className="btn-group" role="group" aria-label="Domain filter">
-          <button
-            type="button"
-            className={`btn ${filter === 'all' ? 'btn-primary' : 'btn-outline-primary'}`}
-            onClick={() => handleFilterChange('all')}
-          >
-            All Domains
-          </button>
-          <button
-            type="button"
-            className={`btn ${filter === 'visible' ? 'btn-primary' : 'btn-outline-primary'}`}
-            onClick={() => handleFilterChange('visible')}
-          >
-            Visible Domains
-          </button>
-          <button
-            type="button"
-            className={`btn ${filter === 'hidden' ? 'btn-primary' : 'btn-outline-primary'}`}
-            onClick={() => handleFilterChange('hidden')}
-          >
-            Hidden Domains
-          </button>
+        {/* Filter Controls */}
+        <div className="mb-3">
+          <div className="btn-group" role="group" aria-label="Domain filter">
+            <button
+              type="button"
+              className={`btn ${filter === 'all' ? 'btn-primary' : 'btn-outline-primary'}`}
+              onClick={() => handleFilterChange('all')}
+            >
+              All Domains
+            </button>
+            <button
+              type="button"
+              className={`btn ${filter === 'visible' ? 'btn-primary' : 'btn-outline-primary'}`}
+              onClick={() => handleFilterChange('visible')}
+            >
+              Visible Domains
+            </button>
+            <button
+              type="button"
+              className={`btn ${filter === 'hidden' ? 'btn-primary' : 'btn-outline-primary'}`}
+              onClick={() => handleFilterChange('hidden')}
+            >
+              Hidden Domains
+            </button>
+          </div>
         </div>
-      </div>
 
-      <Table
-        rawData={domains}
-        columnArray={columns}
-        isLoading={loading}
-      />
-      {paginator.renderComponent()}
+        <Table
+          rawData={domains}
+          columnArray={columns}
+          isLoading={loading}
+        />
+        {paginator.renderComponent()}
+      </Suspense>
+
     </div>
   )
 }

@@ -138,3 +138,28 @@ export function keyToLabel(text: string, capAll?: boolean) {
   return newText
 
 }
+
+
+export const mapObject = (obj, exclude_keys?) => {
+  let newObject = obj;
+  if (exclude_keys) {
+    newObject = Object.keys(obj).reduce((acc, key) => {
+      if (!exclude_keys.includes(key)) {
+        acc[key] = obj[key];
+      }
+      return acc;
+    }, {})
+  }
+
+  if (typeof newObject !== 'object' || newObject === null) {
+    return 'Input is not an object';
+  }
+  else if (Array.isArray(newObject)) {
+    return 'Input is an array';
+  }
+  else {
+    return Object.keys(newObject).map((key) => {
+      return `${key}: ${newObject[key]}`;
+    }).join('---');
+  }
+}

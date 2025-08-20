@@ -843,6 +843,13 @@ export interface Schema {
   processing_heartbeat_at: string | null;
 }
 
+export interface Domain {
+  domain?: string;
+  updated_date: string;
+  hidden: boolean;
+
+}
+
 export interface URLProps {
   url: string;
   lastSubmitted: string | null;

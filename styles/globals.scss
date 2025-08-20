@@ -5418,3 +5418,14 @@ a.btn {
 .max-50 {
   max-width: 50% !important;
 }
+
+.bg-primary {
+
+  &>h1,
+  h2,
+  h3,
+  h4,
+  h5 {
+    color: white;
+  }
+}

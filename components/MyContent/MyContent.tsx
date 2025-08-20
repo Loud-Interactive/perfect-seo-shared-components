@@ -48,6 +48,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
   const [domain, setDomain] = useState(currentDomain || null)
   const [selected, setSelected] = useState(null)
   const [domains, setDomains] = useState([])
+  const [accessibleDomains, setAccessibleDomains] = useState([])
   const [reverify, setReverify] = useState(false)
   const [dataTracked, setDataTracked] = useState(false)
   const [synopsis, setSynopsis] = useState(null)
@@ -161,6 +162,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
     supabase
       .from("domains")
       .select("*")
+      .eq('hidden', false)
       .then((res) => {
         if (res.data?.length > 0) {
           setDomains(res?.data?.sort((a, b) => a?.domain?.localeCompare(b?.domain)));
@@ -190,13 +192,41 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
     }
   }
 
+  // Check domain_access against hidden domains in database
+  const checkAccessibleDomains = useCallback(async () => {
+    if (domain_access?.length > 0) {
+      const siteUrls = domain_access.map(domain => domain.siteUrl)
+
+      const { data: hiddenDomains } = await supabase
+        .from('domains')
+        .select('domain')
+        .in('domain', siteUrls)
+        .eq('hidden', true)
+
+      const hiddenDomainsList = hiddenDomains?.map(d => d.domain) || []
+
+      // Filter out hidden domains from domain_access
+      const filteredDomains = domain_access.filter(domain =>
+        !hiddenDomainsList.includes(domain.siteUrl)
+      )
+
+      setAccessibleDomains(filteredDomains)
+    }
+  }, [domain_access])
+
+  useEffect(() => {
+    if (domain_access?.length > 0) {
+      checkAccessibleDomains()
+    }
+  }, [domain_access, checkAccessibleDomains])
+
   const domainsList = useMemo(() => {
     let list: any = []
     if (isAdmin) {
       list = [...list, ...domains?.sort((a, b) => a.domain.localeCompare(b.domain)).map(({ domain }) => ({ label: domain, value: domain }))]
     }
-    else if (domain_access?.length > 0) {
-      list = [...list, ...domain_access.map((domain) => {
+    else if (accessibleDomains?.length > 0) {
+      list = [...list, ...accessibleDomains.map((domain) => {
         return domain?.siteUrl?.toLowerCase()
       })].sort((a, b) => a?.localeCompare(b)).map((domain) => {
         checkDomain(domain)
@@ -219,34 +249,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
     }
     return list
 
-  }, [domain_access, domains, isAdmin])
-
-
-  useEffect(() => {
-    if (domainsList?.length > 0) {
-      if (currentDomain) {
-        setDomain(currentDomain)
-        setSelected({ label: currentDomain, value: currentDomain })
-        return setLoading(false)
-      } else if (domainParam) {
-        if (domainParam.includes("/")) {
-          let newDomainParam = domainParam.replaceAll("/", "");
-          setDomain(newDomainParam)
-          setSelected({ label: newDomainParam, value: newDomainParam })
-          router.replace(pathname + '?' + createQueryString("domain", newDomainParam))
-          return setLoading(false)
-        }
-        else {
-          setDomain(domainParam)
-          setSelected({ label: domainParam, value: domainParam })
-          return setLoading(false)
-        }
-      }
-      else {
-        return setLoading(false)
-      }
-    }
-  }, [currentDomain, settings, domainsList])
+  }, [accessibleDomains, domains, isAdmin])
 
   const isAuthorized = useMemo(() => {
     let bool = true;
@@ -254,31 +257,29 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
       return true
     } else if (isAdmin) {
       return true
-    } else if (domain_access?.length > 0 && domain_access.map(({ siteUrl }) => siteUrl).length > 0) {
+    } else if (accessibleDomains?.length > 0 && accessibleDomains.map(({ siteUrl }) => siteUrl).length > 0) {
       if (currentDomain) {
         let domain = currentDomain;
-        bool = (domain_access.map(({ siteUrl }) => siteUrl).includes(domain?.toLowerCase()))
+        bool = (accessibleDomains.map(({ siteUrl }) => siteUrl).includes(domain?.toLowerCase()))
       }
       else if (selected?.value) {
         let domain = selected.value
-        bool = (domain_access.map(({ siteUrl }) => siteUrl).includes(domain?.toLowerCase()))
+        bool = (accessibleDomains.map(({ siteUrl }) => siteUrl).includes(domain?.toLowerCase()))
       }
       else {
         bool = true
       }
-
-
     }
-    if (bool === false && email && (currentDomain || selected?.value) && (domainsList || domain_access)) {
+    if (bool === false && email && (currentDomain || selected?.value) && (domainsList || accessibleDomains)) {
       supabase
         .from('user_history')
-        .insert({ email: email, domain: currentDomain || selected?.value, transaction_data: { domains: domainsList || domain_access }, product: en.product, action: "Unauthorized My Content", type: "UNAUTHORIZED" })
+        .insert({ email: email, domain: currentDomain || selected?.value, transaction_data: { domains: domainsList || accessibleDomains }, product: en.product, action: "Unauthorized My Content", type: "UNAUTHORIZED" })
         .select('*')
         .then(res => {
         })
     }
     return bool
-  }, [currentDomain, selected, domainsList, domain_access, isLoading])
+  }, [currentDomain, selected, domainsList, accessibleDomains, isLoading])
 
   useEffect(() => {
     if (isAdmin) {
@@ -410,4 +411,4 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
   )
 }
 
-export default MyContent 
+export default MyContent

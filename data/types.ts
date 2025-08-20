@@ -235,6 +235,7 @@ export interface Outline {
   post_title: string;
   status: string;
   client_name?: string
+  keyword?: string;
 }
 
 export interface PostUploadItem {
@@ -846,4 +847,13 @@ export interface Domain {
   domain?: string;
   updated_date: string;
   hidden: boolean;
+
+}
+
+export interface URLProps {
+  url: string;
+  lastSubmitted: string | null;
+  indexCheckedDate: string | null;
+  isIndexed: boolean;
+  submissionHistory: string[];
 }

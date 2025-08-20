@@ -225,7 +225,7 @@ const StatusActionBar = ({
 
   const [modals, setModals] = useState<{ viewSchema: boolean; viewGenerateImage: boolean, viewEdit: boolean, viewGeneratePost: GenerateTypes, viewImagePrompt: boolean, viewEditLiveUrl: boolean, viewIndex: boolean, viewDeleteOutline: boolean, viewDeletePost: boolean; }>(modalInitialState);
 
-  const modalsOpen = Object.values(modals).some(value => !!value);
+  const modalsOpen = Object.values(modals).some(value => value !== null && value !== false);
 
   //Update modals for specific key
   const setModal = (key: keyof typeof modals, value?: any) => {
@@ -251,7 +251,6 @@ const StatusActionBar = ({
     fetchOutlineData(content_plan_outline_guid)
       .then(res => {
         console.log("Outline data fetched:", res.data[0]);
-        setStatus('outline', res.data[0].status)
         setLocalOutline(res.data[0])
         setLoading('outline', false)
       })
@@ -260,7 +259,6 @@ const StatusActionBar = ({
   const fetchOutlineStatusData = () => {
     fetchOutlineStatus(content_plan_outline_guid)
       .then(res => {
-        console.log(res?.data[0])
         if (res.data[0]?.status) {
           setStatus('outline', res.data[0]?.status);
         }
@@ -429,13 +427,12 @@ const StatusActionBar = ({
 
   // updates outline and outline statuses 
   useEffect(() => {
-    console.log('useEffect: updates outline and outline statuses');
     let outlineStatusesChannel;
     let outlineChannel;
+    console.log('content_plan_outline_guid', content_plan_outline_guid);
     if (content_plan_outline_guid) {
+      console.log(modalsOpen, 'modals');
       if (!modalsOpen) {
-
-
         fetchOutlineStatusData();
 
         fetchOutline();
@@ -445,9 +442,13 @@ const StatusActionBar = ({
         outlineStatusesChannel = supabase.channel(`statusbar-outline-status-${content_plan_outline_guid}`)
           .on(
             'postgres_changes',
-            { event: 'INSERT', schema: 'public', table: 'content_plan_outline_statuses', filter: `outline_guid=eq.${content_plan_outline_guid}` },
+            { event: '*', schema: 'public', table: 'content_plan_outline_statuses', filter: `outline_guid=eq.${content_plan_outline_guid}` },
             (payload) => {
-              setStatus('outline', payload.new.status)
+              console.log('New outline status:', payload);
+              if (payload.new && typeof payload.new === 'object' && 'status' in payload.new) {
+                console.log('New outline status:', payload.new.status);
+                setStatus('outline', payload.new.status);
+              }
             }
           )
           .subscribe()
@@ -467,21 +468,19 @@ const StatusActionBar = ({
     else {
       setLoading('outline', false)
     }
-    if (!modalsOpen) {
-      return () => {
-        if (outlineStatusesChannel) {
-          outlineStatusesChannel.unsubscribe()
-        }
-        if (outlineChannel) {
-          outlineChannel.unsubscribe()
-        }
+
+    return () => {
+      if (outlineStatusesChannel) {
+        outlineStatusesChannel.unsubscribe()
+      }
+      if (outlineChannel) {
+        outlineChannel.unsubscribe()
       }
     }
-  }, [content_plan_outline_guid])
+  }, [content_plan_outline_guid, modalsOpen])
 
   // updates post if post or content_plan_post_id changes
   useEffect(() => {
-    console.log('useEffect: updates post if post or content_plan_post_id changes');
     if (content_plan_post_id) {
       if (post) {
         updatePost(post);
@@ -493,7 +492,6 @@ const StatusActionBar = ({
   }, [content_plan_post_id, post])
 
   useEffect(() => {
-    console.log('useEffect: postChannel for localPost?.task_id and post');
     let postChannel;
     if (localPost?.task_id && !post) {
       postChannel = supabase.channel(`statusbar-post-status-${localPost?.task_id}`)
@@ -515,7 +513,6 @@ const StatusActionBar = ({
 
 
   useEffect(() => {
-    console.log('useEffect: factcheckInterval for statusState?.factcheck?.complete and localPost?.factcheck_guid');
     let factcheckInterval;
     if (!statusState?.factcheck?.complete) {
       fetchFactcheckStatusData();
@@ -531,14 +528,12 @@ const StatusActionBar = ({
   }, [statusState?.factcheck?.complete, localPost?.factcheck_guid]);
 
   useEffect(() => {
-    console.log('useEffect: checkWordPressPublish when statusState?.post?.complete changes');
     if (statusState?.post?.complete) {
       checkWordPressPublish()
     }
   }, [statusState?.post?.complete])
 
   useEffect(() => {
-    console.log('useEffect: checkIfIndexed when localPost?.live_post_url changes');
     if (localPost?.live_post_url
       && localPost?.index_status !== 'Submitted and indexed'
     ) {
@@ -547,7 +542,6 @@ const StatusActionBar = ({
   }, [localPost?.live_post_url])
 
   useEffect(() => {
-    console.log('useEffect: setCompletion and setError for outline/post status changes');
     setCompletion('outline', statusState?.outline?.status === 'completed');
     setCompletion('post', statusState?.post?.status === 'Complete');
     if (statusState?.outline?.status === "reset_completed") {

@@ -61,6 +61,7 @@ const OutlinesList = ({ domain_name, active }: OutlinesListProps) => {
       if (domain_name) {
         getContentPlanOutlinesByDomain(domain_name, paginator.paginationObj, status)
           .then(res => {
+            console.log("by domain", res)
             if (res.data) {
               paginator.setItemCount(res.count)
               setData(res.data)
@@ -75,7 +76,9 @@ const OutlinesList = ({ domain_name, active }: OutlinesListProps) => {
       else {
         getContentPlanOutlinesByEmail(email, paginator.paginationObj, status)
           .then(res => {
+            console.log("by email", res)
             if (res.data) {
+
               paginator.setItemCount(res.count)
               setData(res.data)
               setLoading(false)
@@ -104,6 +107,9 @@ const OutlinesList = ({ domain_name, active }: OutlinesListProps) => {
     let interval;
     if (active) {
       getOutlines();
+    }
+    else {
+      console.log("OutlinesList is not active, skipping initial fetch")
     }
 
     return () => {

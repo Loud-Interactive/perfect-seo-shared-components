@@ -4912,21 +4912,8 @@ a.text-white {
   transform: scaleY(-1);
 }
 
-.btn-tab {
-  height: 38px !important;
 
-  &[data-state="active"] {
-    background-color: $primary;
-    color: white;
-    border-color: $primary;
 
-    &:hover {
-      background-color: rgba($primary, .5);
-      color: white;
-      border-color: $primary;
-    }
-  }
-}
 
 .fixed {
   position: fixed;
@@ -5063,17 +5050,6 @@ button.input-group-append {
   border-color: $orange;
 }
 
-.btn-secondary {
-  color: $orange !important;
-
-  &:not(.no-outline) {
-    border: 1px solid $orange;
-  }
-
-  &:hover {
-    color: white !important;
-  }
-}
 
 .nav-link {
   border: 1px solid $lightOrange !important;
@@ -5085,6 +5061,8 @@ button.input-group-append {
   }
 
 }
+
+
 
 .nav-link.bg-primary {
   background-color: rgba($primary, .5) !important;
@@ -5427,4 +5405,16 @@ a.btn {
     font-weight: bold;
     white-space: nowrap;
   }
+}
+
+.w-auto {
+  width: auto !important;
+}
+
+.w-min {
+  max-width: min-content !important;
+}
+
+.max-50 {
+  max-width: 50% !important;
 }

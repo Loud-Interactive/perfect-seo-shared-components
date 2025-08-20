@@ -291,8 +291,9 @@ const StatusBar = ({
 
   const checkIfIndexed = async (live_post_url: string) => {
     try {
+      let user = localStorage.getItem('email');
       const { data, error } = await supabase.functions.invoke('check-indexation', {
-        body: { url: live_post_url },
+        body: { url: live_post_url, user },
       });
 
       if (error) {

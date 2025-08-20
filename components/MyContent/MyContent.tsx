@@ -1,7 +1,5 @@
 'use client'
 import en from '@/assets/en.json';
-import classNames from 'classnames'
-import styles from './MyContent.module.scss'
 import { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
 import TypeWriterText from '@/perfect-seo-shared-components/components/TypeWriterText/TypeWriterText'
 import { usePathname, useRouter } from 'next/navigation'
@@ -22,6 +20,7 @@ import LoadSpinner from '../LoadSpinner/LoadSpinner';
 import { selectDomains, selectDomainsInfo, selectEmail, selectIsAdmin, selectIsLoading, selectIsLoggedIn, selectSettings, selectUser, setUserSettings } from '@/perfect-seo-shared-components/lib/features/User'
 import Tooltip from '../Tooltip';
 import Reports from '../Reports/Reports';
+import CustomTabs, { CustomTabContent, TabItem } from '../CustomTabs/CustomTabs';
 
 
 export interface MyContentProps {
@@ -59,14 +58,14 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
     if ((currentDomain || domain) && domainsInfo) {
       let checkDomain = currentDomain || domain
       data = domainsInfo.find(obj => obj?.domain === checkDomain)
-      if (!data) {
+      if (data !== null) {
         getSynopsisInfo(checkDomain)
           .then(res => {
+            console.log(res)
             if (res.data) {
               setSynopsis(res?.data[0])
             }
             else {
-
               setSynopsis(null)
 
             }
@@ -74,6 +73,7 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
       }
     }
     else {
+      console.log(data)
       setSynopsis(data)
     }
 
@@ -101,15 +101,6 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
     [searchParams]
   )
 
-  const clickHandler = (e, val) => {
-    e.preventDefault()
-    let url = `${pathname}?tab=${val}`
-    if (domain) {
-      url += `&domain=${domain}`
-    }
-    router.replace(url)
-  }
-
   useEffect(() => {
     if (queryParam) {
       if (['bulk-content', 'bulk-posts'].includes(queryParam) && domainParam) {
@@ -124,12 +115,12 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
 
 
 
-  const TabData = useMemo(() => {
+  const TabData: TabItem[] = useMemo(() => {
 
-    let tabListStart = [{ key: "content-plans", title: "Content Plans" },
+    let tabListStart: TabItem[] = [{ key: "content-plans", title: "Content Plans" },
     { key: "outlines", title: "Outlines" },
     { key: "posts", title: "Posts" }]
-    let bulkTabs = [
+    let bulkTabs: TabItem[] = [
       { key: "bulk-content", title: "Bulk Content Plans" },
       { key: "bulk-posts", title: "Bulk Posts" },]
 
@@ -144,13 +135,23 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
       setDomain(e?.value);
       setSelected(e)
       setDataTracked(false)
-      router.replace(pathname + '?' + createQueryString("domain", e.value))
+      const params = new URLSearchParams(searchParams.toString());
+      params.set("domain", e.value);
+      if (selectedTab) {
+        params.set("tab", selectedTab);
+      }
+      router.replace(pathname + '?' + params.toString());
     }
     else {
       setDomain(null);
       setSelected(null)
       setSynopsis(null)
-      router.replace(pathname)
+      const params = new URLSearchParams(searchParams.toString());
+      params.delete("domain");
+      if (selectedTab) {
+        params.set("tab", selectedTab);
+      }
+      router.replace(pathname + '?' + params.toString());
     }
   };
 
@@ -203,6 +204,10 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
       });
     }
     if (list?.length > 0) {
+      if (!isAdmin) {
+        setDomain(list[0].value);
+        setSelected(list[0]);
+      }
       list = list.reduce((acc, current) => {
         if (!acc.find(item => item.value === current.value)) {
           return [...acc, current]
@@ -311,101 +316,92 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
   return (
     <>
       {hideTitle ? null :
-        <div className='container-fluid bg-secondary container-xl'>
-          <div className='row g-3 align-items-center justify-content-between'>
-            {(synopsis && ['bulk-content', 'bulk-posts'].includes(selectedTab) === false) ?
-              <>
-                <BrandHeader synopsis={synopsis} />
-              </> :
-              <div className='col'>
-                <h1 className="text-start mb-5"><TypeWriterText string={selectedTab.includes("bulk") ? 'Upload for all domains' : selected ? `Content for ${domain}` : 'Your Content'} withBlink /></h1>
-              </div>
-            }
-            {(domainsList?.length > 0 && ['bulk-content', 'bulk-posts'].includes(selectedTab) === false && !currentDomain) && <div className='col-12 mb-5 d-flex align-items-center'>
-              <div className='row d-flex align-items-center g-2 min-350'>
+        <div className='container-fluid container-xl'>
+          <div className='card p-3 bg-secondary my-3'>
+            <div className='row g-3 align-items-center justify-content-between'>
+              {(synopsis && ['bulk-content', 'bulk-posts'].includes(selectedTab) === false) ?
+                <>
+                  <BrandHeader synopsis={synopsis} />
+                </> :
                 <div className='col'>
-                  <SearchSelect
-                    onChange={searchDomainChangeHandler}
-                    options={domainsList}
-                    isLoading={!domainsList}
-                    value={selected || null}
-                    placeholder="Select a Domain"
-                    bottomSpacing={false}
-                    className='w-100 mt-1'
-                  />
+                  <h1 className="text-start mb-0 text-primary"><TypeWriterText string={selectedTab.includes("bulk") ? 'Upload for all domains' : selected ? `Content for ${domain}` : 'Your Content'} withBlink /></h1>
                 </div>
-                <div className="col-auto">
-                  <Tooltip>
-                    Clear search field to see all content by email
-                  </Tooltip>
+              }
+              {(domainsList?.length > 0 && ['bulk-content', 'bulk-posts'].includes(selectedTab) === false && !currentDomain) &&
+                <div className='col-12 d-flex align-items-center'>
+                  <div className='bg-primary card p-3'>
+                    <div className='row d-flex align-items-end g-2 min-350'>
+                      <div className='col'>
+                        <div className='formField'>
+                          <label className='formField-label text-white'>Select a Domain or clear input for content by email address</label>
+                          <SearchSelect
+                            onChange={searchDomainChangeHandler}
+                            options={domainsList}
+                            isLoading={!domainsList}
+                            value={selected || null}
+                            placeholder="Select a Domain"
+                            bottomSpacing={false}
+                            className='w-100'
+                          />
+                        </div>
+                      </div>
+                      <div className="col-auto mb-2">
+                        <Tooltip>
+                          Clear search field to see all content by email
+                        </Tooltip>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              }
             </div>
-            }
           </div>
         </div>
       }
       <div className='container-xl content-fluid rc relative'>
         {/* {isLoading && <LoadSpinner />} */}
-        <div className={styles.tabWrap}>
-          <ul className="nav nav-tabs mb-0 w-100">
-            {TabData.map((tab) => {
+        <CustomTabs
+          tabs={TabData}
+          activeTab={selectedTab}
+          onTabChange={setSelectedTab}
+          enableRouting={true}
+          domain={currentDomain || domain}
+          tabsRequiringDomain={[]} // All tabs in MyContent use domain
+        >
+          <CustomTabContent tabKey="outlines" activeTab={selectedTab}>
+            <Suspense fallback={<LoadSpinner />}>
+              <OutlinesList active={!loading && selectedTab === 'outlines'} domain_name={currentDomain || domain} />
+            </Suspense>
+          </CustomTabContent>
 
-              const tabClasses = classNames('nav-link',
-                { 'active': tab.key === selectedTab })
-              let tabKey = `${tab.key}-tab`
-              return (
-                <li className="nav-item" key={tabKey}>
-                  <button onClick={(e) => clickHandler(e, tab.key)} id={tabKey} data-bs-toggle={tab.key} data-bs-target="#outline" role={tab.key} aria-controls={tab.key} aria-selected={selectedTab === tab.key} className={tabClasses} name={tab.key}>{tab.title}</button>
-                </li>
-              )
-            })}
-          </ul>
-          <div className="tab-content  mb-3" id="myTabContent">
-            <div className={`tab-pane fade ${selectedTab === 'outlines' && 'show active'}`} id="outlines" role="tabpanel" aria-labelledby="outlines-tab">
-              <div className='tab p-3'>
-                <Suspense fallback={<LoadSpinner />}>
-                  <OutlinesList active={!loading && selectedTab === 'outlines'} domain_name={currentDomain || domain} />
-                </Suspense>
-              </div>
-            </div>
-            <div className={`tab-pane fade ${selectedTab === 'posts' && 'show active'}`} id="posts" role="tabpanel" aria-labelledby="posts-tab">
-              <div className='tab p-3'>
-                <Suspense fallback={<LoadSpinner />}>
-                  <PostsList active={!loading && selectedTab === 'posts'} domain_name={currentDomain || domain} />
-                </Suspense>
-              </div>
-            </div>
-            <div className={`tab-pane fade ${selectedTab === 'content-plans' && 'show active'}`} id="content-plans" role="tabpanel" aria-labelledby="content-plans-tab">
-              <div className='tab p-3'>
-                <Suspense fallback={<h1>fallback</h1>}>
-                  <PlansList active={!loading && selectedTab === 'content-plans'} domain_name={currentDomain || domain} />
-                </Suspense>
-              </div>
-            </div>
-            <div className={`tab-pane fade ${selectedTab === 'reports' && 'show active'}`} id="reports" role="tabpanel" aria-labelledby="reports-tab">
-              <div className='tab p-3'>
-                {/* <Suspense fallback={<LoadSpinner />}> */}
-                <Reports active={!loading && selectedTab === 'reports'} domain_name={currentDomain || domain} />
-                {/* </Suspense> */}
-              </div>
-            </div>
-            <div className={`tab-pane fade ${selectedTab === 'bulk-content' && 'show active'}`} id="bulk-content" role="tabpanel" aria-labelledby="bulk-content-tab">
-              <div className='tab p-3'>
-                <Suspense fallback={<LoadSpinner />}>
-                  <BulkContentComponent currentDomain={currentDomain} active={!loading && selectedTab === 'bulk-content'} />
-                </Suspense>
-              </div>
-            </div>
-            <div className={`tab-pane fade ${selectedTab === 'bulk-posts' && 'show active'}`} id="bulk-posts" role="tabpanel" aria-labelledby="bulk-posts-tab">
-              <div className='tab p-3'>
-                <Suspense fallback={<LoadSpinner />}>
-                  <BulkPostComponent currentDomain={currentDomain} active={!loading && selectedTab === 'bulk-posts'} />
-                </Suspense>
-              </div>
-            </div>
-          </div>
-        </div>
+          <CustomTabContent tabKey="posts" activeTab={selectedTab}>
+            <Suspense fallback={<LoadSpinner />}>
+              <PostsList active={!loading && selectedTab === 'posts'} domain_name={currentDomain || domain} />
+            </Suspense>
+          </CustomTabContent>
+
+          <CustomTabContent tabKey="content-plans" activeTab={selectedTab}>
+            <Suspense fallback={<h1>fallback</h1>}>
+              <PlansList active={!loading && selectedTab === 'content-plans'} domain_name={currentDomain || domain} />
+            </Suspense>
+          </CustomTabContent>
+
+          <CustomTabContent tabKey="reports" activeTab={selectedTab}>
+            <Reports active={!loading && selectedTab === 'reports'} domain_name={currentDomain || domain} />
+          </CustomTabContent>
+
+          <CustomTabContent tabKey="bulk-content" activeTab={selectedTab}>
+            <Suspense fallback={<LoadSpinner />}>
+              <BulkContentComponent currentDomain={currentDomain} active={!loading && selectedTab === 'bulk-content'} />
+            </Suspense>
+          </CustomTabContent>
+
+          <CustomTabContent tabKey="bulk-posts" activeTab={selectedTab}>
+            <Suspense fallback={<LoadSpinner />}>
+              <BulkPostComponent currentDomain={currentDomain} active={!loading && selectedTab === 'bulk-posts'} />
+            </Suspense>
+          </CustomTabContent>
+        </CustomTabs>
         {/* <div className="strip-padding container-fluid container-xl d-flex align-items-center justify-content-center">
             <h2 className='text-center text-primary'><TypeWriterText string="No domain selected" withBlink /></h2>
           </div> */}

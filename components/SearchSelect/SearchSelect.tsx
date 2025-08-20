@@ -13,6 +13,7 @@ export interface SearchSelectProps {
   className?: string;
   components?: any;
   value?: any;
+  label?: string;
   [key: string]: any;
 }
 
@@ -25,27 +26,35 @@ const SearchSelect = ({
   onChange,
   options,
   className,
+  label,
   ...props
 }: SearchSelectProps) => {
 
   const searchSelectClasses = classNames('react-select',
     { [className]: className }
   )
-
+  const labelNode = label ? (
+    <label className="formField-label" >
+      {label}
+    </label>
+  ) : null;
   return (
-    <Select
-      className={searchSelectClasses}
-      classNamePrefix="select"
-      isDisabled={isDisabled}
-      isLoading={isLoading}
-      isClearable={isClearable}
-      isSearchable={isSearchable}
-      options={options}
-      components={props?.components}
-      onChange={onChange}
-      value={props?.value}
-      {...props}
-    />
+    <div className="formField">
+      {labelNode}
+      <Select
+        className={searchSelectClasses}
+        classNamePrefix="select"
+        isDisabled={isDisabled}
+        isLoading={isLoading}
+        isClearable={isClearable}
+        isSearchable={isSearchable}
+        options={options}
+        components={props?.components}
+        onChange={onChange}
+        value={props?.value}
+        {...props}
+      />
+    </div>
   );
 }
 export default SearchSelect

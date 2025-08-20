@@ -73,8 +73,13 @@ const OutlineItem = ({ outline, refresh, domain_name }) => {
         <div className="col">
           <div className="row g-2">
             <div className="col-12">
-              <strong className="text-primary me-1">Title</strong>  {localOutline?.post_title} {(!domain_name || outline.domain !== domain_name) && <span className='badge bg-light-blue text-dark ms-2'>{localOutline?.domain}</span>}
-
+              <strong className="text-primary me-1">Title</strong>  {localOutline?.post_title}
+              <div className="d-flex">
+                {outline?.keyword && <span className="input-group w-min">
+                  <span className='badge bg-primary'>keyword</span>
+                  <span className="badge text-primary bg-secondary">{localOutline?.keyword}</span></span>}
+                {(!domain_name || outline.domain !== domain_name) && <span className='badge bg-light-blue text-dark ms-2'>{localOutline?.domain}</span>}
+              </div>
               <div>
                 {localOutline?.created_at && <strong className="text-primary me-2">Date</strong>}
                 {moment(localOutline.created_at).format("dddd, MMM Do, YYYY h:mma")}{email !== localOutline.email && <span> by <span className="text-primary">by {localOutline.email}</span></span>}

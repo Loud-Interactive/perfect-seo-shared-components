@@ -20,7 +20,8 @@ const IndexModal = ({ post, onClose, setPost }: IndexModalProps) => {
     e.preventDefault();
     setLoading(true);
     setSuccess(false)
-    let reqObj = { url: post.live_post_url }
+    let user = localStorage.getItem('email');
+    let reqObj = { url: post.live_post_url, user }
     axiosInstance.post('/api/index/request-index', reqObj)
       .then(res => {
         setPost({ ...post, index_status: 'submitted' })

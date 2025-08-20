@@ -841,3 +841,9 @@ export interface Schema {
   processing_started_at: string | null;
   processing_heartbeat_at: string | null;
 }
+
+export interface Domain {
+  domain?: string;
+  updated_date: string;
+  hidden: boolean;
+}

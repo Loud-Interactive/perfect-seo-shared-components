@@ -850,3 +850,125 @@ export interface URLProps {
   isIndexed: boolean;
   submissionHistory: string[];
 }
+
+export interface CheckIndexationResponse {
+  success: boolean;
+  url: string;
+  siteUrl: string;
+  coverageState: string;
+  emoji: string;
+  status: {
+    inspectionResultLink: string;
+    indexStatusResult: IndexStatusResult;
+    mobileUsabilityResult: MobileUsabilityResult;
+  };
+  result: GoogleApiResult
+}
+
+export interface IndexStatusResult {
+  verdict: string;
+  coverageState: string;
+  robotsTxtState: string;
+  indexingState: string;
+  lastCrawlTime: string;
+  pageFetchState: string;
+  googleCanonical: string;
+  userCanonical: string;
+  sitemap: string[];
+  referringUrls: string[];
+  crawledAs: string;
+}
+
+export interface MobileUsabilityResult {
+  verdict: string;
+}
+
+export interface IndexContentResponse {
+  indexingGuid: string;
+  contentPlanOutlineGuid: string | null;
+  url: string;
+  timestamp: string;
+  reindexed: boolean | null;
+  success: boolean;
+  statusUpdated: string | null;
+  googleApiResponse: GoogleApiResponse;
+}
+
+export interface GoogleApiResponse {
+  success: boolean;
+  url: string;
+  siteUrl: string;
+  result: GoogleApiResult;
+}
+
+export interface GoogleApiResult {
+  urlNotificationMetadata: UrlNotificationMetadata;
+}
+
+export interface UrlNotificationMetadata {
+  url: string;
+}
+
+// Database table interfaces
+export interface IndexingRequest {
+  id: string;
+  url: string;
+  site_url?: string;
+  content_plan_outline_guid?: string;
+  indexing_guid?: string;
+  success: boolean;
+  reindexed?: boolean;
+  google_api_response?: any;
+  user_id?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface IndexationCheck {
+  id: string;
+  url: string;
+  site_url?: string;
+  coverage_state?: string;
+  indexing_state?: string;
+  is_indexed: boolean;
+  last_crawl_time?: string;
+  inspection_result_link?: string;
+  status_result?: IndexStatusResult;
+  mobile_usability_result?: MobileUsabilityResult;
+  emoji?: string;
+  user_id?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+// Combined view interface for displaying URLs with both submission and check data
+export interface URLDisplayData {
+  url: string;
+  site_url?: string;
+
+  // From indexing_requests (latest submission)
+  latest_submission?: {
+    id: string;
+    indexing_guid?: string;
+    success: boolean;
+    reindexed?: boolean;
+    submitted_at: string;
+  };
+
+  // From indexation_checks (latest check)
+  latest_check?: {
+    id: string;
+    coverage_state?: string;
+    indexing_state?: string;
+    is_indexed: boolean;
+    last_crawl_time?: string;
+    checked_at: string;
+    emoji?: string;
+  };
+
+  // Computed fields
+  submission_count: number;
+  last_submitted?: string;
+  last_checked?: string;
+  current_status: 'indexed' | 'pending' | 'not_submitted' | 'failed';
+}

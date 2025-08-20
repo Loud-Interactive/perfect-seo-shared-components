@@ -75,6 +75,7 @@ const DomainsList = () => {
       query = query.eq('blocked', blockedFilter)
     }
 
+
     // Apply search filter
     if (searchQuery && searchQuery.trim() !== '') {
       query = query.ilike('domain', `%${searchQuery}%`)

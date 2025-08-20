@@ -21,6 +21,7 @@ const DomainsList = () => {
 
   // Debounced search function that queries Supabase
   const debounceSearch = useCallback((searchValue: string) => {
+    paginator.setCurrentPage(1)
     const timer = setTimeout(() => {
       fetchDomains(searchValue)
     }, 300)

@@ -321,7 +321,7 @@ const DomainsList = () => {
             >
               Hidden Domains
             </button>
-            <button
+            {isAdmin && <button
               type="button"
               className={`btn ${filter === 'blocked' ? 'btn-primary' : 'btn-outline-primary'}`}
               onClick={(e) => {
@@ -331,6 +331,7 @@ const DomainsList = () => {
             >
               Blocked Domains
             </button>
+            }
           </div>
         </div>
 

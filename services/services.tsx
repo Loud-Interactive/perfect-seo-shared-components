@@ -634,7 +634,7 @@ export const getContentPlanChildren = async (guid: string) => {
   return axiosInstance.post(`/api/content-plan/get-child-content`, { content_plan_guid: guid });
 }
 
-export const getDomains = async (domains?: string[], hidden?: boolean | null, paginator?: PaginationRequest) => {
+export const getDomains = async (domains?: string[], hidden?: boolean | null, blocked?: boolean | null, paginator?: PaginationRequest) => {
   if (paginator) {
     let startIndex = paginator?.page === 1 ? 0 : (paginator.page - 1) * paginator.page_size;
     let endIndex = startIndex + paginator.page_size - 1
@@ -643,6 +643,12 @@ export const getDomains = async (domains?: string[], hidden?: boolean | null, pa
       .select('*', { count: 'exact' })
       .range(startIndex, endIndex)
       .order('domain', { ascending: true })
+    if (blocked === true) {
+      query = query.eq('blocked', true)
+    }
+    else {
+      query = query.eq('blocked', false)
+    }
 
     if (domains && domains.length > 0) {
       query = query.in('domain', domains)

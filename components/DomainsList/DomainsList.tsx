@@ -7,14 +7,16 @@ import { useSelector } from "react-redux"
 import Table from "@/perfect-seo-shared-components/components/Table/Table"
 import usePaginator from "@/perfect-seo-shared-components/hooks/usePaginator"
 import LoadSpinner from "../LoadSpinner/LoadSpinner"
+import { Domain } from "@/perfect-seo-shared-components/data/types"
 
 const DomainsList = () => {
   const domain_access = useSelector(selectDomains)
-  const [domains, setDomains] = useState([])
+  const [domains, setDomains] = useState<Domain[]>([])
   const [loading, setLoading] = useState(false)
-  const [filter, setFilter] = useState('all') // 'all', 'hidden', 'visible'
-  const [searchTerm, setSearchTerm] = useState('')
   const isAdmin = useSelector(selectIsAdmin)
+
+  const [filter, setFilter] = useState('all') // 'all', 'hidden', 'visible', 'blocked'
+  const [searchTerm, setSearchTerm] = useState('')
 
   const paginator = usePaginator()
   const supabase = createClient();
@@ -36,10 +38,19 @@ const DomainsList = () => {
 
     // Convert filter to boolean or null for getDomains
     let hiddenFilter = null;
+    let blockedFilter = null;
+
     if (filter === 'hidden') {
       hiddenFilter = true;
     } else if (filter === 'visible') {
       hiddenFilter = false;
+    } else if (filter === 'blocked') {
+      blockedFilter = true;
+    }
+
+    // Default behavior: don't show blocked domains unless specifically filtering for them
+    if (filter !== 'blocked') {
+      blockedFilter = false;
     }
 
     let domainsFilter = isAdmin ? null : domain_access.map(obj => obj.siteUrl)
@@ -57,6 +68,11 @@ const DomainsList = () => {
     // Apply hidden filter
     if (hiddenFilter !== null && hiddenFilter !== undefined) {
       query = query.eq('hidden', hiddenFilter)
+    }
+
+    // Apply blocked filter
+    if (blockedFilter !== null && blockedFilter !== undefined) {
+      query = query.eq('blocked', blockedFilter)
     }
 
     // Apply search filter
@@ -129,6 +145,42 @@ const DomainsList = () => {
     }
   }
 
+  const handleBlockDomain = async (domain: string) => {
+    try {
+      const { error } = await supabase
+        .from('domains')
+        .update({ blocked: true })
+        .eq('domain', domain)
+
+      if (error) {
+        console.error('Error blocking domain:', error)
+      } else {
+        // Refresh the current page
+        fetchDomains()
+      }
+    } catch (error) {
+      console.error('Error:', error)
+    }
+  }
+
+  const handleUnblockDomain = async (domain: string) => {
+    try {
+      const { error } = await supabase
+        .from('domains')
+        .update({ blocked: false })
+        .eq('domain', domain)
+
+      if (error) {
+        console.error('Error unblocking domain:', error)
+      } else {
+        // Refresh the current page
+        fetchDomains()
+      }
+    } catch (error) {
+      console.error('Error:', error)
+    }
+  }
+
 
   const handleFilterChange = (newFilter: string) => {
     setFilter(newFilter)
@@ -139,7 +191,7 @@ const DomainsList = () => {
     if (isAdmin || domain_access?.length > 0) {
       fetchDomains(searchTerm)
     }
-  }, [domain_access, paginator?.currentPage, paginator?.limit, filter])
+  }, [domain_access, paginator?.currentPage, paginator?.limit, filter, searchTerm])
 
   const columns = [
     {
@@ -155,9 +207,16 @@ const DomainsList = () => {
       key: 'hidden',
       label: 'Status',
       accessor: (row: any) => (
-        <span className={`badge ${row.hidden ? 'bg-secondary' : 'bg-success'}`}>
-          {row.hidden ? 'Hidden' : 'Visible'}
-        </span>
+        <div className="d-flex gap-1 flex-wrap">
+          <span className={`badge ${row.hidden ? 'bg-secondary' : 'bg-success'}`}>
+            {row.hidden ? 'Hidden' : 'Visible'}
+          </span>
+          {row.blocked && (
+            <span className="badge bg-danger">
+              Blocked
+            </span>
+          )}
+        </div>
       )
     },
     {
@@ -165,7 +224,7 @@ const DomainsList = () => {
       key: 'actions',
       label: 'Actions',
       accessor: (row: any) => (
-        <div className="d-flex gap-2">
+        <div className="d-flex gap-2 flex-wrap">
           {!row.hidden && (
             <button
               className="btn btn-sm btn-outline-warning"
@@ -180,6 +239,22 @@ const DomainsList = () => {
               onClick={() => handleUnhideDomain(row.domain)}
             >
               Restore
+            </button>
+          )}
+          {!row.blocked && (
+            <button
+              className="btn btn-sm btn-outline-danger"
+              onClick={() => handleBlockDomain(row.domain)}
+            >
+              Block Domain
+            </button>
+          )}
+          {row.blocked && (
+            <button
+              className="btn btn-sm btn-outline-info"
+              onClick={() => handleUnblockDomain(row.domain)}
+            >
+              Unblock
             </button>
           )}
         </div>
@@ -215,23 +290,42 @@ const DomainsList = () => {
             <button
               type="button"
               className={`btn ${filter === 'all' ? 'btn-primary' : 'btn-outline-primary'}`}
-              onClick={() => handleFilterChange('all')}
+              onClick={(e) => {
+                e.preventDefault();
+                handleFilterChange('all')
+              }}
             >
               All Domains
             </button>
             <button
               type="button"
               className={`btn ${filter === 'visible' ? 'btn-primary' : 'btn-outline-primary'}`}
-              onClick={() => handleFilterChange('visible')}
+              onClick={(e) => {
+                e.preventDefault();
+                handleFilterChange('visible')
+              }}
             >
               Visible Domains
             </button>
             <button
               type="button"
               className={`btn ${filter === 'hidden' ? 'btn-primary' : 'btn-outline-primary'}`}
-              onClick={() => handleFilterChange('hidden')}
+              onClick={(e) => {
+                e.preventDefault();
+                handleFilterChange('hidden')
+              }}
             >
               Hidden Domains
+            </button>
+            <button
+              type="button"
+              className={`btn ${filter === 'blocked' ? 'btn-primary' : 'btn-outline-primary'}`}
+              onClick={(e) => {
+                e.preventDefault();
+                handleFilterChange('blocked')
+              }}
+            >
+              Blocked Domains
             </button>
           </div>
         </div>

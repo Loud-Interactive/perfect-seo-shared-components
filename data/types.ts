@@ -972,7 +972,7 @@ export interface URLDisplayData {
     checked_at: string;
     emoji?: string;
   };
-
+  user?: string;
   // Computed fields
   submission_count: number;
   last_submitted?: string;

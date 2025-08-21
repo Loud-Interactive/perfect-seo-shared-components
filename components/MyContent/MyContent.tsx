@@ -161,9 +161,12 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
     supabase
       .from("domains")
       .select("*")
+      .eq("blocked", false)
+      .eq("hidden", false)
+      .order("domain", { ascending: true })
       .then((res) => {
         if (res.data?.length > 0) {
-          setDomains(res?.data?.sort((a, b) => a?.domain?.localeCompare(b?.domain)));
+          setDomains(res?.data);
         }
 
       });

@@ -4874,11 +4874,6 @@ a.text-white {
   }
 }
 
-.btn-standard {
-  // height: 50px;
-  // display: flex;
-  // align-items: center;
-}
 
 .bg-robot {
   background: url('/images/homebot.webp');
@@ -5417,6 +5412,30 @@ a.btn {
 
 .max-50 {
   max-width: 50% !important;
+}
+
+.btn-white {
+  @extend .btn-secondary;
+  background-color: white !important;
+}
+
+
+.btn-medium {
+  font-size: 16px !important;
+  padding: 8px 16px !important;
+  font-weight: bolder !important;
+}
+
+.btn-large {
+  font-size: 18px !important;
+  padding: 12px 24px !important;
+  font-weight: bolder !important;
+}
+
+.btn-standard {
+  // height: 50px;
+  // display: flex;
+  // align-items: center;
 }
 
 .bg-primary {

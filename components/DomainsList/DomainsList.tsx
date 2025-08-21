@@ -242,22 +242,25 @@ const DomainsList = () => {
               Restore
             </button>
           )}
-          {!row.blocked && (
-            <button
-              className="btn btn-sm btn-outline-danger"
-              onClick={() => handleBlockDomain(row.domain)}
-            >
-              Block Domain
-            </button>
-          )}
-          {row.blocked && (
-            <button
-              className="btn btn-sm btn-outline-info"
-              onClick={() => handleUnblockDomain(row.domain)}
-            >
-              Unblock
-            </button>
-          )}
+          {isAdmin && <>
+            {!row.blocked && (
+              <button
+                className="btn btn-sm btn-outline-danger"
+                onClick={() => handleBlockDomain(row.domain)}
+              >
+                Block Domain
+              </button>
+            )}
+            {row.blocked && (
+              <button
+                className="btn btn-sm btn-outline-info"
+                onClick={() => handleUnblockDomain(row.domain)}
+              >
+                Unblock
+              </button>
+            )}
+          </>
+          }
         </div>
       )
     }
@@ -318,7 +321,7 @@ const DomainsList = () => {
             >
               Hidden Domains
             </button>
-            <button
+            {isAdmin && <button
               type="button"
               className={`btn ${filter === 'blocked' ? 'btn-primary' : 'btn-outline-primary'}`}
               onClick={(e) => {
@@ -328,6 +331,7 @@ const DomainsList = () => {
             >
               Blocked Domains
             </button>
+            }
           </div>
         </div>
 

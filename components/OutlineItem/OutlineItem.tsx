@@ -71,13 +71,13 @@ const OutlineItem = ({ outline, refresh, domain_name }) => {
     <div className="card p-2" title={outline?.post_title}>
       <div className="row d-flex g-0 d-flex align-items-end">
         <div className="col">
-          <div className="row g-2">
+          <div className="row g-0">
             <div className="col-12">
               <strong className="text-primary me-1">Title</strong>  {localOutline?.post_title}
               <div className="d-flex">
-                {outline?.keyword && <span className="input-group w-min">
+                {outline?.keyword && <div className="badge input-group">
                   <span className='badge bg-primary'>keyword</span>
-                  <span className="badge text-primary bg-secondary">{localOutline?.keyword}</span></span>}
+                  <span className="badge text-primary bg-secondary">{localOutline?.keyword}</span></div>}
                 {(!domain_name || outline.domain !== domain_name) && <span className='badge bg-light-blue text-dark ms-2'>{localOutline?.domain}</span>}
               </div>
               <div>

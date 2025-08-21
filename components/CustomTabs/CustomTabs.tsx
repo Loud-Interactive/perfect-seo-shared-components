@@ -34,7 +34,11 @@ export const CustomTabContent: React.FC<CustomTabContentProps> = ({
   children,
   className
 }) => {
-  const isActive = tabKey === activeTab;
+  const [isActive, setIsActive] = React.useState(tabKey === activeTab);
+
+  React.useEffect(() => {
+    setIsActive(tabKey === activeTab);
+  }, [tabKey, activeTab]);
 
   return (
     <div

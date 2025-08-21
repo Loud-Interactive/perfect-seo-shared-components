@@ -1,6 +1,6 @@
 'use client'
 
-import React, { ReactNode, useCallback } from 'react';
+import React, { ReactNode, useCallback, useState, useEffect } from 'react';
 import classNames from 'classnames';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 
@@ -34,17 +34,23 @@ export const CustomTabContent: React.FC<CustomTabContentProps> = ({
   children,
   className
 }) => {
-  const [isActive, setIsActive] = React.useState(tabKey === activeTab);
+  // Use state with effect to prevent hydration mismatches
+  const [isActive, setIsActive] = useState(false);
+  const [hasMounted, setHasMounted] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
+    setHasMounted(true);
     setIsActive(tabKey === activeTab);
   }, [tabKey, activeTab]);
+
+  // During SSR and initial render, don't show active state to prevent hydration mismatch
+  const shouldShowActive = hasMounted && isActive;
 
   return (
     <div
       className={classNames(
         'tab-pane fade',
-        { 'show active': isActive },
+        { 'show active': shouldShowActive },
         className
       )}
       id={tabKey}
@@ -52,7 +58,7 @@ export const CustomTabContent: React.FC<CustomTabContentProps> = ({
       aria-labelledby={`${tabKey}-tab`}
     >
       <div className='tab p-3'>
-        {children}
+        {hasMounted ? children : null}
       </div>
     </div>
   );
@@ -71,6 +77,11 @@ const CustomTabs: React.FC<CustomTabsProps> = ({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const [hasMounted, setHasMounted] = useState(false);
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
 
   // Create query string helper
   const createQueryString = useCallback(
@@ -85,7 +96,7 @@ const CustomTabs: React.FC<CustomTabsProps> = ({
   const handleTabClick = (e: React.MouseEvent, tabKey: string) => {
     e.preventDefault();
     if (!tabs.find(tab => tab.key === tabKey)?.disabled) {
-      if (enableRouting) {
+      if (enableRouting && hasMounted) {
         // Build URL with tab parameter
         let url = `${pathname}?tab=${tabKey}`;
 

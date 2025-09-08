@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import TypeWriterText from "../TypeWriterText/TypeWriterText";
 import { createClient } from "@/perfect-seo-shared-components/utils/supabase/client";
+import Link from "next/link";
 
 
 const ContentPlanStatusCell = ({ plan, setDeleteModal, setDuplicateInfo, setNewModal }) => {
@@ -11,10 +12,6 @@ const ContentPlanStatusCell = ({ plan, setDeleteModal, setDuplicateInfo, setNewM
   const [status, setStatus] = useState(plan.status)
   const { guid } = plan
   const supabase = createClient()
-  const clickHandler = () => {
-    window.open(`/contentplan/${guid}`)
-
-  }
   const deleteClickHandler = (e) => {
     e.preventDefault();
     setDeleteModal(guid)
@@ -89,7 +86,7 @@ const ContentPlanStatusCell = ({ plan, setDeleteModal, setDuplicateInfo, setNewM
         </span>
       }
       <div className='input-group d-flex justify-content-end'>
-        <button onClick={clickHandler} className="btn btn-primary" >View Plan</button>
+        <Link href={`/contentplan/${guid}`} className="btn btn-primary" >View Plan</Link>
         <button className='btn btn-primary d-flex align-items-center justify-content-center' onClick={(e) => { e.preventDefault(); duplicateClickHandler(plan) }} title={`Duplicate: ${guid}`}>
           <i className="bi bi-copy" />
         </button>

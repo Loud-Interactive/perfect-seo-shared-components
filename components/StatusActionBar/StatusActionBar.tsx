@@ -1039,13 +1039,12 @@ const StatusActionBar = ({
               <button className="btn btn-primary" onClick={generateOutlineHandler}>{statusState?.outline?.loading || (statusState?.outline?.status && !statusState?.outline?.complete) ? 'Generating...' : 'Generate Outline'}</button>
             </div> : !statusState?.outline?.loading ?
               <div className="input-group">
-                <a
+                <Link
                   href={`/contentplan/${localOutline?.content_plan_guid}`}
-                  target="_blank"
                   className="btn btn-secondary"
                 >
                   View Content Plan
-                </a>
+                </Link>
                 <button className="btn btn-primary" onClick={regenerateOutlineHandler}>{statusState?.outline?.loading || (statusState?.outline?.status && !statusState?.outline?.complete) ? 'generating...' : 'Regenerate Outline'}</button>
               </div>
               : null}

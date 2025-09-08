@@ -871,13 +871,12 @@ const StatusActionBar = ({
                   <DropdownMenu.Content align="end" className="bg-secondary z-100 card">
                     {localOutline?.content_plan_guid &&
                       <DropdownMenu.Item>
-                        <a
+                        <Link
                           href={`/contentplan/${localOutline?.content_plan_guid}`}
-                          target="_blank"
                           className="btn btn-transparent"
                         >
                           View Content Plan
-                        </a>
+                        </Link>
                       </DropdownMenu.Item>}
                     {(localOutline) &&
                       <DropdownMenu.Item>

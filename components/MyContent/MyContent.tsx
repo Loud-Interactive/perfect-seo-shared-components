@@ -14,7 +14,7 @@ import { createClient } from '@/perfect-seo-shared-components/utils/supabase/cli
 import { urlSanitization } from '@/perfect-seo-shared-components/utils/conversion-utilities';
 import BulkPostComponent from '../BulkPostGenerator/BulkPostComponent';
 import CheckGoogleDomains from '../CheckGoogleDomains/CheckGoogleDomains';
-import { getSynopsisInfo } from '@/perfect-seo-shared-components/services/services';
+import { checkDomainCSSFile, getSynopsisInfo } from '@/perfect-seo-shared-components/services/services';
 import BulkContentComponent from '../BulkContentGenerator/BulkContentComponent';
 import OutlinesList from '../OutlinesList/OutlinesList';
 import BrandHeader from '../BrandHeader/BrandHeader';
@@ -22,6 +22,7 @@ import LoadSpinner from '../LoadSpinner/LoadSpinner';
 import { selectDomains, selectDomainsInfo, selectEmail, selectIsAdmin, selectIsLoading, selectIsLoggedIn, selectSettings, selectUser, setUserSettings } from '@/perfect-seo-shared-components/lib/features/User'
 import Tooltip from '../Tooltip';
 import Reports from '../Reports/Reports';
+import css from 'styled-jsx/css';
 
 
 export interface MyContentProps {
@@ -62,7 +63,10 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
       if (data !== null) {
         getSynopsisInfo(checkDomain)
           .then(res => {
-            console.log(res)
+            checkDomainCSSFile(checkDomain)
+              .then(cssRes => {
+                console.log('🎨 [MyContent] CSS file check result:', cssRes);
+              })
             if (res.data) {
               setSynopsis(res?.data[0])
             }

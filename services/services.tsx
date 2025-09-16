@@ -746,3 +746,8 @@ export const storeCSSFile = async (domain: string, cssContent: string) => {
     return { data: null, error: { message: 'Network error: ' + error.message } };
   }
 };
+
+export const checkDomainCSSFile = async (domain: string) => {
+  console.log('🎨 [checkDomainCSSFile] Checking CSS file existence for domain:', domain);
+  return axios.post('/api/check-css', { domain });
+};

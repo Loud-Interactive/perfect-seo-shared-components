@@ -57,7 +57,7 @@ const StatusActionBar = ({
   const form = useForm()
 
 
-
+  console.log(post)
   const copyClickHandler = (key) => {
     switch (key) {
       case 'schema_data':
@@ -611,13 +611,42 @@ const StatusActionBar = ({
   }
 
   const publishToWordPressClickHandler = (e) => {
-    setStatus('wordPressPublish', 'Publishing...')
+    e.preventDefault();
+    setError('wordPressPublish', null);
+    setLoading('wordPressPublish', true);
+    setStatus('wordPressPublish', 'Publishing');
     publishToWordPress(content_plan_outline_guid)
       .then(res => {
         if (res.data) {
-          setStatus('wordPressPublish', 'Published to WordPress')
+          setStatus('wordPressPublish', 'Published to WordPress');
         }
       })
+      .catch(err => {
+        setError('wordPressPublish', err?.response?.data?.message || err?.message || 'Error publishing');
+        setStatus('wordPressPublish', '');
+      })
+      .finally(() => {
+        setLoading('wordPressPublish', false);
+      });
+  }
+
+  // Open raw HTML in isolated window without app styles
+  const openRawHtml = async (e) => {
+    e.preventDefault();
+    try {
+      if (!localPost?.html_link) return;
+      const res = await fetch(localPost.html_link);
+      const html = await res.text();
+      // Basic strip of inline script tags for safety (not full sanitization)
+      const cleaned = html.replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, '');
+      const win = window.open('', '_blank', 'noopener,noreferrer');
+      if (!win) return;
+      win.document.open();
+      win.document.write(`<!DOCTYPE html><html><head><meta charset=\"utf-8\"/><title>HTML Preview</title><meta name=\"referrer\" content=\"no-referrer\" /></head><body>${cleaned}</body></html>`);
+      win.document.close();
+    } catch (err) {
+      console.error('Error opening raw HTML preview', err);
+    }
   }
 
   const submitHTMLStylingHandler = (receivingEmail, language?) => {
@@ -762,10 +791,18 @@ const StatusActionBar = ({
                 <div className="col-auto d-flex align-items-center">
                   <i className="bi bi-chevron-right mx-1" />
                   {wordPressPublish && <>
-                    <a onClick={publishToWordPressClickHandler} className="text-success my-0 py-0"><i className="bi bi-wordpress" /> Publish</a>
-                    <span className="px-2">or</span>
-                  </>
-                  }
+                    {statusState.wordPressPublish.loading ? (
+                      <span className="text-primary my-0 py-0"><TypeWriterText string="Publishing" withBlink /></span>
+                    ) : statusState.wordPressPublish.status === 'Published to WordPress' ? (
+                      <span className="text-primary my-0 py-0"><i className="bi bi-wordpress" /> Published</span>
+                    ) : (
+                      <a onClick={publishToWordPressClickHandler} className="text-success my-0 py-0 no-underline"><i className="bi bi-wordpress" /> Publish</a>
+                    )}
+                    {(!statusState.wordPressPublish.loading && statusState.wordPressPublish.status !== 'Published to WordPress') && <span className="px-2">or</span>}
+                  </>}
+                  {statusState.wordPressPublish.error && (
+                    <span className="text-danger small ms-2">{statusState.wordPressPublish.error}</span>
+                  )}
                   <a onClick={addLiveUrlClickHandler} className="my-0 py-0 text-success no-underline"><i className="bi bi-plus" />Add Live Url</a>
                 </div>
               </>}
@@ -836,6 +873,14 @@ const StatusActionBar = ({
               <div className="input-group d-flex justify-content-end">
                 {(localPost?.google_doc_link && localPost?.html_link) &&
                   <>
+                    {/* <button
+                      type="button"
+                      onClick={openRawHtml}
+                      className="btn btn-secondary btn-standard text-primary"
+                      title="Preview HTML"
+                    >
+                      <i className="bi bi-eye" />
+                    </button> */}
                     <a
                       href={localPost.html_link}
                       className="btn btn-secondary btn-standard"

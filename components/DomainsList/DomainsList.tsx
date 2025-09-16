@@ -15,7 +15,7 @@ const DomainsList = () => {
   const [loading, setLoading] = useState(false)
   const isAdmin = useSelector(selectIsAdmin)
 
-  const [filter, setFilter] = useState('all') // 'all', 'hidden', 'visible', 'blocked'
+  const [filter, setFilter] = useState('visible') // 'all', 'hidden', 'visible', 'blocked'
   const [searchTerm, setSearchTerm] = useState('')
 
   const paginator = usePaginator()
@@ -293,16 +293,6 @@ const DomainsList = () => {
           <div className="btn-group" role="group" aria-label="Domain filter">
             <button
               type="button"
-              className={`btn ${filter === 'all' ? 'btn-primary' : 'btn-outline-primary'}`}
-              onClick={(e) => {
-                e.preventDefault();
-                handleFilterChange('all')
-              }}
-            >
-              All Domains
-            </button>
-            <button
-              type="button"
               className={`btn ${filter === 'visible' ? 'btn-primary' : 'btn-outline-primary'}`}
               onClick={(e) => {
                 e.preventDefault();
@@ -332,6 +322,16 @@ const DomainsList = () => {
               Blocked Domains
             </button>
             }
+            <button
+              type="button"
+              className={`btn ${filter === 'all' ? 'btn-primary' : 'btn-outline-primary'}`}
+              onClick={(e) => {
+                e.preventDefault();
+                handleFilterChange('all')
+              }}
+            >
+              All Domains
+            </button>
           </div>
         </div>
 

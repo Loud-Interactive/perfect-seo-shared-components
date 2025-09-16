@@ -56,8 +56,6 @@ const StatusActionBar = ({
 
   const form = useForm()
 
-
-
   const copyClickHandler = (key) => {
     switch (key) {
       case 'schema_data':
@@ -247,10 +245,8 @@ const StatusActionBar = ({
 
   //Fetch data
   const fetchOutline = () => {
-    console.log("Fetching outline data for guid:", content_plan_outline_guid);
     fetchOutlineData(content_plan_outline_guid)
       .then(res => {
-        console.log("Outline data fetched:", res.data[0]);
         setLocalOutline(res.data[0])
         setLoading('outline', false)
       })
@@ -299,7 +295,7 @@ const StatusActionBar = ({
         return null;
       }
       if (data) {
-        console.log('Indexed status:', data);
+
         if (data?.coverageState !== localPost?.index_status) {
           supabase
             .from('tasks')
@@ -430,9 +426,8 @@ const StatusActionBar = ({
   useEffect(() => {
     let outlineStatusesChannel;
     let outlineChannel;
-    console.log('content_plan_outline_guid', content_plan_outline_guid);
     if (content_plan_outline_guid) {
-      console.log(modalsOpen, 'modals');
+
       if (!modalsOpen) {
         fetchOutlineStatusData();
 
@@ -611,13 +606,64 @@ const StatusActionBar = ({
   }
 
   const publishToWordPressClickHandler = (e) => {
-    setStatus('wordPressPublish', 'Publishing...')
+    e.preventDefault();
+    setError('wordPressPublish', null);
+    setLoading('wordPressPublish', true);
+    setStatus('wordPressPublish', 'Publishing');
     publishToWordPress(content_plan_outline_guid)
       .then(res => {
         if (res.data) {
-          setStatus('wordPressPublish', 'Published to WordPress')
+          setStatus('wordPressPublish', 'Published to WordPress');
         }
       })
+      .catch(err => {
+        setError('wordPressPublish', err?.response?.data?.message || err?.message || 'Error publishing');
+        setStatus('wordPressPublish', '');
+      })
+      .finally(() => {
+        setLoading('wordPressPublish', false);
+      });
+  }
+
+  // Always open localPost.content as a full HTML document in a new tab
+  const openRawHtml = (e) => {
+    e.preventDefault();
+    if (!localPost?.content) {
+      console.log('No content available');
+      return;
+    }
+
+    // Add max-width:none to body style attribute
+    let htmlContent = localPost.content.toString();
+
+    // Look for existing body tag with style attribute
+    if (htmlContent.includes('<body') && htmlContent.includes('style=')) {
+      // Find and modify existing body style
+      htmlContent = htmlContent.replace(/<body([^>]*style\s*=\s*["'])([^"']*)(["'][^>]*>)/i, (match, beforeStyle, styleContent, afterStyle) => {
+        // Add max-width:none to existing styles
+        const updatedStyle = styleContent + (styleContent.endsWith(';') ? '' : ';') + 'max-width:none !important;width:100% !important;';
+        return '<body' + beforeStyle + updatedStyle + afterStyle;
+      });
+    } else if (htmlContent.includes('<body')) {
+      // Add style attribute to body tag
+      htmlContent = htmlContent.replace(/<body([^>]*)>/i, '<body$1 style="max-width:none !important;width:100% !important;">');
+    } else {
+      // No body tag, add styles at the beginning
+      htmlContent = `<style>body { max-width: none !important; width: 100% !important; }</style>` + htmlContent;
+    }
+
+    const blob = new Blob([htmlContent], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+
+    // Open the blob URL in a new tab
+    const win = window.open(url, '_blank', 'noopener,noreferrer');
+    if (win) {
+      // Clean up the blob URL after a delay
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    } else {
+      console.error('Failed to open window - popup blocked?');
+      URL.revokeObjectURL(url);
+    }
   }
 
   const submitHTMLStylingHandler = (receivingEmail, language?) => {
@@ -762,10 +808,18 @@ const StatusActionBar = ({
                 <div className="col-auto d-flex align-items-center">
                   <i className="bi bi-chevron-right mx-1" />
                   {wordPressPublish && <>
-                    <a onClick={publishToWordPressClickHandler} className="text-success my-0 py-0"><i className="bi bi-wordpress" /> Publish</a>
-                    <span className="px-2">or</span>
-                  </>
-                  }
+                    {statusState.wordPressPublish.loading ? (
+                      <span className="text-primary my-0 py-0"><TypeWriterText string="Publishing" withBlink /></span>
+                    ) : statusState.wordPressPublish.status === 'Published to WordPress' ? (
+                      <span className="text-primary my-0 py-0"><i className="bi bi-wordpress" /> Published</span>
+                    ) : (
+                      <a onClick={publishToWordPressClickHandler} className="text-success my-0 py-0 no-underline"><i className="bi bi-wordpress" /> Publish</a>
+                    )}
+                    {(!statusState.wordPressPublish.loading && statusState.wordPressPublish.status !== 'Published to WordPress') && <span className="px-2">or</span>}
+                  </>}
+                  {statusState.wordPressPublish.error && (
+                    <span className="text-danger small ms-2">{statusState.wordPressPublish.error}</span>
+                  )}
                   <a onClick={addLiveUrlClickHandler} className="my-0 py-0 text-success no-underline"><i className="bi bi-plus" />Add Live Url</a>
                 </div>
               </>}
@@ -836,6 +890,14 @@ const StatusActionBar = ({
               <div className="input-group d-flex justify-content-end">
                 {(localPost?.google_doc_link && localPost?.html_link) &&
                   <>
+                    <button
+                      type="button"
+                      onClick={openRawHtml}
+                      className="btn btn-secondary btn-standard text-primary"
+                      title="Preview HTML"
+                    >
+                      <i className="bi bi-eye" />
+                    </button>
                     <a
                       href={localPost.html_link}
                       className="btn btn-secondary btn-standard"
@@ -871,13 +933,12 @@ const StatusActionBar = ({
                   <DropdownMenu.Content align="end" className="bg-secondary z-100 card">
                     {localOutline?.content_plan_guid &&
                       <DropdownMenu.Item>
-                        <a
+                        <Link
                           href={`/contentplan/${localOutline?.content_plan_guid}`}
-                          target="_blank"
                           className="btn btn-transparent"
                         >
                           View Content Plan
-                        </a>
+                        </Link>
                       </DropdownMenu.Item>}
                     {(localOutline) &&
                       <DropdownMenu.Item>
@@ -1039,13 +1100,12 @@ const StatusActionBar = ({
               <button className="btn btn-primary" onClick={generateOutlineHandler}>{statusState?.outline?.loading || (statusState?.outline?.status && !statusState?.outline?.complete) ? 'Generating...' : 'Generate Outline'}</button>
             </div> : !statusState?.outline?.loading ?
               <div className="input-group">
-                <a
+                <Link
                   href={`/contentplan/${localOutline?.content_plan_guid}`}
-                  target="_blank"
                   className="btn btn-secondary"
                 >
                   View Content Plan
-                </a>
+                </Link>
                 <button className="btn btn-primary" onClick={regenerateOutlineHandler}>{statusState?.outline?.loading || (statusState?.outline?.status && !statusState?.outline?.complete) ? 'generating...' : 'Regenerate Outline'}</button>
               </div>
               : null}

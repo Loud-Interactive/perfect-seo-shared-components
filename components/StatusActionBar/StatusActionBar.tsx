@@ -56,8 +56,6 @@ const StatusActionBar = ({
 
   const form = useForm()
 
-
-  console.log(post)
   const copyClickHandler = (key) => {
     switch (key) {
       case 'schema_data':
@@ -247,10 +245,8 @@ const StatusActionBar = ({
 
   //Fetch data
   const fetchOutline = () => {
-    console.log("Fetching outline data for guid:", content_plan_outline_guid);
     fetchOutlineData(content_plan_outline_guid)
       .then(res => {
-        console.log("Outline data fetched:", res.data[0]);
         setLocalOutline(res.data[0])
         setLoading('outline', false)
       })
@@ -299,7 +295,7 @@ const StatusActionBar = ({
         return null;
       }
       if (data) {
-        console.log('Indexed status:', data);
+
         if (data?.coverageState !== localPost?.index_status) {
           supabase
             .from('tasks')
@@ -430,9 +426,8 @@ const StatusActionBar = ({
   useEffect(() => {
     let outlineStatusesChannel;
     let outlineChannel;
-    console.log('content_plan_outline_guid', content_plan_outline_guid);
     if (content_plan_outline_guid) {
-      console.log(modalsOpen, 'modals');
+
       if (!modalsOpen) {
         fetchOutlineStatusData();
 
@@ -630,22 +625,27 @@ const StatusActionBar = ({
       });
   }
 
-  // Open raw HTML in isolated window without app styles
-  const openRawHtml = async (e) => {
+  // Always open localPost.content as a full HTML document in a new tab
+  const openRawHtml = (e) => {
     e.preventDefault();
-    try {
-      if (!localPost?.html_link) return;
-      const res = await fetch(localPost.html_link);
-      const html = await res.text();
-      // Basic strip of inline script tags for safety (not full sanitization)
-      const cleaned = html.replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, '');
-      const win = window.open('', '_blank', 'noopener,noreferrer');
-      if (!win) return;
-      win.document.open();
-      win.document.write(`<!DOCTYPE html><html><head><meta charset=\"utf-8\"/><title>HTML Preview</title><meta name=\"referrer\" content=\"no-referrer\" /></head><body>${cleaned}</body></html>`);
-      win.document.close();
-    } catch (err) {
-      console.error('Error opening raw HTML preview', err);
+    if (!localPost?.content) {
+      console.log('No content available');
+      return;
+    }
+
+    // Create a blob URL with the HTML content
+    const htmlContent = localPost.content.toString();
+    const blob = new Blob([htmlContent], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+
+    // Open the blob URL in a new tab
+    const win = window.open(url, '_blank', 'noopener,noreferrer');
+    if (win) {
+      // Clean up the blob URL after a delay
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    } else {
+      console.error('Failed to open window - popup blocked?');
+      URL.revokeObjectURL(url);
     }
   }
 
@@ -873,14 +873,14 @@ const StatusActionBar = ({
               <div className="input-group d-flex justify-content-end">
                 {(localPost?.google_doc_link && localPost?.html_link) &&
                   <>
-                    {/* <button
+                    <button
                       type="button"
                       onClick={openRawHtml}
                       className="btn btn-secondary btn-standard text-primary"
                       title="Preview HTML"
                     >
                       <i className="bi bi-eye" />
-                    </button> */}
+                    </button>
                     <a
                       href={localPost.html_link}
                       className="btn btn-secondary btn-standard"

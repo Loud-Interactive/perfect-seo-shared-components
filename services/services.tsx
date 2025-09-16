@@ -676,3 +676,73 @@ export const getDomains = async (domains?: string[], hidden?: boolean | null, bl
     return query
   }
 }
+
+/**
+ * Helper function to download a file to the user's device
+ * @param content - The file content as string
+ * @param filename - The filename to download as
+ * @param mimeType - The MIME type of the file
+ */
+const downloadFile = (content: string, filename: string, mimeType: string = 'text/plain') => {
+  console.log('📥 [downloadFile] Starting download for:', filename);
+
+  const blob = new Blob([content], { type: mimeType });
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  link.style.display = 'none';
+
+  document.body.appendChild(link);
+  link.click();
+
+  // Cleanup
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+
+  console.log('📥 [downloadFile] ✅ Download initiated for:', filename);
+};
+
+/**
+ * Store or update CSS file in Supabase storage via API route (uses admin Supabase client)
+ * @param domain - The domain name to use as the filename
+ * @param cssContent - The CSS content from post_style_tag_main field
+ * @returns Promise with the result of the file upload/update operation
+ */
+export const storeCSSFile = async (domain: string, cssContent: string) => {
+  console.log('🎨 [storeCSSFile] Starting CSS file storage via API route');
+  console.log('🎨 [storeCSSFile] Domain:', domain);
+  console.log('🎨 [storeCSSFile] CSS content length:', cssContent?.length || 0, 'characters');
+
+  try {
+    const response = await fetch('/api/store-css', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        domain,
+        cssContent
+      })
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      console.error('🎨 [storeCSSFile] ❌ API request failed:', result.error?.message);
+      return { data: null, error: result.error };
+    }
+
+    console.log('🎨 [storeCSSFile] ✅ API request successful:', result.data?.action);
+
+    // Return the response following the same pattern as other services
+    return {
+      data: result.data,
+      error: result.error
+    };
+  } catch (error) {
+    console.error('🎨 [storeCSSFile] ❌ Network error:', error);
+    return { data: null, error: { message: 'Network error: ' + error.message } };
+  }
+};

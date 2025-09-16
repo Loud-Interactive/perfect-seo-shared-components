@@ -633,32 +633,23 @@ const StatusActionBar = ({
       return;
     }
 
-    // Add CSS to ensure body uses full window width
+    // Add max-width:none to body style attribute
     let htmlContent = localPost.content.toString();
 
-    // Check if there's already a <style> or <head> tag
-    if (htmlContent.includes('<head>') || htmlContent.includes('<style>')) {
-      // Insert our styles into existing head or before closing head
-      if (htmlContent.includes('</head>')) {
-        htmlContent = htmlContent.replace('</head>', `
-          <style>
-            body { max-width: none !important; width: 100% !important; margin: 0 !important; padding: 20px !important; box-sizing: border-box !important; }
-            .container, .wrapper { max-width: none !important; width: 100% !important; }
-          </style>
-        </head>`);
-      } else if (htmlContent.includes('<head>')) {
-        htmlContent = htmlContent.replace('<head>', `<head>
-          <style>
-            body { max-width: none !important; width: 100% !important; margin: 0 !important; padding: 20px !important; box-sizing: border-box !important; }
-            .container, .wrapper { max-width: none !important; width: 100% !important; }
-          </style>`);
-      }
+    // Look for existing body tag with style attribute
+    if (htmlContent.includes('<body') && htmlContent.includes('style=')) {
+      // Find and modify existing body style
+      htmlContent = htmlContent.replace(/<body([^>]*style\s*=\s*["'])([^"']*)(["'][^>]*>)/i, (match, beforeStyle, styleContent, afterStyle) => {
+        // Add max-width:none to existing styles
+        const updatedStyle = styleContent + (styleContent.endsWith(';') ? '' : ';') + 'max-width:none !important;width:100% !important;';
+        return '<body' + beforeStyle + updatedStyle + afterStyle;
+      });
+    } else if (htmlContent.includes('<body')) {
+      // Add style attribute to body tag
+      htmlContent = htmlContent.replace(/<body([^>]*)>/i, '<body$1 style="max-width:none !important;width:100% !important;">');
     } else {
-      // No head tag, prepend styles to the beginning
-      htmlContent = `<style>
-        body { max-width: none !important; width: 100% !important; margin: 0 !important; padding: 20px !important; box-sizing: border-box !important; }
-        .container, .wrapper { max-width: none !important; width: 100% !important; }
-      </style>` + htmlContent;
+      // No body tag, add styles at the beginning
+      htmlContent = `<style>body { max-width: none !important; width: 100% !important; }</style>` + htmlContent;
     }
 
     const blob = new Blob([htmlContent], { type: 'text/html' });

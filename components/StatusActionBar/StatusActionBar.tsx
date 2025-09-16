@@ -633,8 +633,34 @@ const StatusActionBar = ({
       return;
     }
 
-    // Create a blob URL with the HTML content
-    const htmlContent = localPost.content.toString();
+    // Add CSS to ensure body uses full window width
+    let htmlContent = localPost.content.toString();
+
+    // Check if there's already a <style> or <head> tag
+    if (htmlContent.includes('<head>') || htmlContent.includes('<style>')) {
+      // Insert our styles into existing head or before closing head
+      if (htmlContent.includes('</head>')) {
+        htmlContent = htmlContent.replace('</head>', `
+          <style>
+            body { max-width: none !important; width: 100% !important; margin: 0 !important; padding: 20px !important; box-sizing: border-box !important; }
+            .container, .wrapper { max-width: none !important; width: 100% !important; }
+          </style>
+        </head>`);
+      } else if (htmlContent.includes('<head>')) {
+        htmlContent = htmlContent.replace('<head>', `<head>
+          <style>
+            body { max-width: none !important; width: 100% !important; margin: 0 !important; padding: 20px !important; box-sizing: border-box !important; }
+            .container, .wrapper { max-width: none !important; width: 100% !important; }
+          </style>`);
+      }
+    } else {
+      // No head tag, prepend styles to the beginning
+      htmlContent = `<style>
+        body { max-width: none !important; width: 100% !important; margin: 0 !important; padding: 20px !important; box-sizing: border-box !important; }
+        .container, .wrapper { max-width: none !important; width: 100% !important; }
+      </style>` + htmlContent;
+    }
+
     const blob = new Blob([htmlContent], { type: 'text/html' });
     const url = URL.createObjectURL(blob);
 

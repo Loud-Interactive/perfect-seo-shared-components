@@ -690,7 +690,7 @@ const StatusActionBar = ({
       receiving_email: receivingEmail,
       content_plan_outline_guid
     };
-
+    setCompletion('post', false);
     return regenerateHTML(reqBody)
   };
 
@@ -704,7 +704,7 @@ const StatusActionBar = ({
       receiving_email: receivingEmail,
       content_plan_outline_guid
     };
-
+    setCompletion('post', false);
     return regenerateHTMLfromDoc(reqBody)
   };
 
@@ -906,7 +906,7 @@ const StatusActionBar = ({
           <div className="col-auto">
             <div className='row d-flex justify-content-end'>
               <div className="input-group d-flex justify-content-end">
-                {(localPost?.google_doc_link && localPost?.html_link) &&
+                {(statusState?.post?.complete) &&
                   <>
                     <button
                       type="button"

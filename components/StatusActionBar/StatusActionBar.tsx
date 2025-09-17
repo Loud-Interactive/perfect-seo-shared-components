@@ -636,6 +636,24 @@ const StatusActionBar = ({
     // Add max-width:none to body style attribute
     let htmlContent = localPost.content.toString();
 
+    // Add CSS links to the head section
+    const cssLinks = `
+  <link rel="stylesheet" href="https://jsypctdhynsdqrfifvdh.supabase.co/storage/v1/object/public/cp-blog-css/global.css" />
+  <link rel="stylesheet" href="https://jsypctdhynsdqrfifvdh.supabase.co/storage/v1/object/public/cp-blog-css/${localPost?.client_domain}.css" />`;
+
+    // Look for existing head tag and add CSS links
+    if (htmlContent.includes('</head>')) {
+      htmlContent = htmlContent.replace('</head>', `${cssLinks}
+</head>`);
+    } else if (htmlContent.includes('<head>')) {
+      htmlContent = htmlContent.replace('<head>', `<head>${cssLinks}`);
+    } else if (htmlContent.includes('<head ')) {
+      htmlContent = htmlContent.replace(/<head([^>]*>)/, `<head$1${cssLinks}`);
+    } else {
+      // No head tag, add CSS at the beginning
+      htmlContent = cssLinks + htmlContent;
+    }
+
     // Look for existing body tag with style attribute
     if (htmlContent.includes('<body') && htmlContent.includes('style=')) {
       // Find and modify existing body style

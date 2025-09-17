@@ -603,7 +603,8 @@ const StatusActionBar = ({
   const generateImagePromptHandler = (e) => {
     e.preventDefault();
     if (localPost?.hero_image_prompt) {
-      setModal('viewImagePrompt', true)
+      // setModal('viewImagePrompt', true)
+      setModal('viewGenerateImage', true)
     }
     else {
       setLoading('generateImagePrompt', true);

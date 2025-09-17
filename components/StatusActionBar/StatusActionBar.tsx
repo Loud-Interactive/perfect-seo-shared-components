@@ -489,19 +489,42 @@ const StatusActionBar = ({
 
   useEffect(() => {
     let postChannel;
-    if (localPost?.task_id && !post) {
+    // let postStatusChannel;
+    if (localPost?.task_id) {
+      console.log("setting up post channel for", localPost?.task_id)
       postChannel = supabase.channel(`statusbar-post-status-${localPost?.task_id}`)
         .on(
           'postgres_changes',
-          { event: 'UPDATE', schema: 'public', table: 'tasks', filter: `task_id=eq.${localPost?.task_id}` },
-          (payload) => {
+          { event: '*', schema: 'public', table: 'tasks', filter: `task_id=eq.${localPost?.task_id}` },
+          (payload: any) => {
+            if (process.env.NODE_ENV === 'development') {
+              console.log('Post updated:', payload);
+            }
             updatePost(payload.new as PostProps)
+            if (payload.new.status) {
+              setStatus('post', payload.new.status);
+            }
           }
         )
         .subscribe()
+      // postStatusChannel = supabase.channel(`statusbar-post-status-only-${localPost?.task_id}`)
+      //   .on(
+      //     'postgres_changes',
+      //     { event: '*', schema: 'public', table: 'task_status_history', filter: `task_id=eq.${localPost?.task_id}` },
+      //     (payload) => {
+      //       if (payload.new) {
+      //         console.log('New post status:', payload.new);
+      //       }
+
+      //     }
+      //   )
+      //   .subscribe()
     }
-    if (postChannel) {
-      return () => {
+    return () => {
+      // if (postStatusChannel) {
+      //   postStatusChannel.unsubscribe()
+      // }
+      if (postChannel) {
         postChannel.unsubscribe()
       }
     }

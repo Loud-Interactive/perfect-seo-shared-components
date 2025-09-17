@@ -64,9 +64,6 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
         getSynopsisInfo(checkDomain)
           .then(res => {
             checkDomainCSSFile(checkDomain)
-              .then(cssRes => {
-                console.log('🎨 [MyContent] CSS file check result:', cssRes);
-              })
             if (res.data) {
               setSynopsis(res?.data[0])
             }

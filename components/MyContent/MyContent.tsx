@@ -243,12 +243,19 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
           router.replace(pathname + '?' + createQueryString("domain", newDomainParam))
           return setLoading(false)
         }
+
         else {
           setDomain(domainParam)
           setSelected({ label: domainParam, value: domainParam })
           return setLoading(false)
         }
       }
+      else if (settings?.global?.defaultDomain) {
+        setDomain(settings.global.defaultDomain)
+        setSelected({ label: settings.global.defaultDomain, value: settings.global.defaultDomain })
+        return setLoading(false)
+      }
+
       else {
         return setLoading(false)
       }
@@ -287,6 +294,31 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
     return bool
   }, [currentDomain, selected, domainsList, domain_access, isLoading])
 
+
+  const isDefaultDomain = useMemo(() => {
+    let bool = false;
+    if (settings?.global?.defaultDomain) {
+      console.log(settings?.global?.defaultDomain, selected?.value)
+      if (selected?.value === settings?.global?.defaultDomain) {
+        bool = true
+      }
+    }
+    return bool
+  }, [settings?.global?.defaultDomain, selected])
+
+  const addDefaultHandler = (e?) => {
+    e?.preventDefault();
+    let global = settings?.global || {}
+    supabase
+      .from('settings')
+      .update({ global: { ...global, defaultDomain: selected?.value } })
+      .eq('email', email)
+      .select('*')
+      .then(res => {
+        setUserSettings({ ...settings, global: { ...global, defaultDomain: selected?.value } })
+      })
+
+  }
   useEffect(() => {
     if (isAdmin) {
       fetchDomains();
@@ -357,6 +389,9 @@ const MyContent = ({ currentDomain, hideTitle = false }: MyContentProps) => {
                           Clear search field to see all content by email
                         </Tooltip>
                       </div>
+                      {(!isDefaultDomain && selected) && <div className='col-auto'>
+                        <a className='text-white' onClick={addDefaultHandler}>Make Default</a>
+                      </div>}
                     </div>
                   </div>
                 </div>

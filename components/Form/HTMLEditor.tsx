@@ -165,21 +165,23 @@ const HtmlEditor: React.FC<HtmlEditorProps> = ({
             {showDownload && (
               <button
                 type="button"
-                className="btn btn-sm btn-outline-primary"
+                className="btn btn-sm btn-primary"
                 onClick={handleDownload}
                 title="Download HTML file"
               >
-                💾 Download HTML
+                <i className="bi bi-download me-1"></i>
+                Download HTML
               </button>
             )}
             {showUpload && (
               <button
                 type="button"
-                className="btn btn-sm btn-outline-primary"
+                className="btn btn-sm btn-primary"
                 onClick={triggerFileUpload}
                 title="Upload HTML or TXT file"
               >
-                📁 Upload HTML/TXT
+                <i className="bi bi-upload me-1"></i>
+                Upload HTML/TXT
               </button>
             )}
           </div>

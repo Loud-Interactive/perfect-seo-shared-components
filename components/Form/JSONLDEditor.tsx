@@ -7,9 +7,9 @@ import classNames from 'classnames';
 import FormField from './FormField';
 import useFormInput from '@/perfect-seo-shared-components/hooks/useFormInput';
 import FieldErrors from './FieldErrors';
-import '@/perfect-seo-shared-components/styles/components/CSSEditor.scss';
+import '@/perfect-seo-shared-components/styles/components/JSONLDEditor.scss';
 
-interface CssEditorProps {
+interface JsonLdEditorProps {
   fieldName: string;
   error?: string;
   label?: string | any;
@@ -27,7 +27,7 @@ interface CssEditorProps {
   placeholder?: string;
 }
 
-const CssEditor: React.FC<CssEditorProps> = ({
+const JsonLdEditor: React.FC<JsonLdEditorProps> = ({
   fieldName,
   error,
   label,
@@ -42,7 +42,7 @@ const CssEditor: React.FC<CssEditorProps> = ({
   value,
   showUpload = true,
   showDownload = true,
-  placeholder = "body {\n  font-family: Arial, sans-serif;\n}",
+  placeholder = '{\n  "@context": "https://schema.org",\n  "@type": "Organization",\n  "name": "Your Organization"\n}',
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -62,38 +62,30 @@ const CssEditor: React.FC<CssEditorProps> = ({
     'aria-required': !!required,
   };
 
-  // Function to strip HTML style tags from content
-  const stripStyleTags = (content: string): string => {
-    return content.replace(/<!--[\s\S]*?-->/g, '');
-  };
-
   function handleChange(newValue: string | undefined) {
-    // Strip HTML comments for CSS content
-    const cleanedValue = newValue ? stripStyleTags(newValue) : '';
-
     // Create a synthetic event to work with the form's handleInputChange
     const syntheticEvent = {
       target: {
         name: fieldName,
-        value: cleanedValue,
+        value: newValue || '',
       },
     } as React.ChangeEvent<HTMLInputElement>;
 
     form.handleInputChange(syntheticEvent);
 
     if (onChange) {
-      onChange(cleanedValue);
+      onChange(newValue);
     }
   }
 
   // Download functionality
   const handleDownload = () => {
     const content = currentValue || '';
-    const blob = new Blob([content], { type: 'text/css' });
+    const blob = new Blob([content], { type: 'application/ld+json' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `${fieldName}.css`;
+    link.download = `${fieldName}.json`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -108,18 +100,17 @@ const CssEditor: React.FC<CssEditorProps> = ({
     const reader = new FileReader();
     reader.onload = (e) => {
       const content = e.target?.result as string;
-      const cleanedContent = stripStyleTags(content);
       const syntheticEvent = {
         target: {
           name: fieldName,
-          value: cleanedContent,
+          value: content,
         },
       } as React.ChangeEvent<HTMLInputElement>;
 
       form.handleInputChange(syntheticEvent);
 
       if (onChange) {
-        onChange(cleanedContent);
+        onChange(content);
       }
     };
     reader.readAsText(file);
@@ -134,33 +125,35 @@ const CssEditor: React.FC<CssEditorProps> = ({
   useEffect(() => {
     loader.init().then((monaco) => {
       monaco.editor.onDidCreateModel((model: any) => {
-        if (model.getModeId() !== "css") return;
+        if (model.getModeId() !== "json") return;
 
         // initial check
         const updateMarkers = () => {
           const text = model.getValue();
-          // Check for HTML comments in CSS (which cause errors)
-          const htmlCommentRegex = /<!--[\s\S]*?-->/g;
-          const matches = [];
-          let match;
+          const markers = [];
 
-          while ((match = htmlCommentRegex.exec(text)) !== null) {
-            const lines = text.substring(0, match.index).split('\n');
-            const lineNumber = lines.length;
-            const columnStart = lines[lines.length - 1].length + 1;
-            const columnEnd = columnStart + match[0].length;
+          // Basic JSON syntax validation (Monaco handles most of this)
+          try {
+            if (text.trim()) {
+              const parsed = JSON.parse(text);
 
-            matches.push({
-              startLineNumber: lineNumber,
-              startColumn: columnStart,
-              endLineNumber: lineNumber,
-              endColumn: columnEnd,
-              message: "HTML comments are not valid in CSS",
-              severity: monaco.MarkerSeverity.Error,
-            });
+              // Check for JSON-LD context
+              if (!parsed['@context']) {
+                markers.push({
+                  startLineNumber: 1,
+                  startColumn: 1,
+                  endLineNumber: 1,
+                  endColumn: 10,
+                  message: "JSON-LD should include @context property",
+                  severity: monaco.MarkerSeverity.Warning,
+                });
+              }
+            }
+          } catch (e) {
+            // Monaco's JSON language service will handle syntax errors
           }
 
-          monaco.editor.setModelMarkers(model, "css-lint", matches);
+          monaco.editor.setModelMarkers(model, "jsonld-lint", markers);
         };
 
         updateMarkers();
@@ -177,16 +170,16 @@ const CssEditor: React.FC<CssEditorProps> = ({
             {label && <label className="formField-label mb-0">{label}</label>}
             {hint && <p className="formField-hint text-wrap">{hint}</p>}
           </div>
-          <div className="cssEditor-buttons d-flex gap-1">
+          <div className="jsonldEditor-buttons d-flex gap-1">
             {showDownload && (
               <button
                 type="button"
                 className="btn btn-sm btn-primary"
                 onClick={handleDownload}
-                title="Download CSS file"
+                title="Download JSON-LD file"
               >
                 <i className="bi bi-download me-1"></i>
-                Download CSS
+                Download JSON-LD
               </button>
             )}
             {showUpload && (
@@ -194,20 +187,20 @@ const CssEditor: React.FC<CssEditorProps> = ({
                 type="button"
                 className="btn btn-sm btn-primary"
                 onClick={triggerFileUpload}
-                title="Upload CSS or TXT file"
+                title="Upload JSON or TXT file"
               >
                 <i className="bi bi-upload me-1"></i>
-                Upload CSS/TXT
+                Upload JSON
               </button>
             )}
           </div>
         </div>
-        <div className={classNames("cssEditor-container", className, {
-          "cssEditor-container_withError": hasErrors,
+        <div className={classNames("jsonldEditor-container", className, {
+          "jsonldEditor-container_withError": hasErrors,
         })}>
           <Editor
             height={height}
-            defaultLanguage="css"
+            defaultLanguage="json"
             value={currentValue || placeholder}
             onChange={handleChange}
             options={{
@@ -243,7 +236,7 @@ const CssEditor: React.FC<CssEditorProps> = ({
           <input
             ref={fileInputRef}
             type="file"
-            accept=".css,.txt"
+            accept=".json,.txt"
             onChange={handleFileUpload}
             style={{ display: 'none' }}
           />
@@ -258,4 +251,4 @@ const CssEditor: React.FC<CssEditorProps> = ({
     </FormField>
   );
 };
-export default CssEditor;
+export default JsonLdEditor;

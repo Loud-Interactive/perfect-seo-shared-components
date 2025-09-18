@@ -7,9 +7,9 @@ import classNames from 'classnames';
 import FormField from './FormField';
 import useFormInput from '@/perfect-seo-shared-components/hooks/useFormInput';
 import FieldErrors from './FieldErrors';
-import '@/perfect-seo-shared-components/styles/components/CSSEditor.scss';
+import '@/perfect-seo-shared-components/styles/components/JavaScriptEditor.scss';
 
-interface CssEditorProps {
+interface JavaScriptEditorProps {
   fieldName: string;
   error?: string;
   label?: string | any;
@@ -27,7 +27,7 @@ interface CssEditorProps {
   placeholder?: string;
 }
 
-const CssEditor: React.FC<CssEditorProps> = ({
+const JavaScriptEditor: React.FC<JavaScriptEditorProps> = ({
   fieldName,
   error,
   label,
@@ -42,7 +42,7 @@ const CssEditor: React.FC<CssEditorProps> = ({
   value,
   showUpload = true,
   showDownload = true,
-  placeholder = "body {\n  font-family: Arial, sans-serif;\n}",
+  placeholder = '// Your JavaScript code here\nfunction example() {\n  return "Hello from JavaScript";\n}',
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -62,38 +62,30 @@ const CssEditor: React.FC<CssEditorProps> = ({
     'aria-required': !!required,
   };
 
-  // Function to strip HTML style tags from content
-  const stripStyleTags = (content: string): string => {
-    return content.replace(/<!--[\s\S]*?-->/g, '');
-  };
-
   function handleChange(newValue: string | undefined) {
-    // Strip HTML comments for CSS content
-    const cleanedValue = newValue ? stripStyleTags(newValue) : '';
-
     // Create a synthetic event to work with the form's handleInputChange
     const syntheticEvent = {
       target: {
         name: fieldName,
-        value: cleanedValue,
+        value: newValue || '',
       },
     } as React.ChangeEvent<HTMLInputElement>;
 
     form.handleInputChange(syntheticEvent);
 
     if (onChange) {
-      onChange(cleanedValue);
+      onChange(newValue);
     }
   }
 
   // Download functionality
   const handleDownload = () => {
     const content = currentValue || '';
-    const blob = new Blob([content], { type: 'text/css' });
+    const blob = new Blob([content], { type: 'application/javascript' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `${fieldName}.css`;
+    link.download = `${fieldName}.js`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -108,18 +100,17 @@ const CssEditor: React.FC<CssEditorProps> = ({
     const reader = new FileReader();
     reader.onload = (e) => {
       const content = e.target?.result as string;
-      const cleanedContent = stripStyleTags(content);
       const syntheticEvent = {
         target: {
           name: fieldName,
-          value: cleanedContent,
+          value: content,
         },
       } as React.ChangeEvent<HTMLInputElement>;
 
       form.handleInputChange(syntheticEvent);
 
       if (onChange) {
-        onChange(cleanedContent);
+        onChange(content);
       }
     };
     reader.readAsText(file);
@@ -134,33 +125,37 @@ const CssEditor: React.FC<CssEditorProps> = ({
   useEffect(() => {
     loader.init().then((monaco) => {
       monaco.editor.onDidCreateModel((model: any) => {
-        if (model.getModeId() !== "css") return;
+        if (model.getModeId() !== "javascript") return;
 
         // initial check
         const updateMarkers = () => {
           const text = model.getValue();
-          // Check for HTML comments in CSS (which cause errors)
-          const htmlCommentRegex = /<!--[\s\S]*?-->/g;
-          const matches = [];
-          let match;
+          const markers = [];
 
-          while ((match = htmlCommentRegex.exec(text)) !== null) {
-            const lines = text.substring(0, match.index).split('\n');
-            const lineNumber = lines.length;
-            const columnStart = lines[lines.length - 1].length + 1;
-            const columnEnd = columnStart + match[0].length;
+          // Check for potentially dangerous patterns
+          const dangerousPatterns = [
+            { pattern: /eval\s*\(/, message: "Consider avoiding eval() for security reasons" },
+            { pattern: /document\.write\s*\(/, message: "Consider using modern DOM methods instead of document.write" },
+            { pattern: /innerHTML\s*=/, message: "Consider using textContent or safer DOM methods" }
+          ];
 
-            matches.push({
-              startLineNumber: lineNumber,
-              startColumn: columnStart,
-              endLineNumber: lineNumber,
-              endColumn: columnEnd,
-              message: "HTML comments are not valid in CSS",
-              severity: monaco.MarkerSeverity.Error,
-            });
-          }
+          dangerousPatterns.forEach(({ pattern, message }) => {
+            const match = text.match(pattern);
+            if (match) {
+              const pos = text.indexOf(match[0]);
+              const lines = text.substring(0, pos).split('\n');
+              markers.push({
+                startLineNumber: lines.length,
+                startColumn: lines[lines.length - 1].length + 1,
+                endLineNumber: lines.length,
+                endColumn: lines[lines.length - 1].length + match[0].length + 1,
+                message,
+                severity: monaco.MarkerSeverity.Warning,
+              });
+            }
+          });
 
-          monaco.editor.setModelMarkers(model, "css-lint", matches);
+          monaco.editor.setModelMarkers(model, "javascript-lint", markers);
         };
 
         updateMarkers();
@@ -177,16 +172,16 @@ const CssEditor: React.FC<CssEditorProps> = ({
             {label && <label className="formField-label mb-0">{label}</label>}
             {hint && <p className="formField-hint text-wrap">{hint}</p>}
           </div>
-          <div className="cssEditor-buttons d-flex gap-1">
+          <div className="javascriptEditor-buttons d-flex gap-1">
             {showDownload && (
               <button
                 type="button"
                 className="btn btn-sm btn-primary"
                 onClick={handleDownload}
-                title="Download CSS file"
+                title="Download JavaScript file"
               >
                 <i className="bi bi-download me-1"></i>
-                Download CSS
+                Download JS
               </button>
             )}
             {showUpload && (
@@ -194,20 +189,20 @@ const CssEditor: React.FC<CssEditorProps> = ({
                 type="button"
                 className="btn btn-sm btn-primary"
                 onClick={triggerFileUpload}
-                title="Upload CSS or TXT file"
+                title="Upload JavaScript or TXT file"
               >
                 <i className="bi bi-upload me-1"></i>
-                Upload CSS/TXT
+                Upload JS
               </button>
             )}
           </div>
         </div>
-        <div className={classNames("cssEditor-container", className, {
-          "cssEditor-container_withError": hasErrors,
+        <div className={classNames("javascriptEditor-container", className, {
+          "javascriptEditor-container_withError": hasErrors,
         })}>
           <Editor
             height={height}
-            defaultLanguage="css"
+            defaultLanguage="javascript"
             value={currentValue || placeholder}
             onChange={handleChange}
             options={{
@@ -243,7 +238,7 @@ const CssEditor: React.FC<CssEditorProps> = ({
           <input
             ref={fileInputRef}
             type="file"
-            accept=".css,.txt"
+            accept=".js,.txt"
             onChange={handleFileUpload}
             style={{ display: 'none' }}
           />
@@ -258,4 +253,4 @@ const CssEditor: React.FC<CssEditorProps> = ({
     </FormField>
   );
 };
-export default CssEditor;
+export default JavaScriptEditor;

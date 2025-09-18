@@ -96,7 +96,7 @@ const TextInput = ({
           </div>
         )}
       </div>
-      {(type === 'url' && (props.value || form.getState[fieldName])) &&
+      {(type === 'url' && (props.value || form.getState[fieldName]) && !(props.value || form.getState[fieldName]).startsWith('.')) &&
         <a className='pt-5 text-primary' href={props.value || form.getState[fieldName]} target="_blank"><small>{props.value || form.getState[fieldName]}</small></a>
       }
       {hasErrors && !hideErrorMessage ? (

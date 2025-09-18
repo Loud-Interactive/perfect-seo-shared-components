@@ -125,7 +125,7 @@ const PostItem = ({ post, domain_name, refresh }: PostItemProps) => {
         <Modal.Title title="Add Live URL" />
         <div className="card p-3 w-100">
           <Form controller={form}>
-            <TextInput type="url" fieldName="live_url" label="Live URL" value={liveUrl} onChange={liveUrlChangeHandler} validator={urlValidator} required
+            <TextInput fieldName="live_url" label="Live URL" value={liveUrl} onChange={liveUrlChangeHandler} validator={urlValidator} required
               button={<button className="btn btn-primary" onClick={saveLiveUrl} type="submit" ><i className="bi bi-floppy-fill" /></button>} />
           </Form>
         </div>

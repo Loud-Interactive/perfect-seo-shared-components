@@ -1178,7 +1178,7 @@ const StatusActionBar = ({
         <Modal.Overlay closeIcon open={modals.viewEditLiveUrl} onClose={closeModals} className="modal-small">
           <Modal.Title title="Add Live URL" />
           <div className="card p-3 w-100">
-            <TextInput type="url" fieldName="live_post_url" label="Live URL" validator={urlValidator} required
+            <TextInput fieldName="live_post_url" label="Live URL" validator={urlValidator} required
               button={<button className="btn btn-primary" onClick={saveLiveUrl} type="submit" ><i className="bi bi-floppy-fill" /></button>} />
           </div>
         </Modal.Overlay>

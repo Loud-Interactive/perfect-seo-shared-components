@@ -489,19 +489,42 @@ const StatusActionBar = ({
 
   useEffect(() => {
     let postChannel;
-    if (localPost?.task_id && !post) {
+    // let postStatusChannel;
+    if (localPost?.task_id) {
+      console.log("setting up post channel for", localPost?.task_id)
       postChannel = supabase.channel(`statusbar-post-status-${localPost?.task_id}`)
         .on(
           'postgres_changes',
-          { event: 'UPDATE', schema: 'public', table: 'tasks', filter: `task_id=eq.${localPost?.task_id}` },
-          (payload) => {
+          { event: '*', schema: 'public', table: 'tasks', filter: `task_id=eq.${localPost?.task_id}` },
+          (payload: any) => {
+            if (process.env.NODE_ENV === 'development') {
+              console.log('Post updated:', payload);
+            }
             updatePost(payload.new as PostProps)
+            if (payload.new.status) {
+              setStatus('post', payload.new.status);
+            }
           }
         )
         .subscribe()
+      // postStatusChannel = supabase.channel(`statusbar-post-status-only-${localPost?.task_id}`)
+      //   .on(
+      //     'postgres_changes',
+      //     { event: '*', schema: 'public', table: 'task_status_history', filter: `task_id=eq.${localPost?.task_id}` },
+      //     (payload) => {
+      //       if (payload.new) {
+      //         console.log('New post status:', payload.new);
+      //       }
+
+      //     }
+      //   )
+      //   .subscribe()
     }
-    if (postChannel) {
-      return () => {
+    return () => {
+      // if (postStatusChannel) {
+      //   postStatusChannel.unsubscribe()
+      // }
+      if (postChannel) {
         postChannel.unsubscribe()
       }
     }
@@ -580,7 +603,8 @@ const StatusActionBar = ({
   const generateImagePromptHandler = (e) => {
     e.preventDefault();
     if (localPost?.hero_image_prompt) {
-      setModal('viewImagePrompt', true)
+      // setModal('viewImagePrompt', true)
+      setModal('viewGenerateImage', true)
     }
     else {
       setLoading('generateImagePrompt', true);
@@ -636,6 +660,24 @@ const StatusActionBar = ({
     // Add max-width:none to body style attribute
     let htmlContent = localPost.content.toString();
 
+    // Add CSS links to the head section
+    const cssLinks = `
+  <link rel="stylesheet" href="https://jsypctdhynsdqrfifvdh.supabase.co/storage/v1/object/public/cp-blog-css/global.css" />
+  <link rel="stylesheet" href="https://jsypctdhynsdqrfifvdh.supabase.co/storage/v1/object/public/cp-blog-css/${localPost?.client_domain}.css" />`;
+
+    // Look for existing head tag and add CSS links
+    if (htmlContent.includes('</head>')) {
+      htmlContent = htmlContent.replace('</head>', `${cssLinks}
+</head>`);
+    } else if (htmlContent.includes('<head>')) {
+      htmlContent = htmlContent.replace('<head>', `<head>${cssLinks}`);
+    } else if (htmlContent.includes('<head ')) {
+      htmlContent = htmlContent.replace(/<head([^>]*>)/, `<head$1${cssLinks}`);
+    } else {
+      // No head tag, add CSS at the beginning
+      htmlContent = cssLinks + htmlContent;
+    }
+
     // Look for existing body tag with style attribute
     if (htmlContent.includes('<body') && htmlContent.includes('style=')) {
       // Find and modify existing body style
@@ -672,7 +714,7 @@ const StatusActionBar = ({
       receiving_email: receivingEmail,
       content_plan_outline_guid
     };
-
+    setCompletion('post', false);
     return regenerateHTML(reqBody)
   };
 
@@ -686,7 +728,7 @@ const StatusActionBar = ({
       receiving_email: receivingEmail,
       content_plan_outline_guid
     };
-
+    setCompletion('post', false);
     return regenerateHTMLfromDoc(reqBody)
   };
 
@@ -888,7 +930,7 @@ const StatusActionBar = ({
           <div className="col-auto">
             <div className='row d-flex justify-content-end'>
               <div className="input-group d-flex justify-content-end">
-                {(localPost?.google_doc_link && localPost?.html_link) &&
+                {(statusState?.post?.complete) &&
                   <>
                     <button
                       type="button"

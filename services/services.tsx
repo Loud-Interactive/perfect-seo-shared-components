@@ -161,6 +161,10 @@ export const updateContentPlan = (guid, reqObj, other?) => {
 
 export const createPost = (reqObj: Request.GenerateContentPost) => {
   return axiosInstance.post(
+    `/api/post/generate-content-from-outline-guid`,
+    reqObj
+  );
+  return axiosInstance.post(
     `https://content-v5.replit.app/generate_content_from_outline_guid`,
     reqObj
   );
@@ -220,6 +224,10 @@ export const regeneratePost = (
   if (other) {
     reqObj = { ...reqObj, ...other }
   }
+  return axiosInstance.post(
+    `/api/post/generate-content-from-outline-guid`,
+    reqObj
+  );
   return axiosInstance.post(
     `https://content-v5.replit.app/generate_content_from_outline_guid`,
     reqObj
@@ -610,9 +618,11 @@ export const populateBulkGSC = (reqObj) => {
 }
 
 export const regenerateHTML = (reqObj: Request.RegeneratePost) => {
+  return axiosInstance.post(`/api/post/regenerate-html${parseQueries(reqObj)}`, reqObj);
   return axiosInstance.post(`https://content-v5.replit.app/regenerate_html${parseQueries(reqObj)}`, reqObj);
 }
 export const regenerateHTMLfromDoc = (reqObj: Request.RegeneratePost) => {
+  return axiosInstance.post(`/api/post/regenerate-html-from-outline-guid${parseQueries(reqObj)}`, reqObj);
   return axiosInstance.post(`https://content-v5.replit.app/regenerate_html_from_outline_guid${parseQueries(reqObj)}`, reqObj);
 }
 

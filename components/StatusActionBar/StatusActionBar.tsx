@@ -683,7 +683,7 @@ const StatusActionBar = ({
       // Find and modify existing body style
       htmlContent = htmlContent.replace(/<body([^>]*style\s*=\s*["'])([^"']*)(["'][^>]*>)/i, (match, beforeStyle, styleContent, afterStyle) => {
         // Add max-width:none to existing styles
-        const updatedStyle = styleContent + (styleContent.endsWith(';') ? '' : ';') + 'max-width:none !important;width:100% !important;';
+        const updatedStyle = styleContent + (styleContent.endsWith(';') ? '' : ';') + 'max-width:none !important;width:100% !important; padding: 0 10px !important;';
         return '<body' + beforeStyle + updatedStyle + afterStyle;
       });
     } else if (htmlContent.includes('<body')) {

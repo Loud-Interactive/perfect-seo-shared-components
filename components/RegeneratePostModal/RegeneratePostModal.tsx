@@ -110,10 +110,10 @@ const RegeneratePostModal = ({ onClose, type, submitHandler, onSuccess, submitHT
     setSubmitError(null)
     setSubmitted(true)
     let type = form.getState['generation-type']
-    supabase
-      .from('tasks')
-      .update({ 'live_post_url': null })
-      .eq('post_title', title)
+    // supabase
+    //   .from('tasks')
+    //   .update({ 'live_post_url': null })
+    //   .eq('post_title', title)
     switch (type) {
       case 'all':
         return submitHandler(receivingEmail, langSelected.value)

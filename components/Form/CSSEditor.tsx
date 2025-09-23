@@ -217,11 +217,14 @@ const CssEditor: React.FC<CssEditorProps> = ({
             }}
             onMount={(editor, monaco) => {
               if (!currentValue && placeholder) {
-                // Set placeholder styling when editor is empty
-                editor.updateOptions({
-                  readOnly: false
-                });
 
+                editor.updateOptions({
+                  readOnly: false,
+                  formatOnPaste: true,
+                  formatOnType: true,
+                  tabSize: 2,
+                  insertSpaces: true,
+                });
                 // When editor gains focus and contains placeholder, clear it
                 editor.onDidFocusEditorText(() => {
                   if (editor.getValue() === placeholder) {
@@ -229,13 +232,21 @@ const CssEditor: React.FC<CssEditorProps> = ({
                   }
                 });
 
-                // When editor loses focus and is empty, restore placeholder
-                editor.onDidBlurEditorText(() => {
-                  if (!editor.getValue().trim()) {
-                    editor.setValue(placeholder);
-                  }
-                });
+
+
+                // // When editor loses focus and is empty, restore placeholder
+                // editor.onDidBlurEditorText(() => {
+                //   if (!editor.getValue().trim()) {
+                //     editor.setValue(placeholder);
+
+                //   }
+                // });
+
+
               }
+              editor.onDidBlurEditorText(() => {
+                editor.getAction('editor.action.formatDocument').run();
+              })
             }}
           />
         </div>

@@ -214,7 +214,11 @@ const JavaScriptEditor: React.FC<JavaScriptEditorProps> = ({
               if (!currentValue && placeholder) {
                 // Set placeholder styling when editor is empty
                 editor.updateOptions({
-                  readOnly: false
+                  readOnly: false,
+                  formatOnPaste: true,
+                  formatOnType: true,
+                  tabSize: 2,
+                  insertSpaces: true,
                 });
 
                 // When editor gains focus and contains placeholder, clear it
@@ -231,6 +235,9 @@ const JavaScriptEditor: React.FC<JavaScriptEditorProps> = ({
                   }
                 });
               }
+              editor.onDidBlurEditorText(() => {
+                editor.getAction('editor.action.formatDocument').run();
+              })
             }}
           />
         </div>

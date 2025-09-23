@@ -212,7 +212,11 @@ const JsonLdEditor: React.FC<JsonLdEditorProps> = ({
               if (!currentValue && placeholder) {
                 // Set placeholder styling when editor is empty
                 editor.updateOptions({
-                  readOnly: false
+                  readOnly: false,
+                  formatOnPaste: true,
+                  formatOnType: true,
+                  tabSize: 2,
+                  insertSpaces: true,
                 });
 
                 // When editor gains focus and contains placeholder, clear it
@@ -229,6 +233,9 @@ const JsonLdEditor: React.FC<JsonLdEditorProps> = ({
                   }
                 });
               }
+              editor.onDidBlurEditorText(() => {
+                editor.getAction('editor.action.formatDocument').run();
+              })
             }}
           />
         </div>

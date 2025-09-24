@@ -156,35 +156,9 @@ const HtmlEditor: React.FC<HtmlEditorProps> = ({
   return (
     <FormField hint={hint} fieldName={fieldName} bottomSpacing={bottomSpacing}>
       <div className="d-flex flex-column">
-        <div className="d-flex justify-content-between align-items-center mb-1">
-          <div>
-            {label && <label className="formField-label mb-0">{label}</label>}
-            {hint && <p className="formField-hint text-wrap">{hint}</p>}
-          </div>
-          <div className="htmlEditor-buttons d-flex gap-1">
-            {showDownload && (
-              <button
-                type="button"
-                className="btn btn-sm btn-primary"
-                onClick={handleDownload}
-                title="Download HTML file"
-              >
-                <i className="bi bi-download me-1"></i>
-                Download HTML
-              </button>
-            )}
-            {showUpload && (
-              <button
-                type="button"
-                className="btn btn-sm btn-primary"
-                onClick={triggerFileUpload}
-                title="Upload HTML or TXT file"
-              >
-                <i className="bi bi-upload me-1"></i>
-                Upload HTML/TXT
-              </button>
-            )}
-          </div>
+        <div>
+          {label && <label className="formField-label mb-0">{label}</label>}
+          {hint && <p className="formField-hint text-wrap">{hint}</p>}
         </div>
         <div className={classNames("htmlEditor-container", className, {
           "htmlEditor-container_withError": hasErrors,
@@ -230,6 +204,32 @@ const HtmlEditor: React.FC<HtmlEditorProps> = ({
             }}
           />
         </div>
+        {(showDownload || showUpload) && <div className="bg-light p-1 d-flex justify-content-center card align-items-end">
+          <div className="htmlEditor-buttons">
+            {showDownload && (
+              <button
+                type="button"
+                className="btn btn-tiny btn-primary"
+                onClick={handleDownload}
+                title="Download HTML file"
+              >
+                <i className="bi bi-download"></i>
+                <span className="ml-1 d-none d-lg-inline">Download</span>
+              </button>
+            )}
+            {showUpload && (
+              <button
+                type="button"
+                className="btn btn-tiny btn-primary"
+                onClick={triggerFileUpload}
+                title="Upload HTML or TXT file"
+              >
+                <i className="bi bi-upload"></i>
+                <span className="ms-1 d-none d-lg-inline">Upload</span>
+              </button>
+            )}
+          </div>
+        </div>}
         {showUpload && (
           <input
             ref={fileInputRef}

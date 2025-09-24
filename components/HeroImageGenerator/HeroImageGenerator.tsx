@@ -59,10 +59,10 @@ export default function HeroImageGenerator({ task_id, guid, hero_image_url, hero
     setLoading(true)
     setError(null)
     setResult(null)
-let body: any = { guid }
-if(hero_image_url){
-  body.regenerate = true
-}
+    let body: any = { guid }
+    if (hero_image_url) {
+      body.regenerate = true
+    }
     try {
       // Call the Supabase Edge Function
       const { data, error } = await supabase.functions.invoke('generate-hero-image', {

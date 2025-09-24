@@ -25,6 +25,7 @@ interface CssEditorProps {
   showUpload?: boolean;
   showDownload?: boolean;
   placeholder?: string;
+  button?: any
 }
 
 const CssEditor: React.FC<CssEditorProps> = ({
@@ -42,6 +43,7 @@ const CssEditor: React.FC<CssEditorProps> = ({
   value,
   showUpload = true,
   showDownload = true,
+  button,
   placeholder = "body {\n  font-family: Arial, sans-serif;\n}",
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -172,35 +174,9 @@ const CssEditor: React.FC<CssEditorProps> = ({
   return (
     <FormField hint={hint} fieldName={fieldName} bottomSpacing={bottomSpacing}>
       <div className="d-flex flex-column">
-        <div className="d-flex justify-content-between align-items-center mb-1">
-          <div>
-            {label && <label className="formField-label mb-0">{label}</label>}
-            {hint && <p className="formField-hint text-wrap">{hint}</p>}
-          </div>
-          <div className="cssEditor-buttons d-flex gap-1">
-            {showDownload && (
-              <button
-                type="button"
-                className="btn btn-sm btn-primary"
-                onClick={handleDownload}
-                title="Download CSS file"
-              >
-                <i className="bi bi-download me-1"></i>
-                Download CSS
-              </button>
-            )}
-            {showUpload && (
-              <button
-                type="button"
-                className="btn btn-sm btn-primary"
-                onClick={triggerFileUpload}
-                title="Upload CSS or TXT file"
-              >
-                <i className="bi bi-upload me-1"></i>
-                Upload CSS/TXT
-              </button>
-            )}
-          </div>
+        <div>
+          {label && <label className="formField-label mb-0">{label}</label>}
+          {hint && <p className="formField-hint text-wrap">{hint}</p>}
         </div>
         <div className={classNames("cssEditor-container", className, {
           "cssEditor-container_withError": hasErrors,
@@ -217,11 +193,14 @@ const CssEditor: React.FC<CssEditorProps> = ({
             }}
             onMount={(editor, monaco) => {
               if (!currentValue && placeholder) {
-                // Set placeholder styling when editor is empty
-                editor.updateOptions({
-                  readOnly: false
-                });
 
+                editor.updateOptions({
+                  readOnly: false,
+                  formatOnPaste: true,
+                  formatOnType: true,
+                  tabSize: 2,
+                  insertSpaces: true,
+                });
                 // When editor gains focus and contains placeholder, clear it
                 editor.onDidFocusEditorText(() => {
                   if (editor.getValue() === placeholder) {
@@ -229,16 +208,51 @@ const CssEditor: React.FC<CssEditorProps> = ({
                   }
                 });
 
-                // When editor loses focus and is empty, restore placeholder
-                editor.onDidBlurEditorText(() => {
-                  if (!editor.getValue().trim()) {
-                    editor.setValue(placeholder);
-                  }
-                });
+
+
+                // // When editor loses focus and is empty, restore placeholder
+                // editor.onDidBlurEditorText(() => {
+                //   if (!editor.getValue().trim()) {
+                //     editor.setValue(placeholder);
+
+                //   }
+                // });
+
+
               }
+              editor.onDidBlurEditorText(() => {
+                editor.getAction('editor.action.formatDocument').run();
+              })
             }}
           />
         </div>
+        {(showDownload || showUpload || button) && <div className="bg-light p-1 d-flex justify-content-center card align-items-end">
+          <div className="cssEditor-buttons">
+            {showDownload && (
+              <button
+                type="button"
+                className="btn btn-tiny btn-primary"
+                onClick={handleDownload}
+                title="Download CSS file"
+              >
+                <i className="bi bi-download"></i>
+                <span className="ml-1 d-none d-lg-inline">Download</span>
+              </button>
+            )}
+            {showUpload && (
+              <button
+                type="button"
+                className="btn btn-tiny btn-primary"
+                onClick={triggerFileUpload}
+                title="Upload CSS or TXT file"
+              >
+                <i className="bi bi-upload"></i>
+                <span className="ms-1 d-none d-lg-inline">Upload</span>
+              </button>
+            )}
+            {button && <>{button}</>}
+          </div>
+        </div>}
         {showUpload && (
           <input
             ref={fileInputRef}
@@ -255,7 +269,7 @@ const CssEditor: React.FC<CssEditorProps> = ({
           />
         ) : null}
       </div>
-    </FormField>
+    </FormField >
   );
 };
 export default CssEditor;

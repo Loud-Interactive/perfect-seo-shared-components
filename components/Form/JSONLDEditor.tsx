@@ -165,35 +165,9 @@ const JsonLdEditor: React.FC<JsonLdEditorProps> = ({
   return (
     <FormField hint={hint} fieldName={fieldName} bottomSpacing={bottomSpacing}>
       <div className="d-flex flex-column">
-        <div className="d-flex justify-content-between align-items-center mb-1">
-          <div>
-            {label && <label className="formField-label mb-0">{label}</label>}
-            {hint && <p className="formField-hint text-wrap">{hint}</p>}
-          </div>
-          <div className="jsonldEditor-buttons d-flex gap-1">
-            {showDownload && (
-              <button
-                type="button"
-                className="btn btn-sm btn-primary"
-                onClick={handleDownload}
-                title="Download JSON-LD file"
-              >
-                <i className="bi bi-download me-1"></i>
-                Download JSON-LD
-              </button>
-            )}
-            {showUpload && (
-              <button
-                type="button"
-                className="btn btn-sm btn-primary"
-                onClick={triggerFileUpload}
-                title="Upload JSON or TXT file"
-              >
-                <i className="bi bi-upload me-1"></i>
-                Upload JSON
-              </button>
-            )}
-          </div>
+        <div>
+          {label && <label className="formField-label mb-0">{label}</label>}
+          {hint && <p className="formField-hint text-wrap">{hint}</p>}
         </div>
         <div className={classNames("jsonldEditor-container", className, {
           "jsonldEditor-container_withError": hasErrors,
@@ -212,7 +186,11 @@ const JsonLdEditor: React.FC<JsonLdEditorProps> = ({
               if (!currentValue && placeholder) {
                 // Set placeholder styling when editor is empty
                 editor.updateOptions({
-                  readOnly: false
+                  readOnly: false,
+                  formatOnPaste: true,
+                  formatOnType: true,
+                  tabSize: 2,
+                  insertSpaces: true,
                 });
 
                 // When editor gains focus and contains placeholder, clear it
@@ -229,9 +207,39 @@ const JsonLdEditor: React.FC<JsonLdEditorProps> = ({
                   }
                 });
               }
+              editor.onDidBlurEditorText(() => {
+                editor.getAction('editor.action.formatDocument').run();
+              })
             }}
           />
         </div>
+        {(showDownload || showUpload) && <div className="bg-light p-1 d-flex justify-content-center card align-items-end">
+          <div className="jsonldEditor-buttons">
+            {showDownload && (
+              <button
+                type="button"
+                className="btn btn-tiny btn-primary"
+                onClick={handleDownload}
+                title="Download JSON-LD file"
+              >
+
+                <i className="bi bi-download"></i>
+                <span className="ml-1 d-none d-lg-inline">Download</span>
+              </button>
+            )}
+            {showUpload && (
+              <button
+                type="button"
+                className="btn btn-tiny btn-primary"
+                onClick={triggerFileUpload}
+                title="Upload JSON or TXT file"
+              >
+                <i className="bi bi-upload"></i>
+                <span className="ms-1 d-none d-lg-inline">Upload</span>
+              </button>
+            )}
+          </div>
+        </div>}
         {showUpload && (
           <input
             ref={fileInputRef}

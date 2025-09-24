@@ -25,6 +25,7 @@ interface JavaScriptEditorProps {
   showUpload?: boolean;
   showDownload?: boolean;
   placeholder?: string;
+  button?: any;
 }
 
 const JavaScriptEditor: React.FC<JavaScriptEditorProps> = ({
@@ -42,6 +43,7 @@ const JavaScriptEditor: React.FC<JavaScriptEditorProps> = ({
   value,
   showUpload = true,
   showDownload = true,
+  button,
   placeholder = '// Your JavaScript code here\nfunction example() {\n  return "Hello from JavaScript";\n}',
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -167,35 +169,9 @@ const JavaScriptEditor: React.FC<JavaScriptEditorProps> = ({
   return (
     <FormField hint={hint} fieldName={fieldName} bottomSpacing={bottomSpacing}>
       <div className="d-flex flex-column">
-        <div className="d-flex justify-content-between align-items-center mb-1">
-          <div>
-            {label && <label className="formField-label mb-0">{label}</label>}
-            {hint && <p className="formField-hint text-wrap">{hint}</p>}
-          </div>
-          <div className="javascriptEditor-buttons d-flex gap-1">
-            {showDownload && (
-              <button
-                type="button"
-                className="btn btn-sm btn-primary"
-                onClick={handleDownload}
-                title="Download JavaScript file"
-              >
-                <i className="bi bi-download me-1"></i>
-                Download JS
-              </button>
-            )}
-            {showUpload && (
-              <button
-                type="button"
-                className="btn btn-sm btn-primary"
-                onClick={triggerFileUpload}
-                title="Upload JavaScript or TXT file"
-              >
-                <i className="bi bi-upload me-1"></i>
-                Upload JS
-              </button>
-            )}
-          </div>
+        <div>
+          {label && <label className="formField-label mb-0">{label}</label>}
+          {hint && <p className="formField-hint text-wrap">{hint}</p>}
         </div>
         <div className={classNames("javascriptEditor-container", className, {
           "javascriptEditor-container_withError": hasErrors,
@@ -214,7 +190,11 @@ const JavaScriptEditor: React.FC<JavaScriptEditorProps> = ({
               if (!currentValue && placeholder) {
                 // Set placeholder styling when editor is empty
                 editor.updateOptions({
-                  readOnly: false
+                  readOnly: false,
+                  formatOnPaste: true,
+                  formatOnType: true,
+                  tabSize: 2,
+                  insertSpaces: true,
                 });
 
                 // When editor gains focus and contains placeholder, clear it
@@ -231,9 +211,39 @@ const JavaScriptEditor: React.FC<JavaScriptEditorProps> = ({
                   }
                 });
               }
+              editor.onDidBlurEditorText(() => {
+                editor.getAction('editor.action.formatDocument').run();
+              })
             }}
           />
         </div>
+        {(showDownload || showUpload || button) && <div className="bg-light p-1 d-flex justify-content-center card align-items-end">
+          <div className="javascriptEditor-buttons">
+            {showDownload && (
+              <button
+                type="button"
+                className="btn btn-tiny btn-primary"
+                onClick={handleDownload}
+                title="Download JavaScript file"
+              >
+                <i className="bi bi-download"></i>
+                <span className="ml-1 d-none d-lg-inline">Download</span>
+              </button>
+            )}
+            {showUpload && (
+              <button
+                type="button"
+                className="btn btn-tiny btn-primary"
+                onClick={triggerFileUpload}
+                title="Upload JavaScript or TXT file"
+              >
+                <i className="bi bi-upload"></i>
+                <span className="ms-1 d-none d-lg-inline">Upload</span>
+              </button>
+            )}
+            {button && <>{button}</>}
+          </div>
+        </div>}
         {showUpload && (
           <input
             ref={fileInputRef}

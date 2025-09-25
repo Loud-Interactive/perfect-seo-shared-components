@@ -92,29 +92,16 @@ const parseQueries = (obj: object) => {
 };
 
 // ================================================================================
-// HIGH USAGE SERVICES (Both contentPerfect & preferencesPerfect)
+// HIGH USAGE SERVICES (Multiple Apps)
 // ================================================================================
-// These services are heavily used across both applications and are core to functionality
-
-/**
- * Generate comprehensive schema markup for content outlines
- * Used extensively in StatusActionBar and multiple content generation workflows
- * USAGE: contentPerfect (16+ matches), preferencesPerfect (16+ matches)
- */
-export const generateSchema = (content_plan_outline_guid: string) => {
-  devLog.request('generateSchema', { content_plan_outline_guid });
-
-  const response = axiosInstance.post('/api/post/generate-schema', { content_plan_outline_guid });
-  response.then(res => devLog.response('generateSchema', res)).catch(err => devLog.error('generateSchema', err));
-
-  return response;
-};
+// These services are heavily used across multiple applications and are core to functionality
 
 /**
  * Get synopsis information for a domain - core data retrieval service for synopsisPerfect
  * Used extensively in StatusActionBar, CreateContentModal, OutlineItem, DashboardPage
  * In preferencesPerfect: Used in DashboardPage for domain configuration data retrieval
- * USAGE: contentPerfect (13+ matches), preferencesPerfect (DashboardPage domain setup)
+ * In socialPerfect: Used in SocialInput.tsx and SettingsPage.tsx for brand context and domain configuration
+ * USAGE: contentPerfect (13+ matches), preferencesPerfect (DashboardPage), socialPerfect (SocialInput, SettingsPage)
  */
 export const getSynopsisInfo = (domain: string) => {
   devLog.request('getSynopsisInfo', { domain });
@@ -146,10 +133,25 @@ export const getSynopsisInfo = (domain: string) => {
 };
 
 /**
+ * Generate comprehensive schema markup for content outlines
+ * Used extensively in StatusActionBar and multiple content generation workflows
+ * USAGE: contentPerfect (16+ matches), preferencesPerfect (16+ matches)
+ */
+export const generateSchema = (content_plan_outline_guid: string) => {
+  devLog.request('generateSchema', { content_plan_outline_guid });
+
+  const response = axiosInstance.post('/api/post/generate-schema', { content_plan_outline_guid });
+  response.then(res => devLog.response('generateSchema', res)).catch(err => devLog.error('generateSchema', err));
+
+  return response;
+};
+
+/**
  * Update impression data for domain analytics
  * Used in StatusActionBar and PostsList for tracking user engagement
  * In preferencesPerfect: Used in DashboardPage and useLogoCheck hook for domain analytics
- * USAGE: contentPerfect (5+ matches), preferencesPerfect (DashboardPage, useLogoCheck hook)
+ * In socialPerfect: Used in SettingsPage.tsx for domain configuration and usage analytics
+ * USAGE: contentPerfect (5+ matches), preferencesPerfect (DashboardPage, useLogoCheck), socialPerfect (SettingsPage)
  */
 export const updateImpression = (domain: string, obj: any) => {
   devLog.request('updateImpression', { domain, obj });
@@ -456,6 +458,119 @@ export const processCsvUrls = (content: string, forceSkipHeader: boolean = false
 
   devLog.response('processCsvUrls', result);
   return result;
+};
+
+// ================================================================================
+// SOCIALPERFECT SERVICES
+// ================================================================================
+// Services specifically used by socialPerfect for social media post generation and management
+
+/**
+ * Get social content from URL for social media post generation
+ * Extracts readable content from web pages for social media processing
+ * In socialPerfect: Used in SocialInput.tsx to fetch page content before creating social posts
+ * USAGE: socialPerfect (SocialInput content extraction)
+ */
+export const getSocialContent = (url: string) => {
+  devLog.request('getSocialContent', { url });
+
+  const response = axiosInstance.post('https://socialperfectapi.replit.app/get-content', { url });
+  response.then(res => devLog.response('getSocialContent', res)).catch(err => devLog.error('getSocialContent', err));
+
+  return response;
+};
+
+/**
+ * Create social media post with platform-specific content generation
+ * Generates social media posts for multiple platforms (Twitter, Facebook, LinkedIn, Instagram, TikTok)
+ * In socialPerfect: Used in SocialInput.tsx to create new social posts from URL content
+ * USAGE: socialPerfect (SocialInput post creation)
+ */
+export const createSocialPost = async (postData: Request.SocialPostCreate) => {
+  devLog.request('createSocialPost', { postData });
+
+  const response = axiosInstance.post('https://socialperfectapi.replit.app/create_post', postData);
+  response.then(res => devLog.response('createSocialPost', res)).catch(err => devLog.error('createSocialPost', err));
+
+  return response;
+};
+
+/**
+ * Get social media post by ID for editing and display
+ * Retrieves existing social post data including all platform-specific content
+ * In socialPerfect: Used in Dashboard.tsx to fetch post data for editing
+ * USAGE: socialPerfect (Dashboard post retrieval)
+ */
+export const getSocialPost = async (id: string) => {
+  devLog.request('getSocialPost', { id });
+
+  const response = axiosInstance.get(`https://socialperfectapi.replit.app/socialposts/${id}`);
+  response.then(res => devLog.response('getSocialPost', res)).catch(err => devLog.error('getSocialPost', err));
+
+  return response;
+};
+
+/**
+ * Update social media post content for specific platforms
+ * Modifies existing social post data with new content or platform-specific updates
+ * In socialPerfect: Used in Dashboard.tsx for saving edited social post content
+ * USAGE: socialPerfect (Dashboard post updates)
+ */
+export const updateSocialPost = async (reqObj: any) => {
+  devLog.request('updateSocialPost', { reqObj });
+
+  const response = axiosInstance.patch(`https://socialperfectapi.replit.app/socialposts/${reqObj.id || reqObj.uuid}`, reqObj);
+  response.then(res => devLog.response('updateSocialPost', res)).catch(err => devLog.error('updateSocialPost', err));
+
+  return response;
+};
+
+/**
+ * Regenerate social media post content for specific platform
+ * Creates new variations of social post content for improved engagement
+ * In socialPerfect: Used in Dashboard.tsx for regenerating platform-specific content
+ * USAGE: socialPerfect (Dashboard content regeneration)
+ */
+export const regenerateSocialPost = async (guid: string, platform: string) => {
+  devLog.request('regenerateSocialPost', { guid, platform });
+
+  const response = axiosInstance.post(`https://socialperfectapi.replit.app/regenerate_post/${guid}/${platform}`);
+  response.then(res => devLog.response('regenerateSocialPost', res)).catch(err => devLog.error('regenerateSocialPost', err));
+
+  return response;
+};
+
+/**
+ * Generate social media post content for specific platform
+ * Creates platform-optimized content with appropriate tone, hashtags, and emojis
+ * Available for socialPerfect but not currently in active use in components
+ * USAGE: Available for socialPerfect platform-specific generation
+ */
+export const generateSocialPost = async (reqObj: Request.GenerateSocialPostProps) => {
+  devLog.request('generateSocialPost', { reqObj });
+
+  const response = axiosInstance.post(`https://socialperfectapi.replit.app/generate_post/${reqObj.uuid}`, reqObj, {
+    headers: { 'Content-Type': 'application/json' }
+  });
+
+  response.then(res => devLog.response('generateSocialPost', res)).catch(err => devLog.error('generateSocialPost', err));
+  return response;
+};
+
+/**
+ * Generate synopsis for synopsisPerfect domain analysis
+ * Connects to synopsisperfectai.replit.app API for domain synopsis generation
+ * In socialPerfect: Used in SocialInput.tsx as fallback when getSynopsisInfo fails
+ * USAGE: socialPerfect (SocialInput fallback for brand info generation)
+ */
+export const generateSynopsis = (domain: string) => {
+  devLog.request('generateSynopsis', { domain });
+
+  let newDomain = urlSanitization(domain);
+  const response = axiosInstance.get(`https://synopsisperfectai.replit.app/domain/${newDomain}`);
+
+  response.then(res => devLog.response('generateSynopsis', res)).catch(err => devLog.error('generateSynopsis', err));
+  return response;
 };
 
 // ================================================================================
@@ -1275,22 +1390,6 @@ export const storeCSSFile = async (domain: string, cssContent: string) => {
 // They are kept for potential future use or legacy compatibility
 
 /**
- * Generate synopsis - Legacy service for synopsisPerfect domain analysis
- * Connects to synopsisperfectai.replit.app API for domain synopsis generation
- * Currently marked as UNUSED but may be needed for synopsisPerfect app functionality
- * DEV NOTE: Evaluate usage in synopsisPerfect before removing
- */
-export const generateSynopsis = (domain: string) => {
-  devLog.request('generateSynopsis', { domain });
-
-  let newDomain = urlSanitization(domain);
-  const response = axiosInstance.get(`https://synopsisperfectai.replit.app/domain/${newDomain}`);
-
-  response.then(res => devLog.response('generateSynopsis', res)).catch(err => devLog.error('generateSynopsis', err));
-  return response;
-};
-
-/**
  * Process TSV URL - UNUSED
  * Legacy service for TSV file processing
  * DEV NOTE: Consider removing if TSV functionality is not needed
@@ -1364,92 +1463,6 @@ export const saveDetails = (data: any) => {
 
   const response = axiosInstance.post('https://voice-perfect-api.replit.app/SaveUserDetails', data);
   response.then(res => devLog.response('saveDetails', res)).catch(err => devLog.error('saveDetails', err));
-
-  return response;
-};
-
-/**
- * Get social content - UNUSED
- * Legacy social media integration
- * DEV NOTE: Part of socialPerfect suite - may be reactivated
- */
-export const getSocialContent = (url: string) => {
-  devLog.request('getSocialContent', { url });
-
-  const response = axiosInstance.post('https://socialperfectapi.replit.app/get-content', { url });
-  response.then(res => devLog.response('getSocialContent', res)).catch(err => devLog.error('getSocialContent', err));
-
-  return response;
-};
-
-/**
- * Create social post - UNUSED
- * Legacy social media post creation
- * DEV NOTE: Part of socialPerfect suite - may be reactivated
- */
-export const createSocialPost = async (postData: Request.SocialPostCreate) => {
-  devLog.request('createSocialPost', { postData });
-
-  const response = axiosInstance.post('https://socialperfectapi.replit.app/create_post', postData);
-  response.then(res => devLog.response('createSocialPost', res)).catch(err => devLog.error('createSocialPost', err));
-
-  return response;
-};
-
-/**
- * Get social post - UNUSED
- * Legacy social media post retrieval
- * DEV NOTE: Part of socialPerfect suite - may be reactivated
- */
-export const getSocialPost = async (id: string) => {
-  devLog.request('getSocialPost', { id });
-
-  const response = axiosInstance.get(`https://socialperfectapi.replit.app/socialposts/${id}`);
-  response.then(res => devLog.response('getSocialPost', res)).catch(err => devLog.error('getSocialPost', err));
-
-  return response;
-};
-
-/**
- * Update social post - UNUSED
- * Legacy social media post updating
- * DEV NOTE: Part of socialPerfect suite - may be reactivated
- */
-export const updateSocialPost = async (reqObj: any) => {
-  devLog.request('updateSocialPost', { reqObj });
-
-  const response = axiosInstance.patch(`https://socialperfectapi.replit.app/socialposts/${reqObj.id || reqObj.uuid}`, reqObj);
-  response.then(res => devLog.response('updateSocialPost', res)).catch(err => devLog.error('updateSocialPost', err));
-
-  return response;
-};
-
-/**
- * Generate social post - UNUSED
- * Legacy social media post generation
- * DEV NOTE: Part of socialPerfect suite - may be reactivated
- */
-export const generateSocialPost = async (reqObj: Request.GenerateSocialPostProps) => {
-  devLog.request('generateSocialPost', { reqObj });
-
-  const response = axiosInstance.post(`https://socialperfectapi.replit.app/generate_post/${reqObj.uuid}`, reqObj, {
-    headers: { 'Content-Type': 'application/json' }
-  });
-
-  response.then(res => devLog.response('generateSocialPost', res)).catch(err => devLog.error('generateSocialPost', err));
-  return response;
-};
-
-/**
- * Regenerate social post - UNUSED
- * Legacy social media post regeneration
- * DEV NOTE: Part of socialPerfect suite - may be reactivated
- */
-export const regenerateSocialPost = async (guid: string, platform: string) => {
-  devLog.request('regenerateSocialPost', { guid, platform });
-
-  const response = axiosInstance.post(`https://socialperfectapi.replit.app/regenerate_post/${guid}/${platform}`);
-  response.then(res => devLog.response('regenerateSocialPost', res)).catch(err => devLog.error('regenerateSocialPost', err));
 
   return response;
 };

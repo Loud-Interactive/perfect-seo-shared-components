@@ -1206,14 +1206,14 @@ export const getContentPlansByEmail = (email: string, paginator: PaginationReque
  * Used for updating specific fields in content plans without full replacement
  * USAGE: contentPerfect only
  */
-export const patchContentPlans = (guid: string, data: any) => {
-  devLog.request('patchContentPlans', { guid, data });
+export const patchContentPlan = (guid: string, data: any) => {
+  devLog.request('patchContentPlan', { guid, data });
 
   const response = axiosInstance.patch(
     `https://planperfectapi.replit.app/update_outline/${guid}`, data
   );
 
-  response.then(res => devLog.response('patchContentPlans', res)).catch(err => devLog.error('patchContentPlans', err));
+  response.then(res => devLog.response('patchContentPlan', res)).catch(err => devLog.error('patchContentPlan', err));
   return response;
 };
 

@@ -113,7 +113,8 @@ export const generateSchema = (content_plan_outline_guid: string) => {
 /**
  * Get synopsis information for a domain - core data retrieval service
  * Used extensively in StatusActionBar, CreateContentModal, OutlineItem, DashboardPage
- * USAGE: contentPerfect (13+ matches), preferencesPerfect (13+ matches)
+ * In preferencesPerfect: Used in DashboardPage for domain configuration data retrieval
+ * USAGE: contentPerfect (13+ matches), preferencesPerfect (DashboardPage domain setup)
  */
 export const getSynopsisInfo = (domain: string) => {
   devLog.request('getSynopsisInfo', { domain });
@@ -147,7 +148,8 @@ export const getSynopsisInfo = (domain: string) => {
 /**
  * Update impression data for domain analytics
  * Used in StatusActionBar and PostsList for tracking user engagement
- * USAGE: contentPerfect (5+ matches), preferencesPerfect (5+ matches)
+ * In preferencesPerfect: Used in DashboardPage and useLogoCheck hook for domain analytics
+ * USAGE: contentPerfect (5+ matches), preferencesPerfect (DashboardPage, useLogoCheck hook)
  */
 export const updateImpression = (domain: string, obj: any) => {
   devLog.request('updateImpression', { domain, obj });
@@ -210,7 +212,8 @@ export const fetchOutlineData = (guid: string) => {
 /**
  * Create new content posts from outline data
  * Core content generation service used throughout both applications
- * USAGE: contentPerfect (6+ matches), preferencesPerfect (6+ matches)
+ * In preferencesPerfect: Used in OutlineItem, CreateContentModal, and StatusActionBar components
+ * USAGE: contentPerfect (6+ matches), preferencesPerfect (OutlineItem, CreateContentModal, StatusActionBar)
  */
 export const createPost = (reqObj: Request.GenerateContentPost) => {
   devLog.request('createPost', reqObj);
@@ -286,7 +289,8 @@ export const regeneratePost = (guid: string, other?: any) => {
 /**
  * Add incoming plan items for content planning workflows
  * Used in CreateContentModal for initial content setup
- * USAGE: contentPerfect (3+ matches), preferencesPerfect (3+ matches)
+ * In preferencesPerfect: Used in ContentPlanForm component for content plan creation
+ * USAGE: contentPerfect (3+ matches), preferencesPerfect (ContentPlanForm component)
  */
 export const addIncomingPlanItem = (reqObj: PlanItemProps) => {
   devLog.request('addIncomingPlanItem', reqObj);
@@ -300,7 +304,8 @@ export const addIncomingPlanItem = (reqObj: PlanItemProps) => {
 /**
  * Save content plan post data to database
  * Used in StatusActionBar for content persistence
- * USAGE: contentPerfect (3+ matches), preferencesPerfect (3+ matches)
+ * In preferencesPerfect: Used in OutlineItem and CreateContentModal components
+ * USAGE: contentPerfect (3+ matches), preferencesPerfect (OutlineItem, CreateContentModal)
  */
 export const saveContentPlanPost = (reqObj: Request.SaveContentPost) => {
   devLog.request('saveContentPlanPost', reqObj);
@@ -454,6 +459,21 @@ export const deleteOutline = (guid: string) => {
     .select('*');
 
   response.then(res => devLog.response('deleteOutline', res));
+  return response;
+};
+
+/**
+ * Check domain CSS file - Both Apps
+ * Used for CSS file verification and domain styling checks
+ * In preferencesPerfect: Used in MyContent component for CSS validation
+ * USAGE: contentPerfect, preferencesPerfect (MyContent component)
+ */
+export const checkDomainCSSFile = async (domain: string) => {
+  devLog.request('checkDomainCSSFile', { domain });
+
+  const response = axios.post('/api/check-css', { domain });
+  response.then(res => devLog.response('checkDomainCSSFile', res)).catch(err => devLog.error('checkDomainCSSFile', err));
+
   return response;
 };
 
@@ -1033,17 +1053,42 @@ export const getContentPlanChildren = async (guid: string) => {
 };
 
 /**
- * Check domain CSS file - contentPerfect only
- * Used for CSS file verification
- * USAGE: contentPerfect only
+ * Store CSS file for domain styling - preferencesPerfect only
+ * Used in DashboardPage for saving custom CSS styles to domain configurations
+ * Stores domain-specific CSS content via API for custom styling features
+ * USAGE: preferencesPerfect only (DashboardPage CSS style management)
  */
-export const checkDomainCSSFile = async (domain: string) => {
-  devLog.request('checkDomainCSSFile', { domain });
+export const storeCSSFile = async (domain: string, cssContent: string) => {
+  devLog.request('storeCSSFile', { domain, cssContentLength: cssContent?.length || 0 });
 
-  const response = axios.post('/api/check-css', { domain });
-  response.then(res => devLog.response('checkDomainCSSFile', res)).catch(err => devLog.error('checkDomainCSSFile', err));
+  try {
+    const response = await fetch('/api/store-css', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        domain,
+        cssContent
+      })
+    });
 
-  return response;
+    const result = await response.json();
+
+    if (!response.ok) {
+      devLog.error('storeCSSFile', result.error);
+      return { data: null, error: result.error };
+    }
+
+    devLog.response('storeCSSFile', result.data);
+    return {
+      data: result.data,
+      error: result.error
+    };
+  } catch (error) {
+    devLog.error('storeCSSFile', error);
+    return { data: null, error: { message: 'Network error: ' + error.message } };
+  }
 };
 
 // ================================================================================
@@ -1282,42 +1327,4 @@ export const getDomains = async (domains?: string[], hidden?: boolean | null, bl
 
   response.then(res => devLog.response('getDomains', res)).catch(err => devLog.error('getDomains', err));
   return response;
-};
-
-/**
- * Store CSS file - UNUSED
- * Legacy CSS file storage service
- * DEV NOTE: May be needed for custom styling features in preferencesPerfect
- */
-export const storeCSSFile = async (domain: string, cssContent: string) => {
-  devLog.request('storeCSSFile', { domain, cssContentLength: cssContent?.length || 0 });
-
-  try {
-    const response = await fetch('/api/store-css', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        domain,
-        cssContent
-      })
-    });
-
-    const result = await response.json();
-
-    if (!response.ok) {
-      devLog.error('storeCSSFile', result.error);
-      return { data: null, error: result.error };
-    }
-
-    devLog.response('storeCSSFile', result.data);
-    return {
-      data: result.data,
-      error: result.error
-    };
-  } catch (error) {
-    devLog.error('storeCSSFile', error);
-    return { data: null, error: { message: 'Network error: ' + error.message } };
-  }
 };

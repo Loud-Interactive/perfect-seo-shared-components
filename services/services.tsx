@@ -111,7 +111,7 @@ export const generateSchema = (content_plan_outline_guid: string) => {
 };
 
 /**
- * Get synopsis information for a domain - core data retrieval service
+ * Get synopsis information for a domain - core data retrieval service for synopsisPerfect
  * Used extensively in StatusActionBar, CreateContentModal, OutlineItem, DashboardPage
  * In preferencesPerfect: Used in DashboardPage for domain configuration data retrieval
  * USAGE: contentPerfect (13+ matches), preferencesPerfect (DashboardPage domain setup)
@@ -279,6 +279,183 @@ export const regeneratePost = (guid: string, other?: any) => {
 
   response.then(res => devLog.response('regeneratePost', res)).catch(err => devLog.error('regeneratePost', err));
   return response;
+};
+
+// ================================================================================
+// GOOGLE INDEXING API SERVICES (Index Perfect)
+// ================================================================================
+// Services specifically for Google Indexing API operations in Index Perfect app
+
+/**
+ * Submit a URL to Google for indexing
+ * Used in BulkUploadTab and individual URL submission workflows
+ * USAGE: indexPerfect (multiple matches across indexing workflows)
+ */
+export const indexUrl = async (url: string, user?: string, contentPlanOutlineGuid?: string, reindex?: boolean) => {
+  devLog.request('indexUrl', { url, user, contentPlanOutlineGuid, reindex });
+
+  try {
+    const response = await fetch('/api/index-url', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        url,
+        contentPlanOutlineGuid,
+        reindex,
+        user
+      })
+    });
+
+    if (!response.ok) {
+      const error = new Error(`HTTP error! status: ${response.status}`);
+      devLog.error('indexUrl', error);
+      throw error;
+    }
+
+    const data = await response.json();
+    devLog.response('indexUrl', data);
+    return data;
+  } catch (error) {
+    devLog.error('indexUrl', error);
+    throw error;
+  }
+};
+
+/**
+ * Submit multiple URLs to Google for indexing in batch
+ * Used in BulkUploadTab for processing multiple URLs efficiently
+ * USAGE: indexPerfect (BulkUploadTab batch processing)
+ */
+export const indexUrlsBatch = async (urls: string[], user?: string, batchSize: number = 5) => {
+  devLog.request('indexUrlsBatch', { urls: urls.length, user, batchSize });
+
+  const results = [];
+
+  for (let i = 0; i < urls.length; i += batchSize) {
+    const batch = urls.slice(i, i + batchSize);
+    const batchPromises = batch.map(url => indexUrl(url, user));
+
+    try {
+      const batchResults = await Promise.all(batchPromises);
+      results.push(...batchResults);
+
+      // Add delay between batches to respect rate limits
+      if (i + batchSize < urls.length) {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+    } catch (error) {
+      devLog.error('indexUrlsBatch', error);
+      throw error;
+    }
+  }
+
+  devLog.response('indexUrlsBatch', results);
+  return results;
+};
+
+/**
+ * Check the indexation status of a URL using Google's API
+ * Used in useIndex hook and AllUrlsTab for status verification
+ * USAGE: indexPerfect (status checking workflows)
+ */
+export const checkIndexationStatus = async (url: string, user?: string) => {
+  devLog.request('checkIndexationStatus', { url, user });
+
+  try {
+    const { data, error } = await supabase.functions.invoke('check-indexation', {
+      body: { url, user },
+    });
+
+    if (error) {
+      devLog.error('checkIndexationStatus', error);
+      throw error;
+    }
+
+    devLog.response('checkIndexationStatus', data);
+    return data;
+  } catch (error) {
+    devLog.error('checkIndexationStatus', error);
+    throw error;
+  }
+};
+
+/**
+ * Get URL display data including submission history and indexation status
+ * Used in AllUrlsTab and dashboard for comprehensive URL information
+ * USAGE: indexPerfect (URL management and display)
+ */
+export const getUrlDisplayData = async (domain?: string, user?: string) => {
+  devLog.request('getUrlDisplayData', { domain, user });
+
+  try {
+    const params = new URLSearchParams();
+    if (domain) params.append('domain', domain);
+    if (user) params.append('user', user);
+
+    const response = await fetch(`/api/url-display-data?${params.toString()}`);
+
+    if (!response.ok) {
+      const error = new Error(`HTTP error! status: ${response.status}`);
+      devLog.error('getUrlDisplayData', error);
+      throw error;
+    }
+
+    const data = await response.json();
+    devLog.response('getUrlDisplayData', data);
+    return data;
+  } catch (error) {
+    devLog.error('getUrlDisplayData', error);
+    throw error;
+  }
+};
+
+/**
+ * Validate if a string is a valid URL
+ * Used in BulkUploadTab for URL validation and header detection
+ * USAGE: indexPerfect (URL validation across components)
+ */
+export const validateUrl = (url: string): boolean => {
+  try {
+    new URL(url);
+    return true;
+  } catch {
+    // Also check for relative URLs or URLs without protocol
+    return /^(https?:\/\/|www\.|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]*\.[a-zA-Z]{2,})/i.test(url.trim());
+  }
+};
+
+/**
+ * Process CSV content and extract URLs with header detection
+ * Used in BulkUploadTab for file upload processing
+ * USAGE: indexPerfect (file upload and processing)
+ */
+export const processCsvUrls = (content: string, forceSkipHeader: boolean = false) => {
+  devLog.request('processCsvUrls', { contentLength: content.length, forceSkipHeader });
+
+  let urlLines = content.split('\n')
+    .filter(url => url.trim() !== '')
+    .map(url => url.trim());
+
+  // Auto-detect header: if first row doesn't look like a URL, remove it
+  if (urlLines.length > 0 && !validateUrl(urlLines[0])) {
+    urlLines = urlLines.slice(1);
+  }
+
+  // Remove header if forced to skip
+  if (forceSkipHeader && urlLines.length > 0) {
+    urlLines = urlLines.slice(1);
+  }
+
+  const result = {
+    urls: urlLines,
+    detectedHeader: urlLines.length > 0 && !validateUrl(content.split('\n')[0]?.trim()),
+    processedCount: urlLines.length
+  };
+
+  devLog.response('processCsvUrls', result);
+  return result;
 };
 
 // ================================================================================
@@ -1098,9 +1275,10 @@ export const storeCSSFile = async (domain: string, cssContent: string) => {
 // They are kept for potential future use or legacy compatibility
 
 /**
- * Generate synopsis - UNUSED
- * Legacy service with no current references
- * DEV NOTE: Consider removing if not needed for future features
+ * Generate synopsis - Legacy service for synopsisPerfect domain analysis
+ * Connects to synopsisperfectai.replit.app API for domain synopsis generation
+ * Currently marked as UNUSED but may be needed for synopsisPerfect app functionality
+ * DEV NOTE: Evaluate usage in synopsisPerfect before removing
  */
 export const generateSynopsis = (domain: string) => {
   devLog.request('generateSynopsis', { domain });

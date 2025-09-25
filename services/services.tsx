@@ -1257,6 +1257,20 @@ export const patchPost = (guid: string, field: string, value: string) => {
 };
 
 /**
+ * Patch outline title by GUID - contentPerfect only
+ * Used for updating outline titles
+ * USAGE: contentPerfect only
+ */
+export const patchOutlineTitle = (guid: string, title: string) => {
+  devLog.request('patchOutlineTitle', { guid, title });
+
+  const response = axiosInstance.patch(`https://planperfectapi.replit.app/update_outline_title/${guid}?new_title=${title.toString()}`, title);
+
+  response.then(res => devLog.response('patchOutlineTitle', res)).catch(err => devLog.error('patchOutlineTitle', err));
+  return response;
+};
+
+/**
  * Fact check by post GUID - contentPerfect only
  * Used for content verification by post ID
  * USAGE: contentPerfect only

@@ -111,9 +111,10 @@ export const generateSchema = (content_plan_outline_guid: string) => {
 };
 
 /**
- * Get synopsis information for a domain - core data retrieval service
+ * Get synopsis information for a domain - core data retrieval service for synopsisPerfect
  * Used extensively in StatusActionBar, CreateContentModal, OutlineItem, DashboardPage
- * USAGE: contentPerfect (13+ matches), preferencesPerfect (13+ matches)
+ * This service retrieves domain-specific synopsis data from the pairs table in Supabase
+ * USAGE: synopsisPerfect (primary usage), contentPerfect (13+ matches), preferencesPerfect (13+ matches)
  */
 export const getSynopsisInfo = (domain: string) => {
   devLog.request('getSynopsisInfo', { domain });
@@ -1230,9 +1231,10 @@ export const checkDomainCSSFile = async (domain: string) => {
 // They are kept for potential future use or legacy compatibility
 
 /**
- * Generate synopsis - UNUSED
- * Legacy service with no current references
- * DEV NOTE: Consider removing if not needed for future features
+ * Generate synopsis - Legacy service for synopsisPerfect domain analysis
+ * Connects to synopsisperfectai.replit.app API for domain synopsis generation
+ * Currently marked as UNUSED but may be needed for synopsisPerfect app functionality
+ * DEV NOTE: Evaluate usage in synopsisPerfect before removing
  */
 export const generateSynopsis = (domain: string) => {
   devLog.request('generateSynopsis', { domain });

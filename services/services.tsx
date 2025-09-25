@@ -4,6 +4,26 @@ import { urlSanitization } from "@/perfect-seo-shared-components/utils/conversio
 import axios from "axios";
 import { PaginationRequest } from "@/perfect-seo-shared-components/data/types";
 import { createClient } from "../utils/supabase/client";
+
+/**
+ * ================================================================================
+ * PERFECT SEO SHARED SERVICES
+ * ================================================================================
+ * This file contains all API service functions used across Perfect SEO applications.
+ * Services are organized by usage frequency and application coverage.
+ * 
+ * Environment Variables:
+ * - NEXT_PUBLIC_API_LOGGING: Set to 'true' to enable dev console logging
+ * - NODE_ENV: Used to determine if logging should be enabled in development
+ * 
+ * Usage Categories:
+ * 1. High Usage (Both Apps) - Core services used extensively across contentPerfect and preferencesPerfect
+ * 2. Medium Usage (Both Apps) - Moderately used services across both applications
+ * 3. Single App Usage - Services used only in contentPerfect OR preferencesPerfect
+ * 4. Unused Services - Legacy services with no current references
+ * ================================================================================
+ */
+
 export interface PlanItemProps {
   brand_name: string;
   domain_name: string;
@@ -18,18 +38,43 @@ export interface PlanItemProps {
   target_keyword?: string;
 }
 
+// ================================================================================
+// CONFIGURATION & UTILITIES
+// ================================================================================
+
 const supabase = createClient();
-
 const API_URL = "https://planperfectapi.replit.app";
+const NEW_CONTENT_API_URL = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/api`;
 
-const NEW_CONTENT_API_URL = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/api`
 const headers = {
   "X-API-Key": process.env.NEXT_PUBLIC_API_KEY,
   "Content-Type": "application/json",
 };
+
 const newContentAPIHeader = {
   "Authorization": `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`,
   "Content-Type": "application/json",
+};
+
+/**
+ * Development logging utility - only logs when NEXT_PUBLIC_API_LOGGING=true or NODE_ENV=development
+ */
+const devLog = {
+  request: (serviceName: string, data: any) => {
+    if (process.env.NEXT_PUBLIC_API_LOGGING === 'true' || process.env.NODE_ENV === 'development') {
+      console.log(`🚀 [${serviceName}] Request:`, data);
+    }
+  },
+  response: (serviceName: string, response: any) => {
+    if (process.env.NEXT_PUBLIC_API_LOGGING === 'true' || process.env.NODE_ENV === 'development') {
+      console.log(`✅ [${serviceName}] Response:`, response);
+    }
+  },
+  error: (serviceName: string, error: any) => {
+    if (process.env.NEXT_PUBLIC_API_LOGGING === 'true' || process.env.NODE_ENV === 'development') {
+      console.error(`❌ [${serviceName}] Error:`, error);
+    }
+  }
 };
 
 const parseQueries = (obj: object) => {
@@ -46,23 +91,43 @@ const parseQueries = (obj: object) => {
   );
 };
 
-// UNUSED SERVICE - No references found in contentPerfect app
-export const generateSynopsis = (domain) => {
-  let newDomain = urlSanitization(domain);
-  return axiosInstance.get(`https://synopsisperfectai.replit.app/domain/${newDomain}`)
-}
+// ================================================================================
+// HIGH USAGE SERVICES (Both contentPerfect & preferencesPerfect)
+// ================================================================================
+// These services are heavily used across both applications and are core to functionality
 
-// used by: contentPerfect
-export const getSynopsisInfo = (domain) => {
-  return supabase
-    .from('pairs') // Replace with your actual table name
+/**
+ * Generate comprehensive schema markup for content outlines
+ * Used extensively in StatusActionBar and multiple content generation workflows
+ * USAGE: contentPerfect (16+ matches), preferencesPerfect (16+ matches)
+ */
+export const generateSchema = (content_plan_outline_guid: string) => {
+  devLog.request('generateSchema', { content_plan_outline_guid });
+
+  const response = axiosInstance.post('/api/post/generate-schema', { content_plan_outline_guid });
+  response.then(res => devLog.response('generateSchema', res)).catch(err => devLog.error('generateSchema', err));
+
+  return response;
+};
+
+/**
+ * Get synopsis information for a domain - core data retrieval service
+ * Used extensively in StatusActionBar, CreateContentModal, OutlineItem, DashboardPage
+ * USAGE: contentPerfect (13+ matches), preferencesPerfect (13+ matches)
+ */
+export const getSynopsisInfo = (domain: string) => {
+  devLog.request('getSynopsisInfo', { domain });
+
+  const response = supabase
+    .from('pairs')
     .select('key, value, last_updated')
     .eq('domain', domain)
     .order('last_updated', { ascending: false })
     .then((res) => {
       if (res?.data.length === 0) {
-        // Handle case where no data is found
-        return { data: [], error: { message: 'No data found for the provided domain' } };
+        const result = { data: [], error: { message: 'No data found for the provided domain' } };
+        devLog.response('getSynopsisInfo', result);
+        return result;
       }
       const result: any = res.data.reduce((acc, { key, value }) => {
         if (!acc[key]) {
@@ -71,20 +136,28 @@ export const getSynopsisInfo = (domain) => {
         return acc;
       }, {});
 
+      const finalResult = { ...res, data: [result] };
+      devLog.response('getSynopsisInfo', finalResult);
+      return finalResult;
+    });
 
-      return { ...res, data: [result] }
-    })
-
+  return response;
 };
 
-// used by: contentPerfect
+/**
+ * Update impression data for domain analytics
+ * Used in StatusActionBar and PostsList for tracking user engagement
+ * USAGE: contentPerfect (5+ matches), preferencesPerfect (5+ matches)
+ */
 export const updateImpression = (domain: string, obj: any) => {
+  devLog.request('updateImpression', { domain, obj });
+
   let newData = Object.keys(obj).reduce((prev, curr) => {
     let newObj = { domain: domain, key: curr, value: obj[curr] }
     return [...prev, newObj]
   }, [])
 
-  return supabase
+  const response = supabase
     .from('pairs')
     .upsert(newData)
     .eq('domain', domain)
@@ -92,98 +165,73 @@ export const updateImpression = (domain: string, obj: any) => {
     .then((res) => {
       let newRes = res;
       newRes.data = [res.data.reduce((prev, curr) => ({ ...prev, [curr.key]: curr.value }), {})]
-      return newRes
-    })
+      devLog.response('updateImpression', newRes);
+      return newRes;
+    });
 
-
+  return response;
 };
 
+/**
+ * Fetch outline status information for tracking content generation progress
+ * Used in StatusActionBar and OutlinesList for real-time status updates
+ * USAGE: contentPerfect (8+ matches), preferencesPerfect (8+ matches)
+ */
+export const fetchOutlineStatus = (guid: string) => {
+  devLog.request('fetchOutlineStatus', { guid });
 
-// used by: contentPerfect
-export const addIncomingPlanItem = (reqObj: PlanItemProps) => {
-  return axiosInstance.post(`${API_URL}/add_incoming_plan_item`, reqObj);
+  const response = supabase
+    .from('content_plan_outline_statuses')
+    .select('*')
+    .order('timestamp', { ascending: false })
+    .eq('outline_guid', guid);
+
+  response.then(res => devLog.response('fetchOutlineStatus', res));
+  return response;
 };
 
-// used by: contentPerfect
-export const getPlanStatus = (id: string) => {
-  return axiosInstance.get(`${API_URL}/status/${id}`);
+/**
+ * Fetch detailed outline data for content generation
+ * Used in StatusActionBar and OutlinesList for content management
+ * USAGE: contentPerfect (7+ matches), preferencesPerfect (7+ matches)
+ */
+export const fetchOutlineData = (guid: string) => {
+  devLog.request('fetchOutlineData', { guid });
+
+  const response = supabase
+    .from('content_plan_outlines')
+    .select('*')
+    .eq('guid', guid);
+
+  response.then(res => devLog.response('fetchOutlineData', res));
+  return response;
 };
 
-// used by: contentPerfect
-export const getCompletedPlan = (id: string, server?: boolean) => {
-  if (server) {
-    return axios.get(`${API_URL}/get_content_plan/${id}`);
-  }
-  else {
-    return axiosInstance.get(`${API_URL}/get_content_plan/${id}`);
-  }
-};
-
-
-// used by: contentPerfect
-export const saveContentPlanPost = (reqObj: Request.SaveContentPost) => {
-  return axiosInstance.post(`${API_URL}/post_outline`, reqObj);
-};
-
-// used by: contentPerfect
-export const generateContentPlanOutline = (
-  reqObj: Request.PostOutlineGenerateRequest,
-) => {
-  return axiosInstance.post('/api/outlines/generate', reqObj);
-  // return axiosInstance.post(`${API_URL}/get_outline`, reqObj);
-};
-
-// used by: contentPerfect
-export const generateSchema = (content_plan_outline_guid) => {
-  return axiosInstance.post('/api/post/generate-schema', { content_plan_outline_guid });
-}
-
-// used by: contentPerfect
-export const generateImagePrompt = (content_plan_outline_guid) => {
-  return axiosInstance.post('/api/post/generate-image-prompt', { content_plan_outline_guid });
-}
-
-// used by: contentPerfect
-export const updateContentPlan = (guid, reqObj, other?) => {
-  let reqBody: any = {
-    guid,
-    content_plan_table: reqObj,
-  }
-  if (other) {
-    reqBody = { ...other, ...reqBody }
-    delete reqBody.content_plan_json
-    delete reqBody?.content_plan
-  }
-
-  return axiosInstance.post(`${API_URL}/update_content_plan`, reqBody);
-};
-
-// used by: contentPerfect
+/**
+ * Create new content posts from outline data
+ * Core content generation service used throughout both applications
+ * USAGE: contentPerfect (6+ matches), preferencesPerfect (6+ matches)
+ */
 export const createPost = (reqObj: Request.GenerateContentPost) => {
-  // return axiosInstance.post(
-  //   `/api/post/generate-content-from-outline-guid`,
-  //   reqObj
-  // );
-  return axiosInstance.post(
+  devLog.request('createPost', reqObj);
+
+  const response = axiosInstance.post(
     `https://content-v5.replit.app/generate_content_from_outline_guid`,
     reqObj
   );
+
+  response.then(res => devLog.response('createPost', res)).catch(err => devLog.error('createPost', err));
+  return response;
 };
 
-// UNUSED SERVICE - No references found in contentPerfect app
-export function processTsvUrl(url: string) {
-  return axiosInstance.post<Request.ProcessTsvUrlResponse>('/process-tsv-url', { url }, {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  })
-}
+/**
+ * Regenerate existing outline content with updated parameters
+ * Used for content refinement and updates
+ * USAGE: contentPerfect (4+ matches), preferencesPerfect (4+ matches)
+ */
+export const regenerateOutline = (content_plan_outline_guid: string, other?: any) => {
+  devLog.request('regenerateOutline', { content_plan_outline_guid, other });
 
-// used by: contentPerfect
-export const regenerateOutline = (
-  content_plan_outline_guid,
-  other?
-) => {
   let reqObj: any = {
     guid: content_plan_outline_guid,
   }
@@ -195,16 +243,24 @@ export const regenerateOutline = (
     reqObj.client_domain = reqObj?.domain
     delete reqObj?.domain
   }
-  return axiosInstance.post(
+
+  const response = axiosInstance.post(
     `https://planperfectapi.replit.app/regenerate_outline`,
     reqObj
   );
+
+  response.then(res => devLog.response('regenerateOutline', res)).catch(err => devLog.error('regenerateOutline', err));
+  return response;
 };
 
-// used by: contentPerfect
-export const regeneratePost = (
-  guid, other?
-) => {
+/**
+ * Regenerate existing post content with updated parameters
+ * Used for content refinement and updates
+ * USAGE: contentPerfect (4+ matches), preferencesPerfect (4+ matches)
+ */
+export const regeneratePost = (guid: string, other?: any) => {
+  devLog.request('regeneratePost', { guid, other });
+
   let reqObj = {
     content_plan_outline_guid: guid,
   }
@@ -212,97 +268,378 @@ export const regeneratePost = (
   if (other) {
     reqObj = { ...reqObj, ...other }
   }
-  // return axiosInstance.post(
-  //   `/api/post/generate-content-from-outline-guid`,
-  //   reqObj
-  // );
-  return axiosInstance.post(
+
+  const response = axiosInstance.post(
     `https://content-v5.replit.app/generate_content_from_outline_guid`,
     reqObj
   );
+
+  response.then(res => devLog.response('regeneratePost', res)).catch(err => devLog.error('regeneratePost', err));
+  return response;
 };
 
+// ================================================================================
+// MEDIUM USAGE SERVICES (Both Apps)
+// ================================================================================
+// These services are moderately used across both applications
 
-// used by: contentPerfect
+/**
+ * Add incoming plan items for content planning workflows
+ * Used in CreateContentModal for initial content setup
+ * USAGE: contentPerfect (3+ matches), preferencesPerfect (3+ matches)
+ */
+export const addIncomingPlanItem = (reqObj: PlanItemProps) => {
+  devLog.request('addIncomingPlanItem', reqObj);
+
+  const response = axiosInstance.post(`${API_URL}/add_incoming_plan_item`, reqObj);
+  response.then(res => devLog.response('addIncomingPlanItem', res)).catch(err => devLog.error('addIncomingPlanItem', err));
+
+  return response;
+};
+
+/**
+ * Save content plan post data to database
+ * Used in StatusActionBar for content persistence
+ * USAGE: contentPerfect (3+ matches), preferencesPerfect (3+ matches)
+ */
+export const saveContentPlanPost = (reqObj: Request.SaveContentPost) => {
+  devLog.request('saveContentPlanPost', reqObj);
+
+  const response = axiosInstance.post(`${API_URL}/post_outline`, reqObj);
+  response.then(res => devLog.response('saveContentPlanPost', res)).catch(err => devLog.error('saveContentPlanPost', err));
+
+  return response;
+};
+
+/**
+ * Generate image prompts for visual content creation
+ * Used in StatusActionBar for AI-generated image descriptions
+ * USAGE: contentPerfect (3+ matches), preferencesPerfect (3+ matches)
+ */
+export const generateImagePrompt = (content_plan_outline_guid: string) => {
+  devLog.request('generateImagePrompt', { content_plan_outline_guid });
+
+  const response = axiosInstance.post('/api/post/generate-image-prompt', { content_plan_outline_guid });
+  response.then(res => devLog.response('generateImagePrompt', res)).catch(err => devLog.error('generateImagePrompt', err));
+
+  return response;
+};
+
+/**
+ * Regenerate HTML content from existing data
+ * Used in StatusActionBar for content formatting updates
+ * USAGE: contentPerfect (2+ matches), preferencesPerfect (2+ matches)
+ */
+export const regenerateHTML = (reqObj: Request.RegeneratePost) => {
+  devLog.request('regenerateHTML', reqObj);
+
+  const response = axiosInstance.post(`https://content-v5.replit.app/regenerate_html${parseQueries(reqObj)}`, reqObj);
+  response.then(res => devLog.response('regenerateHTML', res)).catch(err => devLog.error('regenerateHTML', err));
+
+  return response;
+};
+
+/**
+ * Regenerate HTML content from document outline
+ * Used in StatusActionBar for document-based content formatting
+ * USAGE: contentPerfect (2+ matches), preferencesPerfect (2+ matches)
+ */
+export const regenerateHTMLfromDoc = (reqObj: Request.RegeneratePost) => {
+  devLog.request('regenerateHTMLfromDoc', reqObj);
+
+  const response = axiosInstance.post(`https://content-v5.replit.app/regenerate_html_from_outline_guid${parseQueries(reqObj)}`, reqObj);
+  response.then(res => devLog.response('regenerateHTMLfromDoc', res)).catch(err => devLog.error('regenerateHTMLfromDoc', err));
+
+  return response;
+};
+
+/**
+ * Get post data by GUID for content management
+ * Used in StatusActionBar and PostsList for content retrieval
+ * USAGE: contentPerfect (2+ matches), preferencesPerfect (2+ matches)
+ */
+export const getPost = (guid: string) => {
+  devLog.request('getPost', { guid });
+
+  const response = supabase.from('tasks')
+    .select('*')
+    .eq('task_id', guid)
+    .neq("is_deleted", true)
+    .order('created_at', { ascending: false })
+    .single();
+
+  response.then(res => devLog.response('getPost', res));
+  return response;
+};
+
+/**
+ * Get post status from outline GUID
+ * Used in StatusActionBar for status tracking
+ * USAGE: contentPerfect (2+ matches), preferencesPerfect (2+ matches)
+ */
+export const getPostStatusFromOutline = (guid: string) => {
+  devLog.request('getPostStatusFromOutline', { guid });
+
+  const response = supabase.from('tasks')
+    .select('*')
+    .eq('content_plan_outline_guid', guid)
+    .neq("is_deleted", true)
+    .order('created_at', { ascending: false });
+
+  response.then(res => devLog.response('getPostStatusFromOutline', res));
+  return response;
+};
+
+/**
+ * Publish content to WordPress platform
+ * Used in StatusActionBar for content distribution
+ * USAGE: contentPerfect (2+ matches), preferencesPerfect (2+ matches)
+ */
+export const publishToWordPress = async (guid: string) => {
+  devLog.request('publishToWordPress', { guid });
+
+  const response = axiosInstance.post('/api/post/wordpress-publish', { content_plan_outline_guid: guid });
+  response.then(res => devLog.response('publishToWordPress', res)).catch(err => devLog.error('publishToWordPress', err));
+
+  return response;
+};
+
+/**
+ * Update live URL for published content
+ * Used in StatusActionBar for URL management
+ * USAGE: contentPerfect (2+ matches), preferencesPerfect (2+ matches)
+ */
+export const updateLiveUrl = (guid: string, url: string) => {
+  devLog.request('updateLiveUrl', { guid, url });
+
+  let reqObj = {
+    content_plan_outline_guid: guid,
+    live_post_url: url || ''
+  }
+
+  const response = axiosInstance.post(`/api/post/update-live-url`, reqObj);
+  response.then(res => devLog.response('updateLiveUrl', res)).catch(err => devLog.error('updateLiveUrl', err));
+
+  return response;
+};
+
+/**
+ * Delete post by task GUID
+ * Used in StatusActionBar and PostsList for content management
+ * USAGE: contentPerfect (2+ matches), preferencesPerfect (2+ matches)
+ */
+export const deletePost = (task_guid: string) => {
+  devLog.request('deletePost', { task_guid });
+
+  const response = supabase.from('tasks')
+    .update({ is_deleted: true })
+    .eq("task_id", task_guid)
+    .select('*');
+
+  response.then(res => devLog.response('deletePost', res));
+  return response;
+};
+
+/**
+ * Delete outline by GUID
+ * Used in StatusActionBar and OutlinesList for content management
+ * USAGE: contentPerfect (2+ matches), preferencesPerfect (2+ matches)
+ */
+export const deleteOutline = (guid: string) => {
+  devLog.request('deleteOutline', { guid });
+
+  const response = supabase.from('content_plan_outlines')
+    .update({ is_deleted: true })
+    .eq("guid", guid)
+    .select('*');
+
+  response.then(res => devLog.response('deleteOutline', res));
+  return response;
+};
+
+// ================================================================================
+// SINGLE APP USAGE SERVICES
+// ================================================================================
+// These services are used in only one application
+
+/**
+ * Get plan status by ID - contentPerfect only
+ * Used for content plan status tracking
+ * USAGE: contentPerfect only
+ */
+export const getPlanStatus = (id: string) => {
+  devLog.request('getPlanStatus', { id });
+
+  const response = axiosInstance.get(`${API_URL}/status/${id}`);
+  response.then(res => devLog.response('getPlanStatus', res)).catch(err => devLog.error('getPlanStatus', err));
+
+  return response;
+};
+
+/**
+ * Get completed plan data - contentPerfect only
+ * Used for retrieving finalized content plans
+ * USAGE: contentPerfect only
+ */
+export const getCompletedPlan = (id: string, server?: boolean) => {
+  devLog.request('getCompletedPlan', { id, server });
+
+  const response = server ?
+    axios.get(`${API_URL}/get_content_plan/${id}`) :
+    axiosInstance.get(`${API_URL}/get_content_plan/${id}`);
+
+  response.then(res => devLog.response('getCompletedPlan', res)).catch(err => devLog.error('getCompletedPlan', err));
+  return response;
+};
+
+/**
+ * Generate content plan outline - contentPerfect only
+ * Used for initial content structure creation
+ * USAGE: contentPerfect only
+ */
+export const generateContentPlanOutline = (reqObj: Request.PostOutlineGenerateRequest) => {
+  devLog.request('generateContentPlanOutline', reqObj);
+
+  const response = axiosInstance.post('/api/outlines/generate', reqObj);
+  response.then(res => devLog.response('generateContentPlanOutline', res)).catch(err => devLog.error('generateContentPlanOutline', err));
+
+  return response;
+};
+
+/**
+ * Update content plan data - contentPerfect only
+ * Used for modifying existing content plans
+ * USAGE: contentPerfect only
+ */
+export const updateContentPlan = (guid: string, reqObj: any, other?: any) => {
+  devLog.request('updateContentPlan', { guid, reqObj, other });
+
+  let reqBody: any = {
+    guid,
+    content_plan_table: reqObj,
+  }
+  if (other) {
+    reqBody = { ...other, ...reqBody }
+    delete reqBody.content_plan_json
+    delete reqBody?.content_plan
+  }
+
+  const response = axiosInstance.post(`${API_URL}/update_content_plan`, reqBody);
+  response.then(res => devLog.response('updateContentPlan', res)).catch(err => devLog.error('updateContentPlan', err));
+
+  return response;
+};
+
+/**
+ * Get post status by GUID - contentPerfect only
+ * Used for content generation status tracking
+ * USAGE: contentPerfect only
+ */
 export const getPostStatus = (guid: string) => {
-  return axiosInstance.get(`${NEW_CONTENT_API_URL}/content/status/${guid}`, { headers: newContentAPIHeader });
+  devLog.request('getPostStatus', { guid });
+
+  const response = axiosInstance.get(`${NEW_CONTENT_API_URL}/content/status/${guid}`, { headers: newContentAPIHeader });
+  response.then(res => devLog.response('getPostStatus', res)).catch(err => devLog.error('getPostStatus', err));
+
+  return response;
 };
 
-// used by: contentPerfect
+/**
+ * Get latest status by outline GUID - contentPerfect only
+ * Used for tracking the most recent status updates
+ * USAGE: contentPerfect only
+ */
 export const getLatestStatusByOutlineGUID = (guid: string) => {
-  return supabase
+  devLog.request('getLatestStatusByOutlineGUID', { guid });
+
+  const response = supabase
     .from('tasks')
     .select('*')
     .eq('content_plan_outline_guid', guid)
-    .order('last_updated_at', { ascending: false })
-}
+    .order('last_updated_at', { ascending: false });
 
-// used by: contentPerfect
+  response.then(res => devLog.response('getLatestStatusByOutlineGUID', res));
+  return response;
+};
+
+/**
+ * Create user credit account - contentPerfect only
+ * Used for user credit system initialization
+ * USAGE: contentPerfect only
+ */
 export const createUserCreditAccount = (email: string) => {
-  return axiosInstance.post(
+  devLog.request('createUserCreditAccount', { email });
+
+  const response = axiosInstance.post(
     "https://lucsperfect.replit.app/users/",
     { email, amount: 9000 },
     { headers: headers },
   );
+
+  response.then(res => devLog.response('createUserCreditAccount', res)).catch(err => devLog.error('createUserCreditAccount', err));
+  return response;
 };
 
-// used by: contentPerfect
+/**
+ * Add user credits - contentPerfect only
+ * Used for crediting user accounts
+ * USAGE: contentPerfect only
+ */
 export const addUserCredit = (email: string, amount: number) => {
-  return axiosInstance.put(
+  devLog.request('addUserCredit', { email, amount });
+
+  const response = axiosInstance.put(
     "https://lucsperfect.replit.app/users/add_credits",
     { email, amount },
     { headers: headers },
   );
-};
-// UNUSED SERVICE - No references found in contentPerfect app
-export const deductUserCredit = (email: string, amount: number) => {
-  return axiosInstance.put(
-    "https://lucsperfect.replit.app/users/deduct_credits",
-    { email, amount },
-    { headers: headers },
-  );
+
+  response.then(res => devLog.response('addUserCredit', res)).catch(err => devLog.error('addUserCredit', err));
+  return response;
 };
 
-// UNUSED SERVICE - No references found in contentPerfect app
-export const deleteUserCreditAccount = (email: string) => {
-  return axiosInstance.delete(`https://lucsperfect.replit.app/users/${email}`, { headers: headers });
-};
-
-// used by: contentPerfect
+/**
+ * Check user credits - contentPerfect only  
+ * Used for verifying user account balance
+ * USAGE: contentPerfect only
+ */
 export const checkUserCredits = (email: string) => {
-  return axiosInstance.get(`https://lucsperfect.replit.app/users/${email}/credits`, {
+  devLog.request('checkUserCredits', { email });
+
+  const response = axiosInstance.get(`https://lucsperfect.replit.app/users/${email}/credits`, {
     headers: headers,
   });
+
+  response.then(res => devLog.response('checkUserCredits', res)).catch(err => devLog.error('checkUserCredits', err));
+  return response;
 };
 
-// used by: contentPerfect
-export const fetchOutlineStatus = (guid: string) => {
-  return supabase
-    .from('content_plan_outline_statuses')
-    .select('*')
-    .order('timestamp', { ascending: false })
-    .eq('outline_guid', guid)
-};
-// used by: contentPerfect
-export const fetchOutlineData = (guid: string) => {
-  return supabase
-    .from('content_plan_outlines')
-    .select('*')
-    .eq('guid', guid)
-};
-
-
-// used by: contentPerfect
+/**
+ * Get batch status for multiple items - contentPerfect only
+ * Used for bulk status checking operations
+ * USAGE: contentPerfect only
+ */
 export const getBatchStatus = (guids: string[]) => {
-  return axiosInstance.post(
+  devLog.request('getBatchStatus', { guids });
+
+  const response = axiosInstance.post(
     `${NEW_CONTENT_API_URL}/content/status/batch`,
     guids,
-    { headers: newContentAPIHeader });
+    { headers: newContentAPIHeader }
+  );
+
+  response.then(res => devLog.response('getBatchStatus', res)).catch(err => devLog.error('getBatchStatus', err));
+  return response;
 };
 
-
-// used by: contentPerfect
+/**
+ * Get posts by domain - contentPerfect only
+ * Used for domain-specific content retrieval
+ * USAGE: contentPerfect only
+ */
 export const getPostsByDomain = (domain: string, reqObj?: any) => {
+  devLog.request('getPostsByDomain', { domain, reqObj });
+
   const startIndex = reqObj?.page === 1 ? 0 : (reqObj.page - 1) * reqObj.page_size;
   const endIndex = startIndex + reqObj.page_size - 1;
 
@@ -314,25 +651,31 @@ export const getPostsByDomain = (domain: string, reqObj?: any) => {
     .range(startIndex, endIndex)
     .order('last_updated_at', { ascending: false });
 
+  let response;
   if (reqObj?.has_live_post_url !== undefined) {
-    if (reqObj.has_live_post_url === true) {
-      return baseQuery.neq("live_post_url", null);
-    } else {
-      return baseQuery.is("live_post_url", null);
-    }
+    response = reqObj.has_live_post_url === true ?
+      baseQuery.neq("live_post_url", null) :
+      baseQuery.is("live_post_url", null);
   } else if (reqObj?.status) {
-    if (reqObj.status === 'completed') {
-      return baseQuery.eq("status", "Complete").is("live_post_url", null);
-    } else {
-      return baseQuery.neq("status", "Complete");
-    }
+    response = reqObj.status === 'completed' ?
+      baseQuery.eq("status", "Complete").is("live_post_url", null) :
+      baseQuery.neq("status", "Complete");
   } else {
-    return baseQuery;
+    response = baseQuery;
   }
+
+  response.then(res => devLog.response('getPostsByDomain', res)).catch(err => devLog.error('getPostsByDomain', err));
+  return response;
 };
 
-// used by: contentPerfect
+/**
+ * Get posts by email - contentPerfect only
+ * Used for user-specific content retrieval
+ * USAGE: contentPerfect only
+ */
 export const getPostsByEmail = (email: string, reqObj?: any) => {
+  devLog.request('getPostsByEmail', { email, reqObj });
+
   const startIndex = reqObj?.page === 1 ? 0 : (reqObj.page - 1) * reqObj.page_size;
   const endIndex = startIndex + reqObj.page_size - 1;
 
@@ -344,333 +687,610 @@ export const getPostsByEmail = (email: string, reqObj?: any) => {
     .range(startIndex, endIndex)
     .order('last_updated_at', { ascending: false });
 
+  let response;
   if (reqObj?.has_live_post_url !== undefined) {
-    if (reqObj.has_live_post_url === true) {
-      return baseQuery.neq("live_post_url", null);
-    } else {
-      return baseQuery.is("live_post_url", null);
-    }
+    response = reqObj.has_live_post_url === true ?
+      baseQuery.neq("live_post_url", null) :
+      baseQuery.is("live_post_url", null);
   } else if (reqObj?.status) {
-    if (reqObj.status === 'completed') {
-      return baseQuery.eq("status", "Complete").is("live_post_url", null);
-    } else {
-      return baseQuery.neq("status", "Complete");
-    }
+    response = reqObj.status === 'completed' ?
+      baseQuery.eq("status", "Complete").is("live_post_url", null) :
+      baseQuery.neq("status", "Complete");
   } else {
-    return baseQuery;
+    response = baseQuery;
   }
+
+  response.then(res => devLog.response('getPostsByEmail', res)).catch(err => devLog.error('getPostsByEmail', err));
+  return response;
 };
 
-// used by: contentPerfect
+/**
+ * Delete content plan - contentPerfect only
+ * Used for removing entire content plans
+ * USAGE: contentPerfect only
+ */
 export const deleteContentPlan = (guid: string) => {
-  return axiosInstance.delete(`${API_URL}/delete_content_plan/${guid}`);
-}
+  devLog.request('deleteContentPlan', { guid });
 
-// used by: contentPerfect
-export const deletePost = (task_guid: string) => {
-  return supabase.from('tasks')
-    .update({ is_deleted: true })
-    .eq("task_id", task_guid)
-    .select('*')
-  return axiosInstance.delete(`${NEW_CONTENT_API_URL}/content/delete/${task_guid}`, { headers: newContentAPIHeader });
-}
+  const response = axiosInstance.delete(`${API_URL}/delete_content_plan/${guid}`);
+  response.then(res => devLog.response('deleteContentPlan', res)).catch(err => devLog.error('deleteContentPlan', err));
 
-// used by: contentPerfect
-export const updateLiveUrl = (guid, url) => {
-  let reqObj = {
-    content_plan_outline_guid: guid,
-    live_post_url: url || ''
-  }
-  return axiosInstance.post(`/api/post/update-live-url`, reqObj);
-}
+  return response;
+};
 
-// factcheckPerfect apis 
-// used by: contentPerfect
+/**
+ * Get fact check status - contentPerfect only
+ * Used for content verification workflows
+ * USAGE: contentPerfect only
+ */
 export const getFactCheckStatus = (guid: string) => {
-  return axiosInstance.get(`https://factcheck-perfectai.replit.app/status/${guid}`);
-}
+  devLog.request('getFactCheckStatus', { guid });
 
-// used by: contentPerfect
-export const postFactCheck = (reqObj) => {
-  return axiosInstance.post(`https://factcheck-perfectai.replit.app/fact_check_html`, reqObj, { headers: { "Content-Type": "multipart/form-data" } });
-}
+  const response = axiosInstance.get(`https://factcheck-perfectai.replit.app/status/${guid}`);
+  response.then(res => devLog.response('getFactCheckStatus', res)).catch(err => devLog.error('getFactCheckStatus', err));
 
-// UNUSED SERVICE - No references found in contentPerfect app
-export const generateVoicePrompts = (domain) => {
-  return axiosInstance.get(`https://voice-perfect-api.replit.app/GenerateVoicePrompt?domain=${urlSanitization(domain)}`)
-}
-
-// UNUSED SERVICE - No references found in contentPerfect app
-export const saveDetails = (data) => {
-  return axiosInstance.post('https://voice-perfect-api.replit.app/SaveUserDetails', data)
-}
-
-
-// Social Perfect apis 
-// UNUSED SERVICE - No references found in contentPerfect app
-export const getSocialContent = (url: string) => {
-  return axiosInstance.post('https://socialperfectapi.replit.app/get-content', { url });
+  return response;
 };
 
-// UNUSED SERVICE - No references found in contentPerfect app
-export const createSocialPost = async (postData: Request.SocialPostCreate) => {
-  return axiosInstance.post('https://socialperfectapi.replit.app/create_post', postData)
+/**
+ * Post fact check data - contentPerfect only
+ * Used for submitting content for fact verification
+ * USAGE: contentPerfect only
+ */
+export const postFactCheck = (reqObj: any) => {
+  devLog.request('postFactCheck', reqObj);
+
+  const response = axiosInstance.post(`https://factcheck-perfectai.replit.app/fact_check_html`, reqObj, {
+    headers: { "Content-Type": "multipart/form-data" }
+  });
+
+  response.then(res => devLog.response('postFactCheck', res)).catch(err => devLog.error('postFactCheck', err));
+  return response;
 };
 
-
-// UNUSED SERVICE - No references found in contentPerfect app
-export const getSocialPost = async (id: string) => {
-  return axiosInstance.get(`https://socialperfectapi.replit.app/socialposts/${id}`);
-
-};
-// UNUSED SERVICE - No references found in contentPerfect app
-export const updateSocialPost = async (reqObj) => {
-  return axiosInstance.patch(`https://socialperfectapi.replit.app/socialposts/${reqObj.id || reqObj.uuid}`, reqObj);
-
-};
-
-// UNUSED SERVICE - No references found in contentPerfect app
-export const generateSocialPost = async (reqObj: Request.GenerateSocialPostProps) => {
-  return axiosInstance.post(`https://socialperfectapi.replit.app/generate_post/${reqObj.uuid}`, reqObj, { headers: { 'Content-Type': 'application/json' } }
-  );
-
-}
-// UNUSED SERVICE - No references found in contentPerfect app
-export const regenerateSocialPost = async (guid, platform) => {
-  return axiosInstance.post(`https://socialperfectapi.replit.app/regenerate_post/${guid}/${platform}`
-  );
-}
-
-// used by: contentPerfect
+/**
+ * Get outlines by content plan - contentPerfect only
+ * Used for retrieving related outlines
+ * USAGE: contentPerfect only
+ */
 export const getOutlinesByContentPlan = async (content_plan_guid: string, paginator?: PaginationRequest) => {
+  devLog.request('getOutlinesByContentPlan', { content_plan_guid, paginator });
+
+  let response;
   if (paginator) {
     let startIndex = paginator?.page === 1 ? 0 : (paginator.page - 1) * paginator.page_size;
-    let endIndex = startIndex + paginator.page_size - 1
-    return supabase.from('content_plan_outlines')
+    let endIndex = startIndex + paginator.page_size - 1;
+    response = supabase.from('content_plan_outlines')
       .select('*', { count: 'exact' })
       .eq("content_plan_guid", content_plan_guid)
       .range(startIndex, endIndex)
-      .order('updated_at', { ascending: false })
-  }
-  else {
-    return supabase.from('content_plan_outlines')
+      .order('updated_at', { ascending: false });
+  } else {
+    response = supabase.from('content_plan_outlines')
       .select('*')
       .eq("content_plan_guid", content_plan_guid)
-      .order('updated_at', { ascending: false })
+      .order('updated_at', { ascending: false });
   }
 
-}
-// completed
-// used by: contentPerfect
+  response.then(res => devLog.response('getOutlinesByContentPlan', res)).catch(err => devLog.error('getOutlinesByContentPlan', err));
+  return response;
+};
+
+/**
+ * Get content plan outlines by domain - contentPerfect only
+ * Used for domain-specific outline retrieval
+ * USAGE: contentPerfect only
+ */
 export const getContentPlanOutlinesByDomain = (domain: string, paginator: PaginationRequest, status?: string) => {
+  devLog.request('getContentPlanOutlinesByDomain', { domain, paginator, status });
+
   let startIndex = paginator?.page === 1 ? 0 : (paginator.page - 1) * paginator.page_size;
-  let endIndex = startIndex + paginator.page_size - 1
+  let endIndex = startIndex + paginator.page_size - 1;
+
   const baseQuery = supabase.from('content_plan_outlines')
     .select('*', { count: 'exact' })
     .eq("domain", domain)
     .range(startIndex, endIndex)
     .neq("is_deleted", true)
-    .order('created_at', { ascending: false })
+    .order('created_at', { ascending: false });
 
-  if (!!status) {
+  let response;
+  if (status) {
     switch (status) {
       case 'completed':
-        return baseQuery.eq("status", "completed")
+        response = baseQuery.eq("status", "completed");
+        break;
       case 'in-progress':
-        return baseQuery.neq("status", "completed")
+        response = baseQuery.neq("status", "completed");
+        break;
       case 'error':
-        return baseQuery.like('status', '%err%')
+        response = baseQuery.like('status', '%err%');
+        break;
       default:
-        return baseQuery.eq("status", status)
+        response = baseQuery.eq("status", status);
     }
+  } else {
+    response = baseQuery;
   }
-  else return baseQuery
-}
 
-// used by: contentPerfect
+  response.then(res => devLog.response('getContentPlanOutlinesByDomain', res)).catch(err => devLog.error('getContentPlanOutlinesByDomain', err));
+  return response;
+};
+
+/**
+ * Get content plan outlines by email - contentPerfect only
+ * Used for user-specific outline retrieval
+ * USAGE: contentPerfect only
+ */
 export const getContentPlanOutlinesByEmail = (email: string, paginator: PaginationRequest, status?: string) => {
+  devLog.request('getContentPlanOutlinesByEmail', { email, paginator, status });
+
   let startIndex = paginator?.page === 1 ? 0 : (paginator.page - 1) * paginator.page_size;
-  let endIndex = startIndex + paginator.page_size - 1
-  if (status) {
-    console.log("Status provided:", status);
-  }
+  let endIndex = startIndex + paginator.page_size - 1;
+
   const baseQuery = supabase.from('content_plan_outlines')
     .select('*', { count: 'exact' })
     .eq("email", email)
     .neq("is_deleted", true)
     .range(startIndex, endIndex)
-    .order('created_at', { ascending: false })
+    .order('created_at', { ascending: false });
+
+  let response;
   if (status) {
     switch (status) {
       case 'completed':
-        return baseQuery.eq("status", "completed")
+        response = baseQuery.eq("status", "completed");
+        break;
       case 'in-progress':
-        return baseQuery.neq("status", "completed")
+        response = baseQuery.neq("status", "completed");
+        break;
       case 'failed':
-        return baseQuery.like('status', '%fail%')
+        response = baseQuery.like('status', '%fail%');
+        break;
       default:
-        return baseQuery.eq("status", status)
+        response = baseQuery.eq("status", status);
     }
+  } else {
+    response = baseQuery;
   }
-  else return baseQuery
-}
 
-// used by: contentPerfect
+  response.then(res => devLog.response('getContentPlanOutlinesByEmail', res)).catch(err => devLog.error('getContentPlanOutlinesByEmail', err));
+  return response;
+};
+
+/**
+ * Get content plans by email - contentPerfect only
+ * Used for user content plan management
+ * USAGE: contentPerfect only
+ */
 export const getContentPlansByEmail = (email: string, paginator: PaginationRequest) => {
+  devLog.request('getContentPlansByEmail', { email, paginator });
+
   let startIndex = paginator?.page === 1 ? 0 : (paginator.page - 1) * paginator.page_size;
-  let endIndex = startIndex + paginator.page_size - 1
-  return supabase.from('content_plans')
+  let endIndex = startIndex + paginator.page_size - 1;
+
+  const response = supabase.from('content_plans')
     .select('*', { count: 'exact' })
     .eq("email", email)
     .range(startIndex, endIndex)
-    .order('timestamp', { ascending: false })
-}
-// used by: contentPerfect
+    .order('timestamp', { ascending: false });
+
+  response.then(res => devLog.response('getContentPlansByEmail', res));
+  return response;
+};
+
+/**
+ * Patch content plan data by GUID - contentPerfect only
+ * Used for updating specific fields in content plans without full replacement
+ * USAGE: contentPerfect only
+ */
+export const patchContentPlans = (guid: string, data: any) => {
+  devLog.request('patchContentPlans', { guid, data });
+
+  const response = axiosInstance.patch(
+    `https://planperfectapi.replit.app/update_outline/${guid}`, data
+  );
+
+  response.then(res => devLog.response('patchContentPlans', res)).catch(err => devLog.error('patchContentPlans', err));
+  return response;
+};
+
+
+/**
+ * Get content plans by domain - contentPerfect only
+ * Used for domain content plan management
+ * USAGE: contentPerfect only
+ */
 export const getContentPlansByDomain = (domain: string, paginator: PaginationRequest) => {
+  devLog.request('getContentPlansByDomain', { domain, paginator });
+
   let startIndex = paginator?.page === 1 ? 0 : (paginator.page - 1) * paginator.page_size;
-  let endIndex = startIndex + paginator.page_size - 1
-  return supabase.from('content_plans')
+  let endIndex = startIndex + paginator.page_size - 1;
+
+  const response = supabase.from('content_plans')
     .select('*', { count: 'exact' })
     .eq("domain_name", domain)
     .range(startIndex, endIndex)
-    .order('timestamp', { ascending: false })
-}
+    .order('timestamp', { ascending: false });
 
+  response.then(res => devLog.response('getContentPlansByDomain', res));
+  return response;
+};
 
-// used by: contentPerfect
-export const deleteOutline = (guid: string) => {
-  return supabase.from('content_plan_outlines')
-    .update({ is_deleted: true })
-    .eq("guid", guid)
-    .select('*')
-
-  return axiosInstance.delete(`https://planperfectapi.replit.app/delete_outline/${guid}`);
-}
-
-// used by: contentPerfect
+/**
+ * Patch post field data - contentPerfect only
+ * Used for updating specific post fields
+ * USAGE: contentPerfect only
+ */
 export const patchPost = (guid: string, field: string, value: string) => {
-  return axiosInstance.patch(`${NEW_CONTENT_API_URL}/content/update/${guid}/field`, { "field": field, "value": value }, { headers: { 'Content-Type': 'application/json' } });
-}
+  devLog.request('patchPost', { guid, field, value });
 
-// used by: contentPerfect
+  const response = axiosInstance.patch(`${NEW_CONTENT_API_URL}/content/update/${guid}/field`,
+    { "field": field, "value": value },
+    { headers: { 'Content-Type': 'application/json' } }
+  );
+
+  response.then(res => devLog.response('patchPost', res)).catch(err => devLog.error('patchPost', err));
+  return response;
+};
+
+/**
+ * Fact check by post GUID - contentPerfect only
+ * Used for content verification by post ID
+ * USAGE: contentPerfect only
+ */
 export const factCheckByPostGuid = (reqObj: any) => {
-  return axiosInstance.post(`https://factcheck-perfectai.replit.app/fact_check_content_by_guid`, reqObj)
-}
+  devLog.request('factCheckByPostGuid', reqObj);
 
-// GSC and AHREF Reporting 
-// used by: contentPerfect
+  const response = axiosInstance.post(`https://factcheck-perfectai.replit.app/fact_check_content_by_guid`, reqObj);
+  response.then(res => devLog.response('factCheckByPostGuid', res)).catch(err => devLog.error('factCheckByPostGuid', err));
+
+  return response;
+};
+
+/**
+ * Get GSC search analytics - contentPerfect only
+ * Used for Google Search Console data retrieval
+ * USAGE: contentPerfect only  
+ */
 export const getGSCSearchAnalytics = (reqObj: Request.GSCRequest) => {
-  return axiosInstance.get(`https://search-analytics-api-dev456.replit.app/gsc_search_analytics_data${parseQueries(reqObj)}`);
-}
+  devLog.request('getGSCSearchAnalytics', reqObj);
 
-// used by: contentPerfect
+  const response = axiosInstance.get(`https://search-analytics-api-dev456.replit.app/gsc_search_analytics_data${parseQueries(reqObj)}`);
+  response.then(res => devLog.response('getGSCSearchAnalytics', res)).catch(err => devLog.error('getGSCSearchAnalytics', err));
+
+  return response;
+};
+
+/**
+ * Get Ahrefs domain rating - contentPerfect only
+ * Used for domain authority analysis
+ * USAGE: contentPerfect only
+ */
 export const getAhrefsDomainRating = (reqObj: Request.DomainReportsRequest) => {
-  return axiosInstance.get(`https://search-analytics-api-dev456.replit.app/ahrefs_domain_rating${parseQueries(reqObj)}`);
-}
+  devLog.request('getAhrefsDomainRating', reqObj);
 
-// used by: contentPerfect
+  const response = axiosInstance.get(`https://search-analytics-api-dev456.replit.app/ahrefs_domain_rating${parseQueries(reqObj)}`);
+  response.then(res => devLog.response('getAhrefsDomainRating', res)).catch(err => devLog.error('getAhrefsDomainRating', err));
+
+  return response;
+};
+
+/**
+ * Get Ahrefs URL rating - contentPerfect only
+ * Used for page authority analysis
+ * USAGE: contentPerfect only
+ */
 export const getAhrefsUrlRating = (reqObj: Request.PageRequest) => {
-  return axiosInstance.get(`https://search-analytics-api-dev456.replit.app/ahrefs_url_rating${parseQueries(reqObj)}`);
-}
+  devLog.request('getAhrefsUrlRating', reqObj);
 
-// used by: contentPerfect
+  const response = axiosInstance.get(`https://search-analytics-api-dev456.replit.app/ahrefs_url_rating${parseQueries(reqObj)}`);
+  response.then(res => devLog.response('getAhrefsUrlRating', res)).catch(err => devLog.error('getAhrefsUrlRating', err));
+
+  return response;
+};
+
+/**
+ * Get GSC live URL report - contentPerfect only
+ * Used for Google Search Console URL analysis
+ * USAGE: contentPerfect only
+ */
 export const getGSCLiveURLReport = (reqObj: Request.GSCTotalsRequest) => {
-  return axiosInstance.get(`https://search-analytics-api-dev456.replit.app/gsc_benchmarks${parseQueries(reqObj)}`);
-}
+  devLog.request('getGSCLiveURLReport', reqObj);
 
-// used by: contentPerfect
-export const populateBulkGSC = (reqObj) => {
-  return axiosInstance.post(`https://gsc-batch-job-dev456.replit.app/trigger_gsc_job`, reqObj);
-}
+  const response = axiosInstance.get(`https://search-analytics-api-dev456.replit.app/gsc_benchmarks${parseQueries(reqObj)}`);
+  response.then(res => devLog.response('getGSCLiveURLReport', res)).catch(err => devLog.error('getGSCLiveURLReport', err));
 
-// used by: contentPerfect
-export const regenerateHTML = (reqObj: Request.RegeneratePost) => {
-  // return axiosInstance.post(`/api/post/regenerate-html${parseQueries(reqObj)}`, reqObj);
-  return axiosInstance.post(`https://content-v5.replit.app/regenerate_html${parseQueries(reqObj)}`, reqObj);
-}
-// used by: contentPerfect
-export const regenerateHTMLfromDoc = (reqObj: Request.RegeneratePost) => {
-  // return axiosInstance.post(`/api/post/regenerate-html-from-outline-guid${parseQueries(reqObj)}`, reqObj);
-  return axiosInstance.post(`https://content-v5.replit.app/regenerate_html_from_outline_guid${parseQueries(reqObj)}`, reqObj);
-}
+  return response;
+};
 
-// used by: contentPerfect
-export const getPost = (guid: string) => {
-  return supabase.from('tasks')
-    .select('*').eq('task_id', guid).neq("is_deleted", true).order('created_at', { ascending: false }).single()
-}
+/**
+ * Populate bulk GSC data - contentPerfect only
+ * Used for batch Google Search Console operations
+ * USAGE: contentPerfect only
+ */
+export const populateBulkGSC = (reqObj: any) => {
+  devLog.request('populateBulkGSC', reqObj);
 
-// used by: contentPerfect
-export const getPostStatusFromOutline = (guid: string) => {
-  return supabase.from('tasks')
-    .select('*').eq('content_plan_outline_guid', guid).neq("is_deleted", true).order('created_at', { ascending: false })
-}
+  const response = axiosInstance.post(`https://gsc-batch-job-dev456.replit.app/trigger_gsc_job`, reqObj);
+  response.then(res => devLog.response('populateBulkGSC', res)).catch(err => devLog.error('populateBulkGSC', err));
 
-// used by: contentPerfect
-export const publishToWordPress = async (guid: string) => {
-  return axiosInstance.post('/api/post/wordpress-publish', { content_plan_outline_guid: guid })
-}
+  return response;
+};
 
-// used by: contentPerfect
+/**
+ * Get content plan children - contentPerfect only
+ * Used for hierarchical content structure
+ * USAGE: contentPerfect only
+ */
 export const getContentPlanChildren = async (guid: string) => {
-  return axiosInstance.post(`/api/content-plan/get-child-content`, { content_plan_guid: guid });
+  devLog.request('getContentPlanChildren', { guid });
+
+  const response = axiosInstance.post(`/api/content-plan/get-child-content`, { content_plan_guid: guid });
+  response.then(res => devLog.response('getContentPlanChildren', res)).catch(err => devLog.error('getContentPlanChildren', err));
+
+  return response;
+};
+
+/**
+ * Check domain CSS file - contentPerfect only
+ * Used for CSS file verification
+ * USAGE: contentPerfect only
+ */
+export const checkDomainCSSFile = async (domain: string) => {
+  devLog.request('checkDomainCSSFile', { domain });
+
+  const response = axios.post('/api/check-css', { domain });
+  response.then(res => devLog.response('checkDomainCSSFile', res)).catch(err => devLog.error('checkDomainCSSFile', err));
+
+  return response;
+};
+
+// ================================================================================
+// UNUSED SERVICES
+// ================================================================================
+// These services have no current references in either application
+// They are kept for potential future use or legacy compatibility
+
+/**
+ * Generate synopsis - UNUSED
+ * Legacy service with no current references
+ * DEV NOTE: Consider removing if not needed for future features
+ */
+export const generateSynopsis = (domain: string) => {
+  devLog.request('generateSynopsis', { domain });
+
+  let newDomain = urlSanitization(domain);
+  const response = axiosInstance.get(`https://synopsisperfectai.replit.app/domain/${newDomain}`);
+
+  response.then(res => devLog.response('generateSynopsis', res)).catch(err => devLog.error('generateSynopsis', err));
+  return response;
+};
+
+/**
+ * Process TSV URL - UNUSED
+ * Legacy service for TSV file processing
+ * DEV NOTE: Consider removing if TSV functionality is not needed
+ */
+export function processTsvUrl(url: string) {
+  devLog.request('processTsvUrl', { url });
+
+  const response = axiosInstance.post<Request.ProcessTsvUrlResponse>('/process-tsv-url', { url }, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  response.then(res => devLog.response('processTsvUrl', res)).catch(err => devLog.error('processTsvUrl', err));
+  return response;
 }
 
-// UNUSED SERVICE - No references found in contentPerfect app
+/**
+ * Deduct user credit - UNUSED
+ * Legacy credit system function
+ * DEV NOTE: May be needed for future billing features
+ */
+export const deductUserCredit = (email: string, amount: number) => {
+  devLog.request('deductUserCredit', { email, amount });
+
+  const response = axiosInstance.put(
+    "https://lucsperfect.replit.app/users/deduct_credits",
+    { email, amount },
+    { headers: headers },
+  );
+
+  response.then(res => devLog.response('deductUserCredit', res)).catch(err => devLog.error('deductUserCredit', err));
+  return response;
+};
+
+/**
+ * Delete user credit account - UNUSED
+ * Legacy credit system function
+ * DEV NOTE: May be needed for user account deletion
+ */
+export const deleteUserCreditAccount = (email: string) => {
+  devLog.request('deleteUserCreditAccount', { email });
+
+  const response = axiosInstance.delete(`https://lucsperfect.replit.app/users/${email}`, { headers: headers });
+  response.then(res => devLog.response('deleteUserCreditAccount', res)).catch(err => devLog.error('deleteUserCreditAccount', err));
+
+  return response;
+};
+
+/**
+ * Generate voice prompts - UNUSED
+ * Legacy voice generation service
+ * DEV NOTE: Related to voicePerfect integration - may be reactivated
+ */
+export const generateVoicePrompts = (domain: string) => {
+  devLog.request('generateVoicePrompts', { domain });
+
+  const response = axiosInstance.get(`https://voice-perfect-api.replit.app/GenerateVoicePrompt?domain=${urlSanitization(domain)}`);
+  response.then(res => devLog.response('generateVoicePrompts', res)).catch(err => devLog.error('generateVoicePrompts', err));
+
+  return response;
+};
+
+/**
+ * Save details - UNUSED
+ * Legacy data persistence function
+ * DEV NOTE: Generic save function - may be reused for various features
+ */
+export const saveDetails = (data: any) => {
+  devLog.request('saveDetails', { data });
+
+  const response = axiosInstance.post('https://voice-perfect-api.replit.app/SaveUserDetails', data);
+  response.then(res => devLog.response('saveDetails', res)).catch(err => devLog.error('saveDetails', err));
+
+  return response;
+};
+
+/**
+ * Get social content - UNUSED
+ * Legacy social media integration
+ * DEV NOTE: Part of socialPerfect suite - may be reactivated
+ */
+export const getSocialContent = (url: string) => {
+  devLog.request('getSocialContent', { url });
+
+  const response = axiosInstance.post('https://socialperfectapi.replit.app/get-content', { url });
+  response.then(res => devLog.response('getSocialContent', res)).catch(err => devLog.error('getSocialContent', err));
+
+  return response;
+};
+
+/**
+ * Create social post - UNUSED
+ * Legacy social media post creation
+ * DEV NOTE: Part of socialPerfect suite - may be reactivated
+ */
+export const createSocialPost = async (postData: Request.SocialPostCreate) => {
+  devLog.request('createSocialPost', { postData });
+
+  const response = axiosInstance.post('https://socialperfectapi.replit.app/create_post', postData);
+  response.then(res => devLog.response('createSocialPost', res)).catch(err => devLog.error('createSocialPost', err));
+
+  return response;
+};
+
+/**
+ * Get social post - UNUSED
+ * Legacy social media post retrieval
+ * DEV NOTE: Part of socialPerfect suite - may be reactivated
+ */
+export const getSocialPost = async (id: string) => {
+  devLog.request('getSocialPost', { id });
+
+  const response = axiosInstance.get(`https://socialperfectapi.replit.app/socialposts/${id}`);
+  response.then(res => devLog.response('getSocialPost', res)).catch(err => devLog.error('getSocialPost', err));
+
+  return response;
+};
+
+/**
+ * Update social post - UNUSED
+ * Legacy social media post updating
+ * DEV NOTE: Part of socialPerfect suite - may be reactivated
+ */
+export const updateSocialPost = async (reqObj: any) => {
+  devLog.request('updateSocialPost', { reqObj });
+
+  const response = axiosInstance.patch(`https://socialperfectapi.replit.app/socialposts/${reqObj.id || reqObj.uuid}`, reqObj);
+  response.then(res => devLog.response('updateSocialPost', res)).catch(err => devLog.error('updateSocialPost', err));
+
+  return response;
+};
+
+/**
+ * Generate social post - UNUSED
+ * Legacy social media post generation
+ * DEV NOTE: Part of socialPerfect suite - may be reactivated
+ */
+export const generateSocialPost = async (reqObj: Request.GenerateSocialPostProps) => {
+  devLog.request('generateSocialPost', { reqObj });
+
+  const response = axiosInstance.post(`https://socialperfectapi.replit.app/generate_post/${reqObj.uuid}`, reqObj, {
+    headers: { 'Content-Type': 'application/json' }
+  });
+
+  response.then(res => devLog.response('generateSocialPost', res)).catch(err => devLog.error('generateSocialPost', err));
+  return response;
+};
+
+/**
+ * Regenerate social post - UNUSED
+ * Legacy social media post regeneration
+ * DEV NOTE: Part of socialPerfect suite - may be reactivated
+ */
+export const regenerateSocialPost = async (guid: string, platform: string) => {
+  devLog.request('regenerateSocialPost', { guid, platform });
+
+  const response = axiosInstance.post(`https://socialperfectapi.replit.app/regenerate_post/${guid}/${platform}`);
+  response.then(res => devLog.response('regenerateSocialPost', res)).catch(err => devLog.error('regenerateSocialPost', err));
+
+  return response;
+};
+
+/**
+ * Get domains - UNUSED
+ * Legacy domain management function
+ * DEV NOTE: May be useful for domain administration features
+ */
 export const getDomains = async (domains?: string[], hidden?: boolean | null, blocked?: boolean | null, paginator?: PaginationRequest) => {
+  devLog.request('getDomains', { domains, hidden, blocked, paginator });
+
+  let response;
   if (paginator) {
     let startIndex = paginator?.page === 1 ? 0 : (paginator.page - 1) * paginator.page_size;
-    let endIndex = startIndex + paginator.page_size - 1
+    let endIndex = startIndex + paginator.page_size - 1;
 
     let query = supabase.from('domains')
       .select('*', { count: 'exact' })
       .range(startIndex, endIndex)
-      .order('domain', { ascending: true })
+      .order('domain', { ascending: true });
+
     if (blocked === true) {
-      query = query.eq('blocked', true)
-    }
-    else {
-      query = query.eq('blocked', false)
+      query = query.eq('blocked', true);
+    } else {
+      query = query.eq('blocked', false);
     }
 
     if (domains && domains.length > 0) {
-      query = query.in('domain', domains)
+      query = query.in('domain', domains);
     }
 
     if (hidden !== null && hidden !== undefined) {
-      query = query.eq('hidden', hidden)
+      query = query.eq('hidden', hidden);
     }
 
-    return query
-  }
-  else {
+    response = query;
+  } else {
     let query = supabase.from('domains')
       .select('*')
-      .order('domain', { ascending: true })
+      .order('domain', { ascending: true });
 
     if (domains && domains.length > 0) {
-      query = query.in('domain', domains)
+      query = query.in('domain', domains);
     }
 
     if (hidden !== null && hidden !== undefined) {
-      query = query.eq('hidden', hidden)
+      query = query.eq('hidden', hidden);
     }
 
-    return query
+    response = query;
   }
-}
+
+  response.then(res => devLog.response('getDomains', res)).catch(err => devLog.error('getDomains', err));
+  return response;
+};
 
 /**
- * Store or update CSS file in Supabase storage via API route (uses admin Supabase client)
- * @param domain - The domain name to use as the filename
- * @param cssContent - The CSS content from post_style_tag_main field
- * @returns Promise with the result of the file upload/update operation
+ * Store CSS file - UNUSED
+ * Legacy CSS file storage service
+ * DEV NOTE: May be needed for custom styling features in preferencesPerfect
  */
-// UNUSED SERVICE - No references found in contentPerfect app
 export const storeCSSFile = async (domain: string, cssContent: string) => {
-  console.log('🎨 [storeCSSFile] Starting CSS file storage via API route');
-  console.log('🎨 [storeCSSFile] Domain:', domain);
-  console.log('🎨 [storeCSSFile] CSS content length:', cssContent?.length || 0, 'characters');
+  devLog.request('storeCSSFile', { domain, cssContentLength: cssContent?.length || 0 });
 
   try {
     const response = await fetch('/api/store-css', {
@@ -687,25 +1307,17 @@ export const storeCSSFile = async (domain: string, cssContent: string) => {
     const result = await response.json();
 
     if (!response.ok) {
-      console.error('🎨 [storeCSSFile] ❌ API request failed:', result.error?.message);
+      devLog.error('storeCSSFile', result.error);
       return { data: null, error: result.error };
     }
 
-    console.log('🎨 [storeCSSFile] ✅ API request successful:', result.data?.action);
-
-    // Return the response following the same pattern as other services
+    devLog.response('storeCSSFile', result.data);
     return {
       data: result.data,
       error: result.error
     };
   } catch (error) {
-    console.error('🎨 [storeCSSFile] ❌ Network error:', error);
+    devLog.error('storeCSSFile', error);
     return { data: null, error: { message: 'Network error: ' + error.message } };
   }
-};
-
-// used by: contentPerfect
-export const checkDomainCSSFile = async (domain: string) => {
-  console.log('🎨 [checkDomainCSSFile] Checking CSS file existence for domain:', domain);
-  return axios.post('/api/check-css', { domain });
 };

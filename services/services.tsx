@@ -16,10 +16,17 @@ import { createClient } from "../utils/supabase/client";
  * - NEXT_PUBLIC_API_LOGGING: Set to 'true' to enable dev console logging
  * - NODE_ENV: Used to determine if logging should be enabled in development
  * 
+ * Application Usage Summary:
+ * - SEOPerfect: Landing page app - Does NOT directly use services (uses shared components only)
+ * - contentPerfect: Content generation app - Heavily uses most services
+ * - preferencesPerfect: Domain preferences app - Uses subset of services
+ * - socialPerfect: Social media app - Uses social-specific services
+ * - indexPerfect: URL indexing app - Uses indexing-specific services
+ * 
  * Usage Categories:
- * 1. High Usage (Both Apps) - Core services used extensively across contentPerfect and preferencesPerfect
- * 2. Medium Usage (Both Apps) - Moderately used services across both applications
- * 3. Single App Usage - Services used only in contentPerfect OR preferencesPerfect
+ * 1. High Usage (Multiple Apps) - Core services used extensively across contentPerfect and preferencesPerfect
+ * 2. Medium Usage (Multiple Apps) - Moderately used services across applications
+ * 3. Single App Usage - Services used only in one application
  * 4. Unused Services - Legacy services with no current references
  * ================================================================================
  */
@@ -102,6 +109,7 @@ const parseQueries = (obj: object) => {
  * In preferencesPerfect: Used in DashboardPage for domain configuration data retrieval
  * In socialPerfect: Used in SocialInput.tsx and SettingsPage.tsx for brand context and domain configuration
  * USAGE: contentPerfect (13+ matches), preferencesPerfect (DashboardPage), socialPerfect (SocialInput, SettingsPage)
+ * SEOPerfect: Not directly used - app is landing page only with no domain-specific functionality
  */
 export const getSynopsisInfo = (domain: string) => {
   devLog.request('getSynopsisInfo', { domain });
@@ -136,6 +144,7 @@ export const getSynopsisInfo = (domain: string) => {
  * Generate comprehensive schema markup for content outlines
  * Used extensively in StatusActionBar and multiple content generation workflows
  * USAGE: contentPerfect (16+ matches), preferencesPerfect (16+ matches)
+ * SEOPerfect: Not used - app has no content generation functionality
  */
 export const generateSchema = (content_plan_outline_guid: string) => {
   devLog.request('generateSchema', { content_plan_outline_guid });
@@ -152,6 +161,7 @@ export const generateSchema = (content_plan_outline_guid: string) => {
  * In preferencesPerfect: Used in DashboardPage and useLogoCheck hook for domain analytics
  * In socialPerfect: Used in SettingsPage.tsx for domain configuration and usage analytics
  * USAGE: contentPerfect (5+ matches), preferencesPerfect (DashboardPage, useLogoCheck), socialPerfect (SettingsPage)
+ * SEOPerfect: Not used - app has no domain-specific analytics or impression tracking
  */
 export const updateImpression = (domain: string, obj: any) => {
   devLog.request('updateImpression', { domain, obj });
@@ -1519,3 +1529,28 @@ export const getDomains = async (domains?: string[], hidden?: boolean | null, bl
   response.then(res => devLog.response('getDomains', res)).catch(err => devLog.error('getDomains', err));
   return response;
 };
+
+// ================================================================================
+// SEOPE RFECT APP USAGE SUMMARY
+// ================================================================================
+/**
+ * SEOPerfect App Service Usage Analysis (Last Updated: 2025-09-25)
+ * 
+ * DIRECT SERVICE USAGE: NONE
+ * The main SEOPerfect app (src/app/, src/components/) does not directly import or use 
+ * any services from this file. The app serves as a landing page and brand showcase.
+ * 
+ * INDIRECT SERVICE AVAILABILITY: ALL SERVICES AVAILABLE
+ * While not directly used, all services remain available through the shared component 
+ * system for potential future functionality expansion.
+ * 
+ * MAIN APP USAGE PATTERN:
+ * - Uses shared UI components (TypeWriterText, Modal, Form components)
+ * - Uses data types and brand assets from shared system
+ * - Uses Supabase client directly for any data operations
+ * - Focuses on brand display and navigation to other Perfect SEO apps
+ * 
+ * RECOMMENDATION: 
+ * Keep all services available for future expansion while acknowledging current 
+ * SEOPerfect app has minimal functional requirements as a landing page.
+ */
